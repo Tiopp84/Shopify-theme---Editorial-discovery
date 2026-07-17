@@ -22,10 +22,10 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Tạo bộ roadmap từ product strategy đến final release gate.
 - [x] Xác nhận trạng thái ban đầu: `theme/` và `tests/` chưa có implementation production.
 - [x] Thiết lập tệp `current-step.md` làm điểm tiếp tục xuyên phiên.
+- [x] Khởi tạo Git repository với nhánh `main` và tạo baseline commit cho toàn bộ roadmap.
 
 ## Đang thực hiện
 
-- [ ] Khởi tạo repository Git và lưu lịch sử nguồn gốc từ đầu.
 - [ ] Hoàn thiện product brief trong Phase 0.
 
 ## Quyết định đã chốt
@@ -60,16 +60,16 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Roadmap dự án | `docs/Roadmap/README.md` đến `10-release-gate.md` | Có đủ khung phase/gate |
 | Trạng thái implementation | `theme/`, `tests/` | Chưa có file production/test |
 | Điểm tiếp tục | `docs/Roadmap/current-step.md` | Đã thiết lập |
+| Git baseline | Commit `978cf11` trên nhánh `main` | Roadmap đã được lưu từ root commit |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Khởi tạo Git và ghi nhận baseline tài liệu.
-2. Điền product brief: catalog, merchant problem, positioning, ngôn ngữ và hướng naming.
-3. Chốt 3–5 trụ cột khác biệt và tiêu chí đo cho từng trụ cột.
-4. Lập `competitive-analysis.md` với 15 theme cạnh tranh và URL/ngày khảo sát.
-5. Chốt chiến lược source code cùng hồ sơ provenance/license.
-6. Khóa feature matrix MVP và out-of-scope.
-7. Chỉ chuyển sang Phase 1 khi toàn bộ exit criteria của tài liệu 01–02 được duyệt.
+1. Điền product brief: catalog, merchant problem, positioning, ngôn ngữ và hướng naming.
+2. Chốt 3–5 trụ cột khác biệt và tiêu chí đo cho từng trụ cột.
+3. Lập `competitive-analysis.md` với 15 theme cạnh tranh và URL/ngày khảo sát.
+4. Chốt chiến lược source code cùng hồ sơ provenance/license.
+5. Khóa feature matrix MVP và out-of-scope.
+6. Chỉ chuyển sang Phase 1 khi toàn bộ exit criteria của tài liệu 01–02 được duyệt.
 
 ## Nhật ký phiên làm việc
 
@@ -78,4 +78,6 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Đã rà soát toàn bộ `docs/Roadmap`.
 - Xác định dự án đang ở Phase 0 và chưa có implementation trong `theme/`/`tests/`.
 - Tạo cấu trúc lưu trạng thái xuyên phiên trong tệp này.
-- Next: khởi tạo Git, sau đó hoàn thiện product brief.
+- Khởi tạo Git repository trên nhánh `main`.
+- Tạo root commit `978cf11` để lưu baseline roadmap và provenance ban đầu.
+- Next: hoàn thiện product brief.
