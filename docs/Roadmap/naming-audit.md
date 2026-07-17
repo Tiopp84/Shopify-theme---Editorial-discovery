@@ -2,7 +2,7 @@
 
 Ngày khảo sát: 2026-07-17 (Asia/Bangkok)
 
-Trạng thái: **BASIC SCREEN COMPLETE — LEGAL CLEARANCE PENDING**
+Trạng thái: **NARRIVELLE APPROVED PROVISIONALLY — LEGAL CLEARANCE PENDING**
 
 > Đây là product naming screen dựa trên Shopify Theme Store, search engine và nguồn trademark công khai. Nó không phải tư vấn pháp lý hoặc full trademark clearance theo từng quốc gia/class.
 
@@ -86,7 +86,6 @@ Không dùng `Atelier`. Chưa khóa preset names trước khi theme name đượ
 
 ## 6. Quyết định cần chủ dự án xác nhận
 
-- [ ] Dùng `Narrivelle` làm tên thương mại **provisional** để đi tiếp qua design, nhưng chưa public trước professional clearance.
-- [ ] Giữ `Project Loomline` chỉ làm codename nội bộ.
-- [ ] Hủy working preset `Atelier`; đặt tên preset sau khi visual directions được prototype.
-
+- [x] Dùng `Narrivelle` làm tên thương mại **provisional** để đi tiếp qua design, nhưng chưa public trước professional clearance.
+- [x] Giữ `Project Loomline` chỉ làm codename nội bộ.
+- [x] Hủy working preset `Atelier`; đặt tên preset sau khi visual directions được prototype.

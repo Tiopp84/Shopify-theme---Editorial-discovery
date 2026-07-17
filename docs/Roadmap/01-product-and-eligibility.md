@@ -85,8 +85,8 @@ Không định giá chỉ dựa trên số section. Giá trị đến từ độ
 ## Exit criteria
 
 - [x] Product brief được duyệt. Evidence: `product-brief-proposal.md`, 2026-07-17.
-- [ ] Có bằng chứng codebase hợp lệ và kế hoạch license.
+- [x] Có kế hoạch provenance/license; bằng chứng Skeleton import sẽ bổ sung ở Foundation. Evidence: `source-provenance-and-licenses.md`, `asset-license-register.md`.
 - [x] Có competitive analysis. Evidence: `competitive-analysis.md`, 2026-07-17.
 - [ ] Có 3–5 trụ cột khác biệt đo được.
-- [ ] Có danh sách out-of-scope để kiểm soát dự án.
+- [x] Có danh sách out-of-scope để kiểm soát dự án. Evidence: `mvp-feature-matrix.md`.
 - [x] Có tên nội bộ và hướng naming. Evidence: `naming-audit.md`; commercial name provisional.

@@ -27,11 +27,14 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Product brief được phê duyệt; English-only v1.0 với localization contract từ đầu.
 - [x] Hoàn thành desk research competitive analysis 15 theme và xác định năm khoảng trống thị trường.
 - [x] Hoàn thành basic naming screen; loại Loomline/Atelier khỏi public naming và chọn Narrivelle làm provisional lead.
+- [x] Narrivelle được chấp thuận làm commercial name provisional; professional clearance vẫn là release/public-brand gate.
+- [x] Khóa source provenance, dependency và asset license policy cho Skeleton import.
+- [x] Khóa MVP feature matrix với priority, role owner, acceptance và explicit out-of-scope.
 
 ## Đang thực hiện
 
 - [ ] Audit trực tiếp demo Tier 1 trên home/collection/product/cart/mobile navigation trước design gate.
-- [ ] Chủ dự án xác nhận Narrivelle là provisional commercial name.
+- [ ] Import Shopify Skeleton Theme với upstream SHA và commit riêng.
 
 ## Quyết định đã chốt
 
@@ -47,12 +50,11 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 ## Quyết định còn thiếu
 
 - Professional trademark clearance cho commercial theme/preset names.
-- Danh sách tính năng MVP chính thức và backlog post-launch.
 - Owner và target date cho từng workstream.
 
 ## Blocker và rủi ro hiện tại
 
-- Chưa thể bắt đầu production build khi source provenance/license plan và MVP feature matrix chưa được chốt.
+- Cần môi trường Shopify CLI/dev store để import, preview và kiểm chứng Skeleton baseline.
 - Desk research đã có; chưa có screenshot/interaction evidence từ demo audit Tier 1.
 - Yêu cầu Shopify Theme Store có thể thay đổi; phải đối chiếu tài liệu chính thức tại đầu Phase 0, trước beta và trong tuần submission.
 
@@ -67,15 +69,17 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Product brief | `docs/Roadmap/product-brief-proposal.md` | APPROVED — 2026-07-17 |
 | Competitive analysis | `docs/Roadmap/competitive-analysis.md` | 15 theme; desk research complete 2026-07-17 |
 | Naming screen | `docs/Roadmap/naming-audit.md` | Basic screen complete; Narrivelle provisional, legal clearance pending |
+| Provenance/license plan | `docs/Roadmap/source-provenance-and-licenses.md`, `asset-license-register.md`, root `THIRD_PARTY_NOTICES.md` | APPROVED FOR FOUNDATION IMPORT |
+| MVP scope | `docs/Roadmap/mvp-feature-matrix.md` | LOCKED — priority/owner/acceptance/out-of-scope defined |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Chủ dự án xác nhận hoặc từ chối provisional name `Narrivelle`.
-2. Audit demo Tier 1 và lưu screenshot/interaction notes trước design gate.
-3. Chốt chiến lược source code cùng hồ sơ provenance/license.
-4. Khóa feature matrix MVP và out-of-scope.
+1. Xác minh Shopify CLI và import Skeleton với upstream SHA/commit riêng.
+2. Chạy Theme Check baseline và dev-store smoke test.
+3. Audit demo Tier 1 và lưu screenshot/interaction notes trước design gate.
+4. Gán tên owner và target date cho workstreams.
 5. Thực hiện professional trademark clearance trước khi public brand/listing assets.
-6. Chỉ chuyển sang Phase 1 khi toàn bộ exit criteria của tài liệu 01–02 được duyệt.
+6. Review toàn bộ exit criteria 01–02 để đóng Phase 0 và chuyển Phase 1.
 
 ## Nhật ký phiên làm việc
 
@@ -94,4 +98,7 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Xác nhận lookbook/hotspot/swatch/mega-menu/quick-buy là feature parity, không phải differentiation.
 - Hoàn thành `naming-audit.md`; loại public names Loomline, Atelier và các candidate có xung đột rõ.
 - Chọn `Narrivelle` làm provisional lead; giữ Project Loomline chỉ làm codename.
-- Next: chủ dự án xác nhận provisional name; sau đó chốt provenance/license và feature matrix.
+- Chủ dự án tiếp tục dự án với `Narrivelle`; ghi nhận tên provisional đã được chấp thuận.
+- Tạo provenance/license plan, asset register và third-party notices baseline.
+- Khóa `mvp-feature-matrix.md` với các quyết định cart drawer/quick add/predictive search/two presets in scope; recently viewed/voice search/app-like features out.
+- Next: import Shopify Skeleton Theme có upstream SHA và baseline verification.
