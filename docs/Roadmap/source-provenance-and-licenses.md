@@ -64,7 +64,7 @@ Không thêm framework frontend, slider/modal library hoặc icon font theo mặ
 
 | Thành phần | Nguồn/version | License | Import commit | Trạng thái |
 |---|---|---|---|---|
-| Shopify Skeleton Theme | `https://github.com/Shopify/skeleton-theme.git`, HEAD `a4f32d393b9eadf6c4403318ca39116832e5d1df`, imported 2026-07-17 via Shopify CLI 4.5.1 | Shopify restricted MIT-style license in `theme/LICENSE.md` | Baseline source commit pending | IMPORTED / THEME CHECK PASS |
+| Shopify Skeleton Theme | `https://github.com/Shopify/skeleton-theme.git`, HEAD `a4f32d393b9eadf6c4403318ca39116832e5d1df`, imported 2026-07-17 via Shopify CLI 4.5.1 | Shopify restricted MIT-style license in `theme/LICENSE.md` | `7fdb6a1` | IMPORTED / THEME CHECK PASS |
 | Narrivelle original code | Repository này | Proprietary submission source | Từ commit sau baseline | IN PROGRESS |
 | Third-party runtime libraries | None | N/A | N/A | NONE APPROVED |
 | Fonts | Shopify/system only ở baseline | Shopify/platform terms | TBD | POLICY APPROVED |
@@ -78,6 +78,6 @@ Không thêm framework frontend, slider/modal library hoặc icon font theo mặ
 - [x] Dependency/asset license policy được định nghĩa.
 - [x] `THIRD_PARTY_NOTICES.md` được tạo.
 - [x] Asset/license register được tạo.
-- [x] Skeleton được import với upstream SHA; baseline commit đang được tạo. Evidence: SHA `a4f32d393b9eadf6c4403318ca39116832e5d1df`.
+- [x] Skeleton được import với upstream SHA và commit riêng. Evidence: SHA `a4f32d393b9eadf6c4403318ca39116832e5d1df`, commit `7fdb6a1`.
 - [x] Theme Check baseline pass: 39 files, zero offenses, 2026-07-17.
 - [ ] Dev-store smoke test pass.

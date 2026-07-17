@@ -32,6 +32,7 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Khóa MVP feature matrix với priority, role owner, acceptance và explicit out-of-scope.
 - [x] Import official Shopify Skeleton Theme HEAD `a4f32d3` bằng Shopify CLI 4.5.1.
 - [x] Chạy baseline Theme Check: 39 files, zero offenses.
+- [x] Lưu Skeleton baseline trong commit riêng `7fdb6a1` cùng provenance/license evidence.
 
 ## Đang thực hiện
 
@@ -73,16 +74,15 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Naming screen | `docs/Roadmap/naming-audit.md` | Basic screen complete; Narrivelle provisional, legal clearance pending |
 | Provenance/license plan | `docs/Roadmap/source-provenance-and-licenses.md`, `asset-license-register.md`, root `THIRD_PARTY_NOTICES.md` | APPROVED FOR FOUNDATION IMPORT |
 | MVP scope | `docs/Roadmap/mvp-feature-matrix.md` | LOCKED — priority/owner/acceptance/out-of-scope defined |
-| Skeleton baseline | `theme/`, upstream `a4f32d393b9eadf6c4403318ca39116832e5d1df` | 39 files; Theme Check zero offenses |
+| Skeleton baseline | `theme/`, upstream `a4f32d393b9eadf6c4403318ca39116832e5d1df`, commit `7fdb6a1` | 39 files inspected; Theme Check zero offenses |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Commit Skeleton baseline riêng cùng upstream provenance evidence.
-2. Kết nối development store và chạy storefront/Theme Editor smoke test.
-3. Audit demo Tier 1 và lưu screenshot/interaction notes trước design gate.
-4. Gán tên owner và target date cho workstreams.
-5. Thực hiện professional trademark clearance trước khi public brand/listing assets.
-6. Review toàn bộ exit criteria 01–02 để đóng Phase 0 và chuyển Phase 1.
+1. Kết nối development store và chạy storefront/Theme Editor smoke test.
+2. Audit demo Tier 1 và lưu screenshot/interaction notes trước design gate.
+3. Gán tên owner và target date cho workstreams.
+4. Thực hiện professional trademark clearance trước khi public brand/listing assets.
+5. Review toàn bộ exit criteria 01–02 để đóng Phase 0 và chuyển Phase 1.
 
 ## Nhật ký phiên làm việc
 
@@ -107,4 +107,5 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Import official Skeleton vào `theme/` qua Shopify CLI; ghi upstream SHA `a4f32d393b9eadf6c4403318ca39116832e5d1df` và license notice.
 - Shopify CLI tự nâng từ 4.5.0 lên 4.5.1 trong lúc init.
 - Baseline Theme Check pass: 39 files, zero offenses.
-- Next: commit baseline, sau đó kết nối dev store để smoke test.
+- Lưu baseline source và provenance trong commit `7fdb6a1`.
+- Next: kết nối dev store để smoke test storefront và Theme Editor.
