@@ -23,10 +23,12 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Xác nhận trạng thái ban đầu: `theme/` và `tests/` chưa có implementation production.
 - [x] Thiết lập tệp `current-step.md` làm điểm tiếp tục xuyên phiên.
 - [x] Khởi tạo Git repository với nhánh `main` và tạo baseline commit cho toàn bộ roadmap.
+- [x] Hoàn thành market scan định hướng ban đầu và lập product brief đề xuất để phê duyệt.
 
 ## Đang thực hiện
 
 - [ ] Hoàn thiện product brief trong Phase 0.
+- [ ] Phê duyệt hoặc chỉnh sửa `product-brief-proposal.md`.
 
 ## Quyết định đã chốt
 
@@ -61,15 +63,17 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Trạng thái implementation | `theme/`, `tests/` | Chưa có file production/test |
 | Điểm tiếp tục | `docs/Roadmap/current-step.md` | Đã thiết lập |
 | Git baseline | Commit `978cf11` trên nhánh `main` | Roadmap đã được lưu từ root commit |
+| Product brief đề xuất | `docs/Roadmap/product-brief-proposal.md` | PROPOSED — chờ phê duyệt |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Điền product brief: catalog, merchant problem, positioning, ngôn ngữ và hướng naming.
-2. Chốt 3–5 trụ cột khác biệt và tiêu chí đo cho từng trụ cột.
-3. Lập `competitive-analysis.md` với 15 theme cạnh tranh và URL/ngày khảo sát.
-4. Chốt chiến lược source code cùng hồ sơ provenance/license.
-5. Khóa feature matrix MVP và out-of-scope.
-6. Chỉ chuyển sang Phase 1 khi toàn bộ exit criteria của tài liệu 01–02 được duyệt.
+1. Người quyết định phê duyệt/chỉnh sửa `product-brief-proposal.md`.
+2. Lập `competitive-analysis.md` với 15 theme cạnh tranh và URL/ngày khảo sát.
+3. Thực hiện naming/trademark audit; chốt tên theme/preset.
+4. Sau phê duyệt, cập nhật quyết định chính thức vào tài liệu 01–02.
+5. Chốt chiến lược source code cùng hồ sơ provenance/license.
+6. Khóa feature matrix MVP và out-of-scope.
+7. Chỉ chuyển sang Phase 1 khi toàn bộ exit criteria của tài liệu 01–02 được duyệt.
 
 ## Nhật ký phiên làm việc
 
@@ -80,4 +84,6 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Tạo cấu trúc lưu trạng thái xuyên phiên trong tệp này.
 - Khởi tạo Git repository trên nhánh `main`.
 - Tạo root commit `978cf11` để lưu baseline roadmap và provenance ban đầu.
-- Next: hoàn thiện product brief.
+- Nghiên cứu yêu cầu Theme Store hiện hành và một số đối thủ định hướng trong nhóm fashion/editorial.
+- Tạo `product-brief-proposal.md` với segment, positioning, bốn trụ cột, pricing, locale, source strategy và trade-off.
+- Next: người quyết định duyệt/chỉnh phương án; sau đó hoàn thành competitive analysis 15 theme.
