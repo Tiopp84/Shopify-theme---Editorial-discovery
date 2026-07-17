@@ -33,6 +33,8 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Import official Shopify Skeleton Theme HEAD `a4f32d3` bằng Shopify CLI 4.5.1.
 - [x] Chạy baseline Theme Check: 39 files, zero offenses.
 - [x] Lưu Skeleton baseline trong commit riêng `7fdb6a1` cùng provenance/license evidence.
+- [x] Refactor tài liệu: Roadmap chỉ còn 12 tệp điều hành; discovery/specification/governance được tách riêng.
+- [x] Loại `theme/shopify.theme.toml` khỏi Git để không commit development store URL.
 
 ## Đang thực hiện
 
@@ -69,12 +71,13 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Trạng thái implementation | `theme/`, `tests/` | Chưa có file production/test |
 | Điểm tiếp tục | `docs/Roadmap/current-step.md` | Đã thiết lập |
 | Git baseline | Commit `978cf11` trên nhánh `main` | Roadmap đã được lưu từ root commit |
-| Product brief | `docs/Roadmap/product-brief-proposal.md` | APPROVED — 2026-07-17 |
-| Competitive analysis | `docs/Roadmap/competitive-analysis.md` | 15 theme; desk research complete 2026-07-17 |
-| Naming screen | `docs/Roadmap/naming-audit.md` | Basic screen complete; Narrivelle provisional, legal clearance pending |
-| Provenance/license plan | `docs/Roadmap/source-provenance-and-licenses.md`, `asset-license-register.md`, root `THIRD_PARTY_NOTICES.md` | APPROVED FOR FOUNDATION IMPORT |
-| MVP scope | `docs/Roadmap/mvp-feature-matrix.md` | LOCKED — priority/owner/acceptance/out-of-scope defined |
+| Product brief | `docs/Discovery/product-brief.md` | APPROVED — 2026-07-17 |
+| Competitive analysis | `docs/Discovery/competitive-analysis.md` | 15 theme; desk research complete 2026-07-17 |
+| Naming screen | `docs/Discovery/naming-audit.md` | Basic screen complete; Narrivelle provisional, legal clearance pending |
+| Provenance/license plan | `docs/Governance/source-provenance-and-licenses.md`, `docs/Governance/asset-license-register.md`, root `THIRD_PARTY_NOTICES.md` | APPROVED FOR FOUNDATION IMPORT |
+| MVP scope | `docs/Specifications/mvp-feature-matrix.md` | LOCKED — priority/owner/acceptance/out-of-scope defined |
 | Skeleton baseline | `theme/`, upstream `a4f32d393b9eadf6c4403318ca39116832e5d1df`, commit `7fdb6a1` | 39 files inspected; Theme Check zero offenses |
+| Documentation structure | `docs/README.md` | Roadmap/Discovery/Specifications/Governance separated |
 
 ## Việc tiếp theo — theo thứ tự
 
@@ -94,18 +97,19 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Khởi tạo Git repository trên nhánh `main`.
 - Tạo root commit `978cf11` để lưu baseline roadmap và provenance ban đầu.
 - Nghiên cứu yêu cầu Theme Store hiện hành và một số đối thủ định hướng trong nhóm fashion/editorial.
-- Tạo `product-brief-proposal.md` với segment, positioning, bốn trụ cột, pricing, locale, source strategy và trade-off.
+- Tạo `docs/Discovery/product-brief.md` với segment, positioning, bốn trụ cột, pricing, locale, source strategy và trade-off.
 - Product brief được phê duyệt; cập nhật quyết định chính thức vào tài liệu 01.
 - Khóa localization contract: English-only v1.0 nhưng không hard-code UI copy; storefront/schema keys và locale parity là yêu cầu bắt buộc.
-- Hoàn thành `competitive-analysis.md`: 15 theme, price/preset/positioning/feature/art direction và năm khoảng trống thị trường.
+- Hoàn thành `docs/Discovery/competitive-analysis.md`: 15 theme, price/preset/positioning/feature/art direction và năm khoảng trống thị trường.
 - Xác nhận lookbook/hotspot/swatch/mega-menu/quick-buy là feature parity, không phải differentiation.
-- Hoàn thành `naming-audit.md`; loại public names Loomline, Atelier và các candidate có xung đột rõ.
+- Hoàn thành `docs/Discovery/naming-audit.md`; loại public names Loomline, Atelier và các candidate có xung đột rõ.
 - Chọn `Narrivelle` làm provisional lead; giữ Project Loomline chỉ làm codename.
 - Chủ dự án tiếp tục dự án với `Narrivelle`; ghi nhận tên provisional đã được chấp thuận.
 - Tạo provenance/license plan, asset register và third-party notices baseline.
-- Khóa `mvp-feature-matrix.md` với các quyết định cart drawer/quick add/predictive search/two presets in scope; recently viewed/voice search/app-like features out.
+- Khóa `docs/Specifications/mvp-feature-matrix.md` với các quyết định cart drawer/quick add/predictive search/two presets in scope; recently viewed/voice search/app-like features out.
 - Import official Skeleton vào `theme/` qua Shopify CLI; ghi upstream SHA `a4f32d393b9eadf6c4403318ca39116832e5d1df` và license notice.
 - Shopify CLI tự nâng từ 4.5.0 lên 4.5.1 trong lúc init.
 - Baseline Theme Check pass: 39 files, zero offenses.
 - Lưu baseline source và provenance trong commit `7fdb6a1`.
+- Refactor `docs/`: giữ Roadmap chỉ cho phase/gate/tracking; chuyển research sang Discovery, scope sang Specifications và provenance/license sang Governance.
 - Next: kết nối dev store để smoke test storefront và Theme Editor.

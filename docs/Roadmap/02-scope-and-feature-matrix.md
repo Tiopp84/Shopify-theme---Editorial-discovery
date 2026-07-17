@@ -4,7 +4,7 @@
 
 MVP nên có 18–22 sections và 25–35 Theme Blocks thật sự hoàn thiện. Mỗi component phải đạt responsive, accessibility, merchant configurability, section-reload và clean-install behavior.
 
-Scope chi tiết đã khóa tại `mvp-feature-matrix.md` ngày 2026-07-17. Tài liệu này giữ checklist yêu cầu cấp cao; thay đổi scope phải cập nhật cả hai nơi.
+Scope chi tiết đã khóa tại `../Specifications/mvp-feature-matrix.md` ngày 2026-07-17. Tài liệu này giữ checklist yêu cầu cấp cao; thay đổi scope phải cập nhật cả hai nơi.
 
 ## Required templates
 
@@ -72,6 +72,6 @@ Khác biệt: editorial hero, shoppable lookbook, shop-the-outfit, editorial col
 
 ## Exit criteria
 
-- [x] Scope MVP đã khóa; mỗi feature có role owner/priority/acceptance. Evidence: `mvp-feature-matrix.md`.
-- [x] Optional features sang post-launch backlog. Evidence: explicit product decisions trong `mvp-feature-matrix.md`.
+- [x] Scope MVP đã khóa; mỗi feature có role owner/priority/acceptance. Evidence: `../Specifications/mvp-feature-matrix.md`.
+- [x] Optional features sang post-launch backlog. Evidence: explicit product decisions trong `../Specifications/mvp-feature-matrix.md`.
 - [x] Support burden đã được review ở mức scope. Evidence: loại app-like features, recently viewed, voice search, deep builder và preset thứ ba.

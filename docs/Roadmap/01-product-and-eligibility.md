@@ -52,20 +52,20 @@ Không coi đổi màu, font, spacing, radius, shadow hoặc animation đơn l�
 
 ## 5. Nghiên cứu thị trường
 
-- [x] Chọn 15 theme cạnh tranh trực tiếp trên Shopify Theme Store. Evidence: `competitive-analysis.md`, 2026-07-17.
-- [x] Ghi giá, rating, số preset, ngành, feature và art direction. Evidence: `competitive-analysis.md`.
+- [x] Chọn 15 theme cạnh tranh trực tiếp trên Shopify Theme Store. Evidence: `../Discovery/competitive-analysis.md`, 2026-07-17.
+- [x] Ghi giá, rating, số preset, ngành, feature và art direction. Evidence: `../Discovery/competitive-analysis.md`.
 - [ ] Audit ít nhất home, collection, product, cart và mobile navigation.
-- [x] Ghi khoảng trống chưa được phục vụ tốt. Evidence: `competitive-analysis.md`.
+- [x] Ghi khoảng trống chưa được phục vụ tốt. Evidence: `../Discovery/competitive-analysis.md`.
 - [ ] Không tái tạo một theme cụ thể hoặc combination quá giống.
 - [ ] Chốt feature nào tạo giá trị và feature nào chỉ tăng support burden.
 
-Đầu ra: `competitive-analysis.md` hoặc Figma board có ngày khảo sát và URL nguồn.
+Đầu ra: `../Discovery/competitive-analysis.md` hoặc Figma board có ngày khảo sát và URL nguồn.
 
 ## 6. Naming và thương hiệu
 
-- [x] Basic screen loại tên trùng Shopify products/themes; professional clearance vẫn pending. Evidence: `naming-audit.md`.
+- [x] Basic screen loại tên trùng Shopify products/themes; professional clearance vẫn pending. Evidence: `../Discovery/naming-audit.md`.
 - [ ] Không dùng tên công ty, platform, ngành hoặc lợi ích SEO chung chung.
-- [x] Kiểm tra Theme Store, search engine và trademark cơ bản. Evidence: `naming-audit.md`, 2026-07-17.
+- [x] Kiểm tra Theme Store, search engine và trademark cơ bản. Evidence: `../Discovery/naming-audit.md`, 2026-07-17.
 - [ ] Chốt tên preset riêng biệt, dễ hiểu.
 - [ ] Thiết kế logo/listing identity sau khi tên được duyệt nội bộ.
 
@@ -84,9 +84,9 @@ Không định giá chỉ dựa trên số section. Giá trị đến từ độ
 
 ## Exit criteria
 
-- [x] Product brief được duyệt. Evidence: `product-brief-proposal.md`, 2026-07-17.
-- [x] Có kế hoạch provenance/license; bằng chứng Skeleton import sẽ bổ sung ở Foundation. Evidence: `source-provenance-and-licenses.md`, `asset-license-register.md`.
-- [x] Có competitive analysis. Evidence: `competitive-analysis.md`, 2026-07-17.
+- [x] Product brief được duyệt. Evidence: `../Discovery/product-brief.md`, 2026-07-17.
+- [x] Có kế hoạch provenance/license; bằng chứng Skeleton import sẽ bổ sung ở Foundation. Evidence: `../Governance/source-provenance-and-licenses.md`, `../Governance/asset-license-register.md`.
+- [x] Có competitive analysis. Evidence: `../Discovery/competitive-analysis.md`, 2026-07-17.
 - [ ] Có 3–5 trụ cột khác biệt đo được.
-- [x] Có danh sách out-of-scope để kiểm soát dự án. Evidence: `mvp-feature-matrix.md`.
-- [x] Có tên nội bộ và hướng naming. Evidence: `naming-audit.md`; commercial name provisional.
+- [x] Có danh sách out-of-scope để kiểm soát dự án. Evidence: `../Specifications/mvp-feature-matrix.md`.
+- [x] Có tên nội bộ và hướng naming. Evidence: `../Discovery/naming-audit.md`; commercial name provisional.

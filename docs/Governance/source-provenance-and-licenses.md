@@ -76,7 +76,7 @@ Không thêm framework frontend, slider/modal library hoặc icon font theo mặ
 - [x] Skeleton được chọn làm baseline hợp lệ.
 - [x] Import protocol và provenance rules được định nghĩa.
 - [x] Dependency/asset license policy được định nghĩa.
-- [x] `THIRD_PARTY_NOTICES.md` được tạo.
+- [x] Root `THIRD_PARTY_NOTICES.md` được tạo.
 - [x] Asset/license register được tạo.
 - [x] Skeleton được import với upstream SHA và commit riêng. Evidence: SHA `a4f32d393b9eadf6c4403318ca39116832e5d1df`, commit `7fdb6a1`.
 - [x] Theme Check baseline pass: 39 files, zero offenses, 2026-07-17.

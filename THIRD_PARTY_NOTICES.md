@@ -11,6 +11,6 @@ Narrivelle currently has no approved third-party runtime libraries.
 
 The license permits use, modification and distribution for themes that integrate or interoperate with Shopify and, when applicable, distribution through the Shopify Theme Store. The copyright and permission notice must remain in copies or substantial portions.
 
-See `docs/Roadmap/source-provenance-and-licenses.md` and `docs/Roadmap/asset-license-register.md`.
+See `docs/Governance/source-provenance-and-licenses.md` and `docs/Governance/asset-license-register.md`.
 
 Do not add third-party code or assets to this file without also recording approval and proof in the asset/license register.
