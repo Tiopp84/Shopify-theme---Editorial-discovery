@@ -24,7 +24,7 @@ Có thể dùng theme hiện tại để lập feature specification, test merch
 | Trường | Quyết định |
 |---|---|
 | Tên nội bộ | Project Loomline |
-| Tên theme dự kiến | Chưa chốt; thực hiện naming/trademark audit riêng |
+| Tên theme dự kiến | Narrivelle — provisional; professional trademark clearance pending |
 | Merchant mục tiêu | Fashion/apparel/lifestyle |
 | Quy mô catalog | Medium–large, khoảng 100–2.000 sản phẩm |
 | Vấn đề chính | Store giàu hình ảnh thường hy sinh discovery; store catalog lớn thường thiếu storytelling và product confidence |
@@ -63,9 +63,9 @@ Không coi đổi màu, font, spacing, radius, shadow hoặc animation đơn l�
 
 ## 6. Naming và thương hiệu
 
-- [ ] Tên theme không trùng hoặc gần giống Shopify products/events.
+- [x] Basic screen loại tên trùng Shopify products/themes; professional clearance vẫn pending. Evidence: `naming-audit.md`.
 - [ ] Không dùng tên công ty, platform, ngành hoặc lợi ích SEO chung chung.
-- [ ] Kiểm tra Theme Store, search engine và trademark cơ bản.
+- [x] Kiểm tra Theme Store, search engine và trademark cơ bản. Evidence: `naming-audit.md`, 2026-07-17.
 - [ ] Chốt tên preset riêng biệt, dễ hiểu.
 - [ ] Thiết kế logo/listing identity sau khi tên được duyệt nội bộ.
 
@@ -89,4 +89,4 @@ Không định giá chỉ dựa trên số section. Giá trị đến từ độ
 - [x] Có competitive analysis. Evidence: `competitive-analysis.md`, 2026-07-17.
 - [ ] Có 3–5 trụ cột khác biệt đo được.
 - [ ] Có danh sách out-of-scope để kiểm soát dự án.
-- [ ] Có tên nội bộ và hướng naming.
+- [x] Có tên nội bộ và hướng naming. Evidence: `naming-audit.md`; commercial name provisional.
