@@ -23,20 +23,20 @@ Có thể dùng theme hiện tại để lập feature specification, test merch
 
 | Trường | Quyết định |
 |---|---|
-| Tên nội bộ | TBD |
-| Tên theme dự kiến | TBD |
+| Tên nội bộ | Project Loomline |
+| Tên theme dự kiến | Chưa chốt; thực hiện naming/trademark audit riêng |
 | Merchant mục tiêu | Fashion/apparel/lifestyle |
-| Quy mô catalog | TBD: small, medium, large |
-| Vấn đề chính | TBD |
-| Lợi thế cạnh tranh | TBD |
-| Mức giá mục tiêu | $320 launch; $350–400 sau validation |
+| Quy mô catalog | Medium–large, khoảng 100–2.000 sản phẩm |
+| Vấn đề chính | Store giàu hình ảnh thường hy sinh discovery; store catalog lớn thường thiếu storytelling và product confidence |
+| Lợi thế cạnh tranh | Editorial-to-product, outfit-aware merchandising, fashion discovery system và mobile product confidence |
+| Mức giá mục tiêu | $350 launch; xem xét $400 sau validation |
 | Số preset | 2 ở bản đầu |
-| Ngôn ngữ support | TBD |
+| Ngôn ngữ support | English ở v1.0; kiến trúc localization-ready |
 | SLA support | Phản hồi trong 2 business days |
 
 Một positioning statement mẫu:
 
-> Theme editorial commerce cho thương hiệu thời trang có catalog trung bình đến lớn, kết hợp trải nghiệm hình ảnh, lookbook có thể mua và discovery tối ưu trên mobile.
+> Editorial discovery theme for growing fashion brands—turning campaign imagery into fast, confident mobile shopping.
 
 ## 4. Trụ cột khác biệt
 
@@ -52,10 +52,10 @@ Không coi đổi màu, font, spacing, radius, shadow hoặc animation đơn l�
 
 ## 5. Nghiên cứu thị trường
 
-- [ ] Chọn 15 theme cạnh tranh trực tiếp trên Shopify Theme Store.
-- [ ] Ghi giá, rating, số preset, ngành, feature và art direction.
+- [x] Chọn 15 theme cạnh tranh trực tiếp trên Shopify Theme Store. Evidence: `competitive-analysis.md`, 2026-07-17.
+- [x] Ghi giá, rating, số preset, ngành, feature và art direction. Evidence: `competitive-analysis.md`.
 - [ ] Audit ít nhất home, collection, product, cart và mobile navigation.
-- [ ] Ghi khoảng trống chưa được phục vụ tốt.
+- [x] Ghi khoảng trống chưa được phục vụ tốt. Evidence: `competitive-analysis.md`.
 - [ ] Không tái tạo một theme cụ thể hoặc combination quá giống.
 - [ ] Chốt feature nào tạo giá trị và feature nào chỉ tăng support burden.
 
@@ -84,9 +84,9 @@ Không định giá chỉ dựa trên số section. Giá trị đến từ độ
 
 ## Exit criteria
 
-- [ ] Product brief được duyệt.
+- [x] Product brief được duyệt. Evidence: `product-brief-proposal.md`, 2026-07-17.
 - [ ] Có bằng chứng codebase hợp lệ và kế hoạch license.
-- [ ] Có competitive analysis.
+- [x] Có competitive analysis. Evidence: `competitive-analysis.md`, 2026-07-17.
 - [ ] Có 3–5 trụ cột khác biệt đo được.
 - [ ] Có danh sách out-of-scope để kiểm soát dự án.
 - [ ] Có tên nội bộ và hướng naming.

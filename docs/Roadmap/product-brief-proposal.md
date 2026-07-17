@@ -1,8 +1,8 @@
-# Product brief proposal — Chờ phê duyệt
+# Product brief — Đã phê duyệt
 
 Ngày nghiên cứu: 2026-07-17 (Asia/Bangkok)
 
-Trạng thái: **PROPOSED — NOT APPROVED**
+Trạng thái: **APPROVED — 2026-07-17**
 
 ## 1. Đề xuất tổng thể
 
@@ -135,13 +135,29 @@ Không giảm giá để cạnh tranh với theme USD 100–170. Lợi thế ph�
 
 Đây mới là market scan định hướng, chưa thay thế competitive analysis 15 theme bắt buộc của Phase 0.
 
-## 10. Quyết định cần phê duyệt
+## 10. Quyết định đã phê duyệt
 
-- [ ] Duyệt merchant segment và catalog medium–large.
-- [ ] Duyệt product problem và positioning.
-- [ ] Duyệt bốn trụ cột khác biệt.
-- [ ] Duyệt mức giá launch USD 350.
-- [ ] Duyệt English-only ở version 1.0, locale-ready.
-- [ ] Duyệt Shopify Skeleton Theme làm baseline.
-- [ ] Duyệt hai hướng preset Atelier/Afterdark; tên chỉ là working names.
+- [x] Duyệt merchant segment và catalog medium–large.
+- [x] Duyệt product problem và positioning.
+- [x] Duyệt bốn trụ cột khác biệt.
+- [x] Duyệt mức giá launch USD 350.
+- [x] Duyệt English-only ở version 1.0, locale-ready.
+- [x] Duyệt Shopify Skeleton Theme làm baseline.
+- [x] Duyệt hai hướng preset Atelier/Afterdark; tên chỉ là working names.
 
+## 11. Localization contract cho version 1.0
+
+English-only nghĩa là chỉ phát hành bản dịch English ở version 1.0, không có nghĩa hard-code English trong component.
+
+- Storefront copy dùng key trong `locales/en.default.json` và Liquid filter `t`.
+- Theme Editor labels, info và option text dùng key trong `locales/en.default.schema.json`.
+- Key được nhóm theo domain/component và giữ ổn định sau release.
+- Interpolation dùng biến có tên; pluralization dùng `count`, không nối chuỗi theo ngữ pháp English.
+- Ngày/giờ, tiền tệ, country/language và URL dùng object/filter localization của Shopify.
+- Layout dùng `request.locale.iso_code` cho thuộc tính `lang` và không giả định hướng chữ trong component API.
+- CSS tránh width cố định cho text; QA long text/pseudo-locale ngay trong v1.0.
+- JavaScript nhận message đã dịch từ DOM/data hoặc JSON locale; không chứa UI copy hard-code.
+- CI/Theme Check kiểm tra missing/orphan schema và storefront translation keys.
+- Khi thêm locale mới, storefront locale và schema locale phải có key parity với English trước khi release.
+
+Với contract này, thêm locale Latin-script sau này chủ yếu là translation + linguistic/layout QA. RTL hoặc các hệ chữ có typography/line-breaking khác vẫn cần một workstream thiết kế và browser QA riêng.

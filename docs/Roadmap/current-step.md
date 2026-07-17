@@ -24,11 +24,12 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Thiết lập tệp `current-step.md` làm điểm tiếp tục xuyên phiên.
 - [x] Khởi tạo Git repository với nhánh `main` và tạo baseline commit cho toàn bộ roadmap.
 - [x] Hoàn thành market scan định hướng ban đầu và lập product brief đề xuất để phê duyệt.
+- [x] Product brief được phê duyệt; English-only v1.0 với localization contract từ đầu.
+- [x] Hoàn thành desk research competitive analysis 15 theme và xác định năm khoảng trống thị trường.
 
 ## Đang thực hiện
 
-- [ ] Hoàn thiện product brief trong Phase 0.
-- [ ] Phê duyệt hoặc chỉnh sửa `product-brief-proposal.md`.
+- [ ] Audit trực tiếp demo Tier 1 trên home/collection/product/cart/mobile navigation trước design gate.
 
 ## Quyết định đã chốt
 
@@ -37,6 +38,10 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Giá mục tiêu ban đầu: USD 320; xem xét USD 350–400 sau validation.
 - SLA support dự kiến: phản hồi trong 2 business days.
 - Không sử dụng Dawn, Horizon hoặc commercial theme khác làm source code cho bản submission.
+- Product: editorial discovery cho fashion/lifestyle catalog medium–large (100–2.000 sản phẩm).
+- Giá launch: USD 350; xem xét USD 400 sau validation.
+- Source baseline: Shopify Skeleton Theme, implementation và art direction nguyên bản.
+- Locale v1.0: English-only nhưng mọi storefront/schema copy phải dùng translation keys; locale expansion là yêu cầu kiến trúc ngay từ đầu.
 
 ## Quyết định còn thiếu
 
@@ -52,7 +57,7 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 ## Blocker và rủi ro hiện tại
 
 - Chưa thể bắt đầu production build khi product brief và nguồn gốc code chưa được chốt.
-- Chưa có competitive analysis để chứng minh khoảng trống thị trường và tính khác biệt.
+- Desk research đã có; chưa có screenshot/interaction evidence từ demo audit Tier 1.
 - Yêu cầu Shopify Theme Store có thể thay đổi; phải đối chiếu tài liệu chính thức tại đầu Phase 0, trước beta và trong tuần submission.
 
 ## Bằng chứng
@@ -63,17 +68,16 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Trạng thái implementation | `theme/`, `tests/` | Chưa có file production/test |
 | Điểm tiếp tục | `docs/Roadmap/current-step.md` | Đã thiết lập |
 | Git baseline | Commit `978cf11` trên nhánh `main` | Roadmap đã được lưu từ root commit |
-| Product brief đề xuất | `docs/Roadmap/product-brief-proposal.md` | PROPOSED — chờ phê duyệt |
+| Product brief | `docs/Roadmap/product-brief-proposal.md` | APPROVED — 2026-07-17 |
+| Competitive analysis | `docs/Roadmap/competitive-analysis.md` | 15 theme; desk research complete 2026-07-17 |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Người quyết định phê duyệt/chỉnh sửa `product-brief-proposal.md`.
-2. Lập `competitive-analysis.md` với 15 theme cạnh tranh và URL/ngày khảo sát.
-3. Thực hiện naming/trademark audit; chốt tên theme/preset.
-4. Sau phê duyệt, cập nhật quyết định chính thức vào tài liệu 01–02.
-5. Chốt chiến lược source code cùng hồ sơ provenance/license.
-6. Khóa feature matrix MVP và out-of-scope.
-7. Chỉ chuyển sang Phase 1 khi toàn bộ exit criteria của tài liệu 01–02 được duyệt.
+1. Thực hiện naming/trademark audit; chốt tên theme/preset.
+2. Audit demo Tier 1 và lưu screenshot/interaction notes trước design gate.
+3. Chốt chiến lược source code cùng hồ sơ provenance/license.
+4. Khóa feature matrix MVP và out-of-scope.
+5. Chỉ chuyển sang Phase 1 khi toàn bộ exit criteria của tài liệu 01–02 được duyệt.
 
 ## Nhật ký phiên làm việc
 
@@ -86,4 +90,8 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Tạo root commit `978cf11` để lưu baseline roadmap và provenance ban đầu.
 - Nghiên cứu yêu cầu Theme Store hiện hành và một số đối thủ định hướng trong nhóm fashion/editorial.
 - Tạo `product-brief-proposal.md` với segment, positioning, bốn trụ cột, pricing, locale, source strategy và trade-off.
-- Next: người quyết định duyệt/chỉnh phương án; sau đó hoàn thành competitive analysis 15 theme.
+- Product brief được phê duyệt; cập nhật quyết định chính thức vào tài liệu 01.
+- Khóa localization contract: English-only v1.0 nhưng không hard-code UI copy; storefront/schema keys và locale parity là yêu cầu bắt buộc.
+- Hoàn thành `competitive-analysis.md`: 15 theme, price/preset/positioning/feature/art direction và năm khoảng trống thị trường.
+- Xác nhận lookbook/hotspot/swatch/mega-menu/quick-buy là feature parity, không phải differentiation.
+- Next: naming/trademark audit; demo audit Tier 1 được thực hiện trước design gate.
