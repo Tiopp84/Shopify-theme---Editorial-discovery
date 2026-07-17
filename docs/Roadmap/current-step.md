@@ -30,11 +30,13 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Narrivelle được chấp thuận làm commercial name provisional; professional clearance vẫn là release/public-brand gate.
 - [x] Khóa source provenance, dependency và asset license policy cho Skeleton import.
 - [x] Khóa MVP feature matrix với priority, role owner, acceptance và explicit out-of-scope.
+- [x] Import official Shopify Skeleton Theme HEAD `a4f32d3` bằng Shopify CLI 4.5.1.
+- [x] Chạy baseline Theme Check: 39 files, zero offenses.
 
 ## Đang thực hiện
 
 - [ ] Audit trực tiếp demo Tier 1 trên home/collection/product/cart/mobile navigation trước design gate.
-- [ ] Import Shopify Skeleton Theme với upstream SHA và commit riêng.
+- [ ] Kết nối development store và chạy baseline storefront/Theme Editor smoke test.
 
 ## Quyết định đã chốt
 
@@ -54,7 +56,7 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 
 ## Blocker và rủi ro hiện tại
 
-- Cần môi trường Shopify CLI/dev store để import, preview và kiểm chứng Skeleton baseline.
+- Cần development store URL/account permission để preview và kiểm chứng Skeleton storefront/Theme Editor baseline.
 - Desk research đã có; chưa có screenshot/interaction evidence từ demo audit Tier 1.
 - Yêu cầu Shopify Theme Store có thể thay đổi; phải đối chiếu tài liệu chính thức tại đầu Phase 0, trước beta và trong tuần submission.
 
@@ -71,11 +73,12 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Naming screen | `docs/Roadmap/naming-audit.md` | Basic screen complete; Narrivelle provisional, legal clearance pending |
 | Provenance/license plan | `docs/Roadmap/source-provenance-and-licenses.md`, `asset-license-register.md`, root `THIRD_PARTY_NOTICES.md` | APPROVED FOR FOUNDATION IMPORT |
 | MVP scope | `docs/Roadmap/mvp-feature-matrix.md` | LOCKED — priority/owner/acceptance/out-of-scope defined |
+| Skeleton baseline | `theme/`, upstream `a4f32d393b9eadf6c4403318ca39116832e5d1df` | 39 files; Theme Check zero offenses |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Xác minh Shopify CLI và import Skeleton với upstream SHA/commit riêng.
-2. Chạy Theme Check baseline và dev-store smoke test.
+1. Commit Skeleton baseline riêng cùng upstream provenance evidence.
+2. Kết nối development store và chạy storefront/Theme Editor smoke test.
 3. Audit demo Tier 1 và lưu screenshot/interaction notes trước design gate.
 4. Gán tên owner và target date cho workstreams.
 5. Thực hiện professional trademark clearance trước khi public brand/listing assets.
@@ -101,4 +104,7 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Chủ dự án tiếp tục dự án với `Narrivelle`; ghi nhận tên provisional đã được chấp thuận.
 - Tạo provenance/license plan, asset register và third-party notices baseline.
 - Khóa `mvp-feature-matrix.md` với các quyết định cart drawer/quick add/predictive search/two presets in scope; recently viewed/voice search/app-like features out.
-- Next: import Shopify Skeleton Theme có upstream SHA và baseline verification.
+- Import official Skeleton vào `theme/` qua Shopify CLI; ghi upstream SHA `a4f32d393b9eadf6c4403318ca39116832e5d1df` và license notice.
+- Shopify CLI tự nâng từ 4.5.0 lên 4.5.1 trong lúc init.
+- Baseline Theme Check pass: 39 files, zero offenses.
+- Next: commit baseline, sau đó kết nối dev store để smoke test.

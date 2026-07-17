@@ -2,7 +2,15 @@
 
 Narrivelle currently has no approved third-party runtime libraries.
 
-The project plans to use Shopify Skeleton Theme as its permitted source baseline. The exact upstream URL, revision, license, and required notice text will be recorded here when the baseline is imported. See `docs/Roadmap/source-provenance-and-licenses.md` and `docs/Roadmap/asset-license-register.md`.
+## Shopify Skeleton Theme
+
+- Source: https://github.com/Shopify/skeleton-theme.git
+- Imported revision: `a4f32d393b9eadf6c4403318ca39116832e5d1df`
+- Import date: 2026-07-17
+- License and required notice: `theme/LICENSE.md`
+
+The license permits use, modification and distribution for themes that integrate or interoperate with Shopify and, when applicable, distribution through the Shopify Theme Store. The copyright and permission notice must remain in copies or substantial portions.
+
+See `docs/Roadmap/source-provenance-and-licenses.md` and `docs/Roadmap/asset-license-register.md`.
 
 Do not add third-party code or assets to this file without also recording approval and proof in the asset/license register.
-
