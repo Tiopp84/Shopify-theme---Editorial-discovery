@@ -65,6 +65,6 @@ templates/  JSON composition
 ## Exit criteria
 
 - [ ] Architecture decision được duyệt.
-- [ ] Skeleton/original repository chạy trên dev store.
+- [x] Skeleton repository chạy trên dev store. Evidence: owner smoke-test confirmation, 2026-07-17.
 - [ ] CI và Theme Check hoạt động.
 - [ ] Tokens, conventions và PR Definition of Done đã khóa.

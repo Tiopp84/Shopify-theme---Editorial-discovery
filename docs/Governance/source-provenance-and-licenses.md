@@ -80,4 +80,4 @@ Không thêm framework frontend, slider/modal library hoặc icon font theo mặ
 - [x] Asset/license register được tạo.
 - [x] Skeleton được import với upstream SHA và commit riêng. Evidence: SHA `a4f32d393b9eadf6c4403318ca39116832e5d1df`, commit `7fdb6a1`.
 - [x] Theme Check baseline pass: 39 files, zero offenses, 2026-07-17.
-- [ ] Dev-store smoke test pass.
+- [x] Dev-store storefront/Theme Editor smoke test pass. Evidence: owner confirmation, 2026-07-17.

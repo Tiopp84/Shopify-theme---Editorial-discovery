@@ -6,7 +6,7 @@
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-07-17 (Asia/Bangkok) |
+| Cập nhật lần cuối | 2026-07-18 (Asia/Bangkok) |
 | Phase | Phase 0 — Discovery/eligibility |
 | Milestone | M0 — Product/eligibility approved |
 | Trạng thái tổng thể | IN PROGRESS |
@@ -35,11 +35,19 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Lưu Skeleton baseline trong commit riêng `7fdb6a1` cùng provenance/license evidence.
 - [x] Refactor tài liệu: Roadmap chỉ còn 12 tệp điều hành; discovery/specification/governance được tách riêng.
 - [x] Loại `theme/shopify.theme.toml` khỏi Git để không commit development store URL.
+- [x] Baseline storefront và Theme Editor smoke test trên development store đã pass theo xác nhận của chủ dự án.
 
 ## Đang thực hiện
 
-- [ ] Audit trực tiếp demo Tier 1 trên home/collection/product/cart/mobile navigation trước design gate.
-- [ ] Kết nối development store và chạy baseline storefront/Theme Editor smoke test.
+- [x] Audit trực tiếp demo Tier 1 trên home/collection/product/cart/mobile navigation trước design gate.
+- [x] Hoàn tất structural live-demo notes cho Palo Alto/SoMa và Blum/Celia.
+- [x] Hoàn tất structural live-demo notes cho Pipeline/Clean và Stiletto/Stiletto.
+- [x] Hoàn tất structural live-demo notes cho Sleek/Glossy và Concept/Tech; đủ 7/7 Tier 1 themes.
+- [x] Hoàn tất owner spot-check cho Stiletto, Pipeline và Concept.
+- [x] Nhận và lưu Stiletto owner spot-check: mobile quick view/cart gọn, ngắn nhưng đủ thông tin.
+- [x] Nhận và lưu Pipeline owner spot-check: cart bình thường; hover quick-add sizes hữu ích.
+- [x] Nhận và lưu Concept owner spot-check: mobile UI tối giản, bottom task bar và bottom sheets hiệu quả.
+- [x] Chuyển findings Tier 1 thành năm measurable design principles và prototype acceptance criteria.
 
 ## Quyết định đã chốt
 
@@ -59,8 +67,8 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 
 ## Blocker và rủi ro hiện tại
 
-- Cần development store URL/account permission để preview và kiểm chứng Skeleton storefront/Theme Editor baseline.
-- Desk research đã có; chưa có screenshot/interaction evidence từ demo audit Tier 1.
+- Tier 1 market audit hoàn tất: 7/7 structural notes và 3/3 owner spot-checks; findings sẵn sàng chuyển thành design criteria.
+- Design criteria hoàn tất: prototype phải chứng minh editorial-to-product, product confidence, variant-safe quick add, one-handed mobile controls và cart clarity.
 - Yêu cầu Shopify Theme Store có thể thay đổi; phải đối chiếu tài liệu chính thức tại đầu Phase 0, trước beta và trong tuần submission.
 
 ## Bằng chứng
@@ -73,19 +81,24 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Git baseline | Commit `978cf11` trên nhánh `main` | Roadmap đã được lưu từ root commit |
 | Product brief | `docs/Discovery/product-brief.md` | APPROVED — 2026-07-17 |
 | Competitive analysis | `docs/Discovery/competitive-analysis.md` | 15 theme; desk research complete 2026-07-17 |
+| Tier 1 live-demo audit | `docs/Discovery/tier-1-live-demo-audit.md` | COMPLETE FOR PHASE 0 — 7/7 structural + 3/3 spot-checks |
+| Tier 1 interaction checklist | `docs/Discovery/tier-1-interaction-checklist.md` | COMPLETE — Stiletto, Pipeline, Concept |
+| Stiletto owner spot-check | `docs/Discovery/evidence/tier-1/stiletto/` | COMPLETE — product quick view + populated cart |
+| Pipeline owner spot-check | `docs/Discovery/evidence/tier-1/pipeline/` | COMPLETE — product-card quick add + unavailable size |
+| Concept owner spot-check | `docs/Discovery/evidence/tier-1/concept/` | COMPLETE — header/task bar + cart bottom sheet |
 | Naming screen | `docs/Discovery/naming-audit.md` | Basic screen complete; Narrivelle provisional, legal clearance pending |
 | Provenance/license plan | `docs/Governance/source-provenance-and-licenses.md`, `docs/Governance/asset-license-register.md`, root `THIRD_PARTY_NOTICES.md` | APPROVED FOR FOUNDATION IMPORT |
 | MVP scope | `docs/Specifications/mvp-feature-matrix.md` | LOCKED — priority/owner/acceptance/out-of-scope defined |
 | Skeleton baseline | `theme/`, upstream `a4f32d393b9eadf6c4403318ca39116832e5d1df`, commit `7fdb6a1` | 39 files inspected; Theme Check zero offenses |
 | Documentation structure | `docs/README.md` | Roadmap/Discovery/Specifications/Governance separated |
+| Dev-store baseline | Storefront + Theme Editor smoke test | PASS — owner confirmation, 2026-07-17 |
+| Design principles/prototype gate | `docs/Specifications/design-principles-and-prototype-criteria.md` | APPROVED FOR PHASE 0 — 2026-07-18 |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Kết nối development store và chạy storefront/Theme Editor smoke test.
-2. Audit demo Tier 1 và lưu screenshot/interaction notes trước design gate.
-3. Gán tên owner và target date cho workstreams.
-4. Thực hiện professional trademark clearance trước khi public brand/listing assets.
-5. Review toàn bộ exit criteria 01–02 để đóng Phase 0 và chuyển Phase 1.
+1. Gán tên owner và target date cho workstreams.
+2. Thực hiện professional trademark clearance trước khi public brand/listing assets.
+3. Review toàn bộ exit criteria 01–02 để đóng Phase 0 và chuyển Phase 1.
 
 ## Nhật ký phiên làm việc
 
@@ -112,4 +125,20 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Baseline Theme Check pass: 39 files, zero offenses.
 - Lưu baseline source và provenance trong commit `7fdb6a1`.
 - Refactor `docs/`: giữ Roadmap chỉ cho phase/gate/tracking; chuyển research sang Discovery, scope sang Specifications và provenance/license sang Governance.
-- Next: kết nối dev store để smoke test storefront và Theme Editor.
+- Baseline storefront/Theme Editor smoke test pass theo xác nhận của chủ dự án.
+- Bắt đầu Tier 1 live-demo audit; lưu partial evidence cho Prestige/Couture trên home, collection, product và navigation structure.
+- Không đánh dấu Prestige complete vì chưa kiểm chứng cart, viewport/mobile interactions và screenshots.
+- Hoàn tất structural live-demo notes cho Palo Alto/SoMa và Blum/Celia; cả hai giữ trạng thái partial vì thiếu populated-cart/mobile screenshots.
+- Xác nhận outfit/cross-sell UI là parity; differentiation phải nằm ở variant-aware state, product-confidence hierarchy và opinionated merchant defaults.
+- Hoàn tất structural live-demo notes cho Pipeline/Clean và Stiletto/Stiletto; cả hai giữ trạng thái partial vì thiếu populated-cart/mobile screenshots.
+- Ghi nhận Pipeline là benchmark variant-rich product cards/cart threshold và Stiletto là benchmark product-confidence hierarchy.
+- Hoàn tất structural live-demo notes cho Sleek/Glossy và Concept/Tech; Tier 1 đạt 7/7 themes ở mức structural audit.
+- Ghi nhận Sleek là benchmark bundle/content breadth và Concept là benchmark mobile task access/variant switching.
+- Đơn giản hóa interaction checklist: bỏ deep audit và screenshot bắt buộc vì không phải Theme Store requirement và không đáng chi phí ở Phase 0.
+- Chấp nhận structural audit 7/7 là đủ; accessibility và commerce behavior sẽ được test trên chính Narrivelle.
+- Next: tạo measurable design principles/prototype acceptance criteria.
+- Nhận Stiletto spot-check từ chủ dự án; lưu hai ảnh mobile và kết luận hierarchy gọn, đầy đủ.
+- Nhận Pipeline spot-check; progressive-reveal size quick add là pattern nên học nhưng cần mobile/keyboard fallback.
+- Nhận Concept spot-check; xác nhận one-hand task bar và bottom-sheet overlays là mobile patterns nên đưa vào design criteria.
+- Hoàn tất Tier 1 market audit cho Phase 0; không cần audit thêm đối thủ.
+- Chuyển findings thành `docs/Specifications/design-principles-and-prototype-criteria.md`: năm principle đo được, boundaries chống sao chép và prototype gate cho home, collection, product, cart, mobile navigation.

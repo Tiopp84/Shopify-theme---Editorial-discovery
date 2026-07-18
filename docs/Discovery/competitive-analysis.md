@@ -106,5 +106,6 @@ Locale-ready phải bao gồm vị trí country/language selector, long translat
 
 Nguồn cho từng theme là URL trực tiếp trong bảng, khảo sát ngày 2026-07-17. Desk research này hoàn thành checklist cạnh tranh Phase 0; design team vẫn phải lưu screenshot/notes audit demo Tier 1 cho home, collection, product, cart và mobile navigation trước khi chốt art direction.
 
-Bước kế tiếp: naming/trademark audit, sau đó chuyển các khoảng trống thành design principles và measurable prototype acceptance criteria.
+Live-demo evidence được theo dõi riêng tại `tier-1-live-demo-audit.md`. Audit bắt đầu ngày 2026-07-17; Prestige/Couture hiện ở trạng thái partial, chưa đủ cart, viewport và screenshot evidence.
 
+Bước kế tiếp: naming/trademark audit, sau đó chuyển các khoảng trống thành design principles và measurable prototype acceptance criteria.
