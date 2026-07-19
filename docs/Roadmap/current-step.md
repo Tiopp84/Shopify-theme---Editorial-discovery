@@ -6,9 +6,9 @@
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-07-18 (Asia/Bangkok) |
-| Phase | Phase 0 — Discovery/eligibility |
-| Milestone | M0 — Product/eligibility approved |
+| Cập nhật lần cuối | 2026-07-19 (Asia/Bangkok) |
+| Phase | Phase 1 — Design |
+| Milestone | M0 — ACHIEVED; M1 — Design approved (planned 2026-08-09) |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
 | Roadmap nguồn | `docs/Roadmap/01-product-and-eligibility.md` |
@@ -48,6 +48,8 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Nhận và lưu Pipeline owner spot-check: cart bình thường; hover quick-add sizes hữu ích.
 - [x] Nhận và lưu Concept owner spot-check: mobile UI tối giản, bottom task bar và bottom sheets hiệu quả.
 - [x] Chuyển findings Tier 1 thành năm measurable design principles và prototype acceptance criteria.
+- [x] Review exit criteria 01–02; Phase 0 đủ điều kiện chuyển sang Phase 1.
+- [x] Thiết lập single-owner plan, workstream owner và target gate dates trong `09-project-board.md`.
 
 ## Quyết định đã chốt
 
@@ -59,6 +61,7 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Giá launch: USD 350; xem xét USD 400 sau validation.
 - Source baseline: Shopify Skeleton Theme, implementation và art direction nguyên bản.
 - Locale v1.0: English-only nhưng mọi storefront/schema copy phải dùng translation keys; locale expansion là yêu cầu kiến trúc ngay từ đầu.
+- Phase 0 được đóng ngày 2026-07-19; Phase 1 bắt đầu bằng prototype, không viết component production trước design gate.
 
 ## Quyết định còn thiếu
 
@@ -67,8 +70,8 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 
 ## Blocker và rủi ro hiện tại
 
-- Tier 1 market audit hoàn tất: 7/7 structural notes và 3/3 owner spot-checks; findings sẵn sàng chuyển thành design criteria.
-- Design criteria hoàn tất: prototype phải chứng minh editorial-to-product, product confidence, variant-safe quick add, one-handed mobile controls và cart clarity.
+- Professional trademark clearance vẫn bắt buộc trước public brand/listing assets; không chặn prototype nội bộ.
+- Demo assets mới vẫn bị chặn cho đến khi có license/provenance trong register.
 - Yêu cầu Shopify Theme Store có thể thay đổi; phải đối chiếu tài liệu chính thức tại đầu Phase 0, trước beta và trong tuần submission.
 
 ## Bằng chứng
@@ -93,12 +96,13 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Documentation structure | `docs/README.md` | Roadmap/Discovery/Specifications/Governance separated |
 | Dev-store baseline | Storefront + Theme Editor smoke test | PASS — owner confirmation, 2026-07-17 |
 | Design principles/prototype gate | `docs/Specifications/design-principles-and-prototype-criteria.md` | APPROVED FOR PHASE 0 — 2026-07-18 |
+| Phase 0 exit review/workstream plan | `docs/Roadmap/01-product-and-eligibility.md`, `02-scope-and-feature-matrix.md`, `09-project-board.md` | PASS — Phase 1 begins 2026-07-19 |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Gán tên owner và target date cho workstreams.
+1. Tạo prototype cho home → collection → product → cart và mobile navigation theo design gate; review trước 2026-08-09.
 2. Thực hiện professional trademark clearance trước khi public brand/listing assets.
-3. Review toàn bộ exit criteria 01–02 để đóng Phase 0 và chuyển Phase 1.
+3. Trước khi thêm demo asset/dependency, ghi approval và proof/license vào register.
 
 ## Nhật ký phiên làm việc
 
@@ -142,3 +146,5 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Nhận Concept spot-check; xác nhận one-hand task bar và bottom-sheet overlays là mobile patterns nên đưa vào design criteria.
 - Hoàn tất Tier 1 market audit cho Phase 0; không cần audit thêm đối thủ.
 - Chuyển findings thành `docs/Specifications/design-principles-and-prototype-criteria.md`: năm principle đo được, boundaries chống sao chép và prototype gate cho home, collection, product, cart, mobile navigation.
+- Review exit criteria 01–02: tất cả điều kiện exit đã có evidence. Đóng Phase 0 và chuyển Phase 1 — Design ngày 2026-07-19.
+- Thiết lập kế hoạch một owner trong `09-project-board.md`; các mốc là baseline điều phối, cần điều chỉnh nếu capacity thay đổi.
