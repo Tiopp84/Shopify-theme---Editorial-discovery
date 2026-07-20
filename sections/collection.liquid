@@ -23,12 +23,12 @@
         {% endif %}
         <div class="collection-product__content">
           <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
+          {% render 'price', item: product %}
         </div>
       </div>
     {% endfor %}
 
-    {{ paginate | default_pagination }}
+    {% render 'pagination', paginate: paginate %}
   {% endpaginate %}
 </div>
 

@@ -37,14 +37,14 @@
               <p>
                 {{ result.title | link_to: result.url }}
                 {% if result.price %}
-                  {{ result.price | money_with_currency }}
+                  {% render 'price', item: result, show_currency: true %}
                 {% endif %}
               </p>
             </div>
           </div>
         {% endfor %}
 
-        {{ paginate | default_pagination }}
+        {% render 'pagination', paginate: paginate %}
       {% endpaginate %}
     </div>
   {% endif %}

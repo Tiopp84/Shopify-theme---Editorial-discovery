@@ -19,6 +19,10 @@
     "update": "Update",
     "remove": "Remove"
   },
+  "accessibility": {
+    "primary_navigation": "Primary navigation",
+    "skip_to_content": "Skip to content"
+  },
   "customers": {
     "login": {
       "email": "Email",
@@ -41,6 +45,25 @@
     "title": "This shop is private",
     "password": "Password",
     "enter": "Enter"
+  },
+  "customer": {
+    "account": "Account"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "products": {
+    "form": {
+      "add_to_cart": "Add to cart",
+      "quantity": "Quantity",
+      "variant": "Choose an option"
+    },
+    "price": {
+      "regular": "Regular price",
+      "unit": "Unit price"
+    }
   },
   "search": {
     "title": "Search",
