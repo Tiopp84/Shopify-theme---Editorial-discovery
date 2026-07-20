@@ -6,16 +6,16 @@
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-07-19 (Asia/Bangkok) |
-| Phase | Phase 1 — Design |
-| Milestone | M0 — ACHIEVED; M1 — Design approved (planned 2026-08-09) |
+| Cập nhật lần cuối | 2026-07-20 (Asia/Bangkok) |
+| Phase | Phase 2 — Foundation |
+| Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — Foundation stable (planned 2026-09-13) |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
 | Roadmap nguồn | `docs/Roadmap/01-product-and-eligibility.md` |
 
 ## Mục tiêu đang thực hiện
 
-Hoàn thành Phase 0 trước khi viết component production: chốt product brief, định vị khác biệt, phạm vi MVP, nghiên cứu cạnh tranh, chiến lược nguồn gốc code và hồ sơ license.
+Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primitives, semantic shell, locale contract và CI trước global-shell implementation.
 
 ## Đã hoàn thành
 
@@ -36,8 +36,23 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - [x] Refactor tài liệu: Roadmap chỉ còn 12 tệp điều hành; discovery/specification/governance được tách riêng.
 - [x] Loại `theme/shopify.theme.toml` khỏi Git để không commit development store URL.
 - [x] Baseline storefront và Theme Editor smoke test trên development store đã pass theo xác nhận của chủ dự án.
+- [x] Tạo clickable prototype Phase 1 cho home → collection → product → cart và mobile navigation, kèm state reviewer và Shopify architecture map.
+- [x] Owner chấp nhận prototype làm hướng thiết kế để chuyển sang foundation; visual polish không bị coi là final UI.
+- [x] Khóa foundation architecture, token roles, typography settings, semantic main/skip link, focus và reduced-motion primitives.
+- [x] Hoàn thiện foundation price/pagination snippets và button/form/visually-hidden primitives; áp dụng vào product, collection và search baseline.
+- [x] Hoàn thiện responsive image và original icon primitives; bổ sung accessible navigation/account/cart labels cho header baseline.
 
 ## Đang thực hiện
+
+- [x] Hoàn thành prototype implementation checkpoint: desktop/mobile responsive, filters/history, variant-safe product decision, cart states và accessible bottom sheets.
+- [x] Hoàn thành internal comparison chứng minh khác biệt ở cấp hệ thống so với Dawn/competitor patterns; không dùng palette/font làm bằng chứng.
+- [x] Owner duyệt hướng prototype để đóng M1 và chuyển phase; visual/mobile polish tiếp tục tại component reviews.
+- [x] Thiết lập CI cho Theme Check, schema/locale validation và scan debug/remote URL; local-equivalent pass, chờ GitHub run đầu tiên.
+- [x] Development-theme storefront clean-render pass trên các route chính; semantic/token inspection pass.
+- [x] Hoàn tất Theme Editor lifecycle/settings persistence và manual keyboard/mobile/reduced-motion review theo owner confirmation.
+- [x] Owner retest page width Narrow/Standard/Wide và console sau remediation hoàn tất.
+- [x] Keyboard/focus, true 375/320 và zoom 200% được owner xác nhận hoàn tất.
+- [ ] Phase 3 account follow-up: quyết định direct account link hay khôi phục `shopify-account` popover với missing-menu/authenticated-origin fallback và full account-flow test.
 
 - [x] Audit trực tiếp demo Tier 1 trên home/collection/product/cart/mobile navigation trước design gate.
 - [x] Hoàn tất structural live-demo notes cho Palo Alto/SoMa và Blum/Celia.
@@ -97,12 +112,26 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 | Dev-store baseline | Storefront + Theme Editor smoke test | PASS — owner confirmation, 2026-07-17 |
 | Design principles/prototype gate | `docs/Specifications/design-principles-and-prototype-criteria.md` | APPROVED FOR PHASE 0 — 2026-07-18 |
 | Phase 0 exit review/workstream plan | `docs/Roadmap/01-product-and-eligibility.md`, `02-scope-and-feature-matrix.md`, `09-project-board.md` | PASS — Phase 1 begins 2026-07-19 |
+| Phase 1 core-flow prototype checkpoint | `docs/Prototype/index.html`, `prototype.css`, `prototype.js`, `prototype-map.md` | COMPLETE — syntax/diff checks pass; 4 screens, 3 dialogs, state reviewer and architecture map; owner review pending |
+| Prototype differentiation comparison | `docs/Prototype/design-comparison.md` | INTERNAL COMPLETE — journal structure, numbered story grammar, variant-safe actions and commerce-first cart; owner approval pending |
+| Desktop visual QA | `docs/Prototype/review-home-1440.png` | PASS WITH FIX — initial route focus scroll corrected; header link styling clarified |
+| Mobile visual QA attempt | `docs/Prototype/review-home-375.png`, `review-home-320.png` | INCONCLUSIVE — Chrome headless enforces a wider layout viewport then crops output; true 320/375 CSS viewport review still required |
+| M1 owner decision | Owner confirmation, 2026-07-20 | APPROVED FOR FOUNDATION — prototype defines direction/behavior, not final pixel UI |
+| Foundation architecture and tokens | `docs/Specifications/foundation-architecture.md`, `theme/config/settings_schema.json`, `theme/snippets/css-variables.liquid`, `theme/assets/critical.css`, `theme/layout/theme.liquid` | STARTED — JSON parse pass; Theme Check 39 files, zero offenses |
+| Foundation CI | `.github/workflows/theme-ci.yml`, `scripts/validate-theme.mjs` | CONFIGURED — local validation pass: 52 files, 33 storefront keys, 63 schema keys; Theme Check 39 files, zero offenses; first GitHub run pending |
+| Foundation package | `theme/Skeleton-0.1.0.zip` (Git-ignored build artifact) | PASS — Shopify CLI packaged 39 uploadable files; no `shopify.theme.toml` or credential file in archive |
+| Development-store smoke runbook | `docs/Specifications/foundation-smoke-test.md` | IN PROGRESS — storefront automated checks pass; authenticated Theme Editor/manual interaction pending |
+| Development-store clean render | `docs/Specifications/foundation-smoke-test.md`, `docs/Specifications/foundation-home-1440.png` | PASS — core routes render, 404 behaves correctly, no detected Liquid error, semantic/token checks pass |
+| Foundation commerce primitives | `theme/snippets/price.liquid`, `pagination.liquid`, `theme/assets/critical.css`, product/collection/search sections | PASS — Theme Check 41 files zero offenses; live product/collection/search render HTTP 200 with price markup and no Liquid error |
+| Foundation media/icon primitives | `theme/snippets/image.liquid`, `icon.liquid`, `theme/sections/header.liquid` | PASS — Theme Check 42 files zero offenses; live preview confirms srcset, lazy loading, labelled navigation and inline account/cart icons |
+| Owner foundation review | `docs/Specifications/foundation-smoke-test.md` | PASS — settings/layout/skip link/editor lifecycle, keyboard/focus, 375/320, zoom 200% and reduced-motion review complete |
+| Owner remediation retest | `docs/Specifications/foundation-smoke-test.md` | PASS — page-width difference visible and console remediation confirmed, 2026-07-20; account popover functionality explicitly deferred to Phase 3 |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Tạo prototype cho home → collection → product → cart và mobile navigation theo design gate; review trước 2026-08-09.
-2. Thực hiện professional trademark clearance trước khi public brand/listing assets.
-3. Trước khi thêm demo asset/dependency, ghi approval và proof/license vào register.
+1. Xác nhận GitHub Actions run đầu tiên pass sau khi workflow được commit/push.
+2. Review Foundation exit criteria và chuẩn bị chuyển sang Phase 3 Global shell.
+3. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
 
 ## Nhật ký phiên làm việc
 
@@ -148,3 +177,38 @@ Hoàn thành Phase 0 trước khi viết component production: chốt product br
 - Chuyển findings thành `docs/Specifications/design-principles-and-prototype-criteria.md`: năm principle đo được, boundaries chống sao chép và prototype gate cho home, collection, product, cart, mobile navigation.
 - Review exit criteria 01–02: tất cả điều kiện exit đã có evidence. Đóng Phase 0 và chuyển Phase 1 — Design ngày 2026-07-19.
 - Thiết lập kế hoạch một owner trong `09-project-board.md`; các mốc là baseline điều phối, cần điều chỉnh nếu capacity thay đổi.
+
+### 2026-07-19 — Phase 1 core-flow prototype checkpoint
+
+- Tạo prototype độc lập trong `docs/Prototype/`; không thay đổi component production trong `theme/` trước design gate.
+- Hoàn thiện flow home → collection → product → cart và mobile task navigation bằng HTML/CSS/JavaScript không dependency, không remote asset.
+- Bổ sung state reviewer cho loading, empty, error, unavailable, focus, long copy và missing media.
+- Map các vùng prototype sang future Shopify section/block/snippet/custom element trong `prototype-map.md`.
+- Kiểm tra JavaScript syntax và `git diff --check` pass; kiểm tra cấu trúc ghi nhận 4 screen, 3 dialog, 3 live region, reduced-motion, URL filter history, delayed cart state và focus restoration.
+- Checkpoint implementation hoàn tất; chưa đóng M1 cho đến khi comparison và owner desktop/mobile/accessibility review đạt.
+- Hoàn thành `design-comparison.md`: khác biệt được chứng minh bằng journal issue structure, numbered story grammar, variant-safe action language và commerce-first cart; không tuyên bố các pattern parity riêng lẻ là unique.
+- Chạy desktop visual QA bằng Chrome headless và sửa lỗi initial route focus làm trang tự cuộn, đồng thời làm rõ header navigation styling.
+- Chụp thử mobile 375/320 cho thấy Chrome headless dùng layout viewport tối thiểu rộng hơn rồi crop ảnh; không dùng hai ảnh này làm bằng chứng pass mobile. M1 vẫn mở cho true device-emulation và owner review.
+
+### 2026-07-20 — M1 direction approval và bắt đầu Phase 2
+
+- Owner chấp nhận prototype hiện tại làm hướng thiết kế để chuyển bước; giao diện production không bị ràng buộc pixel-perfect với prototype.
+- Đóng M1 cho mục đích foundation; visual/mobile polish được chuyển thành continuous component-review requirement.
+- Tạo `foundation-architecture.md` để khóa ownership, CSS/Liquid/localization conventions và Definition of Done.
+- Bổ sung body/heading font roles, type scale, accent/border roles, spacing/focus tokens, semantic `main`, skip link và reduced-motion fallback.
+- JSON parse pass; Theme Check pass 39 files, zero offenses; `git diff --check` pass.
+- Thêm GitHub Actions `theme-ci.yml` theo Shopify CLI CI guidance, pin CLI 4.5.1 và không dùng store credential vì workflow chỉ lint/validate.
+- Thêm `scripts/validate-theme.mjs`: parse JSON/JSONC, kiểm tra translation keys được tham chiếu, chặn debug statement và remote JavaScript runtime.
+- Local-equivalent CI pass: 52 theme files, 33 storefront keys, 63 schema keys; Theme Check 39 files, zero offenses. GitHub run đầu tiên vẫn chờ commit/push.
+- Codex environment từ chối external upload dù owner đã cho phép; không retry hoặc bypass. Local `shopify theme package` pass và tạo Git-ignored `theme/Skeleton-0.1.0.zip` gồm 39 uploadable files, không chứa `shopify.theme.toml`.
+- Tạo `foundation-smoke-test.md` với storefront, global-setting, keyboard/reduced-motion và Theme Editor lifecycle checklist để chạy ngoài môi trường này.
+- Owner khởi động development theme thành công. Local preview checks pass cho home, collection, product, cart, search, blog, page và list-collections; 404 trả đúng HTTP 404 với rendered body; không phát hiện Liquid error.
+- DOM inspection xác nhận `MainContent`, skip link, heading font, accent và type-scale tokens. Lưu desktop clean-render evidence `foundation-home-1440.png`; không commit store URL/theme ID.
+- Thêm LiquidDoc price/pagination snippets, compare-at/unit-price semantics, accessible pagination labels và shared button/form/visually-hidden primitives.
+- Áp dụng primitives vào product, collection và search Skeleton sections. Validator pass 55 files/41 storefront keys/63 schema keys; Theme Check pass 41 files zero offenses; live preview routes render không có Liquid error.
+- Nâng image snippet với alt override, responsive widths/sizes, lazy-loading default và clean missing-image behavior; thêm original inline SVG icon API cho account/cart/menu/search/close.
+- Header baseline dùng navigation label và accessible account/cart names. Validator pass 55 files/43 storefront keys/63 schema keys; Theme Check pass 42 files zero offenses; live preview xác nhận markup và không có Liquid error.
+- Nhận owner review: typography, undo/redo, margin, colors, save/reload, cross-template persistence, skip link và Theme Editor lifecycle pass; reduced-motion query true; keyboard/mobile/zoom chưa xác định; layout/scale chưa ổn.
+- Sửa page-width scale thành 70/90/110rem để tạo khác biệt đo được và thay `shopify-account` bằng account link baseline, loại bỏ nguồn missing-menu GraphQL/localhost Shop CSP/pre-auth errors. Validator và Theme Check vẫn pass; console cần owner retest.
+- Owner xác nhận remediation retest hoàn tất: page-width variants nhìn thấy được và Foundation console đạt. Ghi account link là fallback tạm thời; Phase 3 phải quyết định direct link hay account popover và kiểm tra missing-menu/CSP/authenticated account flows.
+- Owner xác nhận hoàn tất manual keyboard/focus, true 375/320, zoom 200% và reduced-motion review; Foundation owner-review checklist đạt.

@@ -1,0 +1,8 @@
+header a{color:inherit;text-decoration:none}header nav a{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+dialog{inset:16px 16px 16px auto;width:min(50vw,720px);max-width:calc(100vw - 32px);height:calc(100vh - 32px);max-height:none;margin:0;padding:clamp(1.5rem,3vw,3rem);overflow-y:auto;border-radius:32px 0 0 32px}
+dialog .dialog-head,dialog>nav,dialog>form,dialog>[data-mini],dialog>.button{width:100%;margin-inline:auto}
+dialog .dialog-head{position:sticky;top:calc(-1 * clamp(1.5rem,3vw,3rem));z-index:1;background:white}
+dialog>nav{grid-template-columns:1fr;gap:0}
+dialog>nav a{display:flex;align-items:flex-end;min-height:auto;padding:1.5rem 0}
+@media(max-width:700px){html,body{max-width:100%;overflow-x:hidden}.hero>*{min-width:0}.hero h1,.intro h1,.info h1{overflow-wrap:anywhere}.notice{white-space:normal;padding-inline:.5rem}.tasks>*{min-width:0}}
+@media(max-width:700px){dialog{inset:auto 0 0 0;width:100%;max-width:none;height:auto;max-height:82vh;padding:1rem;border-radius:22px 22px 0 0}dialog .dialog-head{top:-1rem}dialog>nav{grid-template-columns:1fr;gap:0}dialog>nav a{min-height:auto;padding:1rem 0}}

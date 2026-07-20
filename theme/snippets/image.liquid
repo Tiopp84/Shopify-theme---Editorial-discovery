@@ -13,6 +13,10 @@
   @param {number} [width] - The highest resolution width of the image to be rendered
   @param {number} [height] - The highest resolution height of the image to be rendered
   @param {string} [crop] - The crop position of the image
+  @param {string} [alt] - Alternative text override; defaults to the image alt text
+  @param {string} [widths] - Responsive candidate widths
+  @param {string} [sizes] - Responsive sizes hint
+  @param {string} [loading] - Image loading behavior
 
   @example
   {% render 'image', image: product.featured_image %}
@@ -28,6 +32,11 @@
 {% enddoc %}
 
 {% liquid
+  assign alt = alt | default: image.alt
+  assign widths = widths | default: '320, 480, 640, 960, 1280, 1600'
+  assign sizes = sizes | default: '100vw'
+  assign loading = loading | default: 'lazy'
+
   unless height
     assign width = width | default: image.width
   endunless
@@ -39,14 +48,19 @@
   endif
 %}
 
-<{{ wrapper }}
-  class="image {{ class }}"
-  {% if url %}
-    href="{{ url }}"
-  {% endif %}
->
-  {{ image | image_url: width: width, height: height, crop: crop | image_tag }}
-</{{ wrapper }}>
+{% if image %}
+  <{{ wrapper }}
+    class="image {{ class }}"
+    {% if url %}
+      href="{{ url }}"
+    {% endif %}
+  >
+    {{ image
+      | image_url: width: width, height: height, crop: crop
+      | image_tag: alt: alt, widths: widths, sizes: sizes, loading: loading
+    }}
+  </{{ wrapper }}>
+{% endif %}
 
 {% stylesheet %}
   .image {

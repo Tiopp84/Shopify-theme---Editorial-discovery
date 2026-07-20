@@ -19,6 +19,22 @@
         "id": "type_primary_font",
         "default": "work_sans_n4",
         "label": "t:general.primary"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "default": "instrument_serif_n4",
+        "label": "t:labels.heading_font"
+      },
+      {
+        "type": "range",
+        "id": "type_scale",
+        "min": 90,
+        "max": 120,
+        "step": 5,
+        "unit": "%",
+        "label": "t:labels.type_scale",
+        "default": 100
       }
     ]
   },
@@ -31,8 +47,12 @@
         "label": "t:labels.page_width",
         "options": [
           {
-            "value": "90rem",
+            "value": "70rem",
             "label": "t:options.page_width.narrow"
+          },
+          {
+            "value": "90rem",
+            "label": "t:options.page_width.standard"
           },
           {
             "value": "110rem",
@@ -65,8 +85,20 @@
       {
         "type": "color",
         "id": "foreground_color",
-        "default": "#333333",
+        "default": "#17201C",
         "label": "t:labels.foreground"
+      },
+      {
+        "type": "color",
+        "id": "accent_color",
+        "default": "#B94C31",
+        "label": "t:labels.accent"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "default": "#C8C5BA",
+        "label": "t:labels.border"
       },
       {
         "type": "range",

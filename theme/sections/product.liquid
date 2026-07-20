@@ -13,7 +13,7 @@
 
 <div class="product-info">
   <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
+  {% render 'price', item: product.selected_or_first_available_variant %}
   <p>{{ product.description }}</p>
 </div>
 
@@ -21,7 +21,8 @@
   {% form 'product', product %}
     {% assign current_variant = product.selected_or_first_available_variant %}
 
-    <select name="id">
+    <label for="ProductVariant-{{ section.id }}">{{ 'products.form.variant' | t }}</label>
+    <select id="ProductVariant-{{ section.id }}" name="id">
       {% for variant in product.variants %}
         <option
           value="{{ variant.id }}"
@@ -34,9 +35,10 @@
       {% endfor %}
     </select>
 
-    <input type="text" name="quantity" min="1" value="1">
+    <label for="ProductQuantity-{{ section.id }}">{{ 'products.form.quantity' | t }}</label>
+    <input id="ProductQuantity-{{ section.id }}" type="number" name="quantity" min="1" value="1">
 
-    <input type="submit" value="Add to cart">
+    <button type="submit">{{ 'products.form.add_to_cart' | t }}</button>
     {{ form | payment_button }}
   {% endform %}
 </div>
