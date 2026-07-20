@@ -66,5 +66,5 @@ templates/  JSON composition
 
 - [x] Architecture decision được duyệt. Evidence: `../Specifications/foundation-architecture.md`, 2026-07-20.
 - [x] Skeleton repository chạy trên dev store. Evidence: owner smoke-test confirmation, 2026-07-17.
-- [ ] CI và Theme Check hoạt động.
+- [x] CI và Theme Check hoạt động. Evidence: GitHub Actions `Theme CI` owner-confirmed PASS, 2026-07-20; Node 24 local-equivalent pass.
 - [x] Tokens, conventions và PR Definition of Done đã khóa. Evidence: `../Specifications/foundation-architecture.md`, `theme/snippets/css-variables.liquid`, `theme/assets/critical.css`.

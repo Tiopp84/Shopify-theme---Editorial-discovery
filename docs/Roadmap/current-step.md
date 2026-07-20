@@ -47,7 +47,7 @@ Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primit
 - [x] Hoàn thành prototype implementation checkpoint: desktop/mobile responsive, filters/history, variant-safe product decision, cart states và accessible bottom sheets.
 - [x] Hoàn thành internal comparison chứng minh khác biệt ở cấp hệ thống so với Dawn/competitor patterns; không dùng palette/font làm bằng chứng.
 - [x] Owner duyệt hướng prototype để đóng M1 và chuyển phase; visual/mobile polish tiếp tục tại component reviews.
-- [x] Thiết lập CI cho Theme Check, schema/locale validation và scan debug/remote URL; local-equivalent pass, chờ GitHub run đầu tiên.
+- [x] Thiết lập CI cho Theme Check, schema/locale validation và scan debug/remote URL; GitHub Actions run PASS.
 - [x] Development-theme storefront clean-render pass trên các route chính; semantic/token inspection pass.
 - [x] Hoàn tất Theme Editor lifecycle/settings persistence và manual keyboard/mobile/reduced-motion review theo owner confirmation.
 - [x] Owner retest page width Narrow/Standard/Wide và console sau remediation hoàn tất.
@@ -118,10 +118,10 @@ Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primit
 | Mobile visual QA attempt | `docs/Prototype/review-home-375.png`, `review-home-320.png` | INCONCLUSIVE — Chrome headless enforces a wider layout viewport then crops output; true 320/375 CSS viewport review still required |
 | M1 owner decision | Owner confirmation, 2026-07-20 | APPROVED FOR FOUNDATION — prototype defines direction/behavior, not final pixel UI |
 | Foundation architecture and tokens | `docs/Specifications/foundation-architecture.md`, `theme/config/settings_schema.json`, `theme/snippets/css-variables.liquid`, `theme/assets/critical.css`, `theme/layout/theme.liquid` | STARTED — JSON parse pass; Theme Check 39 files, zero offenses |
-| Foundation CI | `.github/workflows/theme-ci.yml`, `scripts/validate-theme.mjs` | CONFIGURED — local validation pass: 52 files, 33 storefront keys, 63 schema keys; Theme Check 39 files, zero offenses; first GitHub run pending |
-| CI Node 24 remediation | `.github/workflows/theme-ci.yml` | LOCAL PASS — first run failed because Shopify CLI 4.5.1 imports `enableCompileCache`, unavailable in Node 20.20.2; upgraded checkout/setup-node to v6 and job runtime to Node 24; GitHub rerun pending |
+| Foundation CI | `.github/workflows/theme-ci.yml`, `scripts/validate-theme.mjs` | PASS — GitHub Actions `Theme CI` owner-confirmed, 2026-07-20; validator and Theme Check successful |
+| CI Node 24 remediation | `.github/workflows/theme-ci.yml` | PASS — checkout/setup-node v6 and Node 24; local Node 24.14 and GitHub rerun successful |
 | Foundation package | `theme/Skeleton-0.1.0.zip` (Git-ignored build artifact) | PASS — Shopify CLI packaged 39 uploadable files; no `shopify.theme.toml` or credential file in archive |
-| Development-store smoke runbook | `docs/Specifications/foundation-smoke-test.md` | IN PROGRESS — storefront automated checks pass; authenticated Theme Editor/manual interaction pending |
+| Development-store smoke runbook | `docs/Specifications/foundation-smoke-test.md` | COMPLETE — storefront automated checks and owner Theme Editor/keyboard/mobile/reduced-motion review pass |
 | Development-store clean render | `docs/Specifications/foundation-smoke-test.md`, `docs/Specifications/foundation-home-1440.png` | PASS — core routes render, 404 behaves correctly, no detected Liquid error, semantic/token checks pass |
 | Foundation commerce primitives | `theme/snippets/price.liquid`, `pagination.liquid`, `theme/assets/critical.css`, product/collection/search sections | PASS — Theme Check 41 files zero offenses; live product/collection/search render HTTP 200 with price markup and no Liquid error |
 | Foundation media/icon primitives | `theme/snippets/image.liquid`, `icon.liquid`, `theme/sections/header.liquid` | PASS — Theme Check 42 files zero offenses; live preview confirms srcset, lazy loading, labelled navigation and inline account/cart icons |
@@ -130,8 +130,8 @@ Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primit
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Xác nhận GitHub Actions run đầu tiên pass sau khi workflow được commit/push.
-2. Review Foundation exit criteria và chuẩn bị chuyển sang Phase 3 Global shell.
+1. Review Phase 2 Foundation exit criteria và quyết định chuyển sang Phase 3 Global shell.
+2. Bắt đầu global shell với announcement/header/navigation/mobile drawer/footer; giữ Phase 3 account follow-up trong scope.
 3. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
 
 ## Nhật ký phiên làm việc
@@ -214,3 +214,4 @@ Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primit
 - Owner xác nhận remediation retest hoàn tất: page-width variants nhìn thấy được và Foundation console đạt. Ghi account link là fallback tạm thời; Phase 3 phải quyết định direct link hay account popover và kiểm tra missing-menu/CSP/authenticated account flows.
 - Owner xác nhận hoàn tất manual keyboard/focus, true 375/320, zoom 200% và reduced-motion review; Foundation owner-review checklist đạt.
 - GitHub Actions run đầu tiên fail tại Theme Check: Shopify CLI 4.5.1 cần `node:module.enableCompileCache`, không có trong Node 20.20.2. Nâng `checkout`/`setup-node` lên v6 và Node job lên 24; local Node 24.14 validation và Theme Check pass 42 files zero offenses, chờ owner commit/push rerun.
+- Owner xác nhận GitHub Actions rerun PASS sau Node 24 remediation. Đóng CI exit criterion của Foundation; bước tiếp theo là Phase 2 exit review và chuẩn bị Phase 3 Global shell.
