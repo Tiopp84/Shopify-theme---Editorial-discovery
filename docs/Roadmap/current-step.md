@@ -2,20 +2,28 @@
 
 > Tệp này là nguồn trạng thái ngắn gọn để tiếp tục dự án giữa các phiên làm việc. Sau mỗi thay đổi đã được kiểm tra, cập nhật mục **Đã hoàn thành**, **Bằng chứng** và **Việc tiếp theo**. Không đánh dấu hoàn thành nếu chưa đạt tiêu chí nghiệm thu tương ứng trong roadmap.
 
+## Checklist bắt buộc khi bắt đầu mỗi phiên
+
+1. Đọc trạng thái, blocker và **Việc tiếp theo** trong tệp này; kiểm tra Git status trước khi sửa.
+2. Với mọi flow tương tác nhiều bước hoặc async, đọc và áp dụng [`../Specifications/interaction-architecture-standard.md`](../Specifications/interaction-architecture-standard.md) trước khi thiết kế UI/code.
+3. Xác định trước state, controller ownership, render boundary, Shopify ownership, URL/history, continuity, async/concurrency, fallback và lifecycle; không triển khai theo từng bản vá rời rạc.
+4. Kiểm tra cả initial render và trạng thái sau interaction/async DOM replacement ở viewport mục tiêu.
+5. Chỉ cập nhật gate/evidence sau khi các kiểm tra tương ứng thực sự pass.
+
 ## Trạng thái hiện tại
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-07-20 (Asia/Bangkok) |
-| Phase | Phase 2 — Foundation |
-| Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — Foundation stable (planned 2026-09-13) |
+| Cập nhật lần cuối | 2026-07-21 (Asia/Bangkok) |
+| Phase | Phase 4 — Discovery |
+| Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
 | Roadmap nguồn | `docs/Roadmap/01-product-and-eligibility.md` |
 
 ## Mục tiêu đang thực hiện
 
-Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primitives, semantic shell, locale contract và CI trước global-shell implementation.
+Triển khai Phase 4 discovery: product/collection cards, featured modules, collection grid/banner, sort/filter/mobile drawer và search/predictive search.
 
 ## Đã hoàn thành
 
@@ -41,6 +49,7 @@ Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primit
 - [x] Khóa foundation architecture, token roles, typography settings, semantic main/skip link, focus và reduced-motion primitives.
 - [x] Hoàn thiện foundation price/pagination snippets và button/form/visually-hidden primitives; áp dụng vào product, collection và search baseline.
 - [x] Hoàn thiện responsive image và original icon primitives; bổ sung accessible navigation/account/cart labels cho header baseline.
+- [x] Review Phase 2 exit criteria: clean development-store render, local validator, Theme Check và CI đều đạt; cho phép chuyển sang Phase 3.
 
 ## Đang thực hiện
 
@@ -52,7 +61,19 @@ Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primit
 - [x] Hoàn tất Theme Editor lifecycle/settings persistence và manual keyboard/mobile/reduced-motion review theo owner confirmation.
 - [x] Owner retest page width Narrow/Standard/Wide và console sau remediation hoàn tất.
 - [x] Keyboard/focus, true 375/320 và zoom 200% được owner xác nhận hoàn tất.
-- [ ] Phase 3 account follow-up: quyết định direct account link hay khôi phục `shopify-account` popover với missing-menu/authenticated-origin fallback và full account-flow test.
+- [x] Phase 3 account decision: giữ direct Shopify account route; authenticated account/order/address coverage chuyển sang hardening test.
+- [x] Khóa Phase 3 global-shell contract và triển khai announcement, responsive header/navigation, native-dialog mobile drawer, search entry, footer Theme Blocks, newsletter và localization controls.
+- [x] Manual Theme Editor/keyboard/375/browser smoke test cho global shell trên Shopify preview origin được owner xác nhận PASS.
+- [x] Khóa Phase 4 discovery contract; triển khai shared product-card cho collection/search với stable ratio, price/sale/sold-out semantics, missing-media fallback và focus=hover parity.
+- [ ] Product-card live edge-state review: sold-out, missing media và representative long title trên development data.
+- [ ] Product-card visual remediation: giảm generic grid anatomy, cân lại media/content hierarchy, bỏ destination action lặp và tạo Narrivelle editorial identity trước filter implementation.
+- [x] Triển khai collection filter/sort GET contract, desktop facets, active remove/reset và native-dialog mobile facets; automated preview sort/filter state pass.
+- [x] Collection facets browser gate: true 320/375, Escape/backdrop/close focus restore, browser Back/Forward, no-results, price boundaries và post-AJAX layout pass 27/27 assertions.
+- [x] Remediate collection state composition: sort và checkbox filter desktop/mobile submit ngay; active filters cộng dồn; sort được giữ; empty price params bị loại; browser interaction test pass.
+- [ ] Owner review collection spacing remediation: compact hero/toolbar, fixed 15rem facet rail, shrink-safe price controls và wider product grid.
+- [ ] Owner review desktop filter layout setting: Sidebar/left Drawer, collapsed groups, full-width grid và responsive handoff sang mobile drawer.
+- [x] Remediate drawer continuity: sau auto-filter drawer mở lại, giữ group đang mở và restore focus vào option vừa chọn; true 375 CSS px browser test pass.
+- [x] Refactor collection discovery sang một AJAX section-rendering controller: không document reload, GET fallback, URL/history, AbortController/stale guard, loading/error/live status, drawer/group/focus continuity và pagination interception; browser sort/filter/Back/rapid-change pass.
 
 - [x] Audit trực tiếp demo Tier 1 trên home/collection/product/cart/mobile navigation trước design gate.
 - [x] Hoàn tất structural live-demo notes cho Palo Alto/SoMa và Blum/Celia.
@@ -127,12 +148,17 @@ Hoàn thiện Phase 2 foundation: architecture, design tokens, typography/primit
 | Foundation media/icon primitives | `theme/snippets/image.liquid`, `icon.liquid`, `theme/sections/header.liquid` | PASS — Theme Check 42 files zero offenses; live preview confirms srcset, lazy loading, labelled navigation and inline account/cart icons |
 | Owner foundation review | `docs/Specifications/foundation-smoke-test.md` | PASS — settings/layout/skip link/editor lifecycle, keyboard/focus, 375/320, zoom 200% and reduced-motion review complete |
 | Owner remediation retest | `docs/Specifications/foundation-smoke-test.md` | PASS — page-width difference visible and console remediation confirmed, 2026-07-20; account popover functionality explicitly deferred to Phase 3 |
+| Phase 2 exit review | `docs/Roadmap/03-architecture-and-engineering.md`, `docs/Roadmap/05-build-roadmap.md` | PASS — validator 55 files/43 storefront keys/64 schema keys; Theme Check 42 files zero offenses; clean render and CI evidence complete, 2026-07-20 |
+| Phase 3 global shell slice | `docs/Specifications/global-shell-contract.md`, `theme/sections/announcement-bar.liquid`, `header.liquid`, `footer.liquid`, `theme/blocks/footer-menu.liquid`, `newsletter.liquid`, `theme/assets/header-shell.js` | PASS — validator 59 files/55 storefront keys/72 schema keys; Theme Check 45 files zero offenses; preview render and owner interaction smoke pass, 2026-07-20 |
+| Phase 4 product-card slice | `docs/Specifications/discovery-contract.md`, `theme/snippets/product-card.liquid`, `theme/sections/collection.liquid`, `search.liquid` | NEEDS ITERATION — automated render passes, but owner/desktop visual review rejects current generic hierarchy; live sold-out/missing-media data also pending |
+| Phase 4 collection facets | `theme/snippets/facets.liquid`, `theme/assets/collection-facets.js`, `theme/sections/collection.liquid`, `docs/Specifications/collection-facets-review-1440.png` | BROWSER GATE PASS — 27/27 assertions at 1440/375/320 cover sort, cumulative filter continuity, Back/Forward, no-results, price bounds, drawer width, Escape/backdrop/close focus restore, no overflow and post-AJAX layout; Theme Check zero offenses |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Review Phase 2 Foundation exit criteria và quyết định chuyển sang Phase 3 Global shell.
-2. Bắt đầu global shell với announcement/header/navigation/mobile drawer/footer; giữ Phase 3 account follow-up trong scope.
-3. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
+1. Khóa Phase 4 component/data contract cho product card, collection grid/banner, sort/filter và search/predictive search.
+2. Triển khai product/collection card primitives với real, unavailable, missing-media và long-copy states trước khi nối filter/search interactions.
+3. Chạy filter → product flow và empty/error/mobile drawer gate; tiếp tục validator, Theme Check và Theme Editor lifecycle cho từng lát dọc.
+4. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
 
 ## Nhật ký phiên làm việc
 

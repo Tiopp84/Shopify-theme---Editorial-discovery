@@ -1,6 +1,6 @@
 # Foundation development-store smoke test
 
-Status: **STOREFRONT CLEAN RENDER PASS — THEME EDITOR LIFECYCLE PENDING**
+Status: **FOUNDATION REVIEW COMPLETE — 2026-07-20**
 
 Development-theme evidence received from owner: 2026-07-20. Store URL and preview/theme IDs are intentionally not committed.
 

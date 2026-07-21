@@ -53,6 +53,7 @@ templates/  JSON composition
 - Fetch có loading/error/stale-response handling.
 - Cleanup listeners/observers; resilient với Theme Editor lifecycle.
 - Product form, cart và media có một source of truth.
+- Flow nhiều bước/async bắt buộc tuân theo [`../Specifications/interaction-architecture-standard.md`](../Specifications/interaction-architecture-standard.md): thiết kế state và render boundary trước UI, giữ URL/fallback, chống race condition và kiểm tra sau DOM replacement.
 
 ## Schema, assets và automation
 

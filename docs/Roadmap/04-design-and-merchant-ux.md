@@ -43,7 +43,7 @@ Product page: hỗ trợ đủ media, variant đồng bộ URL/media/price/SKU/a
 
 ## Exit criteria
 
-- [ ] Clickable prototype core flows.
-- [ ] Comparison chứng minh khác Dawn/competitors.
-- [ ] Desktop/mobile/accessibility design review đạt.
-- [ ] Setting map cho từng section/block được duyệt.
+- [x] Clickable prototype core flows. Evidence: `../Prototype/`, owner direction approval 2026-07-20.
+- [x] Comparison chứng minh khác Dawn/competitors. Evidence: `../Prototype/design-comparison.md`.
+- [x] Desktop/mobile/accessibility design review đạt. Evidence: owner review recorded in `current-step.md`, 2026-07-20; visual polish continues during component reviews.
+- [x] Setting map cho từng section/block được duyệt. Evidence: `../Prototype/prototype-map.md`, `../Specifications/foundation-architecture.md`.

@@ -7,7 +7,7 @@ Cập nhật ít nhất mỗi tuần.
 | Field | Value |
 |---|---|
 | Overall | IN PROGRESS |
-| Current phase | Phase 2 — Foundation |
+| Current phase | Phase 4 — Discovery |
 | Target submission | TBD |
 | Product/Design/Engineering/QA/Support owners | Project owner (single-owner plan); Codex supports planning/documentation |
 
@@ -17,7 +17,7 @@ Cập nhật ít nhất mỗi tuần.
 |---|---|---|---|---|
 | M0 | Product/eligibility approved | ACHIEVED | 2026-07-19 | `01-product-and-eligibility.md`, `02-scope-and-feature-matrix.md` exit criteria complete |
 | M1 | Design approved | ACHIEVED — visual polish deferred | 2026-07-20 | Owner approved prototype direction for foundation; `../Prototype/`, `../Prototype/design-comparison.md` |
-| M2 | Foundation stable | PLANNED | 2026-09-13 | Clean render, Theme Check and global-shell gate |
+| M2 | Foundation stable | ACHIEVED | 2026-07-20 | Clean render, Theme Check and global-shell keyboard/mobile/browser gate pass |
 | M3 | Commerce alpha | PLANNED | 2026-11-22 | Product → cart → checkout core-flow gate |
 | M4 | Feature complete | PLANNED | 2026-12-27 | Required templates and secondary-template gate |
 | M5 | Release candidate | PLANNED | 2027-01-10 | Hardening gate |
@@ -29,8 +29,8 @@ Cập nhật ít nhất mỗi tuần.
 |---|---|---|---|
 | Eligibility/licensing | IN PROGRESS | Project owner | Professional name clearance before public-brand/listing work; asset approvals before use |
 | Research/design | COMPLETE FOR FOUNDATION | Project owner | Visual refinement continues during component reviews |
-| Architecture/shell | IN PROGRESS | Project owner | Foundation stable — 2026-09-13 |
-| Discovery/product/cart | PLANNED | Project owner | Commerce E2E pass — 2026-11-22 |
+| Architecture/shell | COMPLETE FOR M2 | Project owner | Continue component refinement during downstream reviews |
+| Discovery/product/cart | IN PROGRESS | Project owner | Commerce E2E pass — 2026-11-22 |
 | Content/templates | PLANNED | Project owner | Feature complete — 2026-12-27 |
 | Accessibility/performance | PLANNED | Project owner | Hardening complete — 2027-01-10 |
 | Demo/docs/support | PLANNED | Project owner | Commercial ready — 2027-01-10 |
