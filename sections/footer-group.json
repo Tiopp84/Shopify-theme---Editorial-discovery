@@ -14,9 +14,22 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "menu": "",
         "show_payment_icons": true
-      }
+      },
+      "blocks": {
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {}
+        },
+        "footer_menu": {
+          "type": "footer-menu",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "newsletter",
+        "footer_menu"
+      ]
     }
   },
   "order": [
