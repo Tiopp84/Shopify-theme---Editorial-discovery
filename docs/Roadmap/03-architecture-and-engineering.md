@@ -53,6 +53,7 @@ templates/  JSON composition
 - Fetch có loading/error/stale-response handling.
 - Cleanup listeners/observers; resilient với Theme Editor lifecycle.
 - Product form, cart và media có một source of truth.
+- Flow nhiều bước/async bắt buộc tuân theo [`../Specifications/interaction-architecture-standard.md`](../Specifications/interaction-architecture-standard.md): thiết kế state và render boundary trước UI, giữ URL/fallback, chống race condition và kiểm tra sau DOM replacement.
 
 ## Schema, assets và automation
 
@@ -64,7 +65,7 @@ templates/  JSON composition
 
 ## Exit criteria
 
-- [ ] Architecture decision được duyệt.
-- [ ] Skeleton/original repository chạy trên dev store.
-- [ ] CI và Theme Check hoạt động.
-- [ ] Tokens, conventions và PR Definition of Done đã khóa.
+- [x] Architecture decision được duyệt. Evidence: `../Specifications/foundation-architecture.md`, 2026-07-20.
+- [x] Skeleton repository chạy trên dev store. Evidence: owner smoke-test confirmation, 2026-07-17.
+- [x] CI và Theme Check hoạt động. Evidence: GitHub Actions `Theme CI` owner-confirmed PASS, 2026-07-20; Node 24 local-equivalent pass.
+- [x] Tokens, conventions và PR Definition of Done đã khóa. Evidence: `../Specifications/foundation-architecture.md`, `theme/snippets/css-variables.liquid`, `theme/assets/critical.css`.

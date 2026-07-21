@@ -19,6 +19,28 @@
     "update": "Update",
     "remove": "Remove"
   },
+  "accessibility": {
+    "announcement": "Announcement",
+    "close_menu": "Close menu",
+    "mobile_navigation": "Mobile navigation",
+    "open_menu": "Open menu",
+    "payment_methods": "Payment methods",
+    "primary_navigation": "Primary navigation",
+    "skip_to_content": "Skip to content"
+  },
+  "localization": {
+    "country": "Country/region",
+    "language": "Language"
+  },
+  "newsletter": {
+    "email": "Email address",
+    "submit": "Subscribe",
+    "success": "Thanks for subscribing."
+  },
+  "navigation": {
+    "menu": "Explore",
+    "view_all": "View all {{ title }}"
+  },
   "customers": {
     "login": {
       "email": "Email",
@@ -28,7 +50,26 @@
     }
   },
   "collections": {
-    "title": "Collections"
+    "title": "Collections",
+    "eyebrow": "The collection",
+    "product_count": "{{ count }} products",
+    "empty_title": "This collection is waiting",
+    "empty_text": "Products added to this collection will appear here.",
+    "facets": {
+      "active_filters": "Active filters",
+      "apply": "Apply",
+      "apply_sort": "Apply sort",
+      "clear_all": "Clear all",
+      "close": "Close filters",
+      "error": "Filters could not be updated. Your previous results are still available.",
+      "filter_and_sort": "Filter and sort",
+      "filters": "Filters",
+      "from": "From",
+      "loading": "Updating products",
+      "sort_by": "Sort by",
+      "to": "To"
+      ,"updated": "Products updated."
+    }
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -41,6 +82,31 @@
     "title": "This shop is private",
     "password": "Password",
     "enter": "Enter"
+  },
+  "customer": {
+    "account": "Account"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "products": {
+    "card": {
+      "sale": "Sale",
+      "sold_out": "Sold out",
+      "unavailable": "Currently unavailable",
+      "view_product": "View product"
+    },
+    "form": {
+      "add_to_cart": "Add to cart",
+      "quantity": "Quantity",
+      "variant": "Choose an option"
+    },
+    "price": {
+      "regular": "Regular price",
+      "unit": "Unit price"
+    }
   },
   "search": {
     "title": "Search",

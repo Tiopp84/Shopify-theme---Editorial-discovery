@@ -2,6 +2,7 @@
   "general": {
     "404": "Not found",
     "article": "Article",
+    "announcement_bar": "Announcement bar",
     "block": "Block",
     "blog": "Blog",
     "cart": "Cart",
@@ -15,10 +16,12 @@
     "custom_section": "Custom section",
     "fonts": "Fonts",
     "footer": "Footer",
+    "footer_menu": "Footer menu",
     "group": "Group",
     "header": "Header",
     "layout": "Layout",
     "main": "Main",
+    "newsletter": "Newsletter",
     "page": "Page",
     "password": "Password",
     "primary": "Primary",
@@ -35,22 +38,45 @@
   },
   "labels": {
     "alignment": "Alignment",
+    "columns_desktop": "Desktop columns",
     "background": "Background",
+    "accent": "Accent",
+    "border": "Border",
     "foreground": "Foreground",
+    "heading_font": "Heading font",
+    "image_ratio": "Image ratio",
+    "heading": "Heading",
     "grid_gap": "Grid spacing",
     "grid_item_width": "Grid item width",
     "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
+    "link": "Link",
+    "logo": "Logo",
+    "logo_width": "Logo width",
     "menu": "Menu",
     "customer_account_menu": "Customer account menu",
+    "desktop_filter_layout": "Desktop filter layout",
     "padding": "Padding",
     "page_margin": "Page margin",
     "page_width": "Page width",
+    "products_per_page": "Products per page",
     "show_payment_icons": "Show payment icons",
+    "show_vendor": "Show vendor",
+    "sticky_header": "Sticky header",
     "text_style": "Text style",
     "text": "Text"
+    ,"type_scale": "Type scale"
   },
   "options": {
+    "filter_layout": {
+      "drawer": "Drawer",
+      "sidebar": "Sidebar"
+    },
+    "image_ratio": {
+      "portrait": "Portrait (4:5)",
+      "square": "Square (1:1)",
+      "tall": "Tall (3:4)"
+    },
     "alignment": {
       "left": "Left",
       "center": "Center",
@@ -62,6 +88,7 @@
     },
     "page_width": {
       "narrow": "Narrow",
+      "standard": "Standard",
       "wide": "Wide"
     },
     "size": {

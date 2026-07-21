@@ -1,0 +1,75 @@
+{% doc %}
+  Renders accessible pagination for a Liquid paginate object.
+
+  @param {paginate} paginate - Current paginate object.
+  @param {string} [anchor] - Optional fragment appended to generated URLs.
+
+  @example
+  {% render 'pagination', paginate: paginate %}
+{% enddoc %}
+
+{% if paginate.pages > 1 %}
+  <nav class="pagination" aria-label="{{ 'pagination.label' | t }}">
+    {% if paginate.previous %}
+      <a class="pagination__link" href="{{ paginate.previous.url }}{{ anchor }}">
+        {{ 'pagination.previous' | t }}
+      </a>
+    {% endif %}
+
+    <ol class="pagination__list" role="list">
+      {% for part in paginate.parts %}
+        <li>
+          {% if part.is_link %}
+            <a class="pagination__link" href="{{ part.url }}{{ anchor }}">{{ part.title }}</a>
+          {% else %}
+            <span
+              class="pagination__link"
+              {% if part.title == paginate.current_page %}
+                aria-current="page"
+              {% endif %}
+            >
+              {{ part.title }}
+            </span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+
+    {% if paginate.next %}
+      <a class="pagination__link" href="{{ paginate.next.url }}{{ anchor }}">
+        {{ 'pagination.next' | t }}
+      </a>
+    {% endif %}
+  </nav>
+{% endif %}
+
+{% stylesheet %}
+  .pagination,
+  .pagination__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .pagination__list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .pagination__link {
+    display: grid;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding-inline: var(--space-3);
+    place-items: center;
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+  }
+
+  .pagination__link[aria-current='page'] {
+    background: var(--color-foreground);
+    color: var(--color-background);
+  }
+{% endstylesheet %}

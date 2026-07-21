@@ -28,7 +28,16 @@
       {% paginate search.results by 20 %}
         {% # Search result items may be an article, a page, or a product. %}
         {% for result in search.results %}
-          <div class="search-result">
+          {% if result.object_type == 'product' %}
+            {% render 'product-card',
+              product: result,
+              image_ratio: '4 / 5',
+              sizes: '(min-width: 60rem) 25vw, 50vw',
+              card_index: forloop.index,
+              card_count: forloop.length
+            %}
+          {% else %}
+            <article class="search-result">
             {% assign featured_image = result.featured_image | default: result.image %}
             {% if featured_image %}
               {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
@@ -37,14 +46,15 @@
               <p>
                 {{ result.title | link_to: result.url }}
                 {% if result.price %}
-                  {{ result.price | money_with_currency }}
+                  {% render 'price', item: result, show_currency: true %}
                 {% endif %}
               </p>
             </div>
-          </div>
+            </article>
+          {% endif %}
         {% endfor %}
 
-        {{ paginate | default_pagination }}
+        {% render 'pagination', paginate: paginate %}
       {% endpaginate %}
     </div>
   {% endif %}

@@ -1,59 +1,284 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+<script src="{{ 'header-shell.js' | asset_url }}" defer></script>
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+<header-shell class="header-shell full-width{% if section.settings.sticky_header %} header-shell--sticky{% endif %}">
+  <header class="header-shell__inner">
+    <button
+      class="header-shell__icon-button header-shell__menu-button"
+      type="button"
+      aria-label="{{ 'accessibility.open_menu' | t }}"
+      data-drawer-open
+    >
+      {% render 'icon', name: 'menu' %}
+    </button>
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
-    {% endif %}
+    <a class="header-shell__brand" href="{{ routes.root_url }}">
+      {% if section.settings.logo != blank %}
+        {% assign logo_width_2x = section.settings.logo_width | times: 2 %}
+        {{
+          section.settings.logo
+          | image_url: width: logo_width_2x
+          | image_tag: widths: '120, 180, 240, 320, 400', width: section.settings.logo_width, alt: shop.name
+        }}
+      {% else %}
+        {{ shop.name | escape }}
+      {% endif %}
+    </a>
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
+    <nav class="header-shell__desktop-nav" aria-label="{{ 'accessibility.primary_navigation' | t }}">
+      {% for link in section.settings.menu.links %}
+        {% if link.links != blank %}
+          <details class="header-shell__nav-group">
+            <summary>{{ link.title | escape }}</summary>
+            <div class="header-shell__submenu">
+              <a href="{{ link.url }}">{{ 'navigation.view_all' | t: title: link.title }}</a>
+              {% for child_link in link.links %}
+                <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+              {% endfor %}
+            </div>
+          </details>
+        {% else %}
+          <a href="{{ link.url }}">{{ link.title | escape }}</a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+
+    <div class="header-shell__actions">
+      <a class="header-shell__icon-button" href="{{ routes.search_url }}">
+        <span class="visually-hidden">{{ 'search.title' | t }}</span>
+        {% render 'icon', name: 'search' %}
+      </a>
+
+      {% if shop.customer_accounts_enabled %}
+        <a class="header-shell__icon-button header-shell__account" href="{{ routes.account_url }}">
+          <span class="visually-hidden">{{ 'customer.account' | t }}</span>
+          {% render 'icon', name: 'account' %}
+        </a>
       {% endif %}
 
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
-  </div>
-</header>
+      <a class="header-shell__icon-button" href="{{ routes.cart_url }}">
+        <span class="visually-hidden">{{ 'cart.title' | t }}</span>
+        {% render 'icon', name: 'cart' %}
+        {% if cart.item_count > 0 %}
+          <span class="header-shell__cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+        {% endif %}
+      </a>
+    </div>
+  </header>
+
+  <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" scroll-lock>
+    <div class="header-shell__drawer-header">
+      <h2 id="MobileMenuTitle">{{ 'navigation.menu' | t }}</h2>
+      <button
+        class="header-shell__icon-button"
+        type="button"
+        aria-label="{{ 'accessibility.close_menu' | t }}"
+        data-drawer-close
+      >
+        {% render 'icon', name: 'close' %}
+      </button>
+    </div>
+
+    <nav class="header-shell__mobile-nav" aria-label="{{ 'accessibility.mobile_navigation' | t }}">
+      {% for link in section.settings.menu.links %}
+        {% if link.links != blank %}
+          <details>
+            <summary>{{ link.title | escape }}</summary>
+            <div>
+              <a href="{{ link.url }}">{{ 'navigation.view_all' | t: title: link.title }}</a>
+              {% for child_link in link.links %}
+                <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+              {% endfor %}
+            </div>
+          </details>
+        {% else %}
+          <a href="{{ link.url }}">{{ link.title | escape }}</a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+  </dialog>
+</header-shell>
 
 {% stylesheet %}
-  header {
-    height: 5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .header-shell {
+    display: block;
+    border-block-end: 1px solid var(--color-border);
+    background: var(--color-background);
   }
-  header a {
-    position: relative;
+
+  .shopify-section:has(> .header-shell--sticky) {
+    position: sticky;
+    z-index: 20;
+    inset-block-start: 0;
+  }
+
+  .header-shell__inner {
+    width: min(calc(100% - var(--page-margin) * 2), var(--page-width));
+    min-height: 4.5rem;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .header-shell__brand {
+    grid-column: 2;
+    grid-row: 1;
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-style: var(--font-heading--style);
+    line-height: 1;
     text-decoration: none;
-    color: var(--color-foreground);
+  }
+
+  .header-shell__brand img {
+    width: auto;
+    max-height: 3rem;
+  }
+
+  .header-shell__desktop-nav {
+    grid-column: 1;
+    grid-row: 1;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: var(--space-6);
   }
-  header a sup {
+
+  .header-shell__desktop-nav > a,
+  .header-shell__nav-group > summary {
+    padding-block: var(--space-3);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .header-shell__nav-group {
+    position: relative;
+  }
+
+  .header-shell__submenu {
     position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
+    z-index: 2;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    min-width: 14rem;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    background: var(--color-background);
+    display: grid;
   }
-  header svg {
-    width: 2rem;
+
+  .header-shell__submenu a {
+    padding: var(--space-3);
+    text-decoration: none;
   }
-  header .header__menu,
-  header .header__icons {
+
+  .header-shell__actions {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .header-shell__icon-button {
+    position: relative;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: currentcolor;
+    display: grid;
+    place-items: center;
+    text-decoration: none;
+  }
+
+  .header-shell__cart-count {
+    position: absolute;
+    inset-block-start: 0.15rem;
+    inset-inline-end: 0;
+    min-width: 1.15rem;
+    min-height: 1.15rem;
+    padding-inline: 0.2rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-background);
+    font-size: 0.65rem;
+    line-height: 1.15rem;
+    text-align: center;
+  }
+
+  .header-shell__menu-button {
+    display: none;
+  }
+
+  .header-shell__drawer {
+    width: min(75vw, 28rem);
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    margin-inline-end: auto;
+    padding: var(--space-4);
+    border: 0;
+  }
+
+  .header-shell__drawer::backdrop {
+    background: rgb(0 0 0 / 45%);
+  }
+
+  .header-shell__drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block-end: var(--space-4);
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .header-shell__mobile-nav,
+  .header-shell__mobile-nav details > div {
+    display: grid;
+  }
+
+  .header-shell__mobile-nav > a,
+  .header-shell__mobile-nav summary,
+  .header-shell__mobile-nav details a {
+    padding: var(--space-4) 0;
+    border-block-end: 1px solid var(--color-border);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .header-shell__mobile-nav > a,
+  .header-shell__mobile-nav summary {
+    font-family: var(--font-heading--family);
+    font-size: 1.75rem;
+  }
+
+  .header-shell__mobile-nav details a {
+    padding-inline-start: var(--space-4);
+  }
+
+  @media (max-width: 47.99rem) {
+    .header-shell__inner {
+      min-height: 3.75rem;
+    }
+
+    .header-shell__desktop-nav {
+      display: none;
+    }
+
+    .header-shell__menu-button {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
+      display: grid;
+    }
+
+    .header-shell__account {
+      display: none;
+    }
   }
 {% endstylesheet %}
 
@@ -62,15 +287,30 @@
   "name": "t:general.header",
   "settings": [
     {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "t:labels.logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "t:labels.logo_width",
+      "default": 120
+    },
+    {
       "type": "link_list",
       "id": "menu",
       "label": "t:labels.menu"
     },
     {
-      "type": "link_list",
-      "id": "customer_account_menu",
-      "label": "t:labels.customer_account_menu",
-      "default": "customer-account-main-menu"
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "t:labels.sticky_header",
+      "default": true
     }
   ]
 }

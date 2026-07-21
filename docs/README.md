@@ -19,6 +19,8 @@ docs/
 - Product brief: [`Discovery/product-brief.md`](Discovery/product-brief.md)
 - Competitive analysis: [`Discovery/competitive-analysis.md`](Discovery/competitive-analysis.md)
 - MVP scope: [`Specifications/mvp-feature-matrix.md`](Specifications/mvp-feature-matrix.md)
+- Design principles and prototype gate: [`Specifications/design-principles-and-prototype-criteria.md`](Specifications/design-principles-and-prototype-criteria.md)
+- Interaction architecture standard: [`Specifications/interaction-architecture-standard.md`](Specifications/interaction-architecture-standard.md)
 - Source/license policy: [`Governance/source-provenance-and-licenses.md`](Governance/source-provenance-and-licenses.md)
 
 ## Quy tắc phân loại
@@ -28,4 +30,3 @@ docs/
 - `Specifications/`: trả lời **phải xây những capability nào và nghiệm thu ra sao**.
 - `Governance/`: trả lời **nguồn code/asset đến từ đâu và được phép sử dụng thế nào**.
 - Tài liệu implementation/QA/design phát sinh sau này phải vào thư mục riêng tương ứng, không đưa trở lại `Roadmap/`.
-

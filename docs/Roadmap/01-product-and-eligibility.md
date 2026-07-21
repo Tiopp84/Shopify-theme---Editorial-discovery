@@ -6,14 +6,14 @@ Xác lập một sản phẩm có thị trường, có quyền phân phối, kh�
 
 ## 2. Điều kiện nguồn gốc code
 
-- [ ] Tạo repository mới từ Shopify Skeleton Theme hoặc code nguyên bản.
-- [ ] Lưu commit khởi tạo và lịch sử phát triển liên tục.
-- [ ] Không copy file hoặc đoạn code đáng kể từ Dawn/Horizon.
-- [ ] Không port nguyên markup rồi chỉ đổi class hoặc styling.
-- [ ] Không dùng code lấy từ commercial theme khác.
-- [ ] Lập `THIRD_PARTY_NOTICES.md` cho dependency và asset bên thứ ba.
-- [ ] Lưu invoice/license của font, icon, ảnh demo và thư viện.
-- [ ] Review license trước khi thêm dependency.
+- [x] Tạo repository mới từ Shopify Skeleton Theme. Evidence: import commit `7fdb6a1`.
+- [x] Lưu commit khởi tạo và lịch sử phát triển liên tục. Evidence: Git history từ commit `978cf11`.
+- [x] Không copy file hoặc đoạn code đáng kể từ Dawn/Horizon.
+- [x] Không port nguyên markup rồi chỉ đổi class hoặc styling.
+- [x] Không dùng code lấy từ commercial theme khác.
+- [x] Lập `THIRD_PARTY_NOTICES.md` cho dependency và asset bên thứ ba.
+- [x] Thiết lập asset/license register; chưa có font, icon, ảnh demo hoặc thư viện mới được phép dùng nếu chưa có proof/license.
+- [x] Review license của Skeleton baseline; mọi dependency mới phải được review trước khi thêm.
 
 Có thể dùng theme hiện tại để lập feature specification, test merchant workflow và ghi nhận edge case. Không dùng nó làm source code cho bản submission.
 
@@ -54,10 +54,10 @@ Không coi đổi màu, font, spacing, radius, shadow hoặc animation đơn l�
 
 - [x] Chọn 15 theme cạnh tranh trực tiếp trên Shopify Theme Store. Evidence: `../Discovery/competitive-analysis.md`, 2026-07-17.
 - [x] Ghi giá, rating, số preset, ngành, feature và art direction. Evidence: `../Discovery/competitive-analysis.md`.
-- [ ] Audit ít nhất home, collection, product, cart và mobile navigation.
+- [x] Audit home, collection, product, cart và mobile navigation. Evidence: `../Discovery/tier-1-live-demo-audit.md`, `../Discovery/tier-1-interaction-checklist.md`, 2026-07-17.
 - [x] Ghi khoảng trống chưa được phục vụ tốt. Evidence: `../Discovery/competitive-analysis.md`.
-- [ ] Không tái tạo một theme cụ thể hoặc combination quá giống.
-- [ ] Chốt feature nào tạo giá trị và feature nào chỉ tăng support burden.
+- [x] Không tái tạo một theme cụ thể hoặc combination quá giống. Evidence: `../Specifications/design-principles-and-prototype-criteria.md` xác định customer outcomes thay vì competitor composition/code.
+- [x] Chốt feature nào tạo giá trị và feature nào chỉ tăng support burden. Evidence: `../Specifications/design-principles-and-prototype-criteria.md`, `../Specifications/mvp-feature-matrix.md`.
 
 Đầu ra: `../Discovery/competitive-analysis.md` hoặc Figma board có ngày khảo sát và URL nguồn.
 
@@ -87,6 +87,6 @@ Không định giá chỉ dựa trên số section. Giá trị đến từ độ
 - [x] Product brief được duyệt. Evidence: `../Discovery/product-brief.md`, 2026-07-17.
 - [x] Có kế hoạch provenance/license; bằng chứng Skeleton import sẽ bổ sung ở Foundation. Evidence: `../Governance/source-provenance-and-licenses.md`, `../Governance/asset-license-register.md`.
 - [x] Có competitive analysis. Evidence: `../Discovery/competitive-analysis.md`, 2026-07-17.
-- [ ] Có 3–5 trụ cột khác biệt đo được.
+- [x] Có 3–5 trụ cột khác biệt đo được. Evidence: `../Specifications/design-principles-and-prototype-criteria.md`, DP-01 đến DP-05.
 - [x] Có danh sách out-of-scope để kiểm soát dự án. Evidence: `../Specifications/mvp-feature-matrix.md`.
 - [x] Có tên nội bộ và hướng naming. Evidence: `../Discovery/naming-audit.md`; commercial name provisional.

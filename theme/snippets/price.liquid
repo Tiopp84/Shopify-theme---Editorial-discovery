@@ -1,0 +1,64 @@
+{% doc %}
+  Renders current, compare-at, and unit prices for a product or variant.
+
+  @param {object} item - Product or variant whose price is displayed.
+  @param {boolean} [show_currency] - Use currency-qualified money formatting.
+  @param {string} [class] - Additional wrapper class.
+
+  @example
+  {% render 'price', item: product %}
+  {% render 'price', item: product.selected_or_first_available_variant, show_currency: true %}
+{% enddoc %}
+
+{% liquid
+  assign target = item.selected_or_first_available_variant | default: item
+  assign current_price = target.price
+  assign compare_price = target.compare_at_price
+
+  if show_currency
+    assign formatted_price = current_price | money_with_currency
+    assign formatted_compare_price = compare_price | money_with_currency
+  else
+    assign formatted_price = current_price | money
+    assign formatted_compare_price = compare_price | money
+  endif
+%}
+
+<div class="price {{ class }}">
+  <span class="price__current">{{ formatted_price }}</span>
+  {% if compare_price > current_price %}
+    <s class="price__compare">
+      <span class="visually-hidden">{{ 'products.price.regular' | t }}</span>
+      {{ formatted_compare_price }}
+    </s>
+  {% endif %}
+  {% if target.unit_price_measurement %}
+    <small class="price__unit">
+      <span class="visually-hidden">{{ 'products.price.unit' | t }}</span>
+      {{ target.unit_price | money }}
+      <span aria-hidden="true">/</span>
+      {% if target.unit_price_measurement.reference_value != 1 %}
+        {{ target.unit_price_measurement.reference_value }}
+      {% endif %}
+      {{ target.unit_price_measurement.reference_unit }}
+    </small>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .price__current {
+    font-weight: 600;
+  }
+
+  .price__compare,
+  .price__unit {
+    color: color-mix(in srgb, currentcolor 70%, transparent);
+  }
+{% endstylesheet %}
