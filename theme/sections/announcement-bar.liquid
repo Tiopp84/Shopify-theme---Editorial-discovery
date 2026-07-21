@@ -1,0 +1,51 @@
+{% if section.settings.text != blank %}
+  <div class="announcement-bar full-width" role="region" aria-label="{{ 'accessibility.announcement' | t }}">
+    {% if section.settings.link != blank %}
+      <a href="{{ section.settings.link }}">{{ section.settings.text | escape }}</a>
+    {% else %}
+      <p>{{ section.settings.text | escape }}</p>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .announcement-bar {
+    min-height: 2rem;
+    display: grid;
+    place-items: center;
+    padding: var(--space-2) var(--page-margin);
+    background: var(--color-foreground);
+    color: var(--color-background);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .announcement-bar a {
+    text-underline-offset: 0.2em;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.announcement_bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:labels.text",
+      "default": "Complimentary delivery over $150"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:labels.link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.announcement_bar"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,207 @@
+{% doc %}
+  Renders collection filter and sorting controls as a standard GET form.
+
+  @param {collection} results - Collection whose filters and sort options are rendered.
+  @param {string} form_id - Unique ID for labels and controls.
+  @param {boolean} [show_sort] - Render the sort selector.
+  @param {boolean} [sort_only] - Render a sort-only form that preserves active filters.
+  @param {boolean} [open_groups] - Expand filter groups on initial render.
+
+  @example
+  {% render 'facets', results: collection, form_id: 'CollectionFilters', show_sort: true %}
+{% enddoc %}
+
+<form class="facets" id="{{ form_id }}" action="{{ results.url }}" method="get">
+  {% if show_sort %}
+    <div class="facets__sort">
+      <label for="SortBy-{{ form_id }}">{{ 'collections.facets.sort_by' | t }}</label>
+      <select id="SortBy-{{ form_id }}" name="sort_by" data-sort-by>
+        {% assign sort_by = results.sort_by | default: results.default_sort_by %}
+        {% for option in results.sort_options %}
+          <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected{% endif %}>
+            {{ option.name | escape }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+
+  {% if sort_only %}
+    {% for filter in results.filters %}
+      {% for value in filter.active_values %}
+        <input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">
+      {% endfor %}
+      {% if filter.type == 'price_range' %}
+        {% if filter.min_value.value %}
+          <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}">
+        {% endif %}
+        {% if filter.max_value.value %}
+          <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}">
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    <noscript><button type="submit">{{ 'collections.facets.apply_sort' | t }}</button></noscript>
+  {% else %}
+    {% unless show_sort %}
+      <input type="hidden" name="sort_by" value="{{ results.sort_by | default: results.default_sort_by }}">
+    {% endunless %}
+
+  <div class="facets__groups">
+    {% for filter in results.filters %}
+      <details class="facets__group"{% if open_groups %} open{% endif %}>
+        <summary>
+          <span>{{ filter.label | escape }}</span>
+          {% if filter.active_values.size > 0 %}
+            <span class="facets__active-count">{{ filter.active_values.size }}</span>
+          {% endif %}
+        </summary>
+
+        <div class="facets__values">
+          {% case filter.type %}
+            {% when 'boolean', 'list' %}
+              {% for value in filter.values %}
+                <label class="facets__value{% if value.count == 0 and value.active == false %} facets__value--disabled{% endif %}">
+                  <input
+                    type="checkbox"
+                    name="{{ value.param_name }}"
+                    value="{{ value.value }}"
+                    {% if value.active %}checked{% endif %}
+                    {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                  >
+                  <span>{{ value.label | escape }}</span>
+                  <small>{{ value.count }}</small>
+                </label>
+              {% endfor %}
+            {% when 'price_range' %}
+              {% assign range_max = filter.range_max | money_without_currency | replace: ',', '' %}
+              <div class="facets__price">
+                <label>
+                  <span>{{ 'collections.facets.from' | t }}</span>
+                  <input
+                    type="number"
+                    name="{{ filter.min_value.param_name }}"
+                    value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
+                    min="0"
+                    max="{{ range_max }}"
+                    placeholder="0"
+                  >
+                </label>
+                <label>
+                  <span>{{ 'collections.facets.to' | t }}</span>
+                  <input
+                    type="number"
+                    name="{{ filter.max_value.param_name }}"
+                    value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
+                    min="0"
+                    max="{{ range_max }}"
+                    placeholder="{{ range_max }}"
+                  >
+                </label>
+              </div>
+          {% endcase %}
+        </div>
+      </details>
+    {% endfor %}
+  </div>
+
+  <button class="facets__apply" type="submit">{{ 'collections.facets.apply' | t }}</button>
+  {% endif %}
+</form>
+
+{% stylesheet %}
+  .facets {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .facets__sort {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .facets__group {
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .facets__group summary {
+    padding-block: var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    cursor: pointer;
+    font-family: var(--font-heading--family);
+    font-size: 1.2rem;
+    list-style: none;
+  }
+
+  .facets__group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .facets__group summary::after {
+    content: '→';
+    margin-inline-start: auto;
+    font-family: var(--font-primary--family);
+    font-size: 1rem;
+    transition: transform 150ms ease;
+  }
+
+  .facets__group[open] summary::after {
+    transform: rotate(90deg);
+  }
+
+  .facets__active-count {
+    margin-inline-start: auto;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-primary--family);
+    font-size: 0.7rem;
+  }
+
+  .facets__values {
+    padding-block-end: var(--space-4);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .facets__value {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .facets__value input {
+    width: 1rem;
+    min-height: 1rem;
+  }
+
+  .facets__value--disabled {
+    opacity: 0.5;
+  }
+
+  .facets__price {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .facets__price label {
+    min-width: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .facets__price input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .facets__apply {
+    width: 100%;
+  }
+{% endstylesheet %}
