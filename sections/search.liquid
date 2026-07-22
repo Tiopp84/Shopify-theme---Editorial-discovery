@@ -6,13 +6,20 @@
     <h1>{{ 'search.title' | t }}</h1>
   </header>
 
-  {% render 'predictive-search-form', context_id: section.id, search_terms: search.terms %}
+{% render 'predictive-search-form', context_id: section.id, search_terms: search.terms %}
 
 {% if search.performed %}
+  {% capture formatted_search_terms %}<span class="search-page__terms">'{{ search.terms | escape }}'</span>{% endcapture %}
   {% if search.results_count == 0 %}
-    <div class="search-page__message"><p>{{ 'search.no_results_html' | t: terms: search.terms }}</p></div>
+    <div class="search-page__message"><p>{{ 'search.no_results_html' | t: terms: formatted_search_terms }}</p></div>
   {% else %}
-    <p class="search-page__count">{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
+    <p class="search-page__count">
+      {% if search.results_count == 1 %}
+        {{ 'search.result_for_html' | t: terms: formatted_search_terms, count: search.results_count }}
+      {% else %}
+        {{ 'search.results_for_html' | t: terms: formatted_search_terms, count: search.results_count }}
+      {% endif %}
+    </p>
 
     <div class="search-results">
       {% paginate search.results by 20 %}
@@ -75,6 +82,10 @@
 
   .search-page__count {
     margin-block: var(--space-8) var(--space-4);
+  }
+
+  .search-page__terms {
+    text-transform: none;
   }
 
   .search-results {

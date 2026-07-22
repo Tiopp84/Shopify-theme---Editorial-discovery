@@ -17,9 +17,13 @@
             {% for product in predictive_search.resources.products %}
               <li>
                 <a class="predictive-search__product" href="{{ product.url }}">
-                  {% if product.featured_image %}
-                    {{ product.featured_image | image_url: width: 160 | image_tag: widths: '80, 120, 160', loading: 'lazy', alt: product.featured_image.alt }}
-                  {% endif %}
+                  <span class="predictive-search__product-media" aria-hidden="true">
+                    {% if product.featured_image %}
+                      {{ product.featured_image | image_url: width: 160 | image_tag: widths: '80, 120, 160', loading: 'lazy', alt: product.featured_image.alt }}
+                    {% else %}
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    {% endif %}
+                  </span>
                   <span>
                     <strong>{{ product.title | escape }}</strong>
                     {% render 'price', item: product %}

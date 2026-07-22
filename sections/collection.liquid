@@ -9,12 +9,22 @@
   <p class="visually-hidden" role="status" aria-live="polite" data-collection-status></p>
 
   <header class="collection-header">
-    <div>
+    <div class="collection-header__content">
       <p class="collection-header__eyebrow">{{ 'collections.eyebrow' | t }}</p>
       <h1>{{ collection.title | escape }}</h1>
     </div>
-    <div class="collection-header__aside">
-      {% if collection.description != blank %}
+    <div class="collection-header__aside{% if section.settings.show_collection_image and collection.featured_image %} collection-header__aside--media{% endif %}">
+      {% if section.settings.show_collection_image and collection.featured_image %}
+        {% render 'image',
+          class: 'collection-header__image',
+          image: collection.featured_image,
+          alt: collection.featured_image.alt,
+          width: 1200,
+          widths: '480, 720, 960, 1200',
+          sizes: '(min-width: 60rem) 34vw, 100vw',
+          loading: 'eager'
+        %}
+      {% elsif collection.description != blank %}
         <div class="collection-header__description">{{ collection.description }}</div>
       {% endif %}
     </div>
@@ -130,6 +140,19 @@
 
       <div class="collection-results__products">
         {% if collection.products_count > 0 %}
+          {% liquid
+            assign story = collection.metafields.custom.collection_story.value
+            assign show_collection_story = false
+            if section.settings.show_collection_story and story != blank and story.heading.value != blank
+              assign show_collection_story = true
+            endif
+
+            assign story_insert_after = section.settings.collection_story_position
+            assign story_row_remainder = story_insert_after | modulo: section.settings.columns_desktop
+            if story_row_remainder != 0
+              assign story_insert_after = story_insert_after | plus: section.settings.columns_desktop | minus: story_row_remainder
+            endif
+          %}
           <div class="product-grid" style="--product-grid-columns: {{ section.settings.columns_desktop }};">
             {% for product in collection.products %}
               {% render 'product-card',
@@ -140,6 +163,34 @@
                 card_index: forloop.index,
                 card_count: forloop.length
               %}
+              {% if show_collection_story and forloop.index == story_insert_after %}
+                <article class="collection-story-card" aria-labelledby="CollectionStory-{{ section.id }}">
+                  {% if story.image.value %}
+                    {% render 'image',
+                      class: 'collection-story-card__image',
+                      image: story.image.value,
+                      alt: story.image.value.alt,
+                      width: 1200,
+                      widths: '480, 720, 960, 1200',
+                      sizes: '(min-width: 60rem) 50vw, 100vw'
+                    %}
+                  {% endif %}
+                  <div class="collection-story-card__content">
+                    {% if story.eyebrow.value != blank %}
+                      <p>{{ story.eyebrow.value | escape }}</p>
+                    {% endif %}
+                    <h2 id="CollectionStory-{{ section.id }}">{{ story.heading.value | escape }}</h2>
+                    {% if story.body.value != blank %}
+                      <div>{{ story.body | metafield_tag }}</div>
+                    {% endif %}
+                    {% if story.link.value != blank %}
+                      <a href="{{ story.link.value }}">
+                        {{- story.link_label.value | default: story.link.value | escape -}}
+                      </a>
+                    {% endif %}
+                  </div>
+                </article>
+              {% endif %}
             {% endfor %}
           </div>
 
@@ -203,11 +254,75 @@
     text-align: center;
   }
 
+  .collection-header__aside--media {
+    place-items: stretch;
+  }
+
+  .collection-header__image {
+    aspect-ratio: 16 / 10;
+    background: color-mix(in srgb, var(--color-border) 30%, var(--color-background));
+  }
+
+  .collection-header__image > img {
+    height: 100%;
+    object-fit: cover;
+  }
+
   .product-grid {
     display: grid;
     grid-template-columns: repeat(var(--product-grid-columns), minmax(0, 1fr));
     gap: var(--space-8) var(--space-6);
     padding-block-start: var(--space-6);
+  }
+
+  .collection-story-card {
+    min-width: 0;
+    grid-column: 1 / -1;
+    min-block-size: 30rem;
+    border-block: 1px solid var(--color-border);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.9fr);
+    align-items: stretch;
+  }
+
+  .collection-story-card .collection-story-card__image {
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+    background: color-mix(in srgb, var(--color-border) 30%, var(--color-background));
+  }
+
+  .collection-story-card .collection-story-card__image > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .collection-story-card__content {
+    min-width: 0;
+    padding: clamp(var(--space-6), 5vw, var(--space-12));
+    display: grid;
+    align-content: center;
+    gap: var(--space-3);
+  }
+
+  .collection-story-card__content p {
+    color: color-mix(in srgb, currentcolor 62%, transparent);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .collection-story-card__content h2 {
+    font-size: clamp(1.5rem, 2.4vw, 2.5rem);
+    line-height: 1.05;
+  }
+
+  .collection-story-card__content a {
+    width: fit-content;
+    margin-block-start: var(--space-2);
+    text-underline-offset: 0.2em;
   }
 
   .collection-controls {
@@ -375,6 +490,17 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .collection-story-card {
+      grid-column: 1 / -1;
+      min-block-size: 0;
+      grid-template-columns: 1fr;
+    }
+
+    .collection-story-card .collection-story-card__image {
+      height: auto;
+      aspect-ratio: 16 / 10;
+    }
+
     .collection-controls {
       min-height: 3rem;
       display: flex;
@@ -433,6 +559,12 @@
   "name": "t:general.collection",
   "settings": [
     {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "t:labels.show_collection_image",
+      "default": true
+    },
+    {
       "type": "range",
       "id": "products_per_page",
       "min": 8,
@@ -466,6 +598,21 @@
       "id": "show_vendor",
       "label": "t:labels.show_vendor",
       "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_story",
+      "label": "t:labels.show_collection_story",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "collection_story_position",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "t:labels.collection_story_position",
+      "default": 4
     },
     {
       "type": "select",
