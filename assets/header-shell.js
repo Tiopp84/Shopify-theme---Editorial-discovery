@@ -4,14 +4,37 @@ class HeaderShell extends HTMLElement {
     this.initialized = true;
     this.onClick = this.onClick.bind(this);
     this.onClose = this.onClose.bind(this);
+    this.onDocumentClick = this.onDocumentClick.bind(this);
+    this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
     this.addEventListener('click', this.onClick);
+    document.addEventListener('click', this.onDocumentClick);
+    document.addEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.addEventListener('close', this.onClose));
   }
 
   disconnectedCallback() {
     this.removeEventListener('click', this.onClick);
+    document.removeEventListener('click', this.onDocumentClick);
+    document.removeEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.removeEventListener('close', this.onClose));
     this.initialized = false;
+  }
+
+  onDocumentClick(event) {
+    const clickedGroup = event.target.closest?.('.header-shell__nav-group');
+    this.querySelectorAll('.header-shell__nav-group[open]').forEach((group) => {
+      if (group !== clickedGroup) group.removeAttribute('open');
+    });
+  }
+
+  onDocumentKeydown(event) {
+    if (event.key !== 'Escape') return;
+    const openGroups = [...this.querySelectorAll('.header-shell__nav-group[open]')];
+    if (openGroups.length === 0) return;
+
+    const focusedGroup = document.activeElement?.closest?.('.header-shell__nav-group');
+    openGroups.forEach((group) => group.removeAttribute('open'));
+    focusedGroup?.querySelector('summary')?.focus();
   }
 
   onClick(event) {
