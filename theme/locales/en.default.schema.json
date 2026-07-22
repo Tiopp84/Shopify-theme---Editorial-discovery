@@ -60,14 +60,19 @@
     "page_margin": "Page margin",
     "page_width": "Page width",
     "products_per_page": "Products per page",
+    "search_behavior": "Search behavior",
     "show_payment_icons": "Show payment icons",
     "show_vendor": "Show vendor",
     "sticky_header": "Sticky header",
     "text_style": "Text style",
-    "text": "Text"
-    ,"type_scale": "Type scale"
+    "text": "Text",
+    "type_scale": "Type scale"
   },
   "options": {
+    "search_behavior": {
+      "page": "Search page",
+      "drawer": "Search drawer"
+    },
     "filter_layout": {
       "drawer": "Drawer",
       "sidebar": "Sidebar"

@@ -6,127 +6,153 @@
   data-updated-text="{{ 'collections.facets.updated' | t | escape }}"
   data-error-text="{{ 'collections.facets.error' | t | escape }}"
 >
-<p class="visually-hidden" role="status" aria-live="polite" data-collection-status></p>
+  <p class="visually-hidden" role="status" aria-live="polite" data-collection-status></p>
 
-<header class="collection-header">
-  <div>
-    <p class="collection-header__eyebrow">{{ 'collections.eyebrow' | t }}</p>
-    <h1>{{ collection.title | escape }}</h1>
-  </div>
-  <div class="collection-header__aside">
-    {% if collection.description != blank %}
-      <div class="collection-header__description">{{ collection.description }}</div>
-    {% endif %}
-  </div>
-</header>
+  <header class="collection-header">
+    <div>
+      <p class="collection-header__eyebrow">{{ 'collections.eyebrow' | t }}</p>
+      <h1>{{ collection.title | escape }}</h1>
+    </div>
+    <div class="collection-header__aside">
+      {% if collection.description != blank %}
+        <div class="collection-header__description">{{ collection.description }}</div>
+      {% endif %}
+    </div>
+  </header>
 
-{% paginate collection.products by section.settings.products_per_page %}
-  <div class="collection-controls">
-    {% if collection.filters != empty and section.settings.desktop_filter_layout == 'drawer' %}
-      <div class="collection-desktop-drawer" data-facets-panel>
-        <button type="button" class="collection-desktop-drawer__open" data-facets-open>
-          {% render 'icon', name: 'filter' %}
-          <span>{{ 'collections.facets.filters' | t }}</span>
-        </button>
-        <dialog class="collection-facets-dialog" aria-labelledby="DesktopFacetsTitle" scroll-lock>
-          <div class="collection-facets-dialog__header">
-            <div>
-              <h2 id="DesktopFacetsTitle">{{ 'collections.facets.filters' | t }}</h2>
-              <p>{{ 'collections.product_count' | t: count: collection.products_count }}</p>
+  {% paginate collection.products by section.settings.products_per_page %}
+    <div class="collection-controls">
+      {% if collection.filters != empty and section.settings.desktop_filter_layout == 'drawer' %}
+        <div class="collection-desktop-drawer" data-facets-panel>
+          <button type="button" class="collection-desktop-drawer__open" data-facets-open>
+            {% render 'icon', name: 'filter' %}
+            <span>{{ 'collections.facets.filters' | t }}</span>
+          </button>
+          <dialog class="collection-facets-dialog" aria-labelledby="DesktopFacetsTitle" scroll-lock>
+            <div class="collection-facets-dialog__header">
+              <div>
+                <h2 id="DesktopFacetsTitle">{{ 'collections.facets.filters' | t }}</h2>
+                <p>{{ 'collections.product_count' | t: count: collection.products_count }}</p>
+              </div>
+              <button type="button" aria-label="{{ 'collections.facets.close' | t }}" data-facets-close>
+                {% render 'icon', name: 'close' %}
+              </button>
             </div>
+            {% render 'facets',
+              results: collection,
+              form_id: 'CollectionFiltersDrawer',
+              show_sort: false,
+              open_groups: false
+            %}
+          </dialog>
+        </div>
+      {% endif %}
+
+      <p class="collection-controls__count" role="status">
+        {{ 'collections.product_count' | t: count: collection.products_count }}
+      </p>
+
+      <div class="collection-mobile-facets" data-facets-panel>
+        <button type="button" class="collection-mobile-facets__open" data-facets-open>
+          {{ 'collections.facets.filters' | t }}
+          {% if collection.filters != empty -%}
+            <span aria-hidden="true">+</span>
+          {%- endif %}
+        </button>
+        <dialog class="collection-facets-dialog" aria-labelledby="MobileFacetsTitle" scroll-lock>
+          <div class="collection-facets-dialog__header">
+            <h2 id="MobileFacetsTitle">{{ 'collections.facets.filter_and_sort' | t }}</h2>
             <button type="button" aria-label="{{ 'collections.facets.close' | t }}" data-facets-close>
               {% render 'icon', name: 'close' %}
             </button>
           </div>
-          {% render 'facets', results: collection, form_id: 'CollectionFiltersDrawer', show_sort: false, open_groups: false %}
+          {% render 'facets',
+            results: collection,
+            form_id: 'CollectionFiltersMobile',
+            show_sort: true,
+            open_groups: false
+          %}
         </dialog>
+      </div>
+
+      <div class="collection-sort">
+        {% render 'facets', results: collection, form_id: 'CollectionSort', show_sort: true, sort_only: true %}
+      </div>
+    </div>
+
+    {% assign active_filter_count = 0 %}
+    {% for filter in collection.filters %}
+      {% assign active_filter_count = active_filter_count | plus: filter.active_values.size %}
+      {% if filter.type == 'price_range' %}
+        {% if filter.min_value.value or filter.max_value.value %}
+          {% assign active_filter_count = active_filter_count | plus: 1 %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if active_filter_count > 0 %}
+      <div class="active-facets" aria-label="{{ 'collections.facets.active_filters' | t }}">
+        {% for filter in collection.filters %}
+          {% for value in filter.active_values %}
+            <a href="{{ value.url_to_remove }}">
+              {{- value.label | escape }}
+              <span aria-hidden="true">×</span></a
+            >
+          {% endfor %}
+          {% if filter.type == 'price_range' and filter.min_value.value or filter.max_value.value %}
+            <a href="{{ filter.url_to_remove }}">
+              {{ filter.min_value.value | default: 0 | money }}–
+              {{- filter.max_value.value | default: filter.range_max | money }}
+              <span aria-hidden="true">×</span>
+            </a>
+          {% endif %}
+        {% endfor %}
+        <a class="active-facets__clear" href="{{ collection.url }}">{{ 'collections.facets.clear_all' | t }}</a>
       </div>
     {% endif %}
 
-    <p class="collection-controls__count" role="status">
-      {{ 'collections.product_count' | t: count: collection.products_count }}
-    </p>
-
-    <div class="collection-mobile-facets" data-facets-panel>
-      <button type="button" class="collection-mobile-facets__open" data-facets-open>
-        {{ 'collections.facets.filter_and_sort' | t }}
-        {% if collection.filters != empty %}<span aria-hidden="true">+</span>{% endif %}
-      </button>
-      <dialog class="collection-facets-dialog" aria-labelledby="MobileFacetsTitle" scroll-lock>
-        <div class="collection-facets-dialog__header">
-          <h2 id="MobileFacetsTitle">{{ 'collections.facets.filter_and_sort' | t }}</h2>
-          <button type="button" aria-label="{{ 'collections.facets.close' | t }}" data-facets-close>
-            {% render 'icon', name: 'close' %}
-          </button>
-        </div>
-        {% render 'facets', results: collection, form_id: 'CollectionFiltersMobile', show_sort: true, open_groups: false %}
-      </dialog>
-    </div>
-
-    <div class="collection-sort">
-      {% render 'facets', results: collection, form_id: 'CollectionSort', show_sort: true, sort_only: true %}
-    </div>
-  </div>
-
-  {% assign active_filter_count = 0 %}
-  {% for filter in collection.filters %}
-    {% assign active_filter_count = active_filter_count | plus: filter.active_values.size %}
-    {% if filter.type == 'price_range' %}
-      {% if filter.min_value.value or filter.max_value.value %}
-        {% assign active_filter_count = active_filter_count | plus: 1 %}
+    <div
+      class="collection-results"
+      {% if collection.filters == empty or section.settings.desktop_filter_layout == 'drawer' %}
+        data-without-filters
       {% endif %}
-    {% endif %}
-  {% endfor %}
+    >
+      {% if collection.filters != empty and section.settings.desktop_filter_layout == 'sidebar' %}
+        <aside class="collection-desktop-facets" aria-label="{{ 'collections.facets.filters' | t }}">
+          {% render 'facets',
+            results: collection,
+            form_id: 'CollectionFiltersDesktop',
+            show_sort: false,
+            open_groups: true
+          %}
+        </aside>
+      {% endif %}
 
-  {% if active_filter_count > 0 %}
-    <div class="active-facets" aria-label="{{ 'collections.facets.active_filters' | t }}">
-      {% for filter in collection.filters %}
-        {% for value in filter.active_values %}
-          <a href="{{ value.url_to_remove }}">{{ value.label | escape }} <span aria-hidden="true">×</span></a>
-        {% endfor %}
-        {% if filter.type == 'price_range' and filter.min_value.value or filter.max_value.value %}
-          <a href="{{ filter.url_to_remove }}">
-            {{ filter.min_value.value | default: 0 | money }}–{{ filter.max_value.value | default: filter.range_max | money }}
-            <span aria-hidden="true">×</span>
-          </a>
+      <div class="collection-results__products">
+        {% if collection.products_count > 0 %}
+          <div class="product-grid" style="--product-grid-columns: {{ section.settings.columns_desktop }};">
+            {% for product in collection.products %}
+              {% render 'product-card',
+                product: product,
+                show_vendor: section.settings.show_vendor,
+                image_ratio: section.settings.image_ratio,
+                sizes: '(min-width: 60rem) 25vw, 50vw',
+                card_index: forloop.index,
+                card_count: forloop.length
+              %}
+            {% endfor %}
+          </div>
+
+          {% render 'pagination', paginate: paginate %}
+        {% else %}
+          <div class="collection-empty">
+            <h2>{{ 'collections.empty_title' | t }}</h2>
+            <p>{{ 'collections.empty_text' | t }}</p>
+          </div>
         {% endif %}
-      {% endfor %}
-      <a class="active-facets__clear" href="{{ collection.url }}">{{ 'collections.facets.clear_all' | t }}</a>
+      </div>
     </div>
-  {% endif %}
-
-  <div class="collection-results"{% if collection.filters == empty or section.settings.desktop_filter_layout == 'drawer' %} data-without-filters{% endif %}>
-    {% if collection.filters != empty and section.settings.desktop_filter_layout == 'sidebar' %}
-      <aside class="collection-desktop-facets" aria-label="{{ 'collections.facets.filters' | t }}">
-        {% render 'facets', results: collection, form_id: 'CollectionFiltersDesktop', show_sort: false, open_groups: true %}
-      </aside>
-    {% endif %}
-
-    <div class="collection-results__products">
-  {% if collection.products_count > 0 %}
-    <div class="product-grid" style="--product-grid-columns: {{ section.settings.columns_desktop }};">
-      {% for product in collection.products %}
-        {% render 'product-card',
-          product: product,
-          show_vendor: section.settings.show_vendor,
-          image_ratio: section.settings.image_ratio,
-          sizes: '(min-width: 60rem) 25vw, 50vw',
-          card_index: forloop.index,
-          card_count: forloop.length
-        %}
-      {% endfor %}
-    </div>
-
-    {% render 'pagination', paginate: paginate %}
-  {% else %}
-    <div class="collection-empty">
-      <h2>{{ 'collections.empty_title' | t }}</h2>
-      <p>{{ 'collections.empty_text' | t }}</p>
-    </div>
-  {% endif %}
-    </div>
-  </div>
-{% endpaginate %}
+  {% endpaginate %}
 </collection-discovery>
 
 {% stylesheet %}
@@ -185,7 +211,8 @@
   }
 
   .collection-controls {
-    padding-block: var(--space-2);
+    min-height: 3.5rem;
+    padding-block: var(--space-1);
     border-block-end: 1px solid var(--color-border);
     display: flex;
     justify-content: space-between;
@@ -205,7 +232,7 @@
   }
 
   .collection-desktop-drawer__open {
-    min-height: 2.75rem;
+    min-height: 2.25rem;
     padding: var(--space-2) 0;
     border: 0;
     background: transparent;
@@ -275,8 +302,25 @@
   }
 
   .collection-sort .facets__sort {
-    grid-template-columns: auto minmax(12rem, 16rem);
+    grid-template-columns: auto minmax(9rem, 12rem);
     align-items: center;
+    gap: var(--space-2);
+  }
+
+  .collection-sort .facets {
+    gap: 0;
+  }
+
+  .collection-sort .facets__sort label {
+    color: color-mix(in srgb, currentcolor 62%, transparent);
+    font-size: 0.75rem;
+  }
+
+  .collection-sort .facets__sort select {
+    min-height: 2.25rem;
+    padding: 0.4rem 2rem 0.4rem 0.65rem;
+    border-color: color-mix(in srgb, var(--color-border) 70%, transparent);
+    font-size: 0.85rem;
   }
 
   .collection-results {
@@ -332,48 +376,40 @@
     }
 
     .collection-controls {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: var(--space-4);
+      min-height: 3rem;
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-3);
     }
 
     .collection-controls__count {
-      grid-column: 1;
-      grid-row: 1;
-      align-self: center;
+      flex: 1;
     }
 
     .collection-sort {
-      grid-column: 2;
-      grid-row: 1;
+      display: none;
     }
 
     .collection-mobile-facets {
-      grid-column: 1 / -1;
-      grid-row: 2;
       display: block;
+      flex: none;
     }
 
     .collection-mobile-facets__open {
-      width: 100%;
+      width: auto;
+      min-height: 2.25rem;
+      padding: 0;
+      border: 0;
       background: transparent;
       color: currentcolor;
+      font-size: 0.8rem;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
     }
 
     .collection-desktop-drawer {
       display: none;
-    }
-
-    .collection-sort .facets__sort {
-      grid-template-columns: 1fr;
-    }
-
-    .collection-sort .facets__sort label {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
     }
 
     .collection-results {
@@ -439,7 +475,7 @@
         { "value": "sidebar", "label": "t:options.filter_layout.sidebar" },
         { "value": "drawer", "label": "t:options.filter_layout.drawer" }
       ],
-      "default": "sidebar"
+      "default": "drawer"
     }
   ]
 }

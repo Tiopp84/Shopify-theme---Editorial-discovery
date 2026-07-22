@@ -1,6 +1,6 @@
 # Phase 4 discovery contract
 
-Status: **PRODUCT CARD VISUAL REVIEW NEEDS ITERATION — 2026-07-20**
+Status: **PRODUCT CARD REMEDIATION IN REVIEW — 2026-07-21**
 
 ## Ownership
 
@@ -32,6 +32,7 @@ Status: **PRODUCT CARD VISUAL REVIEW NEEDS ITERATION — 2026-07-20**
 - Development preview search for “Camel”: 2 product cards rendered through the shared snippet, no Liquid error.
 - The current development dataset does not expose sold-out or missing-media products in these result sets. Those live-data states remain pending and must not be inferred from static markup alone.
 - Desktop visual review at 1440 px does not pass: the grid remains too close to a generic Skeleton catalog, media dominates the information hierarchy, repeated destination links add noise, dividers are visually heavy, and the card lacks a recognizable Narrivelle editorial anatomy. Evidence: `product-card-review-1440.png`.
+- Remediation on 2026-07-21 moves sale/sold-out state onto the media, reduces metadata weight, combines title and price into a decision row, removes the heavy card divider and removes duplicate unavailable copy. Validator passes 62 files/76 storefront keys/82 schema keys and Theme Check passes 47 files with zero offenses. This is implementation evidence only; owner visual approval and live sold-out/missing-media/representative long-title data remain open.
 
 ## Collection facets evidence — 2026-07-20
 
@@ -47,3 +48,13 @@ Status: **PRODUCT CARD VISUAL REVIEW NEEDS ITERATION — 2026-07-20**
 - Collection section now exposes a locale-backed Desktop filter layout setting: Sidebar or left-side Drawer. Drawer mode gives the product grid full width, keeps sort in the toolbar, opens filter groups collapsed by default, and shares native dialog Escape/backdrop/focus restoration plus immediate checkbox filtering with mobile.
 - AJAX discovery refactor replaces per-form/reload behavior with one `collection-discovery` controller. Standard GET forms remain the no-JavaScript fallback; enhanced filter, sort, active-chip and pagination navigation fetch the current section through Shopify Section Rendering, atomically replace collection content, update History API state, announce loading/update/error, and preserve drawer/group/focus state.
 - Browser verification proves no document reload: a page marker and outer controller reference survive sort, mobile filter and Back navigation. At 375 CSS px, Camel filtering keeps the drawer and Color group open with focus on the checked input; Back restores four products. Rapid price-descending → title-ascending changes finish on title-ascending with no stale response and `aria-busy` cleared.
+
+## Search and predictive search evidence — 2026-07-22
+
+- The standard `/search?q=...` GET route remains the no-JavaScript/direct-navigation fallback and returns HTTP 200 for populated and no-results queries without Liquid errors.
+- Predictive Search uses Shopify's locale-aware predictive URL and a static `predictive-search` section. Product, collection, page and article groups have explicit headings/contracts; development data produced live Product, Collection and Page groups, while no matching Article fixture was found and Article live-data proof remains pending.
+- The controller responds from the first character, opens an immediate visible loading state, waits only 80 ms to coalesce keystrokes, aborts the previous request and checks request sequence plus current input before committing HTML. Results are cached by normalized term so backspacing to a previous query renders immediately. It exposes loading/update/error through one live region and clears `aria-busy` on completion.
+- Browser regression at 375 CSS px passes rapid `sh` → `shirt` input, five rendered links without horizontal overflow, ArrowDown focus into suggestions, Escape close/focus restore, and a blocked-network failure that closes results, clears loading and announces the standard-search fallback.
+- Preview endpoint `/search/suggest` returns HTTP 200 with section content and no Liquid error. Validator passes 64 files/85 storefront keys/82 schema keys; Theme Check passes 48 files with zero offenses.
+- Follow-up browser verification confirms the panel opens with loading within 20 ms for `s`; `s` resolves four products plus Product/Collection/Page groups; `sh` resolves Everyday Stripe Shirt, Relaxed Pocket Shirt, Resort Stripe Shirt and Sky Stripe Camp Shirt; returning to cached `s` restores four products immediately. Predictive CSS is owned by and loaded with the search page rather than depending on CSS from the dynamically fetched section.
+- The shared predictive form supports two presentation contexts without duplicating request logic: an anchored dropdown on `/search` and static results inside the optional header search dialog. The final presentation uses a right-side desktop drawer and a full-width, bottom-aligned mobile sheet; `/search` remains an absolute-positioned dropdown.

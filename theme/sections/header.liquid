@@ -1,4 +1,7 @@
 <script src="{{ 'header-shell.js' | asset_url }}" defer></script>
+{% if section.settings.search_behavior == 'drawer' and request.page_type != 'search' %}
+  <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
+{% endif %}
 
 <header-shell class="header-shell full-width{% if section.settings.sticky_header %} header-shell--sticky{% endif %}">
   <header class="header-shell__inner">
@@ -6,7 +9,7 @@
       class="header-shell__icon-button header-shell__menu-button"
       type="button"
       aria-label="{{ 'accessibility.open_menu' | t }}"
-      data-drawer-open
+      data-dialog-open="menu"
     >
       {% render 'icon', name: 'menu' %}
     </button>
@@ -43,10 +46,21 @@
     </nav>
 
     <div class="header-shell__actions">
-      <a class="header-shell__icon-button" href="{{ routes.search_url }}">
-        <span class="visually-hidden">{{ 'search.title' | t }}</span>
-        {% render 'icon', name: 'search' %}
-      </a>
+      {% if section.settings.search_behavior == 'drawer' %}
+        <button
+          class="header-shell__icon-button"
+          type="button"
+          aria-label="{{ 'search.open' | t }}"
+          data-dialog-open="search"
+        >
+          {% render 'icon', name: 'search' %}
+        </button>
+      {% else %}
+        <a class="header-shell__icon-button" href="{{ routes.search_url }}">
+          <span class="visually-hidden">{{ 'search.title' | t }}</span>
+          {% render 'icon', name: 'search' %}
+        </a>
+      {% endif %}
 
       {% if shop.customer_accounts_enabled %}
         <a class="header-shell__icon-button header-shell__account" href="{{ routes.account_url }}">
@@ -65,14 +79,14 @@
     </div>
   </header>
 
-  <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" scroll-lock>
+  <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" scroll-lock>
     <div class="header-shell__drawer-header">
       <h2 id="MobileMenuTitle">{{ 'navigation.menu' | t }}</h2>
       <button
         class="header-shell__icon-button"
         type="button"
         aria-label="{{ 'accessibility.close_menu' | t }}"
-        data-drawer-close
+        data-dialog-close
       >
         {% render 'icon', name: 'close' %}
       </button>
@@ -96,6 +110,29 @@
       {% endfor %}
     </nav>
   </dialog>
+
+  {% if section.settings.search_behavior == 'drawer' %}
+    <dialog
+      class="header-shell__search-dialog"
+      aria-labelledby="HeaderSearchTitle"
+      data-header-dialog="search"
+      scroll-lock
+    >
+      <div class="header-shell__drawer-header">
+        <h2 id="HeaderSearchTitle">{{ 'search.title' | t }}</h2>
+        <button
+          class="header-shell__icon-button"
+          type="button"
+          aria-label="{{ 'search.close' | t }}"
+          data-dialog-close
+        >
+          {% render 'icon', name: 'close' %}
+        </button>
+      </div>
+      {% render 'predictive-search-form', context_id: 'HeaderSearch', in_drawer: true %}
+      <a class="header-shell__search-page-link" href="{{ routes.search_url }}">{{ 'search.view_page' | t }}</a>
+    </dialog>
+  {% endif %}
 </header-shell>
 
 {% stylesheet %}
@@ -228,6 +265,64 @@
     background: rgb(0 0 0 / 45%);
   }
 
+  .header-shell__search-dialog {
+    width: min(32rem, 90vw);
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0 0 0 auto;
+    padding: var(--space-6);
+    border: 0;
+    border-radius: 0.75rem 0 0 0.75rem;
+    opacity: 0;
+    transform: translateX(1.5rem);
+    transition: opacity 180ms ease, transform 220ms ease, display 220ms allow-discrete, overlay 220ms allow-discrete;
+  }
+
+  .header-shell__search-dialog[open] {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .header-shell__search-dialog::backdrop {
+    background: rgb(0 0 0 / 38%);
+  }
+
+  @starting-style {
+    .header-shell__search-dialog[open] {
+      opacity: 0;
+      transform: translateX(1.5rem);
+    }
+  }
+
+  .header-shell__search-dialog .predictive-search {
+    min-height: 0;
+    margin-block-start: var(--space-6);
+  }
+
+  .header-shell__search-dialog .header-shell__drawer-header {
+    padding-block-end: var(--space-5);
+  }
+
+  .header-shell__search-dialog .header-shell__drawer-header h2 {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .header-shell__search-page-link {
+    margin-block-start: auto;
+    padding-block-start: var(--space-6);
+    display: inline-block;
+    align-self: flex-start;
+    color: currentcolor;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-underline-offset: 0.2em;
+  }
+
   .header-shell__drawer-header {
     display: flex;
     justify-content: space-between;
@@ -279,6 +374,51 @@
     .header-shell__account {
       display: none;
     }
+
+    .header-shell__search-dialog {
+      inset: auto 0 0;
+      width: 100%;
+      height: auto;
+      max-height: 82dvh;
+      margin: 0;
+      padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+      border-radius: 0.9rem 0.9rem 0 0;
+      overflow: hidden;
+      transform: translateY(1.5rem);
+    }
+
+    .header-shell__search-dialog[open] {
+      transform: translateY(0);
+    }
+
+    .header-shell__search-dialog .header-shell__drawer-header {
+      padding-block-end: var(--space-3);
+    }
+
+    .header-shell__search-dialog .header-shell__drawer-header h2 {
+      font-size: 1.65rem;
+    }
+
+    .header-shell__search-dialog .predictive-search {
+      margin-block-start: var(--space-4);
+    }
+
+    .header-shell__search-page-link {
+      padding-block-start: var(--space-4);
+    }
+
+    @starting-style {
+      .header-shell__search-dialog[open] {
+        opacity: 0;
+        transform: translateY(1.5rem);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header-shell__search-dialog {
+      transition: none;
+    }
   }
 {% endstylesheet %}
 
@@ -311,6 +451,22 @@
       "id": "sticky_header",
       "label": "t:labels.sticky_header",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "search_behavior",
+      "label": "t:labels.search_behavior",
+      "options": [
+        {
+          "value": "page",
+          "label": "t:options.search_behavior.page"
+        },
+        {
+          "value": "drawer",
+          "label": "t:options.search_behavior.drawer"
+        }
+      ],
+      "default": "drawer"
     }
   ]
 }

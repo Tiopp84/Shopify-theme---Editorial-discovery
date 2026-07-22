@@ -41,7 +41,11 @@
         {{ 'product-1' | placeholder_svg_tag }}
       </a>
     {% endif %}
-
+    {% if product.available == false %}
+      <span class="product-card__status">{{ 'products.card.sold_out' | t }}</span>
+    {% elsif on_sale %}
+      <span class="product-card__status">{{ 'products.card.sale' | t }}</span>
+    {% endif %}
   </div>
 
   <div class="product-card__content">
@@ -52,11 +56,6 @@
       {% if show_vendor and product.vendor != blank %}
         <span>{{ product.vendor | escape }}</span>
       {% endif %}
-      {% if product.available == false %}
-        <span>{{ 'products.card.sold_out' | t }}</span>
-      {% elsif on_sale %}
-        <span>{{ 'products.card.sale' | t }}</span>
-      {% endif %}
     </div>
 
     <div class="product-card__decision">
@@ -65,21 +64,15 @@
       </h2>
       {% render 'price', item: product, class: 'product-card__price' %}
     </div>
-
-    {% unless product.available %}
-      <p class="product-card__availability">{{ 'products.card.unavailable' | t }}</p>
-    {% endunless %}
   </div>
 </article>
 
 {% stylesheet %}
   .product-card {
     min-width: 0;
-    padding-block-end: var(--space-6);
-    border-block-end: 1px solid var(--color-border);
     display: grid;
     align-content: start;
-    gap: var(--space-4);
+    gap: var(--space-3);
   }
 
   .product-card__media {
@@ -103,6 +96,19 @@
     transition: transform 300ms ease;
   }
 
+  .product-card__status {
+    position: absolute;
+    inset-block-start: var(--space-3);
+    inset-inline-start: var(--space-3);
+    padding: 0.35rem 0.55rem;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
   .product-card:hover .product-card__image > img,
   .product-card:focus-within .product-card__image > img {
     transform: scale(1.015);
@@ -111,7 +117,7 @@
   .product-card__content {
     min-width: 0;
     display: grid;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .product-card__meta {
@@ -119,28 +125,23 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: var(--space-2) var(--space-4);
-    color: color-mix(in srgb, currentcolor 68%, transparent);
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
+    color: color-mix(in srgb, currentcolor 62%, transparent);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
   .product-card__decision {
     min-width: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: var(--space-4);
-  }
-
-  .product-card__availability {
-    color: color-mix(in srgb, currentcolor 70%, transparent);
-    font-size: 0.75rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--space-3);
   }
 
   .product-card__title {
-    font-size: clamp(1.2rem, 1.8vw, 1.55rem);
-    line-height: 1.1;
+    font-size: clamp(1.05rem, 1.45vw, 1.35rem);
+    line-height: 1.15;
   }
 
   .product-card__title a {
@@ -155,12 +156,25 @@
   }
 
   .product-card__price {
-    justify-content: flex-start;
-    text-align: start;
+    justify-content: flex-end;
+    text-align: end;
+    white-space: nowrap;
   }
 
   .product-card--unavailable .product-card__media {
     opacity: 0.72;
+  }
+
+  @media (max-width: 35rem) {
+    .product-card__decision {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2);
+    }
+
+    .product-card__price {
+      justify-content: flex-start;
+      text-align: start;
+    }
   }
 
 {% endstylesheet %}

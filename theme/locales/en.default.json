@@ -110,9 +110,23 @@
   },
   "search": {
     "title": "Search",
+    "open": "Open search",
+    "close": "Close search",
+    "view_page": "View full search page",
+    "eyebrow": "Discover",
     "placeholder": "Search articles, pages, or products",
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
-    "results_for_html": "{{ count }} results found for {{ terms }}"
+    "results_for_html": "{{ count }} results found for {{ terms }}",
+    "predictive": {
+      "articles": "Articles",
+      "collections": "Collections",
+      "error": "Suggestions are unavailable. Submit the form to search.",
+      "loading": "Loading suggestions",
+      "no_results": "No suggestions found",
+      "pages": "Pages",
+      "products": "Products",
+      "updated": "Suggestions updated"
+    }
   }
 }

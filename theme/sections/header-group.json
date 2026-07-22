@@ -13,7 +13,9 @@
   "sections": {
     "announcement_bar": {
       "type": "announcement-bar",
-      "settings": {}
+      "settings": {
+        "search_behavior": "drawer"
+      }
     },
     "header": {
       "type": "header",
