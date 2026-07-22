@@ -1,0 +1,65 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+{% if predictive_search.performed %}
+  <div data-predictive-results-content>
+    {% assign result_count = predictive_search.resources.products.size
+      | plus: predictive_search.resources.collections.size
+      | plus: predictive_search.resources.pages.size
+      | plus: predictive_search.resources.articles.size
+    %}
+
+    {% if result_count == 0 %}
+      <p class="predictive-search__empty">{{ 'search.predictive.no_results' | t }}</p>
+    {% else %}
+      {% if predictive_search.resources.products.size > 0 %}
+        <section class="predictive-search__group" aria-labelledby="PredictiveProducts">
+          <h2 id="PredictiveProducts">{{ 'search.predictive.products' | t }}</h2>
+          <ul role="list">
+            {% for product in predictive_search.resources.products %}
+              <li>
+                <a class="predictive-search__product" href="{{ product.url }}">
+                  {% if product.featured_image %}
+                    {{ product.featured_image | image_url: width: 160 | image_tag: widths: '80, 120, 160', loading: 'lazy', alt: product.featured_image.alt }}
+                  {% endif %}
+                  <span>
+                    <strong>{{ product.title | escape }}</strong>
+                    {% render 'price', item: product %}
+                    {% unless product.available %}<small>{{ 'products.card.sold_out' | t }}</small>{% endunless %}
+                  </span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% assign text_groups = 'collections,pages,articles' | split: ',' %}
+      {% for group_name in text_groups %}
+        {% assign resources = predictive_search.resources[group_name] %}
+        {% if resources.size > 0 %}
+          <section class="predictive-search__group">
+            <h2>
+              {% case group_name %}
+                {% when 'collections' %}{{ 'search.predictive.collections' | t }}
+                {% when 'pages' %}{{ 'search.predictive.pages' | t }}
+                {% when 'articles' %}{{ 'search.predictive.articles' | t }}
+              {% endcase %}
+            </h2>
+            <ul role="list">
+              {% for resource in resources %}
+                <li><a href="{{ resource.url }}">{{ resource.title | escape }}</a></li>
+              {% endfor %}
+            </ul>
+          </section>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </div>
+{% endif %}
+{% # theme-check-enable ValidScopedCSSClass %}
+
+{% schema %}
+{
+  "name": "t:general.search",
+  "settings": []
+}
+{% endschema %}

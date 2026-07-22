@@ -1,28 +1,18 @@
-{% comment %}
-  This section is used in the search template to render search results for
-  products, articles, and pages.
+<script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/search
-{% endcomment %}
+<section class="search-page">
+  <header class="search-page__header">
+    <p>{{ 'search.eyebrow' | t }}</p>
+    <h1>{{ 'search.title' | t }}</h1>
+  </header>
 
-<h1>{{ 'search.title' | t }}</h1>
-
-<form action="{{ routes.search_url }}" method="get" role="search">
-  <input
-    type="search"
-    size="50"
-    name="q"
-    value="{{ search.terms | escape }}"
-    placeholder="{{ 'search.placeholder' | t }}"
-  >
-  <button type="submit">{{ 'search.submit' | t }}</button>
-</form>
+  {% render 'predictive-search-form', context_id: section.id, search_terms: search.terms %}
 
 {% if search.performed %}
   {% if search.results_count == 0 %}
-    <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
+    <div class="search-page__message"><p>{{ 'search.no_results_html' | t: terms: search.terms }}</p></div>
   {% else %}
-    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
+    <p class="search-page__count">{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
 
     <div class="search-results">
       {% paginate search.results by 20 %}
@@ -43,12 +33,8 @@
               {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
             {% endif %}
             <div class="search-result__content">
-              <p>
-                {{ result.title | link_to: result.url }}
-                {% if result.price %}
-                  {% render 'price', item: result, show_currency: true %}
-                {% endif %}
-              </p>
+              <p class="search-result__type">{{ result.object_type | escape }}</p>
+              <h2>{{ result.title | link_to: result.url }}</h2>
             </div>
             </article>
           {% endif %}
@@ -59,16 +45,79 @@
     </div>
   {% endif %}
 {% endif %}
+</section>
 
 {% stylesheet %}
+  .search-page {
+    padding-block: clamp(var(--space-8), 8vw, 7rem);
+  }
+
+  .search-page__header {
+    margin-block-end: var(--space-6);
+  }
+
+  .search-page__header p,
+  .search-page__count,
+  .search-result__type {
+    color: color-mix(in srgb, currentcolor 65%, transparent);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .search-page__header h1 {
+    font-size: clamp(3rem, 7vw, 6rem);
+  }
+
+  .search-page__message {
+    padding-block: var(--space-8);
+  }
+
+  .search-page__count {
+    margin-block: var(--space-8) var(--space-4);
+  }
+
   .search-results {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-6);
   }
+
+  .search-result {
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .search-result__image,
+  .search-result__image > img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .search-result__content h2 {
+    margin-block-start: var(--space-2);
+    font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+  }
+
   .search-results .prev,
   .search-results .page,
   .search-results .next {
     grid-column: 1 / -1;
+  }
+
+  @media (max-width: 47.99rem) {
+    .search-page {
+      padding-block: var(--space-8);
+    }
+
+    .search-results {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-6) var(--space-4);
+    }
+
   }
 {% endstylesheet %}
 

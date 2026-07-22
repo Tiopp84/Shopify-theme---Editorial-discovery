@@ -1,43 +1,45 @@
 class HeaderShell extends HTMLElement {
   connectedCallback() {
-    this.dialog = this.querySelector('dialog');
-    this.openButton = this.querySelector('[data-drawer-open]');
-    this.closeButton = this.querySelector('[data-drawer-close]');
-
-    if (!this.dialog || !this.openButton || !this.closeButton) return;
-
-    this.openButton.addEventListener('click', this.openDrawer);
-    this.closeButton.addEventListener('click', this.closeDrawer);
-    this.dialog.addEventListener('close', this.restoreFocus);
-    this.dialog.addEventListener('click', this.closeFromBackdrop);
+    if (this.initialized) return;
+    this.initialized = true;
+    this.onClick = this.onClick.bind(this);
+    this.onClose = this.onClose.bind(this);
+    this.addEventListener('click', this.onClick);
+    this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.addEventListener('close', this.onClose));
   }
 
   disconnectedCallback() {
-    if (!this.dialog || !this.openButton || !this.closeButton) return;
-
-    this.openButton.removeEventListener('click', this.openDrawer);
-    this.closeButton.removeEventListener('click', this.closeDrawer);
-    this.dialog.removeEventListener('close', this.restoreFocus);
-    this.dialog.removeEventListener('click', this.closeFromBackdrop);
+    this.removeEventListener('click', this.onClick);
+    this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.removeEventListener('close', this.onClose));
+    this.initialized = false;
   }
 
-  openDrawer = () => {
-    this.dialog.showModal();
-  };
+  onClick(event) {
+    const openButton = event.target.closest('[data-dialog-open]');
+    if (openButton) {
+      const dialog = this.querySelector(`[data-header-dialog="${CSS.escape(openButton.dataset.dialogOpen)}"]`);
+      if (!dialog) return;
+      this.activeOpener = openButton;
+      dialog.showModal();
+      if (openButton.dataset.dialogOpen === 'search') {
+        requestAnimationFrame(() => dialog.querySelector('input[type="search"]')?.focus());
+      }
+      return;
+    }
 
-  closeDrawer = () => {
-    this.dialog.close();
-  };
+    const closeButton = event.target.closest('[data-dialog-close]');
+    if (closeButton) {
+      closeButton.closest('dialog')?.close();
+      return;
+    }
 
-  restoreFocus = () => {
-    this.openButton.focus();
-  };
+    if (event.target.matches('dialog[open][data-header-dialog]')) event.target.close();
+  }
 
-  closeFromBackdrop = (event) => {
-    if (event.target === this.dialog) this.dialog.close();
-  };
+  onClose() {
+    this.activeOpener?.focus();
+    this.activeOpener = null;
+  }
 }
 
-if (!customElements.get('header-shell')) {
-  customElements.define('header-shell', HeaderShell);
-}
+if (!customElements.get('header-shell')) customElements.define('header-shell', HeaderShell);
