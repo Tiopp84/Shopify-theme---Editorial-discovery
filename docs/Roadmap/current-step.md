@@ -64,6 +64,8 @@ Triển khai Phase 5 Product detail: media gallery/modal/video/3D, variant sourc
 - [x] Phase 3 account decision: giữ direct Shopify account route; authenticated account/order/address coverage chuyển sang hardening test.
 - [x] Khóa Phase 3 global-shell contract và triển khai announcement, responsive header/navigation, native-dialog mobile drawer, search entry, footer Theme Blocks, newsletter và localization controls.
 - [x] Manual Theme Editor/keyboard/375/browser smoke test cho global shell trên Shopify preview origin được owner xác nhận PASS.
+- [x] Remediate Phase 3 desktop navigation typography regression: menu có type scale riêng, nowrap labels và responsive gap để không vỡ từng từ trong header grid.
+- [x] Remediate Phase 3 desktop submenu continuity: sửa invalid spacing token giữa brand/menu; single-open submenu, outside-click close và Escape/focus restoration với native-details fallback.
 - [x] Khóa Phase 4 discovery contract; triển khai shared product-card cho collection/search với stable ratio, price/sale/sold-out semantics, missing-media fallback và focus=hover parity.
 - [x] Product-card live edge-state review: sold-out, missing media và representative long title PASS ở desktop/375/320 theo owner evidence 2026-07-22.
 - [x] Product-card visual remediation implemented và owner/live edge-state review PASS: status trên media, metadata nhẹ, title/price decision row, sold-out/missing-media/long-title đúng ở desktop/375/320.

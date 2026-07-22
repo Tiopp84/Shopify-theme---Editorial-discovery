@@ -8,11 +8,11 @@ Status: **GLOBAL SHELL GATE PASS — 2026-07-20**
 - `header` owns logo, desktop navigation, mobile drawer, search/account/cart entry points, and sticky behavior.
 - `footer` owns layout, localization controls, payment presentation, and the Theme Block integration point.
 - `footer-menu` and `newsletter` are merchant-addable Theme Blocks with independent settings.
-- `header-shell.js` owns only native dialog open/close/backdrop/focus restoration behavior.
+- `header-shell.js` owns native dialog open/close/backdrop/focus restoration and desktop submenu single-open/click-outside/Escape behavior.
 
 ## Interaction contract
 
-- Desktop navigation remains usable without JavaScript; child menus use native `details`.
+- Desktop navigation remains usable without JavaScript; child menus use native `details`. Progressive enhancement limits the desktop header to one open submenu, closes it on outside click/Escape and restores summary focus after keyboard dismissal.
 - Mobile navigation uses native `dialog`: opening moves focus into the modal, Escape closes it, and closing restores focus to the menu trigger.
 - Header search behavior is merchant-selectable: `Search page` preserves direct navigation to `/search`, while `Search drawer` opens a shared predictive-search form and retains an explicit link to the full search page.
 - The search drawer uses one native-dialog contract with a right-side panel on desktop and a full-width, bottom-aligned sheet on mobile. It owns backdrop, Escape, initial input focus, opener-focus restoration, reduced-motion behavior, and overflow-safe responsive bounds.
