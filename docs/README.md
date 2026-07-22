@@ -9,6 +9,7 @@ docs/
 ├── Roadmap/         Phase, gates, project board và current step
 ├── Discovery/       Product brief, market research và naming
 ├── Specifications/  Scope và acceptance chi tiết của sản phẩm
+├── QA/              Test runbook, review record và verification evidence
 └── Governance/      Provenance, dependency, asset và license controls
 ```
 
@@ -28,5 +29,6 @@ docs/
 - `Roadmap/`: chỉ trả lời **đang ở phase nào, gate nào, khi nào được đi tiếp**.
 - `Discovery/`: bằng chứng và quyết định **xây sản phẩm gì, cho ai, khác biệt thế nào**.
 - `Specifications/`: trả lời **phải xây những capability nào và nghiệm thu ra sao**.
+- `QA/`: trả lời **đã kiểm tra bằng cách nào và kết quả thực tế là gì**.
 - `Governance/`: trả lời **nguồn code/asset đến từ đâu và được phép sử dụng thế nào**.
 - Tài liệu implementation/QA/design phát sinh sau này phải vào thư mục riêng tương ứng, không đưa trở lại `Roadmap/`.

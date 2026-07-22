@@ -14,8 +14,8 @@
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-07-21 (Asia/Bangkok) |
-| Phase | Phase 4 — Discovery |
+| Cập nhật lần cuối | 2026-07-22 (Asia/Bangkok) |
+| Phase | Phase 5 — Product detail |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
@@ -23,7 +23,7 @@
 
 ## Mục tiêu đang thực hiện
 
-Triển khai Phase 4 discovery: product/collection cards, featured modules, collection grid/banner, sort/filter/mobile drawer và search/predictive search.
+Triển khai Phase 5 Product detail: media gallery/modal/video/3D, variant source of truth, product form, merchant blocks, selling plans và recommendations.
 
 ## Đã hoàn thành
 
@@ -65,17 +65,25 @@ Triển khai Phase 4 discovery: product/collection cards, featured modules, coll
 - [x] Khóa Phase 3 global-shell contract và triển khai announcement, responsive header/navigation, native-dialog mobile drawer, search entry, footer Theme Blocks, newsletter và localization controls.
 - [x] Manual Theme Editor/keyboard/375/browser smoke test cho global shell trên Shopify preview origin được owner xác nhận PASS.
 - [x] Khóa Phase 4 discovery contract; triển khai shared product-card cho collection/search với stable ratio, price/sale/sold-out semantics, missing-media fallback và focus=hover parity.
-- [ ] Product-card live edge-state review: sold-out, missing media và representative long title trên development data.
-- [x] Product-card visual remediation implemented: status chuyển lên media, metadata nhẹ hơn, title/price thành decision row, bỏ divider đáy và duplicate availability copy; owner visual approval và live edge-state data vẫn pending.
+- [x] Product-card live edge-state review: sold-out, missing media và representative long title PASS ở desktop/375/320 theo owner evidence 2026-07-22.
+- [x] Product-card visual remediation implemented và owner/live edge-state review PASS: status trên media, metadata nhẹ, title/price decision row, sold-out/missing-media/long-title đúng ở desktop/375/320.
 - [x] Triển khai collection filter/sort GET contract, desktop facets, active remove/reset và native-dialog mobile facets; automated preview sort/filter state pass.
 - [x] Collection facets browser gate: true 320/375, Escape/backdrop/close focus restore, browser Back/Forward, no-results, price boundaries và post-AJAX layout pass 27/27 assertions.
 - [x] Remediate collection state composition: sort và checkbox filter desktop/mobile submit ngay; active filters cộng dồn; sort được giữ; empty price params bị loại; browser interaction test pass.
-- [ ] Owner review collection spacing remediation: compact hero/toolbar, fixed 15rem facet rail, shrink-safe price controls và wider product grid.
-- [ ] Owner review desktop filter layout setting: Sidebar/left Drawer, collapsed groups, full-width grid và responsive handoff sang mobile drawer.
+- [x] Owner review collection spacing remediation PASS: compact hero/toolbar, 15rem facet rail, shrink-safe price controls, wider product grid và mobile no-overflow.
+- [x] Owner review desktop filter layout setting PASS: Sidebar/left Drawer, collapsed groups, full-width grid, focus behavior và responsive handoff sang mobile drawer.
+- [x] Hoàn tất static audit và owner runbook cho Phase 4 edge review; không phát hiện regression có bằng chứng trong product-card/collection code hoặc ảnh review hiện có.
 - [x] Remediate drawer continuity: sau auto-filter drawer mở lại, giữ group đang mở và restore focus vào option vừa chọn; true 375 CSS px browser test pass.
 - [x] Refactor collection discovery sang một AJAX section-rendering controller: không document reload, GET fallback, URL/history, AbortController/stale guard, loading/error/live status, drawer/group/focus continuity và pagination interception; browser sort/filter/Back/rapid-change pass.
 - [x] Triển khai predictive search progressive enhancement: GET fallback, product/collection/page/article rendering contract, debounce, AbortController/stale guard, loading/error/live status, ArrowDown và Escape/focus; browser mobile/error regression pass.
 - [x] Thêm Header `Search behavior` setting: điều hướng `/search` hoặc mở search drawer; desktop dùng left drawer, mobile dùng bottom sheet, tái sử dụng predictive controller/form và luôn giữ link tới full search page. Browser gate pass cho focus restore, `sh` trả 4 products, 375 px không overflow và `/search` vẫn là dropdown.
+- [x] Remediate predictive-search missing-media live regression: product không có featured image vẫn render placeholder 4:5 trong media column, giữ alignment với các result khác.
+- [x] Clamp predictive-search product title còn hai dòng trên mobile drawer; dấu ellipsis giữ result list gọn trong viewport nhỏ mà không thay đổi accessible text/destination.
+- [x] Owner retest predictive missing-media, mobile title clamp và search-query casing PASS, 2026-07-22.
+- [x] Owner/live-data Article fixture PASS: predictive search render đúng nhóm Articles, destination hợp lệ và không overflow ở desktop/375, 2026-07-22.
+- [x] Đóng Phase 4 Discovery: filter → product flow, collection merchandising, product-card edge states, search/predictive search type coverage và error/empty/mobile gates đều đạt.
+- [x] Triển khai collection banner/media và story insertion trong product grid: nội dung story lấy theo từng collection qua `custom.collection_story` metaobject reference, không tạo product giả, không thay đổi Shopify product count/filter/pagination semantics; validator và Theme Check pass.
+- [x] Owner/live-data smoke pass collection story, 2026-07-22: entry metaobject riêng được gán và render đúng theo collection; collection không gán không hiển thị; filter/sort/pagination và product-count semantics không regression.
 
 - [x] Audit trực tiếp demo Tier 1 trên home/collection/product/cart/mobile navigation trước design gate.
 - [x] Hoàn tất structural live-demo notes cho Palo Alto/SoMa và Blum/Celia.
@@ -152,16 +160,17 @@ Triển khai Phase 4 discovery: product/collection cards, featured modules, coll
 | Owner remediation retest | `docs/Specifications/foundation-smoke-test.md` | PASS — page-width difference visible and console remediation confirmed, 2026-07-20; account popover functionality explicitly deferred to Phase 3 |
 | Phase 2 exit review | `docs/Roadmap/03-architecture-and-engineering.md`, `docs/Roadmap/05-build-roadmap.md` | PASS — validator 55 files/43 storefront keys/64 schema keys; Theme Check 42 files zero offenses; clean render and CI evidence complete, 2026-07-20 |
 | Phase 3 global shell slice | `docs/Specifications/global-shell-contract.md`, `theme/sections/announcement-bar.liquid`, `header.liquid`, `footer.liquid`, `theme/blocks/footer-menu.liquid`, `newsletter.liquid`, `theme/assets/header-shell.js` | PASS — validator 59 files/55 storefront keys/72 schema keys; Theme Check 45 files zero offenses; preview render and owner interaction smoke pass, 2026-07-20 |
-| Phase 4 product-card slice | `docs/Specifications/discovery-contract.md`, `theme/snippets/product-card.liquid`, `theme/sections/collection.liquid`, `search.liquid` | REMEDIATION IN REVIEW — editorial hierarchy updated and validator/Theme Check pass; owner visual approval plus live sold-out/missing-media/long-title data remain pending |
+| Phase 4 product-card slice | `docs/Specifications/discovery-contract.md`, `docs/QA/phase-4-owner-edge-review.md`, `theme/snippets/product-card.liquid`, `theme/sections/collection.liquid`, `search.liquid` | OWNER/LIVE-DATA PASS — sold-out semantics, linked missing-media fallback and long-title wrapping pass at desktop/375/320; collection spacing and Sidebar/Drawer behavior approved 2026-07-22 |
 | Phase 4 collection facets | `theme/snippets/facets.liquid`, `theme/assets/collection-facets.js`, `theme/sections/collection.liquid`, `docs/Specifications/collection-facets-review-1440.png` | BROWSER GATE PASS — 27/27 assertions at 1440/375/320 cover sort, cumulative filter continuity, Back/Forward, no-results, price bounds, drawer width, Escape/backdrop/close focus restore, no overflow and post-AJAX layout; Theme Check zero offenses |
-| Phase 4 search/predictive search | `theme/sections/search.liquid`, `predictive-search.liquid`, `theme/assets/predictive-search.js`, `docs/Specifications/discovery-contract.md` | BROWSER SLICE PASS — endpoint/search fallback HTTP 200; rapid typing, product suggestions, 375 no-overflow, ArrowDown, Escape/focus and blocked-network error announcement pass; live Products/Collections/Pages observed, Article fixture pending |
+| Phase 4 search/predictive search | `theme/sections/search.liquid`, `predictive-search.liquid`, `theme/assets/predictive-search.js`, `docs/Specifications/discovery-contract.md` | OWNER/BROWSER PASS — endpoint/search fallback HTTP 200; rapid typing, missing-media placeholder, mobile title clamp, query casing, 375 no-overflow, ArrowDown, Escape/focus and blocked-network error announcement pass; live Products/Collections/Pages/Articles all observed |
+| Phase 4 collection banner/story insertion | `theme/sections/collection.liquid`, `theme/locales/en.default.schema.json` | OWNER/LIVE-DATA PASS — current collection's `custom.collection_story` metaobject reference renders independently; unassigned collections omit the insert; filter/sort/pagination and product-count semantics remain intact; validator 65 files/88 storefront keys/90 schema keys; Theme Check 49 files zero offenses; owner confirmation 2026-07-22 |
+| Phase 4 exit review | `docs/Specifications/discovery-contract.md`, `docs/QA/phase-4-owner-edge-review.md`, `docs/Roadmap/05-build-roadmap.md` | PASS — discovery gate closed with complete product/collection/page/article search coverage, filter → product flow, error/empty states and owner mobile evidence; validator 65 files/89 storefront keys/90 schema keys; Theme Check 49 files zero offenses; 2026-07-22 |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Khóa Phase 4 component/data contract cho product card, collection grid/banner, sort/filter và search/predictive search.
-2. Triển khai product/collection card primitives với real, unavailable, missing-media và long-copy states trước khi nối filter/search interactions.
-3. Chạy filter → product flow và empty/error/mobile drawer gate; tiếp tục validator, Theme Check và Theme Editor lifecycle cho từng lát dọc.
-4. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
+1. Khóa Phase 5 PDP contract và product data matrix cho image/video/external video/3D, single/multi/unavailable variants, selling plans, quantity rules/pricing và missing optional data.
+2. Triển khai vertical slice đầu tiên: media gallery + variant source of truth, giữ product form GET/POST fallback và không stale URL/media/price/availability state.
+3. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
 
 ## Nhật ký phiên làm việc
 

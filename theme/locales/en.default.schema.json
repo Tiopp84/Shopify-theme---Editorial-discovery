@@ -48,9 +48,11 @@
     "heading": "Heading",
     "grid_gap": "Grid spacing",
     "grid_item_width": "Grid item width",
+    "image": "Image",
     "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
     "link": "Link",
+    "link_label": "Link label",
     "logo": "Logo",
     "logo_width": "Logo width",
     "menu": "Menu",
@@ -62,11 +64,14 @@
     "products_per_page": "Products per page",
     "search_behavior": "Search behavior",
     "show_payment_icons": "Show payment icons",
+    "show_collection_image": "Show collection image",
+    "show_collection_story": "Show collection story",
     "show_vendor": "Show vendor",
     "sticky_header": "Sticky header",
     "text_style": "Text style",
     "text": "Text",
-    "type_scale": "Type scale"
+    "type_scale": "Type scale",
+    "collection_story_position": "Story position"
   },
   "options": {
     "search_behavior": {
