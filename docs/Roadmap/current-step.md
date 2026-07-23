@@ -53,6 +53,7 @@ Triển khai Phase 5 Product detail: media gallery/modal/video/3D, variant sourc
 
 ## Đang thực hiện
 
+- [x] Khóa PDP contract và product data matrix cho media image/video/external video/3D, variant single/multi/unavailable, selling plans, quantity/pricing và optional data; triển khai vertical slice gallery + variant source of truth với native product-form fallback. Static gate pass: JavaScript syntax, validator, Theme Check và `git diff --check`, 2026-07-23. Live-data/browser/Theme Editor gate vẫn pending.
 - [x] Hoàn thành prototype implementation checkpoint: desktop/mobile responsive, filters/history, variant-safe product decision, cart states và accessible bottom sheets.
 - [x] Hoàn thành internal comparison chứng minh khác biệt ở cấp hệ thống so với Dawn/competitor patterns; không dùng palette/font làm bằng chứng.
 - [x] Owner duyệt hướng prototype để đóng M1 và chuyển phase; visual/mobile polish tiếp tục tại component reviews.
