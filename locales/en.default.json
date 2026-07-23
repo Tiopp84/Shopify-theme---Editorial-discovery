@@ -93,6 +93,16 @@
     "previous": "Previous"
   },
   "products": {
+    "gallery": {
+      "close": "Close media viewer",
+      "media_unavailable": "Product image unavailable",
+      "media_selection": "Product media",
+      "next": "Next media",
+      "previous": "Previous media",
+      "select_media": "View product media {{ index }}",
+      "zoom_media": "Expand product media {{ index }}",
+      "zoomed_media": "Expanded product media"
+    },
     "card": {
       "sale": "Sale",
       "sold_out": "Sold out",
@@ -101,7 +111,17 @@
     },
     "form": {
       "add_to_cart": "Add to cart",
+      "available": "Available",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity",
+      "in_stock": "{{ count }} in stock",
+      "all_stock_in_cart": "All available stock is already in your cart.",
+      "sold_out": "Sold out",
+      "unavailable_combination": "This combination is unavailable.",
       "quantity": "Quantity",
+      "quantity_pricing_available": "Volume pricing is available for this variant.",
+      "sku": "SKU",
+      "size_guide": "Size guide",
       "variant": "Choose an option"
     },
     "price": {
