@@ -38,6 +38,7 @@
     "success": "Thanks for subscribing."
   },
   "navigation": {
+    "back": "Back",
     "menu": "Explore",
     "view_all": "View all {{ title }}"
   },

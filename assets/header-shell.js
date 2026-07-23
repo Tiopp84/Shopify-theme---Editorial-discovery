@@ -6,10 +6,24 @@ class HeaderShell extends HTMLElement {
     this.onClose = this.onClose.bind(this);
     this.onDocumentClick = this.onDocumentClick.bind(this);
     this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
+    this.onNavGroupPointerEnter = this.onNavGroupPointerEnter.bind(this);
+    this.onNavGroupPointerLeave = this.onNavGroupPointerLeave.bind(this);
+    this.hoverCloseTimer = null;
     this.addEventListener('click', this.onClick);
     document.addEventListener('click', this.onDocumentClick);
     document.addEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.addEventListener('close', this.onClose));
+    this.navGroups = [...this.querySelectorAll('.header-shell__nav-group')];
+    this.mobileMenu = this.querySelector('[data-mobile-menu]');
+    this.mobileMenu?.setAttribute('data-mobile-menu-enhanced', '');
+    this.mobileMenu?.querySelectorAll('[data-mobile-menu-open]').forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
+
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      this.navGroups.forEach((group) => {
+        group.addEventListener('pointerenter', this.onNavGroupPointerEnter);
+        group.addEventListener('pointerleave', this.onNavGroupPointerLeave);
+      });
+    }
   }
 
   disconnectedCallback() {
@@ -17,7 +31,28 @@ class HeaderShell extends HTMLElement {
     document.removeEventListener('click', this.onDocumentClick);
     document.removeEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.removeEventListener('close', this.onClose));
+    this.navGroups?.forEach((group) => {
+      group.removeEventListener('pointerenter', this.onNavGroupPointerEnter);
+      group.removeEventListener('pointerleave', this.onNavGroupPointerLeave);
+    });
+    window.clearTimeout(this.hoverCloseTimer);
     this.initialized = false;
+  }
+
+  onNavGroupPointerEnter(event) {
+    window.clearTimeout(this.hoverCloseTimer);
+    const activeGroup = event.currentTarget;
+    this.navGroups.forEach((group) => {
+      if (group !== activeGroup) group.removeAttribute('open');
+    });
+    activeGroup.setAttribute('open', '');
+  }
+
+  onNavGroupPointerLeave(event) {
+    const activeGroup = event.currentTarget;
+    this.hoverCloseTimer = window.setTimeout(() => {
+      if (!activeGroup.matches(':hover')) activeGroup.removeAttribute('open');
+    }, 180);
   }
 
   onDocumentClick(event) {
@@ -37,7 +72,47 @@ class HeaderShell extends HTMLElement {
     focusedGroup?.querySelector('summary')?.focus();
   }
 
+  openMobileSubmenu(trigger) {
+    const panelId = trigger.dataset.mobileMenuOpen;
+    const panel = this.querySelector(`#${CSS.escape(panelId)}`);
+    const rootPanel = this.mobileMenu?.querySelector('[data-mobile-menu-root]');
+    if (!panel || !rootPanel) return;
+
+    this.resetMobileSubmenu();
+    rootPanel.hidden = true;
+    panel.hidden = false;
+    this.mobileMenu.dataset.activeSubmenu = panelId;
+    trigger.setAttribute('aria-expanded', 'true');
+    panel.querySelector('[data-mobile-menu-back]')?.focus();
+  }
+
+  resetMobileSubmenu({ restoreFocus = false } = {}) {
+    const activePanelId = this.mobileMenu?.dataset.activeSubmenu;
+    if (!activePanelId) return;
+
+    const activePanel = this.querySelector(`#${CSS.escape(activePanelId)}`);
+    const activeTrigger = this.mobileMenu.querySelector(`[data-mobile-menu-open="${CSS.escape(activePanelId)}"]`);
+    activePanel?.setAttribute('hidden', '');
+    this.mobileMenu.querySelector('[data-mobile-menu-root]')?.removeAttribute('hidden');
+    delete this.mobileMenu.dataset.activeSubmenu;
+    activeTrigger?.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) activeTrigger?.focus();
+  }
+
   onClick(event) {
+    const mobileMenuTrigger = event.target.closest('[data-mobile-menu-open]');
+    if (mobileMenuTrigger) {
+      event.preventDefault();
+      this.openMobileSubmenu(mobileMenuTrigger);
+      return;
+    }
+
+    const mobileMenuBack = event.target.closest('[data-mobile-menu-back]');
+    if (mobileMenuBack) {
+      this.resetMobileSubmenu({ restoreFocus: true });
+      return;
+    }
+
     const openButton = event.target.closest('[data-dialog-open]');
     if (openButton) {
       const dialog = this.querySelector(`[data-header-dialog="${CSS.escape(openButton.dataset.dialogOpen)}"]`);
@@ -59,7 +134,8 @@ class HeaderShell extends HTMLElement {
     if (event.target.matches('dialog[open][data-header-dialog]')) event.target.close();
   }
 
-  onClose() {
+  onClose(event) {
+    if (event.currentTarget?.dataset.headerDialog === 'menu') this.resetMobileSubmenu();
     this.activeOpener?.focus();
     this.activeOpener = null;
   }
