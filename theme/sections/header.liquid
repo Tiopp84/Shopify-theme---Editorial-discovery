@@ -167,6 +167,16 @@
     display: block;
     border-block-end: 1px solid var(--color-border);
     background: var(--color-background);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    will-change: transform;
+  }
+
+  .header-shell--scrolled {
+    background: color-mix(in srgb, var(--color-background) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+    border-block-end-color: color-mix(in srgb, var(--color-border) 40%, transparent);
   }
 
   .shopify-section:has(> .header-shell--sticky) {
