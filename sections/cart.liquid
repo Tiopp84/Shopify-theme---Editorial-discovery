@@ -1,37 +1,93 @@
-{% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
+{% liquid
+  assign show_note = section.settings.show_note
+%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
-{% endcomment %}
+<section class="main-cart" data-cart-page>
+  <header class="main-cart__header">
+    <p class="main-cart__eyebrow">{{ 'cart.eyebrow' | t }}</p>
+    <h1>{{ 'cart.title' | t }}</h1>
+  </header>
 
-<h1>{{ 'cart.title' | t }}</h1>
+  {% if cart.item_count == 0 %}
+    <div class="main-cart__empty">
+      <h2>{{ 'cart.empty_title' | t }}</h2>
+      <p>{{ 'cart.empty_text' | t }}</p>
+      <a class="button" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue_shopping' | t }}</a>
+    </div>
+  {% else %}
+    {% form 'cart', cart, class: 'main-cart__form' %}
+      <div class="main-cart__lines">
+        {% for item in cart.items %}
+          <article class="main-cart__line">
+            <a class="main-cart__image" href="{{ item.url }}" aria-label="{{ item.product.title | escape }}">
+              {% render 'image', image: item.image, alt: item.product.title, width: 240, sizes: '160px' %}
+            </a>
+            <div class="main-cart__line-details">
+              <a href="{{ item.url }}">{{ item.product.title | escape }}</a>
+              {% unless item.product.has_only_default_variant %}<p>{{ item.variant.title | escape }}</p>{% endunless %}
+              {% if item.selling_plan_allocation %}<p>{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>{% endif %}
+              {% for property in item.properties %}{% unless property.last == blank %}<p>{{ property.first | escape }}: {{ property.last | escape }}</p>{% endunless %}{% endfor %}
+              {% if item.line_level_discount_allocations.size > 0 %}
+                <ul class="main-cart__discounts" role="list">
+                  {% for discount in item.line_level_discount_allocations %}<li>{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</li>{% endfor %}
+                </ul>
+              {% endif %}
+              <div class="main-cart__quantity">
+                <label for="CartQuantity-{{ item.index }}">{{ 'cart.quantity' | t }}</label>
+                <input id="CartQuantity-{{ item.index }}" type="number" name="updates[]" value="{{ item.quantity }}" min="0" step="1" inputmode="numeric">
+              </div>
+              <a href="{{ item.url_to_remove }}">{{ 'cart.remove' | t }}</a>
+            </div>
+            <div class="main-cart__line-price">
+              {% if item.original_line_price > item.final_line_price %}<s>{{ item.original_line_price | money }}</s>{% endif %}
+              <strong>{{ item.final_line_price | money }}</strong>
+              {% if item.unit_price_measurement %}<small>{{ item.unit_price | money }} / {{ item.unit_price_measurement.reference_unit }}</small>{% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      <aside class="main-cart__summary">
+        {% if show_note %}
+          <label for="CartNote-{{ section.id }}">{{ 'cart.note' | t }}</label>
+          <textarea id="CartNote-{{ section.id }}" name="note">{{ cart.note }}</textarea>
+        {% endif %}
+        {% if cart.cart_level_discount_applications.size > 0 %}
+          <ul class="main-cart__discounts" role="list">{% for discount in cart.cart_level_discount_applications %}<li>{{ discount.title | escape }} (−{{ discount.total_allocated_amount | money }})</li>{% endfor %}</ul>
+        {% endif %}
+        <p class="main-cart__subtotal"><span>{{ 'cart.subtotal' | t }}</span><strong>{{ cart.total_price | money_with_currency }}</strong></p>
+        <p>{{ 'cart.taxes_and_shipping_at_checkout' | t }}</p>
+        <button type="submit" name="update">{{ 'cart.update' | t }}</button>
+        <button type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
+        {{ content_for_additional_checkout_buttons }}
+      </aside>
+    {% endform %}
+  {% endif %}
+</section>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
-
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+{% stylesheet %}
+  .main-cart { display: grid; gap: var(--space-8); padding-block: var(--space-8); }
+  .main-cart__eyebrow { color: var(--color-accent); font-size: .8em; letter-spacing: .12em; text-transform: uppercase; }
+  .main-cart__header { display: grid; gap: var(--space-2); }
+  .main-cart__form { display: grid; gap: var(--space-8); }
+  .main-cart__lines { display: grid; border-block: 1px solid var(--color-border); }
+  .main-cart__line { display: grid; grid-template-columns: minmax(5rem, 9rem) minmax(0, 1fr) auto; gap: var(--space-4); align-items: start; padding-block: var(--space-5); border-block-end: 1px solid var(--color-border); }
+  .main-cart__line:last-child { border-block-end: 0; }
+  .main-cart__image { background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); }
+  .main-cart__image img { aspect-ratio: 4 / 5; inline-size: 100%; object-fit: cover; }
+  .main-cart__line-details, .main-cart__line-price, .main-cart__summary, .main-cart__empty { display: grid; gap: var(--space-3); }
+  .main-cart__line-price { justify-items: end; text-align: end; }
+  .main-cart__quantity { display: grid; gap: var(--space-1); max-inline-size: 6rem; }
+  .main-cart__discounts { display: grid; gap: var(--space-1); padding: 0; color: var(--color-accent); font-size: .9em; list-style: none; }
+  .main-cart__summary { padding: var(--space-5); border: 1px solid var(--color-border); align-self: start; }
+  .main-cart__subtotal { display: flex; justify-content: space-between; gap: var(--space-4); font-size: 1.2em; }
+  .main-cart__empty { max-inline-size: 36rem; padding-block: var(--space-8); }
+  @media (min-width: 750px) { .main-cart__form { grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem); } }
+  @media (max-width: 520px) { .main-cart__line { grid-template-columns: 5rem minmax(0, 1fr); } .main-cart__line-price { grid-column: 2; justify-items: start; text-align: start; } }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.cart",
-  "settings": []
+  "settings": [{ "type": "checkbox", "id": "show_note", "label": "t:general.cart_show_note", "default": true }]
 }
 {% endschema %}
