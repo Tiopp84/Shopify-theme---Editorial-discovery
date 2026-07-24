@@ -1,0 +1,22 @@
+{% doc %}
+  Renders the current product description as a merchant-managed PDP block.
+{% enddoc %}
+
+{% if product.description != blank %}
+  <div class="product-description" {{ block.shopify_attributes }}>
+    {{ product.description }}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-description { line-height: 1.6; }
+  .product-description > :first-child { margin-top: 0; }
+  .product-description > :last-child { margin-bottom: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.product_description",
+  "presets": [{ "name": "t:general.product_description" }]
+}
+{% endschema %}

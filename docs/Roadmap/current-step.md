@@ -14,8 +14,8 @@
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-07-22 (Asia/Bangkok) |
-| Phase | Phase 5 — Product detail |
+| Cập nhật lần cuối | 2026-07-24 (Asia/Bangkok) |
+| Phase | Phase 6 — Cart |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
@@ -23,7 +23,7 @@
 
 ## Mục tiêu đang thực hiện
 
-Triển khai Phase 5 Product detail: media gallery/modal/video/3D, variant source of truth, product form, merchant blocks, selling plans và recommendations.
+Triển khai Phase 6 Cart: cart page/drawer, quantity/remove/note/discount, empty/loading/error/live region, checkout buttons và focus behavior.
 
 ## Đã hoàn thành
 
@@ -53,7 +53,16 @@ Triển khai Phase 5 Product detail: media gallery/modal/video/3D, variant sourc
 
 ## Đang thực hiện
 
-- [x] Khóa PDP contract và product data matrix cho media image/video/external video/3D, variant single/multi/unavailable, selling plans, quantity/pricing và optional data; triển khai vertical slice gallery + variant source of truth với native product-form fallback. Static gate pass: JavaScript syntax, validator, Theme Check và `git diff --check`, 2026-07-23. Live-data/browser/Theme Editor gate vẫn pending.
+- [x] Khóa PDP contract và product data matrix cho media image/video/external video/3D, variant single/multi/unavailable, selling plans, quantity/pricing và optional data; triển khai vertical slice gallery + variant source of truth với native product-form fallback. Static gate pass: JavaScript syntax, validator, Theme Check và `git diff --check`, 2026-07-23.
+- [x] Owner live PDP checkpoint PASS (tạm thời), 2026-07-24: sale/price, inventory, color/size unavailable, quantity và missing-media placeholder đều render đúng; form mua vẫn usable khi thiếu media. Đây là evidence partial, chưa đóng full PDP browser/Theme Editor gate.
+- [x] Tách product-detail merchant UX thành Theme Blocks nhưng giữ nguyên hierarchy/style mặc định: vendor, title, price, SKU, availability, product form (variant/quantity/buy/size guide) và description đều là default blocks theo đúng thứ tự UI cũ; collapsible content là block merchant-addable, không được thêm mặc định. Selling-plan select chỉ render khi Shopify có selling-plan groups; video/external video không autoplay. Static gate pass: validator, Theme Check (57 files, zero offenses) và `git diff --check`, 2026-07-24. Live selling-plan/block/Theme Editor verification vẫn pending.
+- [x] Khóa block-targeting policy: Product và Footer dùng schema allowlist explicit, không dùng generic `@theme`; Product giữ `@app` làm integration point. `@theme` chỉ còn ở Custom section và generic Group vì đó là builder có chủ đích. Private underscore targeting bị hoãn vì Shopify editor active từ chối private type trong JSON template; static gate pass: validator, Theme Check (57 files, zero offenses) và `git diff --check`, 2026-07-24.
+- [x] Thêm Product section settings có giới hạn và default giữ nguyên giao diện: media ratio portrait, thumbnails bật khi có nhiều media, vendor/SKU/availability/quantity bật. Không thêm sticky details vì current single-media layout thường có product information cao hơn gallery, nên setting không tạo giá trị rõ và tăng support burden. Visibility settings do Product section sở hữu qua class CSS để Theme Blocks luôn render đầy đủ node cần cho form/controller; tắt SKU/inventory/quantity không làm hỏng variant form. Static gate pass: JavaScript syntax, validator, Theme Check (57 files, zero offenses) và `git diff --check`, 2026-07-24. Theme Editor/live verification vẫn pending.
+- [x] Triển khai Product recommendations/complementary thành Product-template section full-width, không đặt trong cột product details: Shopify Product Recommendations endpoint là source of truth; merchant chọn related/complementary intent, heading và giới hạn 2–8 items. Section chỉ enabled trên product template và có preset nên xuất hiện trong Add section; progressive-enhance từ safe no-JS omission, có loading/error live status, AbortController, stale-request guard và cleanup khi Theme Editor thay section. Static gate pass: JavaScript syntax, validator (76 files, 113 storefront keys, 109 schema keys), Theme Check (58 files, zero offenses) và `git diff --check`, 2026-07-24. Live data, empty/error và Theme Editor lifecycle verification vẫn pending.
+- [x] Owner live test Product recommendations PASS, 2026-07-24: section full-width, related/complementary configuration và Theme Editor use case hoạt động đúng. Tạo runbook [`../QA/phase-5-pdp-owner-review.md`](../QA/phase-5-pdp-owner-review.md) cho full PDP gate; empty/error-path evidence vẫn được bao phủ trong gate này.
+- [x] Sửa no-JS product-form fallback cho multi-variant product: native Variant selector chỉ xuất hiện khi JavaScript tắt, POST đúng `id` và disable variant sold-out; JavaScript vẫn dùng hidden `id` riêng để không tạo duplicate form field. Video/external video/3D chưa có live fixture nên ghi NOT EVIDENCED, không suy diễn PASS. Static gate pass: JavaScript syntax, validator (76 files, 113 storefront keys, 109 schema keys), Theme Check (58 files, zero offenses) và `git diff --check`, 2026-07-24. Live recheck pending.
+- [x] Owner no-JS PDP recheck tạm chấp nhận, 2026-07-24: native Variant selector không cho chọn sold-out và direct sold-out purchase path được chặn. Tiếp tục gate với image gallery/modal, keyboard, responsive và Theme Editor; video/external video/3D vẫn NOT EVIDENCED do chưa có fixture.
+- [x] Owner full PDP gate PASS, 2026-07-24: variant, sold-out/no-JS fallback, no-media, image gallery/modal, recommendations, keyboard, responsive và Theme Editor lifecycle đều đạt với fixture hiện có. Selling plans là N/A vì store không có selling-plan groups; video/external video/3D là NOT EVIDENCED vì catalogue chưa có fixture. Đóng Phase 5 theo phạm vi fixture hiện có; các data type chưa evidence phải được retest khi merchant thêm dữ liệu.
 - [x] Hoàn thành prototype implementation checkpoint: desktop/mobile responsive, filters/history, variant-safe product decision, cart states và accessible bottom sheets.
 - [x] Hoàn thành internal comparison chứng minh khác biệt ở cấp hệ thống so với Dawn/competitor patterns; không dùng palette/font làm bằng chứng.
 - [x] Owner duyệt hướng prototype để đóng M1 và chuyển phase; visual/mobile polish tiếp tục tại component reviews.
@@ -168,12 +177,17 @@ Triển khai Phase 5 Product detail: media gallery/modal/video/3D, variant sourc
 | Phase 4 search/predictive search | `theme/sections/search.liquid`, `predictive-search.liquid`, `theme/assets/predictive-search.js`, `docs/Specifications/discovery-contract.md` | OWNER/BROWSER PASS — endpoint/search fallback HTTP 200; rapid typing, missing-media placeholder, mobile title clamp, query casing, 375 no-overflow, ArrowDown, Escape/focus and blocked-network error announcement pass; live Products/Collections/Pages/Articles all observed |
 | Phase 4 collection banner/story insertion | `theme/sections/collection.liquid`, `theme/locales/en.default.schema.json` | OWNER/LIVE-DATA PASS — current collection's `custom.collection_story` metaobject reference renders independently; unassigned collections omit the insert; filter/sort/pagination and product-count semantics remain intact; validator 65 files/88 storefront keys/90 schema keys; Theme Check 49 files zero offenses; owner confirmation 2026-07-22 |
 | Phase 4 exit review | `docs/Specifications/discovery-contract.md`, `docs/QA/phase-4-owner-edge-review.md`, `docs/Roadmap/05-build-roadmap.md` | PASS — discovery gate closed with complete product/collection/page/article search coverage, filter → product flow, error/empty states and owner mobile evidence; validator 65 files/89 storefront keys/90 schema keys; Theme Check 49 files zero offenses; 2026-07-22 |
+| Phase 5 live PDP checkpoint | Owner screenshots, 2026-07-24 | PARTIAL PASS — sale/price, inventory, unavailable size, quantity and missing-media placeholder observed; media-type matrix, URL/no-JS, gallery modal, selling plans, lifecycle and full browser gate remain open |
+| Phase 5 merchant UX slice | `theme/sections/product.liquid`, `theme/blocks/product-*.liquid`, `theme/templates/product.json` | STATIC PASS — vendor/title/price/SKU/availability/form/description are default Theme Blocks in the legacy UI order; collapsible content remains optional; native selling-plan fallback added; validator 74 files/111 storefront keys/99 schema keys; Theme Check 57 files zero offenses; live verification pending, 2026-07-24 |
+| Phase 5 recommendations slice | `theme/sections/product-recommendations.liquid`, `theme/assets/product-recommendations.js`, `theme/templates/product.json` | OWNER/LIVE PASS — full-width product-template section, related/complementary intent, merchant heading/limit and Add section preset working; static validation 76 files/113 storefront keys/109 schema keys; Theme Check 58 files zero offenses; empty/error-path retained for PDP browser gate, 2026-07-24 |
+| Phase 5 PDP exit | `docs/QA/phase-5-pdp-owner-review.md`, owner live testing, 2026-07-24 | PASS FOR AVAILABLE FIXTURES — variant/no-JS, no-media, image modal, recommendations, keyboard, responsive and Theme Editor lifecycle pass. Selling plans N/A; video/external video/3D NOT EVIDENCED and must be retested when data exists. |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Khóa Phase 5 PDP contract và product data matrix cho image/video/external video/3D, single/multi/unavailable variants, selling plans, quantity rules/pricing và missing optional data.
-2. Triển khai vertical slice đầu tiên: media gallery + variant source of truth, giữ product form GET/POST fallback và không stale URL/media/price/availability state.
-3. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
+1. Khóa Cart contract/data matrix trước khi triển khai: cart page/drawer ownership, GET/POST fallback, quantity/remove/note/discount, cart error/loading/live-region, checkout handoff, focus/URL/async/lifecycle và Shopify cart source of truth.
+2. Triển khai Cart vertical slice và chạy product → cart → checkout smoke test.
+3. Khi merchant thêm selling plan, Shopify-hosted/external video hoặc 3D model, chạy lại rows NOT EVIDENCED của PDP runbook.
+4. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
 
 ## Nhật ký phiên làm việc
 

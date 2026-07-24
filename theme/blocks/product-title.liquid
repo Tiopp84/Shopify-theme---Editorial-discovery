@@ -1,0 +1,8 @@
+<h1 {{ block.shopify_attributes }}>{{ product.title | escape }}</h1>
+
+{% schema %}
+{
+  "name": "t:general.product_title",
+  "presets": [{ "name": "t:general.product_title" }]
+}
+{% endschema %}

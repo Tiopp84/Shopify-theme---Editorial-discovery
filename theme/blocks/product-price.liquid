@@ -1,0 +1,13 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+{% assign current_variant = product.selected_or_first_available_variant %}
+<div class="main-product__price" data-product-price aria-live="polite" {{ block.shopify_attributes }}>
+  {% render 'price', item: current_variant %}
+</div>
+
+{% schema %}
+{
+  "name": "t:general.product_price",
+  "presets": [{ "name": "t:general.product_price" }]
+}
+{% endschema %}
+{% # theme-check-enable ValidScopedCSSClass %}

@@ -1,0 +1,12 @@
+{
+  "name": "shopify-theme-editorial-discovery",
+  "version": "1.0.0",
+  "description": "Shopify Theme - Editorial Discovery with GSAP animations and Git Subtree deployment scripts",
+  "private": true,
+  "scripts": {
+    "theme:dev": "shopify theme dev --path theme",
+    "theme:push": "git subtree push --prefix theme origin deploy-theme",
+    "theme:pull": "git subtree pull --prefix theme origin deploy-theme --squash",
+    "theme:check": "shopify theme check theme"
+  }
+}
