@@ -22,6 +22,7 @@ docs/
 - MVP scope: [`Specifications/mvp-feature-matrix.md`](Specifications/mvp-feature-matrix.md)
 - Design principles and prototype gate: [`Specifications/design-principles-and-prototype-criteria.md`](Specifications/design-principles-and-prototype-criteria.md)
 - Interaction architecture standard: [`Specifications/interaction-architecture-standard.md`](Specifications/interaction-architecture-standard.md)
+- Motion architecture: [`Specifications/motion-architecture.md`](Specifications/motion-architecture.md)
 - Source/license policy: [`Governance/source-provenance-and-licenses.md`](Governance/source-provenance-and-licenses.md)
 
 ## Quy tắc phân loại

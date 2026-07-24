@@ -54,6 +54,7 @@ templates/  JSON composition
 - Cleanup listeners/observers; resilient với Theme Editor lifecycle.
 - Product form, cart và media có một source of truth.
 - Flow nhiều bước/async bắt buộc tuân theo [`../Specifications/interaction-architecture-standard.md`](../Specifications/interaction-architecture-standard.md): thiết kế state và render boundary trước UI, giữ URL/fallback, chống race condition và kiểm tra sau DOM replacement.
+- Motion tuân theo [`../Specifications/motion-architecture.md`](../Specifications/motion-architecture.md): CSS/Web APIs cho UI state; GSAP cục bộ, self-hosted chỉ cho editorial timeline; ScrollTrigger không là runtime toàn site.
 
 ## Schema, assets và automation
 

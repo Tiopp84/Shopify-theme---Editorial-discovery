@@ -52,6 +52,8 @@ Dependency chỉ được thêm khi:
 
 Không thêm framework frontend, slider/modal library hoặc icon font theo mặc định. Ưu tiên web platform APIs, custom elements nhỏ, inline SVG nguyên bản và CSS native.
 
+GSAP Core (và ScrollTrigger khi cần) có thể được phê duyệt như motion runtime ngoại lệ theo `Specifications/motion-architecture.md`; không phải là dependency mặc định. Mỗi lần đưa vào production phải self-host bản pin version, ghi source/license/notice, bundle impact và removal path vào evidence register. CDN không được dùng làm production runtime.
+
 ## 5. Asset policy
 
 - Demo imagery không nằm trong submission ZIP trừ khi có quyền redistribution rõ.
