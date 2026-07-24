@@ -8,7 +8,12 @@ class HeaderShell extends HTMLElement {
     this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
     this.onNavGroupPointerEnter = this.onNavGroupPointerEnter.bind(this);
     this.onNavGroupPointerLeave = this.onNavGroupPointerLeave.bind(this);
+    this.onScroll = this.onScroll.bind(this);
+    this.onMotionPreferenceChange = this.onMotionPreferenceChange.bind(this);
     this.hoverCloseTimer = null;
+    this.scrollFrame = null;
+    this.lastScrollY = window.scrollY;
+    this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.addEventListener('click', this.onClick);
     document.addEventListener('click', this.onDocumentClick);
     document.addEventListener('keydown', this.onDocumentKeydown);
@@ -18,12 +23,13 @@ class HeaderShell extends HTMLElement {
     this.mobileMenu?.setAttribute('data-mobile-menu-enhanced', '');
     this.mobileMenu?.querySelectorAll('[data-mobile-menu-open]').forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
 
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      this.navGroups.forEach((group) => {
-        group.addEventListener('pointerenter', this.onNavGroupPointerEnter);
-        group.addEventListener('pointerleave', this.onNavGroupPointerLeave);
-      });
-    }
+    this.navGroups.forEach((group) => {
+      group.addEventListener('pointerenter', this.onNavGroupPointerEnter);
+      group.addEventListener('pointerleave', this.onNavGroupPointerLeave);
+    });
+
+    this.reducedMotionQuery.addEventListener('change', this.onMotionPreferenceChange);
+    this.startMotion();
   }
 
   disconnectedCallback() {
@@ -36,10 +42,56 @@ class HeaderShell extends HTMLElement {
       group.removeEventListener('pointerleave', this.onNavGroupPointerLeave);
     });
     window.clearTimeout(this.hoverCloseTimer);
+    window.removeEventListener('scroll', this.onScroll);
+    this.reducedMotionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
+    if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
+    this.scrollFrame = null;
+    this.classList.remove('header-shell--hidden');
     this.initialized = false;
   }
 
+  startMotion() {
+    this.classList.toggle('header-shell--scrolled', window.scrollY > 40);
+    if (this.reducedMotionQuery.matches) return;
+
+    if (this.classList.contains('header-shell--sticky')) {
+      window.addEventListener('scroll', this.onScroll, { passive: true });
+    }
+  }
+
+  onMotionPreferenceChange() {
+    window.removeEventListener('scroll', this.onScroll);
+    if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
+    this.scrollFrame = null;
+    this.classList.remove('header-shell--hidden');
+    this.lastScrollY = window.scrollY;
+    this.startMotion();
+  }
+
+  onScroll() {
+    if (this.scrollFrame) return;
+
+    this.scrollFrame = window.requestAnimationFrame(() => {
+      const scrollY = window.scrollY;
+      const delta = scrollY - this.lastScrollY;
+      const dialogOpen = this.querySelector('dialog[open]');
+      const focusInside = this.contains(document.activeElement);
+
+      this.classList.toggle('header-shell--scrolled', scrollY > 40);
+
+      if (!dialogOpen && !focusInside && scrollY > 160 && delta > 8) {
+        this.classList.add('header-shell--hidden');
+      } else if (delta < -8 || scrollY <= 160 || dialogOpen || focusInside) {
+        this.classList.remove('header-shell--hidden');
+      }
+
+      this.lastScrollY = scrollY;
+      this.scrollFrame = null;
+    });
+  }
+
   onNavGroupPointerEnter(event) {
+    if (event.pointerType && event.pointerType !== 'mouse') return;
     window.clearTimeout(this.hoverCloseTimer);
     const activeGroup = event.currentTarget;
     this.navGroups.forEach((group) => {
@@ -49,6 +101,7 @@ class HeaderShell extends HTMLElement {
   }
 
   onNavGroupPointerLeave(event) {
+    if (event.pointerType && event.pointerType !== 'mouse') return;
     const activeGroup = event.currentTarget;
     this.hoverCloseTimer = window.setTimeout(() => {
       if (!activeGroup.matches(':hover')) activeGroup.removeAttribute('open');
@@ -118,6 +171,7 @@ class HeaderShell extends HTMLElement {
       const dialog = this.querySelector(`[data-header-dialog="${CSS.escape(openButton.dataset.dialogOpen)}"]`);
       if (!dialog) return;
       this.activeOpener = openButton;
+      this.classList.remove('header-shell--hidden');
       dialog.showModal();
       if (openButton.dataset.dialogOpen === 'search') {
         requestAnimationFrame(() => dialog.querySelector('input[type="search"]')?.focus());
