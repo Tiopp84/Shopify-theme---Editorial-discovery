@@ -40,6 +40,7 @@ Use the variant-rich product.
 ## 4. Quantity and purchase fallback
 
 - Change quantity with minus/plus and direct typing. It cannot drop below the Shopify minimum or exceed a tracked, deny-oversell variant cap.
+- Add some units of the currently selected tracked, deny-oversell variant to cart. PDP maximum must become `inventory quantity − cart quantity`; changing/removing that cart line must update the PDP cap before the next add.
 - When changing variant, quantity constraints and disabled controls update for that variant only.
 - Submit one valid quantity to the cart in the normal browser flow. Shopify remains the final authority; an invalid quantity must not result in a misleading success state.
 - If the store has quantity rules, volume pricing or selling plans, verify their server-rendered labels and values match Shopify data. If it has none, verify no empty subscription/volume-pricing UI is present.

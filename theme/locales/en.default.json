@@ -14,10 +14,23 @@
     "comment_form_title": "Add a comment"
   },
   "cart": {
+    "close": "Close cart",
     "checkout": "Checkout",
+    "continue_shopping": "Continue shopping",
+    "decrease_quantity": "Decrease quantity",
+    "empty_text": "Your bag is ready when you are.",
+    "empty_title": "Your bag is empty",
+    "eyebrow": "Your selection",
+    "increase_quantity": "Increase quantity",
+    "maximum_quantity": "Maximum available quantity reached.",
+    "note": "Order note",
+    "quantity": "Quantity",
     "title": "Cart",
+    "subtotal": "Subtotal",
+    "taxes_and_shipping_at_checkout": "Taxes and shipping are calculated at checkout.",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "view_cart": "View cart"
   },
   "accessibility": {
     "announcement": "Announcement",

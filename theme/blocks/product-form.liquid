@@ -16,6 +16,7 @@
   data-sold-out="{{ 'products.form.sold_out' | t }}"
   data-unavailable="{{ 'products.form.unavailable_combination' | t }}"
   data-in-stock="{{ 'products.form.in_stock' | t: count: '__count__' }}"
+  data-all-stock="{{ 'products.form.all_stock_in_cart' | t }}"
   {{ block.shopify_attributes }}
 >
   {% form 'product', product, id: product_form_id %}

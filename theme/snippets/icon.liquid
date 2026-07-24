@@ -1,7 +1,7 @@
 {% doc %}
   Renders a small, decorative interface icon. The parent control must provide its accessible name.
 
-  @param {string} name - Supported icon name: account, cart, close, filter, menu, or search.
+  @param {string} name - Supported icon name: account, cart, close, filter, menu, search, or trash.
   @param {string} [class] - Additional SVG class.
 
   @example
@@ -39,6 +39,8 @@
     {% when 'search' %}
       <circle cx="11" cy="11" r="6" />
       <path d="m16 16 4 4" />
+    {% when 'trash' %}
+      <path d="M5 7h14M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3" />
   {% endcase %}
 </svg>
 

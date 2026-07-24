@@ -13,7 +13,7 @@ This is the implementation contract for PDP-01 through PDP-03. It precedes UI wo
 | Variant option controls | Native form controls; controller derives a matching variant from serialized Shopify data | Picker and variant-dependent fields inside `main-product` |
 | Main gallery item | Selected variant's `featured_media`, otherwise the current gallery selection | Gallery only; changing it must never overwrite the selected variant |
 | Media playback, modal, model viewer | Native Shopify media markup/browser APIs; later gallery controller | Individual media item/modal only |
-| Quantity input | Native product form owns POST fallback. Enhanced controller combines variant quantity rule with tracked, deny-oversell inventory for the selected variant; Shopify validates again on submit | Product form |
+| Quantity input | Native product form owns POST fallback. Enhanced controller combines variant quantity rule with tracked, deny-oversell inventory less the cart total for the selected variant; Shopify validates again on submit | Product form |
 | Selling plan | Native `selling_plan` form control; Shopify validates allocations and price | Product form |
 | Size guide | Merchant-selected Shopify Page rendered once in the product section | `size-guide` owns only dialog open/close state; the page link remains the no-JS fallback |
 
@@ -41,11 +41,11 @@ The Phase 5 vertical slice has one stable `product-form` controller per main pro
 
 - **Event:** a native option `change` requests selection; `popstate` restores the URL-selected variant. No debounce is needed.
 - **Validation:** only an exact Shopify variant tuple is committed. An impossible tuple preserves the current committed variant, disables purchase with an explicit unavailable message, and does not change URL/media/price.
-- **Render:** serialized variant data atomically changes hidden `id`, price, availability, SKU, option disabled state, quantity rule, buttons, selected media marker and URL. Tracked, deny-oversell inventory is a variant-local cap in this phase.
+- **Render:** serialized variant data atomically changes hidden `id`, price, availability, SKU, option disabled state, quantity rule, buttons, selected media marker and URL. For tracked, deny-oversell inventory, the enhanced cap is `variant.inventory_quantity − cart quantity for that variant_id`.
 - **URL/history:** initial valid `?variant=` is respected. User changes use `replaceState` so option exploration does not flood history; Back/Forward applies URL state without creating history.
 - **Focus and continuity:** native control retains focus after a selection. Updating text/media never moves focus. A future gallery dialog must restore its opener focus and pause/reset video on close.
 - **Size guide modal:** the selected Page is server-rendered. The `size-guide` controller intercepts its link only when native dialog support exists, moves focus to Close, closes by Escape/backdrop/Close, and returns focus to the link. It has no URL state, fetch, animation, or reduced-motion behavior. Without JavaScript it remains a normal page link.
-- **Async/error:** this slice does not read or mutate cart state. Cart-aware remaining stock is deferred until the cart exposes stable line-item `variant_id` and a shared cart-state controller. That controller must aggregate quantities by `variant_id`, subtract only the selected variant total, refresh stale state before add, and leave Shopify as final validator. Cart submission remains native here.
+- **Async/error:** the cart drawer exposes a shared `cart:state` event aggregated by `variant_id`; PDP receives it and updates only the selected variant's cap. PDP also reads the current cart before an enhanced add so its quantity control is refreshed immediately before submit. If that read fails, Shopify remains the final validator and the form stays usable.
 - **Fallback:** without JavaScript, server-selected variant, native controls and the Shopify product form remain fully functional. Direct variant URLs remain bookmarkable. If JavaScript fails, it must not hide form content.
 - **Lifecycle/reduced motion:** controller initialization is idempotent and listens for Shopify section load/unload. No automatic media motion is introduced; media controls are user initiated.
 

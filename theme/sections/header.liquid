@@ -69,12 +69,10 @@
         </a>
       {% endif %}
 
-      <a class="header-shell__icon-button" href="{{ routes.cart_url }}">
+      <a class="header-shell__icon-button" href="{{ routes.cart_url }}" data-cart-open>
         <span class="visually-hidden">{{ 'cart.title' | t }}</span>
         {% render 'icon', name: 'cart' %}
-        {% if cart.item_count > 0 %}
-          <span class="header-shell__cart-count" aria-hidden="true">{{ cart.item_count }}</span>
-        {% endif %}
+        <span class="header-shell__cart-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
       </a>
     </div>
   </header>
