@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "theme:dev": "shopify theme dev --path theme",
-    "theme:push": "git subtree push --prefix theme origin deploy-theme",
-    "theme:pull": "git subtree pull --prefix theme origin deploy-theme --squash",
+    "theme:push": "git subtree split --prefix theme -b temp-deploy-branch && git push origin temp-deploy-branch:deploy-theme --force && git branch -D temp-deploy-branch",
+    "theme:pull": "git fetch origin deploy-theme && git checkout origin/deploy-theme -- theme/",
     "theme:check": "shopify theme check theme"
   }
 }
