@@ -15,7 +15,8 @@ class ProductForm extends HTMLElement {
     this.skuValue = this.section.querySelector('[data-product-sku-value]');
     this.availability = this.section.querySelector('[data-product-availability]');
     this.variants = JSON.parse(this.section.querySelector('[data-product-variants]').textContent);
-    if (!this.variantInput || !this.submit || !this.price || !this.availability) return;
+    if (!this.variantInput || !this.submit || !this.price) return;
+    this.variantInput.name = 'id';
     this.abortController = new AbortController();
     const signal = this.abortController.signal;
     this.options.forEach((option) => option.addEventListener('change', () => this.fromControls(), { signal }));
@@ -55,8 +56,10 @@ class ProductForm extends HTMLElement {
     this.submit.disabled = true;
     this.error.hidden = false;
     this.error.textContent = this.dataset.unavailable;
-    this.availability.textContent = this.dataset.unavailable;
-    this.availability.dataset.state = 'unavailable';
+    if (this.availability) {
+      this.availability.textContent = this.dataset.unavailable;
+      this.availability.dataset.state = 'unavailable';
+    }
     this.syncOptionButtons();
   }
 
@@ -68,8 +71,8 @@ class ProductForm extends HTMLElement {
     this.submit.disabled = !variant.available;
     this.submit.textContent = variant.available ? this.dataset.addToCart : this.dataset.soldOut;
     this.renderAvailability(variant);
-    this.skuValue.textContent = variant.sku || '';
-    this.sku.hidden = !variant.sku;
+    if (this.skuValue) this.skuValue.textContent = variant.sku || '';
+    if (this.sku) this.sku.hidden = !variant.sku;
     this.syncOptionButtons();
     this.syncQuantityRule(variant);
     this.price.innerHTML = `<div class="price"><span class="price__current">${this.escape(variant.price)}</span>${variant.onSale ? `<s class="price__compare">${this.escape(variant.comparePrice)}</s>` : ''}${variant.unitPrice ? `<small class="price__unit">${this.escape(variant.unitPrice)}</small>` : ''}</div>`;
@@ -129,6 +132,7 @@ class ProductForm extends HTMLElement {
   }
 
   renderAvailability(variant) {
+    if (!this.availability) return;
     const stockLimit = this.stockLimit(variant);
     if (!variant.available) {
       this.availability.textContent = this.dataset.soldOut;

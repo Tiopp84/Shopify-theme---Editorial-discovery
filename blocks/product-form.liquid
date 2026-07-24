@@ -1,0 +1,120 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'ProductForm-' | append: section.id
+  assign has_multiple_variants = false
+  unless product.has_only_default_variant
+    assign has_multiple_variants = true
+  endunless
+  assign size_guide_page = section.settings.size_guide_page
+%}
+
+<product-form
+  data-product-form
+  data-add-to-cart="{{ 'products.form.add_to_cart' | t }}"
+  data-available="{{ 'products.form.available' | t }}"
+  data-sold-out="{{ 'products.form.sold_out' | t }}"
+  data-unavailable="{{ 'products.form.unavailable_combination' | t }}"
+  data-in-stock="{{ 'products.form.in_stock' | t: count: '__count__' }}"
+  {{ block.shopify_attributes }}
+>
+  {% form 'product', product, id: product_form_id %}
+    {% if has_multiple_variants %}
+      {% for option in product.options_with_values %}
+        {% assign option_name_downcase = option.name | downcase %}
+        {% assign is_color_option = false %}
+        {% assign is_size_option = false %}
+        {% if option_name_downcase == 'color' or option_name_downcase == 'colour' %}
+          {% assign is_color_option = true %}
+        {% endif %}
+        {% if option_name_downcase == 'size' %}
+          {% assign is_size_option = true %}
+        {% endif %}
+        <div class="main-product__option">
+          <label for="ProductOption-{{ section.id }}-{{ forloop.index0 }}">
+            {{ option.name | escape }}{% if is_color_option %}: <span data-product-option-selected="{{ forloop.index0 }}">{{ option.selected_value | escape }}</span>{% endif %}
+          </label>
+          <div class="main-product__option-buttons" role="group" aria-label="{{ option.name | escape }}">
+            {% for value in option.values %}
+              {% assign swatch_value = null %}
+              {% if value.swatch.image %}
+                {% assign swatch_image_url = value.swatch.image | image_url: width: 96 %}
+                {% assign swatch_value = 'url(' | append: swatch_image_url | append: ')' %}
+              {% elsif value.swatch.color %}
+                {% assign swatch_value = 'rgb(' | append: value.swatch.color.rgb | append: ')' %}
+              {% endif %}
+              <button class="main-product__option-button{% if swatch_value %} main-product__option-button--swatch{% endif %}" type="button" data-product-option-button data-product-option-index="{{ forloop.parentloop.index0 }}" data-product-option-value="{{ value.name | escape }}" aria-pressed="{{ value.selected }}"{% if swatch_value %} style="--pdp-swatch-background: {{ swatch_value }};"{% endif %}>{{ value.name | escape }}</button>
+            {% endfor %}
+          </div>
+          <select class="main-product__option-select" id="ProductOption-{{ section.id }}-{{ forloop.index0 }}" data-product-option="{{ forloop.index0 }}">
+            {% for value in option.values %}
+              <option value="{{ value.name | escape }}" {% if value.selected %}selected{% endif %}>{{ value.name | escape }}</option>
+            {% endfor %}
+          </select>
+          {% if is_size_option and size_guide_page != blank %}
+            <a class="main-product__size-guide" href="{{ size_guide_page.url }}" data-size-guide-open>{{ 'products.form.size_guide' | t }}</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <noscript>
+      <div class="main-product__option main-product__variant-fallback">
+        <label for="ProductVariant-{{ section.id }}">{{ 'products.form.variant' | t }}</label>
+        <select id="ProductVariant-{{ section.id }}" name="id">
+          {% for variant in product.variants %}
+            <option value="{{ variant.id }}"{% if variant.id == current_variant.id %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>
+              {{ variant.title | escape }}{% unless variant.available %} — {{ 'products.form.sold_out' | t }}{% endunless %}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </noscript>
+    <input type="hidden" value="{{ current_variant.id }}" data-product-variant-id>
+    <div class="main-product__quantity">
+      <label for="ProductQuantity-{{ section.id }}">{{ 'products.form.quantity' | t }}</label>
+      <div class="main-product__quantity-control">
+        <button type="button" data-product-quantity-decrease aria-label="{{ 'products.form.decrease_quantity' | t }}">−</button>
+        <input id="ProductQuantity-{{ section.id }}" type="number" name="quantity" min="{{ current_variant.quantity_rule.min }}"{% if current_variant.quantity_rule.max %} max="{{ current_variant.quantity_rule.max }}"{% endif %} step="{{ current_variant.quantity_rule.increment }}" value="{{ current_variant.quantity_rule.min }}" data-product-quantity>
+        <button type="button" data-product-quantity-increase aria-label="{{ 'products.form.increase_quantity' | t }}">+</button>
+      </div>
+    </div>
+    {% if current_variant.quantity_price_breaks.size > 0 %}
+      <p class="main-product__quantity-note">{{ 'products.form.quantity_pricing_available' | t }}</p>
+    {% endif %}
+    {% if product.selling_plan_groups.size > 0 %}
+      <div class="main-product__selling-plan">
+        <label for="ProductSellingPlan-{{ section.id }}">{{ 'products.form.purchase_option' | t }}</label>
+        <select id="ProductSellingPlan-{{ section.id }}" name="selling_plan" data-product-selling-plan>
+          <option value="">{{ 'products.form.one_time_purchase' | t }}</option>
+          {% for group in product.selling_plan_groups %}{% for plan in group.selling_plans %}<option value="{{ plan.id }}">{{ plan.name | escape }}</option>{% endfor %}{% endfor %}
+        </select>
+        <p class="main-product__selling-plan-note">{{ 'products.form.selling_plan_notice' | t }}</p>
+      </div>
+    {% endif %}
+    <p class="main-product__selection-error" data-product-selection-error role="status" hidden></p>
+    <button type="submit" data-product-submit {% unless current_variant.available %}disabled{% endunless %}>{% if current_variant.available %}{{ 'products.form.add_to_cart' | t }}{% else %}{{ 'products.form.sold_out' | t }}{% endif %}</button>
+  {% endform %}
+</product-form>
+
+{% if size_guide_page != blank %}
+  <size-guide {{ block.shopify_attributes }}>
+    <dialog class="main-product__size-guide-dialog" data-size-guide-dialog aria-labelledby="SizeGuideTitle-{{ section.id }}">
+      <div class="main-product__size-guide-dialog-inner">
+        <div class="main-product__size-guide-dialog-header">
+          <h2 id="SizeGuideTitle-{{ section.id }}">{{ size_guide_page.title | escape }}</h2>
+          <button type="button" data-size-guide-close aria-label="{{ 'products.gallery.close' | t }}">×</button>
+        </div>
+        <div class="main-product__size-guide-dialog-content">{{ size_guide_page.content }}</div>
+      </div>
+    </dialog>
+  </size-guide>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:general.product_form",
+  "presets": [{ "name": "t:general.product_form" }]
+}
+{% endschema %}
+{% # theme-check-enable ValidScopedCSSClass %}

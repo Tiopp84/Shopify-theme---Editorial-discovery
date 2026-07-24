@@ -1,19 +1,15 @@
 {% liquid
   assign current_variant = product.selected_or_first_available_variant
-  assign product_form_id = 'ProductForm-' | append: section.id
-  assign has_multiple_variants = false
-  unless product.has_only_default_variant
-    assign has_multiple_variants = true
-  endunless
   assign initial_media = current_variant.featured_media | default: product.featured_media | default: product.media.first
-  assign current_variant_stock_tracked = false
-  if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'deny'
-    assign current_variant_stock_tracked = true
+  assign media_ratio = '4 / 5'
+  if section.settings.media_ratio == 'square'
+    assign media_ratio = '1 / 1'
+  elsif section.settings.media_ratio == 'landscape'
+    assign media_ratio = '3 / 2'
   endif
-  assign size_guide_page = section.settings.size_guide_page
 %}
 
-<section class="main-product" data-product-section data-section-id="{{ section.id }}">
+<section class="main-product{% if section.settings.show_vendor %} main-product--show-vendor{% endif %}{% if section.settings.show_sku %} main-product--show-sku{% endif %}{% if section.settings.show_availability %} main-product--show-availability{% endif %}{% if section.settings.show_quantity %} main-product--show-quantity{% endif %}" data-product-section data-section-id="{{ section.id }}" style="--pdp-media-ratio: {{ media_ratio }};">
   {% if product.media.size > 0 %}
     <product-gallery class="main-product__gallery" data-product-gallery data-initial-media-id="{{ initial_media.id }}" aria-label="{{ product.title | escape }}">
       <div class="main-product__media-stage">
@@ -26,9 +22,9 @@
             {% when 'image' %}
               {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 750px) 50vw, 100vw', loading: 'eager' %}
             {% when 'video' %}
-              {{ media | media_tag: image_size: '1200x', controls: true, autoplay: true, muted: true, loop: true, preload: 'metadata' }}
+              {{ media | media_tag: image_size: '1200x', controls: true, preload: 'metadata' }}
             {% when 'external_video' %}
-              {{ media | external_video_tag: autoplay: true, muted: true, loop: true }}
+              {{ media | external_video_tag }}
             {% when 'model' %}
               {{ media | model_viewer_tag: image_size: '1200x', reveal: 'interaction', toggleable: true }}
           {% endcase %}
@@ -41,7 +37,7 @@
           </div>
         {% endfor %}
       </div>
-      {% if product.media.size > 1 %}
+      {% if product.media.size > 1 and section.settings.show_thumbnails %}
         <div class="main-product__thumbnails" aria-label="{{ 'products.gallery.media_selection' | t }}">
           {% for media in product.media %}
             <button
@@ -74,125 +70,9 @@
   {% endif %}
 
   <div class="main-product__details">
-    {% if product.vendor != blank %}<p class="main-product__vendor">{{ product.vendor | escape }}</p>{% endif %}
-    <h1>{{ product.title }}</h1>
-
-    <div class="main-product__price" data-product-price aria-live="polite">
-      {% render 'price', item: current_variant %}
+    <div class="main-product__blocks">
+      {% content_for 'blocks' %}
     </div>
-    <p class="main-product__sku" data-product-sku {% if current_variant.sku == blank %}hidden{% endif %}>
-      <span>{{ 'products.form.sku' | t }}</span> <span data-product-sku-value>{{ current_variant.sku | escape }}</span>
-    </p>
-    <p class="main-product__availability" data-product-availability data-state="{% if current_variant.available %}{% if current_variant_stock_tracked %}in-stock{% else %}available{% endif %}{% else %}sold-out{% endif %}" aria-live="polite">
-      {% if current_variant.available %}
-        {% if current_variant_stock_tracked %}{{ 'products.form.in_stock' | t: count: current_variant.inventory_quantity }}{% else %}{{ 'products.form.available' | t }}{% endif %}
-      {% else %}
-        {{ 'products.form.sold_out' | t }}
-      {% endif %}
-    </p>
-
-    <product-form
-      data-product-form
-      data-add-to-cart="{{ 'products.form.add_to_cart' | t }}"
-      data-available="{{ 'products.form.available' | t }}"
-      data-sold-out="{{ 'products.form.sold_out' | t }}"
-      data-unavailable="{{ 'products.form.unavailable_combination' | t }}"
-      data-in-stock="{{ 'products.form.in_stock' | t: count: '__count__' }}"
-    >
-      {% form 'product', product, id: product_form_id %}
-        {% if has_multiple_variants %}
-          {% for option in product.options_with_values %}
-            {% assign option_name_downcase = option.name | downcase %}
-            {% assign is_color_option = false %}
-            {% assign is_size_option = false %}
-            {% if option_name_downcase == 'color' or option_name_downcase == 'colour' %}
-              {% assign is_color_option = true %}
-            {% endif %}
-            {% if option_name_downcase == 'size' %}
-              {% assign is_size_option = true %}
-            {% endif %}
-            <div class="main-product__option">
-              <label for="ProductOption-{{ section.id }}-{{ forloop.index0 }}">
-                {{ option.name | escape }}{% if is_color_option %}: <span data-product-option-selected="{{ forloop.index0 }}">{{ option.selected_value | escape }}</span>{% endif %}
-              </label>
-              <div class="main-product__option-buttons" role="group" aria-label="{{ option.name | escape }}">
-                {% for value in option.values %}
-                  {% assign swatch_value = null %}
-                  {% if value.swatch.image %}
-                    {% assign swatch_image_url = value.swatch.image | image_url: width: 96 %}
-                    {% assign swatch_value = 'url(' | append: swatch_image_url | append: ')' %}
-                  {% elsif value.swatch.color %}
-                    {% assign swatch_value = 'rgb(' | append: value.swatch.color.rgb | append: ')' %}
-                  {% endif %}
-                  <button
-                    class="main-product__option-button{% if swatch_value %} main-product__option-button--swatch{% endif %}"
-                    type="button"
-                    data-product-option-button
-                    data-product-option-index="{{ forloop.parentloop.index0 }}"
-                    data-product-option-value="{{ value.name | escape }}"
-                    aria-pressed="{{ value.selected }}"
-                    {% if swatch_value %}
-                      style="--pdp-swatch-background: {{ swatch_value }};"
-                    {% endif %}
-                  >{{ value.name | escape }}</button>
-                {% endfor %}
-              </div>
-              <select class="main-product__option-select" id="ProductOption-{{ section.id }}-{{ forloop.index0 }}" data-product-option="{{ forloop.index0 }}">
-                {% for value in option.values %}
-                  <option value="{{ value.name | escape }}" {% if value.selected %}selected{% endif %}>{{ value.name | escape }}</option>
-                {% endfor %}
-              </select>
-              {% if is_size_option and size_guide_page != blank %}
-                <a class="main-product__size-guide" href="{{ size_guide_page.url }}" data-size-guide-open>{{ 'products.form.size_guide' | t }}</a>
-              {% endif %}
-            </div>
-          {% endfor %}
-        {% endif %}
-
-        <input type="hidden" name="id" value="{{ current_variant.id }}" data-product-variant-id>
-        <div class="main-product__quantity">
-          <label for="ProductQuantity-{{ section.id }}">{{ 'products.form.quantity' | t }}</label>
-          <div class="main-product__quantity-control">
-            <button type="button" data-product-quantity-decrease aria-label="{{ 'products.form.decrease_quantity' | t }}">−</button>
-            <input
-              id="ProductQuantity-{{ section.id }}"
-              type="number"
-              name="quantity"
-              min="{{ current_variant.quantity_rule.min }}"
-              {% if current_variant.quantity_rule.max %}max="{{ current_variant.quantity_rule.max }}"{% endif %}
-              step="{{ current_variant.quantity_rule.increment }}"
-              value="{{ current_variant.quantity_rule.min }}"
-              data-product-quantity
-            >
-            <button type="button" data-product-quantity-increase aria-label="{{ 'products.form.increase_quantity' | t }}">+</button>
-          </div>
-        </div>
-        {% if current_variant.quantity_price_breaks.size > 0 %}
-          <p class="main-product__quantity-note">{{ 'products.form.quantity_pricing_available' | t }}</p>
-        {% endif %}
-
-        <p class="main-product__selection-error" data-product-selection-error role="status" hidden></p>
-        <button type="submit" data-product-submit {% unless current_variant.available %}disabled{% endunless %}>
-          {% if current_variant.available %}{{ 'products.form.add_to_cart' | t }}{% else %}{{ 'products.form.sold_out' | t }}{% endif %}
-        </button>
-      {% endform %}
-    </product-form>
-
-    {% if size_guide_page != blank %}
-      <size-guide>
-      <dialog class="main-product__size-guide-dialog" data-size-guide-dialog aria-labelledby="SizeGuideTitle-{{ section.id }}">
-        <div class="main-product__size-guide-dialog-inner">
-          <div class="main-product__size-guide-dialog-header">
-            <h2 id="SizeGuideTitle-{{ section.id }}">{{ size_guide_page.title | escape }}</h2>
-            <button type="button" data-size-guide-close aria-label="{{ 'products.gallery.close' | t }}">×</button>
-          </div>
-          <div class="main-product__size-guide-dialog-content">{{ size_guide_page.content }}</div>
-        </div>
-      </dialog>
-      </size-guide>
-    {% endif %}
-
-    {% if product.description != blank %}<div class="main-product__description">{{ product.description }}</div>{% endif %}
   </div>
 
   <script type="application/json" data-product-variants>
@@ -229,8 +109,8 @@
 {% stylesheet %}
   .main-product { display: grid; gap: var(--space-6); margin: var(--space-6) auto; max-width: var(--page-width); padding-inline: var(--page-gutter); }
   .main-product__gallery { display: grid; gap: var(--space-3); min-width: 0; }
-  .main-product__media-stage { aspect-ratio: 4 / 5; background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; }
-  .main-product__media-placeholder { align-items: center; aspect-ratio: 4 / 5; background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; overflow: hidden; }
+  .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; }
+  .main-product__media-placeholder { align-items: center; aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; overflow: hidden; }
   .main-product__media-placeholder svg { block-size: auto; inline-size: 42%; max-block-size: 42%; }
   .main-product__media { block-size: 100%; inline-size: 100%; position: relative; }
   .main-product__media > :not(.main-product__media-open) { block-size: 100%; display: block; inline-size: 100%; max-width: 100%; }
@@ -265,6 +145,7 @@
   .main-product__details product-form { display: block; margin-top: 1.45rem; }
   .main-product__details product-form form { align-content: start; display: grid; gap: 1.4rem; }
   .main-product__option, .main-product__quantity { display: grid; gap: .6rem; margin: 0; }
+  product-form:not([data-product-enhanced]) .main-product__option:not(.main-product__variant-fallback) { display: none; }
   .main-product__option > label, .main-product__quantity > label { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
   .main-product__option-buttons { display: none; flex-wrap: wrap; gap: var(--pdp-option-gap); }
   product-form[data-product-enhanced] .main-product__option-buttons { display: flex; }
@@ -299,19 +180,80 @@
   .main-product__quantity-control input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
   .main-product__quantity-control input[type='number']::-webkit-inner-spin-button, .main-product__quantity-control input[type='number']::-webkit-outer-spin-button { appearance: none; margin: 0; }
   .main-product__quantity-control button:disabled { cursor: not-allowed; opacity: .42; }
+  .main-product__selling-plan { display: grid; gap: .5rem; }
+  .main-product__selling-plan label { font-size: .875rem; font-weight: 700; }
+  .main-product__selling-plan select { background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--pdp-control-radius); color: var(--color-foreground); min-block-size: var(--pdp-control-size); padding-inline: .8rem; width: 100%; }
+  .main-product__selling-plan-note { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); font-size: .825rem; line-height: 1.45; margin: 0; }
   .main-product__details [data-product-submit] { --button-background: var(--color-foreground); --button-border-color: var(--color-foreground); --button-min-block-size: 3.5rem; --button-padding-inline: var(--space-6); --button-radius: var(--pdp-action-radius); font-weight: 700; inline-size: 100%; letter-spacing: .04em; margin: 0; text-transform: uppercase; }
   .main-product__selection-error { color: var(--color-foreground); font-weight: 600; }
-  @media (min-width: 750px) { .main-product { grid-template-columns: minmax(0, 1.1fr) minmax(20rem, .9fr); align-items: start; } .main-product__details { position: sticky; top: var(--space-5); } }
+  .main-product__blocks { display: grid; gap: var(--space-3); margin-top: var(--space-5); }
+  .main-product:not(.main-product--show-vendor) .main-product__vendor,
+  .main-product:not(.main-product--show-sku) .main-product__sku,
+  .main-product:not(.main-product--show-availability) .main-product__availability,
+  .main-product:not(.main-product--show-quantity) :is(.main-product__quantity, .main-product__quantity-note) { display: none; }
+  @media (min-width: 750px) { .main-product { grid-template-columns: minmax(0, 1.1fr) minmax(20rem, .9fr); align-items: start; } }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.product",
+  "blocks": [
+    { "type": "product-vendor" },
+    { "type": "product-title" },
+    { "type": "product-price" },
+    { "type": "product-sku" },
+    { "type": "product-availability" },
+    { "type": "product-form" },
+    { "type": "product-description" },
+    { "type": "product-collapsible" },
+    { "type": "@app" }
+  ],
   "settings": [
     {
       "type": "page",
       "id": "size_guide_page",
       "label": "Size guide page"
+    },
+    {
+      "type": "select",
+      "id": "media_ratio",
+      "label": "t:labels.image_ratio",
+      "options": [
+        { "value": "portrait", "label": "t:options.image_ratio.portrait" },
+        { "value": "square", "label": "t:options.image_ratio.square" },
+        { "value": "landscape", "label": "t:options.image_ratio.landscape" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumbnails",
+      "label": "t:labels.show_thumbnails",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "t:labels.show_vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "t:labels.show_sku",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_availability",
+      "label": "t:labels.show_availability",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity",
+      "label": "t:labels.show_quantity",
+      "default": true
     }
   ],
   "disabled_on": { "groups": ["header", "footer"] }

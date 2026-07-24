@@ -120,6 +120,9 @@
       "unavailable_combination": "This combination is unavailable.",
       "quantity": "Quantity",
       "quantity_pricing_available": "Volume pricing is available for this variant.",
+      "purchase_option": "Purchase option",
+      "one_time_purchase": "One-time purchase",
+      "selling_plan_notice": "Subscription availability and pricing are confirmed by Shopify at checkout.",
       "sku": "SKU",
       "size_guide": "Size guide",
       "variant": "Choose an option"
@@ -127,6 +130,10 @@
     "price": {
       "regular": "Regular price",
       "unit": "Unit price"
+    },
+    "recommendations": {
+      "loading": "Loading product recommendations",
+      "unavailable": "Product recommendations are unavailable right now."
     }
   },
   "search": {

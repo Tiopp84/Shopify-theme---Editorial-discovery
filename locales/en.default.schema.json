@@ -26,6 +26,15 @@
     "password": "Password",
     "primary": "Primary",
     "product": "Product",
+    "product_availability": "Product availability",
+    "product_details": "Product details",
+    "product_description": "Product description",
+    "product_form": "Product form",
+    "product_price": "Product price",
+    "product_recommendations": "Product recommendations",
+    "product_sku": "Product SKU",
+    "product_title": "Product title",
+    "product_vendor": "Product vendor",
     "row": "Row",
     "search": "Search",
     "secondary": "Secondary",
@@ -39,6 +48,7 @@
   "labels": {
     "alignment": "Alignment",
     "columns_desktop": "Desktop columns",
+    "content": "Content",
     "background": "Background",
     "accent": "Accent",
     "border": "Border",
@@ -62,10 +72,16 @@
     "page_margin": "Page margin",
     "page_width": "Page width",
     "products_per_page": "Products per page",
+    "product_limit": "Number of products",
+    "recommendation_intent": "Recommendation type",
     "search_behavior": "Search behavior",
     "show_payment_icons": "Show payment icons",
     "show_collection_image": "Show collection image",
     "show_collection_story": "Show collection story",
+    "show_thumbnails": "Show thumbnails when multiple media",
+    "show_sku": "Show SKU",
+    "show_availability": "Show availability",
+    "show_quantity": "Show quantity selector",
     "show_vendor": "Show vendor",
     "sticky_header": "Sticky header",
     "text_style": "Text style",
@@ -78,11 +94,16 @@
       "page": "Search page",
       "drawer": "Search drawer"
     },
+    "recommendation_intent": {
+      "complementary": "Complementary products",
+      "related": "Related products"
+    },
     "filter_layout": {
       "drawer": "Drawer",
       "sidebar": "Sidebar"
     },
     "image_ratio": {
+      "landscape": "Landscape (3:2)",
       "portrait": "Portrait (4:5)",
       "square": "Square (1:1)",
       "tall": "Tall (3:4)"
