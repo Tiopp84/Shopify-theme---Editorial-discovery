@@ -1,55 +1,75 @@
 {% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+  Collection index with an editorial introduction and Shopify collection links.
 {% endcomment %}
 
-<h1>{{ 'collections.title' | t }}</h1>
+<section class="collection-index full-width" aria-labelledby="CollectionIndexHeading-{{ section.id }}">
+  <header class="collection-index__intro">
+    <h1 id="CollectionIndexHeading-{{ section.id }}">{{ 'collections.title' | t }}</h1>
+    {% if section.settings.intro != blank %}
+      <div class="collection-index__description rte">{{ section.settings.intro }}</div>
+    {% endif %}
+  </header>
 
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
+  <div class="collection-index__grid">
+    {% for collection in collections %}
+      <a class="collection-card" href="{{ collection.url }}">
+        <span class="collection-card__media">
+          {% if collection.featured_image %}
+            {% render 'image',
+              class: 'collection-card__image',
+              image: collection.featured_image,
+              width: 1200,
+              height: 1500,
+              crop: 'center',
+              widths: '480, 640, 800, 960, 1200',
+              sizes: '(min-width: 36rem) 44vw, 100vw'
+            %}
+          {% else %}
+            <span class="collection-card__placeholder" aria-hidden="true">{{ 'collection-1' | placeholder_svg_tag }}</span>
+          {% endif %}
+        </span>
 
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
-
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
-</div>
+        <span class="collection-card__content">
+          <span class="collection-card__title">{{ collection.title | escape }}</span>
+          <span class="collection-card__action">{{ 'collections.view_collection' | t }}</span>
+        </span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
 
 {% stylesheet %}
-  .collections {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
+  .collection-index { margin: 0 auto; max-width: 110rem; padding: clamp(5rem, 8vw, 8rem) clamp(var(--page-margin), 4vw, 4rem) var(--space-64px); }
+  .collection-index__intro { display: grid; gap: var(--space-16px); justify-items: center; margin: 0 auto clamp(2.5rem, 6vw, 5rem); max-width: 38rem; text-align: center; }
+  .collection-index__intro h1 { font-family: var(--font-campaign); font-size: clamp(2.75rem, 5vw, 4.5rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.035em; line-height: .95; margin: 0; }
+  .collection-index__description { color: color-mix(in srgb, var(--color-foreground) 74%, var(--color-background)); font-size: .875rem; line-height: 1.55; max-width: 32rem; }
+  .collection-index__description > :first-child { margin-block-start: 0; }
+  .collection-index__description > :last-child { margin-block-end: 0; }
+  .collection-index__grid { display: grid; gap: clamp(var(--space-24px), 3vw, var(--space-40px)); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .collection-card { color: currentcolor; display: grid; gap: var(--space-16px); min-width: 0; position: relative; text-decoration: none; }
+  .collection-card__media { aspect-ratio: 4 / 5; background: var(--color-panel-01); display: block; overflow: hidden; position: relative; }
+  .collection-card__media > .collection-card__image, .collection-card__media > .collection-card__placeholder { inset: 0; position: absolute; }
+  .collection-card__media > .collection-card__image, .collection-card__media > .collection-card__image > img, .collection-card__media > .collection-card__placeholder, .collection-card__media > .collection-card__placeholder > svg { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; object-position: center; width: 100%; }
+  .collection-card__image > img { transition: transform 240ms ease; }
+  .collection-card:is(:hover, :focus-visible) .collection-card__image > img { transform: scale(1.015); }
+  .collection-card__content { align-items: baseline; border-block-end: 1px solid var(--color-border); display: flex; gap: var(--space-16px); justify-content: space-between; padding-block-end: var(--space-16px); }
+  .collection-card__title { font-family: var(--font-campaign); font-size: clamp(1.8rem, 2.7vw, 2.45rem); font-style: var(--font-heading--style); line-height: .95; }
+  .collection-card__action { flex: 0 0 auto; font-size: .625rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+  .collection-card:is(:hover, :focus-visible) .collection-card__action { color: var(--color-accent); }
+  @media (max-width: 35.99rem) {
+    .collection-index { padding-block: var(--space-40px); }
+    .collection-index__intro { margin-block-end: var(--space-40px); }
+    .collection-index__grid { grid-template-columns: 1fr; }
+    .collection-card { display: block; }
+    .collection-card__content { align-items: start; background: linear-gradient(0deg, rgb(0 0 0 / 65%), transparent 65%); border: 0; bottom: 0; color: var(--color-background); display: grid; gap: var(--space-16px); inset-inline: 0; justify-content: stretch; padding: var(--space-24px); position: absolute; }
+    .collection-card__title { font-size: clamp(2rem, 9vw, 3rem); }
+    .collection-card__action { background: var(--color-background); color: var(--color-foreground); padding: var(--space-16px); text-align: center; }
   }
-  .collections--compact {
-    --collection-card-size: 160px;
+  @media (min-width: 60rem) {
+    .collection-index__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
-  .collections--full {
-    --collection-card-size: 280px;
-  }
-  .collection-card {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  @media (min-width: 90rem) {
+    .collection-index__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
 {% endstylesheet %}
 
@@ -58,24 +78,10 @@
   "name": "t:general.collections_grid",
   "settings": [
     {
-      "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
-      "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
-      ],
-      "default": "collections--full"
-    },
-    {
-      "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
+      "type": "richtext",
+      "id": "intro",
+      "label": "t:labels.text",
+      "default": "<p>A curated editorial selection of seasonal narratives, tactile luxury and timeless form.</p>"
     }
   ],
   "presets": [{ "name": "t:general.collections_grid" }]

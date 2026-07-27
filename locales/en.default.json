@@ -76,6 +76,7 @@
   "collections": {
     "title": "Collections",
     "eyebrow": "The collection",
+    "view_collection": "View collection",
     "product_count": "{{ count }} products",
     "empty_title": "This collection is waiting",
     "empty_text": "Products added to this collection will appear here.",
