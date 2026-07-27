@@ -165,6 +165,8 @@
     display: block;
     border-block-end: 1px solid var(--color-border);
     background: var(--color-background);
+    position: relative;
+    z-index: 1;
     transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
     will-change: transform;
   }
@@ -181,9 +183,14 @@
     transform: translateY(-100%);
   }
 
+  .shopify-section:has(> .header-shell) {
+    isolation: isolate;
+    position: relative;
+    z-index: 40;
+  }
+
   .shopify-section:has(> .header-shell--sticky) {
     position: sticky;
-    z-index: 20;
     inset-block-start: 0;
   }
 
@@ -200,7 +207,7 @@
   .header-shell__brand {
     grid-column: 1;
     grid-row: 1;
-    font-family: var(--font-heading--family);
+    font-family: var(--font-campaign);
     font-size: clamp(1.5rem, 3vw, 2rem);
     font-style: var(--font-heading--style);
     line-height: 1;
@@ -305,7 +312,7 @@
 
   .header-shell__submenu {
     position: absolute;
-    z-index: 2;
+    z-index: 31;
     inset-block-start: calc(100% + var(--space-4));
     inset-inline-start: 0;
     min-width: 14rem;
@@ -496,7 +503,7 @@
 
   .header-shell__mobile-menu-root > a,
   .header-shell__mobile-nav summary {
-    font-family: var(--font-heading--family);
+    font-family: var(--font-commerce);
     font-size: 1.75rem;
   }
 
@@ -562,7 +569,7 @@
     margin: 0;
     justify-self: end;
     padding: var(--space-2) 0;
-    font-family: var(--font-heading--family);
+    font-family: var(--font-commerce);
     font-size: 1.5rem;
     font-weight: 500;
   }

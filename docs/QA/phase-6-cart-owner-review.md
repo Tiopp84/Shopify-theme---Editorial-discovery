@@ -1,6 +1,6 @@
 # Phase 6 — Cart owner review
 
-Status: **CART DRAWER OWNER/LIVE PASS; CART PAGE OWNER/PREVIEW PASS (TEMPORARY) — 2026-07-27**
+Status: **PHASE 6 CLOSED FOR CURRENT FIXTURES — 2026-07-27**
 
 Use a Shopify preview URL for cart and drawer browser behavior. Test Theme Editor lifecycle separately. The required behavior is defined by [`cart-contract.md`](../Specifications/cart-contract.md).
 
@@ -45,3 +45,21 @@ With JavaScript enabled on the cart page:
 - Reload the preview, open/close the drawer, then add/remove/re-add the cart drawer section if Shopify exposes it. There must be no duplicated listener, duplicate dialog or console error.
 - Record each row as **PASS**, **FAIL** or **NOT EVIDENCED**, with viewport, cart fixture and screenshot/video for a failure.
 - Do not close Phase 6 until product → cart → standard/accelerated checkout smoke paths pass on the Shopify preview origin.
+
+## Recorded owner smoke result — 2026-07-27
+
+| Check | Result | Evidence / limitation |
+|---|---|---|
+| PDP add → cart drawer | PASS | Drawer opened after a confirmed add. |
+| Rapid quantity and remove | PASS | Shared cart state remained responsive and no error was reported. |
+| Cart page quantity and order note | PASS | Note persisted through the cart-page flow. |
+| Standard checkout | PASS | Native Shopify checkout handoff succeeded. |
+| JavaScript-off cart fallback | PASS | Native cart form and checkout fallback succeeded. |
+| Theme Editor lifecycle | PASS | No duplicate UI/listener or console error was reported. |
+| Console/network | PASS | No error; only resource warnings were observed. |
+| Inventory preflight | NOT EVIDENCED | No tracked, deny-oversell fixture was available. |
+| Accelerated checkout | NOT EVIDENCED | `content_for_additional_checkout_buttons` is present in the cart-page source, but Shopify preview returned no accelerated checkout buttons for the current payment/preview context. |
+
+## Owner gate decision — 2026-07-27
+
+The owner accepts the completed cart smoke evidence as sufficient to close Phase 6 for the current development-store fixtures. Accelerated checkout remains **NOT EVIDENCED**, because the active Test payment gateway does not supply accelerated checkout buttons and Shopify Payments onboarding must not be completed with false KYC information. This is a deferred regression row: when a legitimate accelerated provider is enabled, test its native handoff and record the result. Inventory preflight is likewise deferred until a tracked, deny-oversell fixture exists.

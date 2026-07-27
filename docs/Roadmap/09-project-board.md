@@ -7,7 +7,7 @@ Cập nhật ít nhất mỗi tuần.
 | Field | Value |
 |---|---|
 | Overall | IN PROGRESS |
-| Current phase | Phase 6 — Cart |
+| Current phase | Phase 7 — Differentiation |
 | Target submission | TBD |
 | Product/Design/Engineering/QA/Support owners | Project owner (single-owner plan); Codex supports planning/documentation |
 
@@ -30,7 +30,8 @@ Cập nhật ít nhất mỗi tuần.
 | Eligibility/licensing | IN PROGRESS | Project owner | Professional name clearance before public-brand/listing work; asset approvals before use |
 | Research/design | COMPLETE FOR FOUNDATION | Project owner | Visual refinement continues during component reviews |
 | Architecture/shell | COMPLETE FOR M2 | Project owner | Continue component refinement during downstream reviews |
-| Discovery/product/cart | IN PROGRESS | Project owner | Cart contract, product → cart → checkout smoke test — 2026-11-22 |
+| Discovery/product/cart | COMPLETE FOR CURRENT FIXTURES | Project owner | Deferred accelerated-checkout and inventory-preflight regression when eligible fixtures exist |
+| Differentiation | IN PROGRESS | Project owner | Three consistent editorial/shoppable experiences across presets |
 | Content/templates | PLANNED | Project owner | Feature complete — 2026-12-27 |
 | Accessibility/performance | PLANNED | Project owner | Hardening complete — 2027-01-10 |
 | Demo/docs/support | PLANNED | Project owner | Commercial ready — 2027-01-10 |

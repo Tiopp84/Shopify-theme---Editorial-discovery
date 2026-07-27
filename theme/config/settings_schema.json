@@ -79,25 +79,25 @@
       {
         "type": "color",
         "id": "background_color",
-        "default": "#FFFFFF",
+        "default": "#F5F3EE",
         "label": "t:labels.background"
       },
       {
         "type": "color",
         "id": "foreground_color",
-        "default": "#17201C",
+        "default": "#242119",
         "label": "t:labels.foreground"
       },
       {
         "type": "color",
         "id": "accent_color",
-        "default": "#B94C31",
+        "default": "#5C6A4B",
         "label": "t:labels.accent"
       },
       {
         "type": "color",
         "id": "border_color",
-        "default": "#C8C5BA",
+        "default": "#D6CFBC",
         "label": "t:labels.border"
       },
       {
@@ -108,7 +108,7 @@
         "step": 1,
         "unit": "px",
         "label": "t:labels.input_corner_radius",
-        "default": 4
+        "default": 0
       }
     ]
   }

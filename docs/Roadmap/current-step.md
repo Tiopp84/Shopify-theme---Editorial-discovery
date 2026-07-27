@@ -15,7 +15,7 @@
 | Trường | Giá trị |
 |---|---|
 | Cập nhật lần cuối | 2026-07-27 (Asia/Bangkok) |
-| Phase | Phase 6 — Cart |
+| Phase | Phase 7 — Differentiation |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
@@ -23,7 +23,7 @@
 
 ## Mục tiêu đang thực hiện
 
-Triển khai Phase 6 Cart: cart page/drawer, quantity/remove/note/discount, empty/loading/error/live region, checkout buttons và focus behavior.
+Triển khai Phase 7 Differentiation: editorial hero, shoppable story và outfit composition theo contract đã khóa; giữ Shopify product/cart/checkout là nguồn sự thật.
 
 ## Đã hoàn thành
 
@@ -184,12 +184,17 @@ Triển khai Phase 6 Cart: cart page/drawer, quantity/remove/note/discount, empt
 | Phase 5 merchant UX slice | `theme/sections/product.liquid`, `theme/blocks/product-*.liquid`, `theme/templates/product.json` | STATIC PASS — vendor/title/price/SKU/availability/form/description are default Theme Blocks in the legacy UI order; collapsible content remains optional; native selling-plan fallback added; validator 74 files/111 storefront keys/99 schema keys; Theme Check 57 files zero offenses; live verification pending, 2026-07-24 |
 | Phase 5 recommendations slice | `theme/sections/product-recommendations.liquid`, `theme/assets/product-recommendations.js`, `theme/templates/product.json` | OWNER/LIVE PASS — full-width product-template section, related/complementary intent, merchant heading/limit and Add section preset working; static validation 76 files/113 storefront keys/109 schema keys; Theme Check 58 files zero offenses; empty/error-path retained for PDP browser gate, 2026-07-24 |
 | Phase 5 PDP exit | `docs/QA/phase-5-pdp-owner-review.md`, owner live testing, 2026-07-24 | PASS FOR AVAILABLE FIXTURES — variant/no-JS, no-media, image modal, recommendations, keyboard, responsive and Theme Editor lifecycle pass. Selling plans N/A; video/external video/3D NOT EVIDENCED and must be retested when data exists. |
-| Phase 6 Cart vertical slice | `docs/Specifications/cart-contract.md`, `theme/sections/cart.liquid`, `cart-drawer.liquid`, `theme/assets/cart.js`, `docs/QA/phase-6-cart-owner-review.md` | PARTIAL PASS — CART-01 cart drawer is OWNER/LIVE PASS; CART-02 cart page is OWNER/PREVIEW PASS (temporary), both owner-verified 2026-07-27. CART-02 covers the two-column bag/summary design, native no-JS cart form, inventory max, sale/unit/discount data, page-only note and checkout controls. Drawer/page share one local-first CartStore mutation queue; page note autosaves through Shopify `cart/update.js`, while checkout stays native Shopify. Phase 6 remains open until the product → cart → standard/accelerated checkout smoke path and remaining lifecycle evidence are recorded. Validator 78 files/134 storefront keys/110 schema keys; Theme Check 59 files zero offenses. |
+| Phase 6 Cart vertical slice | `docs/Specifications/cart-contract.md`, `theme/sections/cart.liquid`, `cart-drawer.liquid`, `theme/assets/cart.js`, `docs/QA/phase-6-cart-owner-review.md` | CLOSED FOR CURRENT FIXTURES — CART-01 drawer is OWNER/LIVE PASS; CART-02 page is OWNER/PREVIEW SMOKE PASS. PDP → drawer, rapid quantity/remove, cart page + note, standard checkout, no-JS fallback and Theme Editor lifecycle all PASS; Console has no error. Owner accepts closure on 2026-07-27. Accelerated checkout is NOT EVIDENCED because the active Test payment gateway supplies no accelerated button; inventory preflight is NOT EVIDENCED because no tracked deny-oversell fixture exists. Both remain deferred regression rows. Validator 78 files/134 storefront keys/110 schema keys; Theme Check 59 files zero offenses. |
+| Phase 7 differentiation architecture | `docs/Specifications/differentiation-contract.md` | READY — locks three sections: editorial hero, shoppable story and outfit composition. Each keeps Shopify as product/price/availability/cart authority, uses no-JS links as the baseline, avoids generic builders and fake bundles, and has explicit lifecycle, missing-resource and variant-safe acceptance. |
+| Visual design tokens | `docs/Specifications/visual-design-tokens.md`, `stitch_fashion_cart_redesign/narrivelle_homepage_desktop_full_width_hero/`, `stitch_fashion_cart_redesign/narrivelle_homepage_mobile_editorial_overlay/` | FOUNDATION TOKENS IMPLEMENTED — approved palette, sharp controls, semantic spacing aliases, commerce/campaign roles and tabular prices are shared primitives; homepage composition remains scoped to Phase 7. Shopify preview remains the visual acceptance authority. |
+| Phase 7 editorial hero vertical slice | `theme/sections/editorial-hero.liquid`, `theme/templates/index.json`, `theme/locales/en.default.schema.json` | STATIC PASS — hero is the home template's first section, with one ordinary optional CTA, responsive hero media and a text-only fallback; no JavaScript/runtime is added. Schema has explicit locale-backed labels, desktop/mobile media-height choices and a preset. Validator passes 79 files/134 storefront keys/117 schema keys; Theme Check passes 60 files with zero offenses, 2026-07-27. Shopify preview, 320/375/desktop and Theme Editor lifecycle evidence remain pending. |
+| Phase 7 shoppable story vertical slice | `theme/sections/shoppable-story.liquid`, `theme/locales/en.default.schema.json` | STATIC PASS — ordered product blocks use independent product destinations, Shopify-derived title/price/availability and an optional editorial image/caption. Missing product blocks are omitted; no variant is silently added. Validator passes 80 files/134 storefront keys/122 schema keys; Theme Check passes 61 files with zero offenses, 2026-07-27. Browser/Theme Editor evidence remains pending. |
+| Phase 7 outfit composition vertical slice | `theme/sections/outfit-composition.liquid`, `theme/locales/en.default.schema.json` | STATIC PASS — one optional look image/introduction plus independent product blocks rendered by the shared product-card. There is no combined price, bundle claim, grouped cart mutation or product state. Validator passes 81 files/134 storefront keys/125 schema keys; Theme Check passes 62 files with zero offenses, 2026-07-27. Browser/Theme Editor evidence remains pending. |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Khi sẵn sàng đóng Phase 6, chạy và ghi bằng chứng product → cart → standard/accelerated checkout smoke path cùng Theme Editor lifecycle theo `docs/QA/phase-6-cart-owner-review.md`.
-2. Remediate mọi lỗi live-data/browser phát hiện trong smoke test trước khi đóng gate.
+1. Configure real hero/story/composition images, links and product blocks in Theme Editor, then run the Phase 7 visual gate at desktop, 375 and 320 px. Record long-copy, missing-resource, product-state, keyboard, zoom and Theme Editor lifecycle evidence before closing Phase 7.
+2. Khi một accelerated checkout provider hợp lệ được bật, chạy và ghi smoke test native handoff; khi có tracked deny-oversell fixture, chạy lại inventory-preflight row của Cart runbook.
 3. Khi merchant thêm selling plan, Shopify-hosted/external video hoặc 3D model, chạy lại rows NOT EVIDENCED của PDP runbook.
 4. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
 

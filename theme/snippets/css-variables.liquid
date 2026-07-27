@@ -14,6 +14,8 @@
     --font-heading--family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
     --font-heading--style: {{ settings.type_heading_font.style }};
     --font-heading--weight: {{ settings.type_heading_font.weight }};
+    --font-commerce: var(--font-primary--family);
+    --font-campaign: var(--font-heading--family);
     --type-scale: {{ settings.type_scale | divided_by: 100.0 }};
     --page-width: {{ settings.max_page_width }};
     --page-margin: {{ settings.min_page_margin }}px;
@@ -21,6 +23,10 @@
     --color-foreground: {{ settings.foreground_color }};
     --color-accent: {{ settings.accent_color }};
     --color-border: {{ settings.border_color }};
+    --color-panel-01: #EBE7DD;
+    --color-panel-02: #E1DBCC;
+    --color-panel-03: #D6CFBC;
+    --color-accent-tint: #E4E8DC;
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
     --space-1: 0.25rem;
     --space-2: 0.5rem;
@@ -31,6 +37,13 @@
     --space-8: 2rem;
     --space-12: 3rem;
     --space-16: 4rem;
+    --space-chapter: 4rem;
+    --space-chapter-mobile: 2.5rem;
+    --space-8px: 0.5rem;
+    --space-16px: 1rem;
+    --space-24px: 1.5rem;
+    --space-40px: 2.5rem;
+    --space-64px: 4rem;
     --focus-ring: 0 0 0 0.1875rem color-mix(in srgb, var(--color-accent) 75%, transparent);
   }
 {% endstyle %}

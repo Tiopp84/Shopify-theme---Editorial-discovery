@@ -274,7 +274,7 @@ class ProductGallery extends HTMLElement {
     this.previousButton = this.querySelector('[data-product-gallery-previous]');
     this.nextButton = this.querySelector('[data-product-gallery-next]');
     this.count = this.querySelector('[data-product-gallery-count]');
-    this.buttons.forEach((button) => button.addEventListener('click', () => this.select(button.dataset.productMediaSelect), { signal }));
+    this.buttons.forEach((button) => button.addEventListener('click', () => this.select(button.dataset.productMediaSelect, { reveal: true }), { signal }));
     this.stage?.addEventListener('click', (event) => {
       const opener = event.target.closest('[data-product-media-open]');
       if (!opener) return;
@@ -300,15 +300,26 @@ class ProductGallery extends HTMLElement {
 
   disconnectedCallback() { this.abortController?.abort(); this.abortController = null; }
 
-  select(id) {
+  select(id, { reveal = false } = {}) {
     if (!id) return;
+    const selectedMedia = this.media.find((item) => item.dataset.productMediaId === String(id));
     this.media.forEach((item) => {
       const selected = item.dataset.productMediaId === String(id);
       item.hidden = !selected;
       if (!selected) item.querySelectorAll('video').forEach((video) => video.pause());
     });
+    if (selectedMedia?.dataset.productMediaRatio) this.stage?.style.setProperty('--pdp-media-ratio', selectedMedia.dataset.productMediaRatio);
     this.buttons.forEach((button) => button.toggleAttribute('aria-current', button.dataset.productMediaSelect === String(id)));
     this.selectedId = String(id);
+    if (reveal) this.revealSelectedMedia();
+  }
+
+  revealSelectedMedia() {
+    requestAnimationFrame(() => {
+      if (!this.stage) return;
+      const bounds = this.stage.getBoundingClientRect();
+      if (bounds.top < 0 || bounds.bottom > window.innerHeight) this.stage.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' });
+    });
   }
 
   open(opener = null) {

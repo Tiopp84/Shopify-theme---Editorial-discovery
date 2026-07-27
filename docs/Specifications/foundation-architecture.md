@@ -10,8 +10,8 @@ The Phase 1 prototype is an interaction and art-direction contract, not producti
 - Sections own layout and context; reusable merchant capabilities become Theme Blocks or snippets with explicit inputs.
 - Section block schemas are allowlists by default. Declare each surface-owned Theme Block explicitly in its section; do not use generic `@theme` for commerce or shell surfaces. Use `@theme` only for deliberate general-purpose builders such as Custom section; use `@app` only at genuine app integration points. Private underscore block targeting may be adopted only when the active Shopify editor supports it end-to-end.
 - Storefront and schema interface copy use locale keys. No prototype copy is copied into production without a translation key.
-- Body and editorial heading typography are separate merchant settings. Spacing uses a fixed token scale; components may not invent arbitrary global spacing variables.
-- Colour roles begin with background, foreground, accent, and border. Component states must not communicate through colour alone.
+- Body and editorial heading typography are separate merchant settings. Spacing uses a fixed token scale; components may not invent arbitrary global spacing variables. The approved role mapping, palette and component rules are defined in `visual-design-tokens.md`.
+- Colour roles begin with background, foreground, accent, and border. Component states must not communicate through colour alone; the only seasonal accent is governed by `visual-design-tokens.md`.
 - `main` is the single page landmark and receives the skip-link target. Overlays must use native dialog semantics or equivalent focus/Escape/restore behavior.
 - Prototype CSS and JavaScript remain outside `theme/`; production components are implemented progressively and tested against real Shopify data.
 
