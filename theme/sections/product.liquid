@@ -83,8 +83,6 @@
         {% if variant.compare_at_price > variant.price %}{% assign on_sale = true %}{% endif %}
         {% assign has_quantity_price_breaks = false %}
         {% if variant.quantity_price_breaks.size > 0 %}{% assign has_quantity_price_breaks = true %}{% endif %}
-        {% assign inventory_tracked = false %}
-        {% if variant.inventory_management == 'shopify' and variant.inventory_policy == 'deny' %}{% assign inventory_tracked = true %}{% endif %}
         {
           "id": {{ variant.id | json }},
           "options": {{ variant.options | json }},
@@ -96,7 +94,6 @@
           "sku": {{ variant.sku | json }},
           "featuredMediaId": {% if variant.featured_media %}{{ variant.featured_media.id | json }}{% else %}null{% endif %},
           "quantityRule": {{ variant.quantity_rule | json }},
-          "inventory": { "tracked": {{ inventory_tracked | json }}, "quantity": {{ variant.inventory_quantity | default: 0 | json }} },
           "hasQuantityPriceBreaks": {{ has_quantity_price_breaks | json }}
         }{% unless forloop.last %},{% endunless %}
       {% endfor %}
@@ -185,7 +182,7 @@
   .main-product__selling-plan select { background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--pdp-control-radius); color: var(--color-foreground); min-block-size: var(--pdp-control-size); padding-inline: .8rem; width: 100%; }
   .main-product__selling-plan-note { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); font-size: .825rem; line-height: 1.45; margin: 0; }
   .main-product__details [data-product-submit] { --button-background: var(--color-foreground); --button-border-color: var(--color-foreground); --button-min-block-size: 3.5rem; --button-padding-inline: var(--space-6); --button-radius: var(--pdp-action-radius); font-weight: 700; inline-size: 100%; letter-spacing: .04em; margin: 0; text-transform: uppercase; }
-  .main-product__selection-error { color: var(--color-foreground); font-weight: 600; }
+  .main-product__selection-error { background: color-mix(in srgb, #a33f2b 8%, var(--color-background)); border-inline-start: .2rem solid #a33f2b; color: #a33f2b; font-size: .9rem; font-weight: 600; line-height: 1.45; margin: var(--space-3) 0 0; padding: var(--space-3); }
   .main-product__blocks { display: grid; gap: var(--space-3); margin-top: var(--space-5); }
   .main-product:not(.main-product--show-vendor) .main-product__vendor,
   .main-product:not(.main-product--show-sku) .main-product__sku,

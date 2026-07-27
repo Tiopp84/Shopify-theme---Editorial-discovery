@@ -1,15 +1,9 @@
 {% # theme-check-disable ValidScopedCSSClass %}
-{% liquid
-  assign current_variant = product.selected_or_first_available_variant
-  assign stock_tracked = false
-  if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'deny'
-    assign stock_tracked = true
-  endif
-%}
+{% assign current_variant = product.selected_or_first_available_variant %}
 
-<p class="main-product__availability" data-product-availability data-state="{% if current_variant.available %}{% if stock_tracked %}in-stock{% else %}available{% endif %}{% else %}sold-out{% endif %}" aria-live="polite" {{ block.shopify_attributes }}>
+<p class="main-product__availability" data-product-availability data-state="{% if current_variant.available %}available{% else %}sold-out{% endif %}" aria-live="polite" {{ block.shopify_attributes }}>
   {% if current_variant.available %}
-    {% if stock_tracked %}{{ 'products.form.in_stock' | t: count: current_variant.inventory_quantity }}{% else %}{{ 'products.form.available' | t }}{% endif %}
+    {{ 'products.form.available' | t }}
   {% else %}
     {{ 'products.form.sold_out' | t }}
   {% endif %}

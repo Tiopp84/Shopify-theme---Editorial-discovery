@@ -39,6 +39,80 @@ class ProductForm extends HTMLElement {
 
   disconnectedCallback() { this.abortController?.abort(); this.abortController = null; }
 
+  showError(message) {
+    if (!this.error) return;
+    this.error.textContent = message;
+    this.error.hidden = false;
+  }
+
+  async validateAdd() {
+    if (!this.currentVariant || !this.quantity) return false;
+    this.inventoryController?.abort();
+    const controller = new AbortController();
+    this.inventoryController = controller;
+    const { signal } = controller;
+    const wasDisabled = this.submit.disabled;
+    const variantId = this.currentVariant.id;
+    const requested = Number(this.quantity.value) || Number(this.quantity.min) || 1;
+    this.submit.disabled = true;
+    try {
+      const [cartQuantities, inventory] = await Promise.all([
+        this.readCartQuantities(signal),
+        this.readLiveInventory(variantId, signal),
+      ]);
+      if (signal.aborted || String(this.currentVariant?.id) !== String(variantId)) return false;
+      if (!inventory) {
+        this.showError('We could not verify availability. Please try again.');
+        return false;
+      }
+      if (!inventory.tracked || inventory.policy !== 'deny') return true;
+      const inCart = cartQuantities.get(String(variantId)) || 0;
+      const remaining = Math.max(0, inventory.quantity - inCart);
+      if (requested > remaining) {
+        this.showError(remaining ? `Only ${remaining} more item${remaining === 1 ? '' : 's'} can be added for this variant.` : 'The maximum quantity of this item is already in your cart.');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      if (!signal.aborted) this.showError('We could not verify availability. Please try again.');
+      return false;
+    } finally {
+      if (this.inventoryController === controller) this.inventoryController = null;
+      if (!signal.aborted) this.submit.disabled = wasDisabled || !this.currentVariant.available;
+    }
+  }
+
+  async readCartQuantities(signal) {
+    const cartUrl = document.querySelector('[data-cart-drawer]')?.dataset.cartUrl || '/cart';
+    const response = await fetch(`${cartUrl}.js`, { cache: 'no-store', headers: { Accept: 'application/json' }, signal });
+    if (!response.ok) throw new Error('Cart state request failed');
+    const cart = await response.json();
+    const quantities = (cart.items || []).reduce((result, item) => {
+      result[String(item.variant_id)] = (result[String(item.variant_id)] || 0) + item.quantity;
+      return result;
+    }, {});
+    this.applyCartState(quantities);
+    return new Map(Object.entries(quantities));
+  }
+
+  async readLiveInventory(variantId, signal) {
+    const url = new URL(this.dataset.productUrl, window.location.origin);
+    url.searchParams.set('variant', variantId);
+    url.searchParams.set('section_id', this.section.dataset.sectionId);
+    url.searchParams.set('_', Date.now());
+    const response = await fetch(url, { cache: 'no-store', headers: { Accept: 'text/html' }, signal });
+    if (!response.ok) throw new Error('Inventory request failed');
+    const html = await response.text();
+    const form = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-product-form]');
+    const returnedVariantId = form?.querySelector('[data-product-variant-id]')?.value;
+    if (!form || returnedVariantId !== String(variantId)) throw new Error('Inventory response was stale');
+    return {
+      tracked: form.dataset.variantInventoryTracked === 'true',
+      policy: form.dataset.variantInventoryPolicy,
+      quantity: Number(form.dataset.variantInventoryQuantity),
+    };
+  }
+
   fromControls() {
     const choices = this.options.map((option) => option.value);
     const variant = this.variants.find((item) => item.options.every((value, index) => value === choices[index]));
@@ -67,11 +141,12 @@ class ProductForm extends HTMLElement {
   }
 
   commit(variant, updateUrl) {
+    this.inventoryController?.abort();
     this.currentVariant = variant;
     this.variantInput.value = variant.id;
     this.error.hidden = true;
     this.error.textContent = '';
-    this.submit.disabled = !variant.available;
+    this.submit.disabled = !variant.available || Boolean(this.inventoryController);
     this.submit.textContent = variant.available ? this.dataset.addToCart : this.dataset.soldOut;
     this.renderAvailability(variant);
     if (this.skuValue) this.skuValue.textContent = variant.sku || '';
@@ -117,37 +192,20 @@ class ProductForm extends HTMLElement {
     const rule = variant.quantityRule || {};
     this.quantity.min = rule.min || 1;
     this.quantity.step = rule.increment || 1;
-    const stockLimit = this.stockLimit(variant);
-    const max = stockLimit === null ? rule.max : (rule.max ? Math.min(rule.max, stockLimit) : stockLimit);
-    if (max) this.quantity.max = max;
+    if (rule.max) this.quantity.max = rule.max;
     else this.quantity.removeAttribute('max');
-    const cannotAdd = variant.available && stockLimit !== null && stockLimit < Number(this.quantity.min);
-    this.quantity.disabled = cannotAdd;
-    this.submit.disabled = !variant.available || cannotAdd;
-    this.error.hidden = !cannotAdd;
-    this.error.textContent = cannotAdd ? this.dataset.allStock : '';
+    this.quantity.disabled = !variant.available;
+    this.submit.disabled = !variant.available;
+    this.error.hidden = true;
+    this.error.textContent = '';
     this.clampQuantity();
-  }
-
-  stockLimit(variant) {
-    if (!variant?.inventory?.tracked) return null;
-    return Math.max(0, Number(variant.inventory.quantity) - (this.cartQuantities.get(String(variant.id)) || 0));
-  }
-
-  inventoryLimit(variant) {
-    if (!variant?.inventory?.tracked) return null;
-    return Math.max(0, Number(variant.inventory.quantity));
   }
 
   renderAvailability(variant) {
     if (!this.availability) return;
-    const inventoryLimit = this.inventoryLimit(variant);
     if (!variant.available) {
       this.availability.textContent = this.dataset.soldOut;
       this.availability.dataset.state = 'sold-out';
-    } else if (inventoryLimit !== null) {
-      this.availability.textContent = inventoryLimit ? this.dataset.inStock.replace('__count__', inventoryLimit) : this.dataset.soldOut;
-      this.availability.dataset.state = inventoryLimit ? 'in-stock' : 'sold-out';
     } else {
       this.availability.textContent = this.dataset.available;
       this.availability.dataset.state = 'available';

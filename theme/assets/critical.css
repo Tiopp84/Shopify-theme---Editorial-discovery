@@ -164,7 +164,7 @@ textarea {
   cursor: pointer;
 }
 
-:where(button, input[type='button'], input[type='submit'], .button):is(:hover, :focus-visible):not(:disabled) {
+:where(button, input[type='button'], input[type='submit'], .button):where(:hover, :focus-visible):where(:not(:disabled)) {
   background: var(--button-background-hover);
 }
 

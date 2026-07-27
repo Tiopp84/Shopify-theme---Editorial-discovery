@@ -1,6 +1,6 @@
 # Phase 6 — Cart owner review
 
-Status: **CART DRAWER OWNER/LIVE PASS — 2026-07-27; CART PAGE REVIEW REMAINS OPEN**
+Status: **CART DRAWER OWNER/LIVE PASS; CART PAGE OWNER/PREVIEW PASS (TEMPORARY) — 2026-07-27**
 
 Use a Shopify preview URL for cart and drawer browser behavior. Test Theme Editor lifecycle separately. The required behavior is defined by [`cart-contract.md`](../Specifications/cart-contract.md).
 
@@ -25,11 +25,20 @@ With JavaScript enabled:
 1. Open Cart from the header at desktop, 375 px and 320 px. It opens a dialog; Close, Escape and backdrop return focus to the original header control.
 2. Add an available product from PDP. The drawer opens, announces the update, refreshes quantity/subtotal and updates the header count.
 3. Change quantity several times rapidly and remove a line. Quantity, line total and subtotal must update immediately on every interaction. Confirm that each changed line is sent once through a sequential Shopify update after the final quantity interaction; removing a line must be next in the queue without the 650 ms debounce.
-4. For a tracked, deny-oversell variant, increase the drawer quantity to its inventory. The `+` control must become disabled; typing a larger value must clamp to that inventory, and the subtotal must use the clamped quantity. On PDP, the availability text must continue to show raw inventory, while its quantity maximum is inventory minus that variant's cart quantity.
+4. For a tracked, deny-oversell variant, click `+` or type a quantity above available stock. The UI may update optimistically, then Shopify must reject or partially accept the request. The controller must read `cart.js`, show the accepted quantity, retain the item position, and show Shopify's inventory error in the summary; PDP must show Available/Sold out rather than an exact Liquid inventory count.
 5. Remove the final drawer line. It must immediately show the empty state with no checkout controls; if Shopify rejects the mutation, the confirmed line must return.
 6. Where present, verify custom properties, selling plan, original/final price, unit price, line discount and cart-level discount. Change across a quantity-price threshold or automatic discount threshold: the local total updates immediately, then reconciles to the price/discount returned by Shopify.
 7. Block one `/cart/add.js` or `/cart/change.js` request. The old drawer contents remain usable, an error is announced, and View cart still works.
 8. Confirm drawer checkout goes straight to Shopify checkout; it must not be intercepted or replaced.
+
+## Shared enhanced cart state
+
+With JavaScript enabled on the cart page:
+
+1. Change a quantity rapidly using both buttons and direct input. The page line total, subtotal, header count and the drawer must update immediately; Shopify receives only the final quantity after the 650 ms debounce.
+2. Remove a line from the page. It must disappear immediately from both surfaces; removing the final line shows the page and drawer empty state immediately. Force a failed request and verify the confirmed line returns in both places.
+3. Enter an order note on the page. It must show Saving then Saved, persist after reload, and remain serialized behind any quantity mutation. Then open the drawer and proceed to checkout. The drawer need not display an editor, but its native checkout form must submit the saved note.
+4. Cross a quantity-price or automatic-discount threshold. Both surfaces must reconcile to the server's final price/discount without duplicate listeners or stale totals.
 
 ## Theme Editor and recording
 

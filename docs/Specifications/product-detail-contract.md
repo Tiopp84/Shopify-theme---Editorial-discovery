@@ -8,12 +8,12 @@ This is the implementation contract for PDP-01 through PDP-03. It precedes UI wo
 
 | Concern | Owner / source of truth | Boundary |
 |---|---|---|
-| Product, variants, inventory policy, quantity rules, selling-plan allocations, price and availability | Shopify Liquid on first render; Shopify product-form/cart endpoints remain authoritative on submit | `main-product` section |
+| Product, variants, inventory policy, quantity rules, selling-plan allocations, price and availability | Shopify Liquid on first render; product-form/cart endpoints remain authoritative on submit | `main-product` section |
 | Selected variant | `?variant=<variant-id>` when valid; otherwise `product.selected_or_first_available_variant` | `product-form` custom element and serialized variant JSON |
 | Variant option controls | Native form controls; controller derives a matching variant from serialized Shopify data | Picker and variant-dependent fields inside `main-product` |
 | Main gallery item | Selected variant's `featured_media`, otherwise the current gallery selection | Gallery only; changing it must never overwrite the selected variant |
 | Media playback, modal, model viewer | Native Shopify media markup/browser APIs; later gallery controller | Individual media item/modal only |
-| Quantity input | Native product form owns POST fallback. Enhanced controller combines variant quantity rule with tracked, deny-oversell inventory less the cart total for the selected variant; Shopify validates again on submit | Product form |
+| Quantity input | Native product form owns POST fallback. Enhanced controller applies Shopify quantity rules and performs a fresh Online Store section/cart preflight before Ajax add; Shopify cart mutation remains final validation | Product form |
 | Selling plan | Native `selling_plan` form control; Shopify validates allocations and price | Product form |
 | Size guide | Merchant-selected Shopify Page rendered once in the product section | `size-guide` owns only dialog open/close state; the page link remains the no-JS fallback |
 
@@ -41,11 +41,11 @@ The Phase 5 vertical slice has one stable `product-form` controller per main pro
 
 - **Event:** a native option `change` requests selection; `popstate` restores the URL-selected variant. No debounce is needed.
 - **Validation:** only an exact Shopify variant tuple is committed. An impossible tuple preserves the current committed variant, disables purchase with an explicit unavailable message, and does not change URL/media/price.
-- **Render:** serialized variant data atomically changes hidden `id`, price, availability, SKU, option disabled state, quantity rule, buttons, selected media marker and URL. For tracked, deny-oversell inventory, the enhanced cap is `variant.inventory_quantity − cart quantity for that variant_id`.
+- **Render:** serialized variant data atomically changes hidden `id`, price, availability, SKU, option disabled state, quantity rule, buttons, selected media marker and URL. The theme exposes availability, not an exact inventory count.
 - **URL/history:** initial valid `?variant=` is respected. User changes use `replaceState` so option exploration does not flood history; Back/Forward applies URL state without creating history.
 - **Focus and continuity:** native control retains focus after a selection. Updating text/media never moves focus. A future gallery dialog must restore its opener focus and pause/reset video on close.
 - **Size guide modal:** the selected Page is server-rendered. The `size-guide` controller intercepts its link only when native dialog support exists, moves focus to Close, closes by Escape/backdrop/Close, and returns focus to the link. It has no URL state, fetch, animation, or reduced-motion behavior. Without JavaScript it remains a normal page link.
-- **Async/error:** the cart drawer exposes a shared `cart:state` event aggregated by `variant_id`; PDP receives it and updates only the selected variant's cap. PDP also reads the current cart before an enhanced add so its quantity control is refreshed immediately before submit. If that read fails, Shopify remains the final validator and the form stays usable.
+- **Async/error:** before enhanced add, PDP reads the fresh cart and requests its own Online Store section for the selected variant. For tracked deny-oversell inventory, it blocks the request when `requested quantity > fresh inventory − cart quantity for that variant`, with the error shown at the PDP; it never opens the drawer in that case. This uses neither Storefront API nor a public token. A failed preflight blocks add; Shopify remains the final validator for a concurrent inventory change. The cart drawer exposes a shared `cart:state` event aggregated by `variant_id` to keep PDP state aligned after cart mutations.
 - **Fallback:** without JavaScript, server-selected variant, native controls and the Shopify product form remain fully functional. Direct variant URLs remain bookmarkable. If JavaScript fails, it must not hide form content.
 - **Lifecycle/reduced motion:** controller initialization is idempotent and listens for Shopify section load/unload. No automatic media motion is introduced; media controls are user initiated.
 
