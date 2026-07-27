@@ -10,11 +10,21 @@
 {
   "sections": {
     "main": {
-      "type": "hello-world",
+      "type": "editorial-hero",
+      "settings": {}
+    },
+    "story": {
+      "type": "shoppable-story",
+      "settings": {}
+    },
+    "composition": {
+      "type": "outfit-composition",
       "settings": {}
     }
   },
   "order": [
-    "main"
+    "main",
+    "story",
+    "composition"
   ]
 }

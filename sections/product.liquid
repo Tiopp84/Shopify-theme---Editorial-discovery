@@ -7,6 +7,9 @@
   elsif section.settings.media_ratio == 'landscape'
     assign media_ratio = '3 / 2'
   endif
+  if initial_media.preview_image.aspect_ratio != blank
+    assign media_ratio = initial_media.preview_image.aspect_ratio
+  endif
 %}
 
 <section class="main-product{% if section.settings.show_vendor %} main-product--show-vendor{% endif %}{% if section.settings.show_sku %} main-product--show-sku{% endif %}{% if section.settings.show_availability %} main-product--show-availability{% endif %}{% if section.settings.show_quantity %} main-product--show-quantity{% endif %}" data-product-section data-section-id="{{ section.id }}" style="--pdp-media-ratio: {{ media_ratio }};">
@@ -17,6 +20,7 @@
           <div
             class="main-product__media"
             data-product-media-id="{{ media.id }}"
+            data-product-media-ratio="{{ media.preview_image.aspect_ratio | default: media_ratio }}"
           >
           {% case media.media_type %}
             {% when 'image' %}
@@ -106,7 +110,7 @@
 {% stylesheet %}
   .main-product { display: grid; gap: var(--space-6); margin: var(--space-6) auto; max-width: var(--page-width); padding-inline: var(--page-gutter); }
   .main-product__gallery { display: grid; gap: var(--space-3); min-width: 0; }
-  .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; }
+  .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; scroll-margin-block-start: 5rem; }
   .main-product__media-placeholder { align-items: center; aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; overflow: hidden; }
   .main-product__media-placeholder svg { block-size: auto; inline-size: 42%; max-block-size: 42%; }
   .main-product__media { block-size: 100%; inline-size: 100%; position: relative; }
