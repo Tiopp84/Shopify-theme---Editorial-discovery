@@ -14,7 +14,7 @@
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-07-24 (Asia/Bangkok) |
+| Cập nhật lần cuối | 2026-07-27 (Asia/Bangkok) |
 | Phase | Phase 6 — Cart |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
@@ -182,11 +182,11 @@ Triển khai Phase 6 Cart: cart page/drawer, quantity/remove/note/discount, empt
 | Phase 5 merchant UX slice | `theme/sections/product.liquid`, `theme/blocks/product-*.liquid`, `theme/templates/product.json` | STATIC PASS — vendor/title/price/SKU/availability/form/description are default Theme Blocks in the legacy UI order; collapsible content remains optional; native selling-plan fallback added; validator 74 files/111 storefront keys/99 schema keys; Theme Check 57 files zero offenses; live verification pending, 2026-07-24 |
 | Phase 5 recommendations slice | `theme/sections/product-recommendations.liquid`, `theme/assets/product-recommendations.js`, `theme/templates/product.json` | OWNER/LIVE PASS — full-width product-template section, related/complementary intent, merchant heading/limit and Add section preset working; static validation 76 files/113 storefront keys/109 schema keys; Theme Check 58 files zero offenses; empty/error-path retained for PDP browser gate, 2026-07-24 |
 | Phase 5 PDP exit | `docs/QA/phase-5-pdp-owner-review.md`, owner live testing, 2026-07-24 | PASS FOR AVAILABLE FIXTURES — variant/no-JS, no-media, image modal, recommendations, keyboard, responsive and Theme Editor lifecycle pass. Selling plans N/A; video/external video/3D NOT EVIDENCED and must be retested when data exists. |
-| Phase 6 Cart vertical slice | `docs/Specifications/cart-contract.md`, `theme/sections/cart.liquid`, `cart-drawer.liquid`, `theme/assets/cart.js`, `docs/QA/phase-6-cart-owner-review.md` | STATIC PASS — no-JS cart page plus native-dialog progressive enhancement; drawer local totals, debounced quantity sync, immediate add/remove sync, inventory clamp and PDP raw-stock display implemented; validator 78 files/126 storefront keys/110 schema keys; Theme Check 59 files zero offenses; Shopify preview/browser evidence pending, 2026-07-24. |
+| Phase 6 Cart vertical slice | `docs/Specifications/cart-contract.md`, `theme/sections/cart.liquid`, `cart-drawer.liquid`, `theme/assets/cart.js`, `docs/QA/phase-6-cart-owner-review.md` | PARTIAL PASS — CART-01 cart drawer is OWNER/LIVE PASS (owner verified, 2026-07-27). CART-02 cart page is STATIC PASS: two-column bag/summary design, native no-JS cart form, inventory max, sale/unit/discount data, note and checkout controls; enhanced ± controls only change the native input until Update bag submits. CART-02 owner/Shopify-preview review remains open. Validator 78 files/133 storefront keys/110 schema keys; Theme Check 59 files zero offenses. |
 
 ## Việc tiếp theo — theo thứ tự
 
-1. Chạy `docs/QA/phase-6-cart-owner-review.md` trên Shopify preview: no-JS cart page, drawer add/update/remove/error, 320/375/desktop, focus/Escape/backdrop, standard/accelerated checkout và Theme Editor lifecycle.
+1. Chạy CART-02 cart page trên Shopify preview theo `docs/QA/phase-6-cart-owner-review.md`: no-JS update/remove/note, enhanced ± → Update bag, inventory maximum, sale/discount/unit price, 320/375/desktop, standard/accelerated checkout và Theme Editor lifecycle.
 2. Remediate mọi lỗi live-data/browser trước khi đóng product → cart → checkout smoke test.
 3. Khi merchant thêm selling plan, Shopify-hosted/external video hoặc 3D model, chạy lại rows NOT EVIDENCED của PDP runbook.
 4. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
