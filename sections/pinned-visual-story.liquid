@@ -8,7 +8,7 @@
   endfor
 %}
 
-<section class="pinned-visual-story" {% if section.settings.heading != blank %}aria-labelledby="PinnedVisualStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="pinned-visual-story" data-home-reveal="pinned-visual-story" {% if section.settings.heading != blank %}aria-labelledby="PinnedVisualStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <header class="pinned-visual-story__intro">
     {% if section.settings.eyebrow != blank %}<p>{{ section.settings.eyebrow | escape }}</p>{% endif %}
     {% if section.settings.heading != blank %}<h2 id="PinnedVisualStoryHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
@@ -25,7 +25,7 @@
       <div class="pinned-visual-story__chapters">
         {% for block in section.blocks %}
           {% if block.settings.heading != blank or block.settings.text != blank %}
-            <article class="pinned-visual-story__chapter" {{ block.shopify_attributes }}>
+            <article class="pinned-visual-story__chapter" data-home-reveal-chapter {{ block.shopify_attributes }}>
               <p class="pinned-visual-story__number" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
               {% if block.settings.heading != blank %}<h3>{{ block.settings.heading | escape }}</h3>{% endif %}
               {% if block.settings.text != blank %}<div class="pinned-visual-story__body">{{ block.settings.text }}</div>{% endif %}

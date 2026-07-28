@@ -8,7 +8,7 @@
   endfor
 %}
 
-<section class="outfit-composition" {% if section.settings.heading != blank %}aria-labelledby="OutfitCompositionHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="outfit-composition" data-home-reveal="outfit-composition" {% if section.settings.heading != blank %}aria-labelledby="OutfitCompositionHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="outfit-composition__lead{% if section.settings.image == blank %} outfit-composition__lead--text-only{% endif %}">
     <div class="outfit-composition__content">
       {% if section.settings.eyebrow != blank %}
@@ -36,7 +36,7 @@
   </div>
 
   {% if has_products %}
-    <ul class="outfit-composition__items" role="list">
+    <ul class="outfit-composition__items" data-home-reveal-group="cards" role="list">
       {% for block in section.blocks %}
         {% if block.settings.product != blank %}
           <li {{ block.shopify_attributes }}>

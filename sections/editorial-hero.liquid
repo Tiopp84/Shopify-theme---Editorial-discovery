@@ -7,6 +7,7 @@
 
 <section
   class="editorial-hero full-width editorial-hero--desktop-{{ section.settings.desktop_height }} editorial-hero--mobile-{{ section.settings.mobile_height }}{% if section.settings.image == blank %} editorial-hero--text-only{% endif %}"
+  data-home-reveal="editorial-hero"
   {% if section.settings.heading != blank %}aria-labelledby="EditorialHeroHeading-{{ section.id }}"{% endif %}
   {{ section.shopify_attributes }}
 >
