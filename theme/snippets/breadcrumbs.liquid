@@ -1,0 +1,42 @@
+{% unless request.page_type == 'index' %}
+  <nav class="breadcrumbs" aria-label="{{ 'accessibility.breadcrumb' | t }}">
+    <ol>
+      <li><a href="{{ routes.root_url }}">{{ 'navigation.home' | t }}</a></li>
+      {% case request.page_type %}
+        {% when 'product' %}
+          {% if collection %}
+            <li><a href="{{ collection.url }}">{{ collection.title | escape }}</a></li>
+          {% else %}
+            <li><a href="{{ routes.all_products_collection_url }}">{{ 'navigation.products' | t }}</a></li>
+          {% endif %}
+          <li aria-current="page">{{ product.title | escape }}</li>
+        {% when 'collection' %}
+          <li><a href="{{ routes.collections_url }}">{{ 'collections.title' | t }}</a></li>
+          <li aria-current="page">{{ collection.title | escape }}</li>
+        {% when 'article' %}
+          <li><a href="{{ blog.url }}">{{ blog.title | escape }}</a></li>
+          <li aria-current="page">{{ article.title | escape }}</li>
+        {% when 'blog' %}
+          <li aria-current="page">{{ blog.title | escape }}</li>
+        {% when 'page' %}
+          <li aria-current="page">{{ page.title | escape }}</li>
+        {% when 'cart' %}
+          <li aria-current="page">{{ 'cart.title' | t }}</li>
+        {% when 'search' %}
+          <li aria-current="page">{{ 'navigation.search' | t }}</li>
+        {% else %}
+          <li aria-current="page">{{ page_title | escape }}</li>
+      {% endcase %}
+    </ol>
+  </nav>
+{% endunless %}
+
+{% stylesheet %}
+  .breadcrumbs { margin: var(--space-3) auto 0; max-width: var(--page-width); padding-inline: var(--page-gutter); }
+  .breadcrumbs ol { align-items: center; display: flex; flex-wrap: wrap; gap: .35rem; list-style: none; margin: 0; padding: 0; }
+  .breadcrumbs li { align-items: center; color: color-mix(in srgb, var(--color-foreground) 68%, transparent); display: inline-flex; font-size: .75rem; letter-spacing: .02em; line-height: 1.4; }
+  .breadcrumbs li + li::before { color: color-mix(in srgb, var(--color-foreground) 45%, transparent); content: '›'; font-size: 1.2em; margin-inline: .35rem; }
+  .breadcrumbs a { color: inherit; text-decoration: none; text-underline-offset: .18em; }
+  .breadcrumbs a:is(:hover, :focus-visible) { color: var(--color-foreground); text-decoration: underline; }
+  .breadcrumbs [aria-current='page'] { color: var(--color-foreground); }
+{% endstylesheet %}

@@ -458,13 +458,15 @@ class CartDrawer extends HTMLElement {
     this.addController = new AbortController();
     this.opener = document.activeElement;
     const productForm = form.closest('product-form');
-    const productError = productForm?.querySelector('[data-product-selection-error]');
+    const quickAdd = form.closest('quick-add');
+    const productError = productForm?.querySelector('[data-product-selection-error]') || quickAdd?.querySelector('[data-quick-add-error]');
     if (productError) {
       productError.textContent = '';
       productError.hidden = true;
     }
     try {
-      if (productForm && !(await productForm.validateAdd())) return;
+      const validator = productForm || quickAdd;
+      if (validator && !(await validator.validateAdd())) return;
       const body = new FormData(form);
       body.set('sections', 'cart-drawer');
       body.set('sections_url', `${window.location.pathname}${window.location.search}`);
