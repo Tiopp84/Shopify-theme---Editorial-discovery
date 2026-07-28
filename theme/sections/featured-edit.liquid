@@ -5,7 +5,7 @@
   endif
 %}
 
-<section class="featured-edit" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="featured-edit" data-home-reveal="featured-edit" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <header class="featured-edit__header">
     <div>
       {% if section.settings.eyebrow != blank %}<p class="featured-edit__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
@@ -19,7 +19,7 @@
   </header>
 
   {% if featured_collection != blank and featured_collection.products_count > 0 %}
-    <ul class="featured-edit__grid" role="list">
+    <ul class="featured-edit__grid" data-home-reveal-group="cards" role="list">
       {% for product in featured_collection.products limit: section.settings.product_limit %}
         <li>{% render 'product-card', product: product, card_context: 'homepage', image_ratio: '4 / 5', sizes: '(min-width: 75rem) 22vw, (min-width: 48rem) 30vw, 46vw' %}</li>
       {% endfor %}

@@ -9,7 +9,7 @@
   endfor
 %}
 
-<section class="shoppable-story" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="shoppable-story" data-home-reveal="shoppable-story" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="shoppable-story__intro">
     {% if section.settings.eyebrow != blank %}
       <p class="shoppable-story__eyebrow">{{ section.settings.eyebrow | escape }}</p>
@@ -23,7 +23,7 @@
   </div>
 
   {% if has_products %}
-    <ol class="shoppable-story__items">
+    <ol class="shoppable-story__items" data-home-reveal-group="rows">
       {% for block in section.blocks %}
         {% assign story_product = block.settings.product %}
         {% if story_product != blank %}

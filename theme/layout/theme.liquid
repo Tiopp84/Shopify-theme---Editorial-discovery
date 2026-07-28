@@ -20,6 +20,23 @@
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
 
+    {% if template.name == 'index' %}
+      <script>
+        (() => {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const root = document.documentElement;
+          root.classList.add('home-reveal-pending');
+          let fallbackTimer = window.setTimeout(release, 2500);
+          window.homeRevealBoot = { release };
+
+          function release() {
+            root.classList.remove('home-reveal-pending');
+            window.clearTimeout(fallbackTimer);
+          }
+        })();
+      </script>
+    {% endif %}
+
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 
@@ -38,6 +55,11 @@
 
     {% sections 'footer-group' %}
     {% section 'cart-drawer' %}
+    {% if template.name == 'index' %}
+      <script src="{{ 'gsap-3.13.0.min.js' | asset_url }}" defer onerror="window.homeRevealBoot?.release()"></script>
+      <script src="{{ 'scroll-trigger-3.13.0.min.js' | asset_url }}" defer onerror="window.homeRevealBoot?.release()"></script>
+      <script src="{{ 'home-reveal.js' | asset_url }}" defer></script>
+    {% endif %}
     <script src="{{ 'quick-add.js' | asset_url }}" defer></script>
     <script src="{{ 'cart.js' | asset_url }}" defer></script>
   </body>

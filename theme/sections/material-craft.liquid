@@ -1,4 +1,4 @@
-<section class="material-craft" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="material-craft" data-home-reveal="material-craft" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="material-craft__images">
     {% for index in (1..2) %}
       {% assign image_key = 'image_' | append: index %}
