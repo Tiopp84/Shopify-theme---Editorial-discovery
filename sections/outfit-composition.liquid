@@ -40,7 +40,7 @@
       {% for block in section.blocks %}
         {% if block.settings.product != blank %}
           <li {{ block.shopify_attributes }}>
-            {% render 'product-card', product: block.settings.product, image_ratio: '4 / 5', sizes: '(min-width: 75rem) 22vw, (min-width: 48rem) 30vw, 88vw' %}
+            {% render 'product-card', product: block.settings.product, card_context: 'homepage', image_ratio: '4 / 5', sizes: '(min-width: 75rem) 22vw, (min-width: 48rem) 30vw, 88vw' %}
           </li>
         {% endif %}
       {% endfor %}
@@ -58,8 +58,9 @@
   .outfit-composition__body { color: color-mix(in srgb, var(--color-background) 76%, transparent); font-size: .9375rem; line-height: 1.55; max-width: 30rem; }
   .outfit-composition__body > :first-child { margin-block-start: 0; }
   .outfit-composition__body > :last-child { margin-block-end: 0; }
-  .outfit-composition__media { aspect-ratio: 4 / 3; background: color-mix(in srgb, var(--color-background) 18%, var(--color-foreground)); overflow: hidden; }
-  .outfit-composition__image, .outfit-composition__image > img { block-size: 100%; height: 100%; object-fit: cover; }
+  .outfit-composition__media { aspect-ratio: 4 / 3; background: color-mix(in srgb, var(--color-background) 18%, var(--color-foreground)); overflow: hidden; position: relative; }
+  .outfit-composition .outfit-composition__image, .outfit-composition .outfit-composition__image > img { block-size: 100%; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
+  .outfit-composition .outfit-composition__image { inset: 0; position: absolute; }
   .outfit-composition__items { display: grid; gap: var(--space-3); list-style: none; margin: 0; padding: 0; }
   .outfit-composition__items > li { min-width: 0; }
   .outfit-composition .product-card { gap: var(--space-3); }
