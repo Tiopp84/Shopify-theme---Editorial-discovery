@@ -13,6 +13,7 @@ class HeaderShell extends HTMLElement {
     this.hoverCloseTimer = null;
     this.scrollFrame = null;
     this.lastScrollY = window.scrollY;
+    this.compactAnchorY = null;
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.addEventListener('click', this.onClick);
     document.addEventListener('click', this.onDocumentClick);
@@ -46,25 +47,24 @@ class HeaderShell extends HTMLElement {
     this.reducedMotionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
     this.scrollFrame = null;
-    this.classList.remove('header-shell--hidden');
+    this.compactAnchorY = null;
+    this.classList.remove('header-shell--compact', 'header-shell--scrolled');
     this.initialized = false;
   }
 
   startMotion() {
-    this.classList.toggle('header-shell--scrolled', window.scrollY > 40);
-    if (this.reducedMotionQuery.matches) return;
-
-    if (this.classList.contains('header-shell--sticky')) {
-      window.addEventListener('scroll', this.onScroll, { passive: true });
-    }
+    if (!this.classList.contains('header-shell--sticky')) return;
+    this.updateScrollState();
+    window.addEventListener('scroll', this.onScroll, { passive: true });
   }
 
   onMotionPreferenceChange() {
     window.removeEventListener('scroll', this.onScroll);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
     this.scrollFrame = null;
-    this.classList.remove('header-shell--hidden');
+    this.classList.remove('header-shell--compact');
     this.lastScrollY = window.scrollY;
+    this.compactAnchorY = null;
     this.startMotion();
   }
 
@@ -72,22 +72,37 @@ class HeaderShell extends HTMLElement {
     if (this.scrollFrame) return;
 
     this.scrollFrame = window.requestAnimationFrame(() => {
-      const scrollY = window.scrollY;
-      const delta = scrollY - this.lastScrollY;
-      const dialogOpen = this.querySelector('dialog[open]');
-      const focusInside = this.contains(document.activeElement);
-
-      this.classList.toggle('header-shell--scrolled', scrollY > 40);
-
-      if (!dialogOpen && !focusInside && scrollY > 160 && delta > 8) {
-        this.classList.add('header-shell--hidden');
-      } else if (delta < -8 || scrollY <= 160 || dialogOpen || focusInside) {
-        this.classList.remove('header-shell--hidden');
-      }
-
-      this.lastScrollY = scrollY;
+      this.updateScrollState();
       this.scrollFrame = null;
     });
+  }
+
+  updateScrollState() {
+    const scrollY = window.scrollY;
+    const delta = scrollY - this.lastScrollY;
+    const dialogOpen = this.querySelector('dialog[open]');
+    const focusInside = this.contains(document.activeElement);
+
+    this.classList.toggle('header-shell--scrolled', scrollY > 40);
+
+    if (!this.classList.contains('header-shell--compact') && !dialogOpen && !focusInside && scrollY > 120 && delta > 4) {
+      this.classList.add('header-shell--compact');
+      this.compactAnchorY = scrollY;
+    } else if (this.classList.contains('header-shell--compact') && delta > 0) {
+      this.compactAnchorY = scrollY;
+    }
+
+    if (
+      scrollY <= 40
+      || dialogOpen
+      || focusInside
+      || (this.compactAnchorY !== null && scrollY <= this.compactAnchorY - 48)
+    ) {
+      this.classList.remove('header-shell--compact');
+      this.compactAnchorY = null;
+    }
+
+    this.lastScrollY = scrollY;
   }
 
   onNavGroupPointerEnter(event) {
@@ -171,7 +186,7 @@ class HeaderShell extends HTMLElement {
       const dialog = this.querySelector(`[data-header-dialog="${CSS.escape(openButton.dataset.dialogOpen)}"]`);
       if (!dialog) return;
       this.activeOpener = openButton;
-      this.classList.remove('header-shell--hidden');
+      this.classList.remove('header-shell--compact');
       dialog.showModal();
       if (openButton.dataset.dialogOpen === 'search') {
         requestAnimationFrame(() => dialog.querySelector('input[type="search"]')?.focus());
