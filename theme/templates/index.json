@@ -13,6 +13,24 @@
       "type": "editorial-hero",
       "settings": {}
     },
+    "featured_edit": {
+      "type": "featured-edit",
+      "settings": {}
+    },
+    "visual_story": {
+      "type": "pinned-visual-story",
+      "settings": {},
+      "blocks": {
+        "chapter_one": { "type": "chapter", "settings": {} },
+        "chapter_two": { "type": "chapter", "settings": {} },
+        "chapter_three": { "type": "chapter", "settings": {} }
+      },
+      "block_order": ["chapter_one", "chapter_two", "chapter_three"]
+    },
+    "material_craft": {
+      "type": "material-craft",
+      "settings": {}
+    },
     "story": {
       "type": "shoppable-story",
       "settings": {}
@@ -24,6 +42,9 @@
   },
   "order": [
     "main",
+    "featured_edit",
+    "visual_story",
+    "material_craft",
     "story",
     "composition"
   ]

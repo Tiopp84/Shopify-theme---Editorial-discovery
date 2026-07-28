@@ -14,3 +14,12 @@ The license permits use, modification and distribution for themes that integrate
 See `docs/Governance/source-provenance-and-licenses.md` and `docs/Governance/asset-license-register.md`.
 
 Do not add third-party code or assets to this file without also recording approval and proof in the asset/license register.
+
+## GSAP Core and ScrollTrigger
+
+- Source: `https://www.npmjs.com/package/gsap`
+- Version: `3.13.0`
+- Files: `theme/assets/gsap-3.13.0.min.js`, `theme/assets/scroll-trigger-3.13.0.min.js`
+- License: GSAP Standard “No Charge” License, `https://gsap.com/community/standard-license/`
+- Usage: retained as a self-hosted, pinned motion runtime for future approved section-level effects; it is not currently loaded by the storefront. No CDN runtime is used.
+- Removal path: remove the two self-hosted assets and their register entries.

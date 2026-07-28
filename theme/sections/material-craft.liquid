@@ -1,0 +1,56 @@
+<section class="material-craft" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+  <div class="material-craft__images">
+    {% for index in (1..2) %}
+      {% assign image_key = 'image_' | append: index %}
+      {% assign image = section.settings[image_key] %}
+      <div class="material-craft__image material-craft__image--{{ index }}">
+        {% if image != blank %}
+          {% render 'image', image: image, alt: image.alt, width: 1400, widths: '360, 540, 720, 960, 1200, 1400', sizes: '(min-width: 60rem) 32vw, 75vw' %}
+        {% else %}
+          {{ 'image' | placeholder_svg_tag: 'material-craft__placeholder' }}
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  <div class="material-craft__content">
+    {% if section.settings.eyebrow != blank %}<p class="material-craft__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
+    {% if section.settings.heading != blank %}<h2 id="MaterialCraftHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
+    {% if section.settings.text != blank %}<div class="material-craft__text">{{ section.settings.text }}</div>{% endif %}
+    {% if section.settings.link_label != blank and section.settings.link != blank %}<a class="material-craft__link" href="{{ section.settings.link }}">{{ section.settings.link_label | escape }}</a>{% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .material-craft { align-items: center; display: grid; gap: clamp(2.5rem, 7vw, 8rem); margin: 0 auto var(--space-chapter); max-width: var(--page-width); padding-inline: var(--page-margin); }
+  .material-craft__images { align-items: end; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+  .material-craft__image { background: var(--color-panel-02); overflow: hidden; }
+  .material-craft__image--1 { aspect-ratio: 4 / 5; }
+  .material-craft__image--2 { aspect-ratio: 3 / 4; margin-block-end: clamp(1.5rem, 7vw, 7rem); }
+  .material-craft__image .image, .material-craft__image .image > img, .material-craft__placeholder { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
+  .material-craft__content { display: grid; gap: var(--space-4); max-width: 31rem; }
+  .material-craft__eyebrow { font-size: .6875rem; font-weight: 600; letter-spacing: .1em; margin: 0; text-transform: uppercase; }
+  .material-craft h2 { font-family: var(--font-campaign); font-size: clamp(2.4rem, 4.1vw, 4.2rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .95; margin: 0; }
+  .material-craft__text { color: color-mix(in srgb, var(--color-foreground) 74%, var(--color-background)); font-size: .9375rem; line-height: 1.6; }
+  .material-craft__text > :first-child { margin-block-start: 0; }
+  .material-craft__text > :last-child { margin-block-end: 0; }
+  .material-craft__link { background: var(--color-foreground); color: var(--color-background); font-size: .6875rem; font-weight: 600; justify-self: start; letter-spacing: .1em; padding: .95rem 1.35rem; text-decoration: none; text-transform: uppercase; }
+  .material-craft__link:is(:hover, :focus-visible) { background: var(--color-accent); }
+  @media (min-width: 60rem) { .material-craft { grid-template-columns: minmax(0, 1.15fr) minmax(18rem, .65fr); } }
+  @media (max-width: 59.99rem) { .material-craft { gap: var(--space-5); margin-block-end: var(--space-chapter-mobile); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.material_craft",
+  "settings": [
+    { "type": "image_picker", "id": "image_1", "label": "t:labels.image_one" },
+    { "type": "image_picker", "id": "image_2", "label": "t:labels.image_two" },
+    { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "Material note" },
+    { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "The details make the difference" },
+    { "type": "richtext", "id": "text", "label": "t:labels.text", "default": "<p>Fabric, finish and proportion are considered together, so everyday pieces feel distinct without asking for attention.</p>" },
+    { "type": "text", "id": "link_label", "label": "t:labels.link_label" },
+    { "type": "url", "id": "link", "label": "t:labels.link" }
+  ],
+  "presets": [{ "name": "t:general.material_craft" }]
+}
+{% endschema %}

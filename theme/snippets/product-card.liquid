@@ -7,7 +7,7 @@
   @param {string} [sizes] - Responsive image sizes hint.
   @param {number} [card_index] - One-based position in the current result set.
   @param {number} [card_count] - Number of products in the current result set.
-  @param {string} [card_context] - Presentation context; use `recommendation` for compact PDP suggestions.
+  @param {string} [card_context] - Presentation context; use `recommendation` for compact PDP suggestions or `homepage` to omit Quick Add.
 
   @example
   {% render 'product-card', product: product, show_vendor: true, image_ratio: '4 / 5' %}
@@ -56,8 +56,7 @@
     {% elsif on_sale %}
       <span class="product-card__status">{{ 'products.card.sale' | t }}</span>
     {% endif %}
-    {% if product.available %}
-      {% unless card_context == 'recommendation' %}
+    {% if product.available and card_context != 'recommendation' and card_context != 'homepage' %}
       <div class="product-card__quick-add-wrap">
         {% if available_variant_count == 1 %}
           <quick-add class="product-card__quick-add-shell" data-product-form data-quick-add-direct data-product-url="{{ product.url }}" data-variant-id="{{ quick_add_variant.id }}" data-error="{{ 'products.card.quick_add_error' | t }}">
@@ -158,7 +157,6 @@
           </quick-add>
         {% endif %}
       </div>
-      {% endunless %}
     {% endif %}
   </div>
 

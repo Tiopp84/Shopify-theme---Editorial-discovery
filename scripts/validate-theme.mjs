@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs';
-import { extname, join, relative } from 'node:path';
+import { basename, extname, join, relative } from 'node:path';
 
 const root = new URL('../', import.meta.url).pathname.replace(/^\/(.:\/)/, '$1');
 const themeRoot = join(root, 'theme');
@@ -52,12 +52,13 @@ for (const file of themeFiles.filter((path) => ['.liquid', '.json'].includes(ext
 }
 
 const runtimeFiles = themeFiles.filter((path) => ['.js', '.liquid'].includes(extname(path)));
+const approvedSelfHostedRuntimeFiles = new Set(['gsap-3.13.0.min.js', 'scroll-trigger-3.13.0.min.js']);
 for (const file of runtimeFiles) {
   const text = readFileSync(file, 'utf8');
   if (/\bdebugger\s*;|console\.(?:log|debug|trace)\s*\(/.test(text)) {
     errors.push(`${relative(root, file)}: debug statement found`);
   }
-  if (extname(file) === '.js' && /https?:\/\//i.test(text)) {
+  if (extname(file) === '.js' && !approvedSelfHostedRuntimeFiles.has(basename(file)) && /https?:\/\//i.test(text)) {
     errors.push(`${relative(root, file)}: remote runtime URL found in JavaScript`);
   }
   if (/<script\b[^>]*\bsrc\s*=\s*['"]https?:\/\//i.test(text)) {
