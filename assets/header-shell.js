@@ -14,6 +14,9 @@ class HeaderShell extends HTMLElement {
     this.scrollFrame = null;
     this.lastScrollY = window.scrollY;
     this.compactAnchorY = null;
+    this.compactReleaseDistance = 120;
+    this.compactReleaseDelay = 480;
+    this.compactReleaseTimer = null;
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.addEventListener('click', this.onClick);
     document.addEventListener('click', this.onDocumentClick);
@@ -43,10 +46,12 @@ class HeaderShell extends HTMLElement {
       group.removeEventListener('pointerleave', this.onNavGroupPointerLeave);
     });
     window.clearTimeout(this.hoverCloseTimer);
+    window.clearTimeout(this.compactReleaseTimer);
     window.removeEventListener('scroll', this.onScroll);
     this.reducedMotionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
     this.scrollFrame = null;
+    this.compactReleaseTimer = null;
     this.compactAnchorY = null;
     this.classList.remove('header-shell--compact', 'header-shell--scrolled');
     this.initialized = false;
@@ -62,6 +67,8 @@ class HeaderShell extends HTMLElement {
     window.removeEventListener('scroll', this.onScroll);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
     this.scrollFrame = null;
+    window.clearTimeout(this.compactReleaseTimer);
+    this.compactReleaseTimer = null;
     this.classList.remove('header-shell--compact');
     this.lastScrollY = window.scrollY;
     this.compactAnchorY = null;
@@ -86,23 +93,43 @@ class HeaderShell extends HTMLElement {
     this.classList.toggle('header-shell--scrolled', scrollY > 40);
 
     if (!this.classList.contains('header-shell--compact') && !dialogOpen && !focusInside && scrollY > 120 && delta > 4) {
+      this.cancelCompactRelease();
       this.classList.add('header-shell--compact');
       this.compactAnchorY = scrollY;
     } else if (this.classList.contains('header-shell--compact') && delta > 0) {
+      this.cancelCompactRelease();
       this.compactAnchorY = scrollY;
     }
 
-    if (
-      scrollY <= 40
-      || dialogOpen
-      || focusInside
-      || (this.compactAnchorY !== null && scrollY <= this.compactAnchorY - 48)
-    ) {
+    if (scrollY <= 40 || dialogOpen || focusInside) {
+      this.cancelCompactRelease();
       this.classList.remove('header-shell--compact');
       this.compactAnchorY = null;
+    } else if (this.classList.contains('header-shell--compact') && this.compactAnchorY !== null && scrollY <= this.compactAnchorY - this.compactReleaseDistance && delta < -4) {
+      this.scheduleCompactRelease();
+    } else if (delta >= 0) {
+      this.cancelCompactRelease();
     }
 
     this.lastScrollY = scrollY;
+  }
+
+  scheduleCompactRelease() {
+    if (this.compactReleaseTimer) return;
+    this.compactReleaseTimer = window.setTimeout(() => {
+      this.compactReleaseTimer = null;
+      if (!this.classList.contains('header-shell--compact') || this.compactAnchorY === null) return;
+      if (window.scrollY <= this.compactAnchorY - this.compactReleaseDistance) {
+        this.classList.remove('header-shell--compact');
+        this.compactAnchorY = null;
+      }
+    }, this.compactReleaseDelay);
+  }
+
+  cancelCompactRelease() {
+    if (!this.compactReleaseTimer) return;
+    window.clearTimeout(this.compactReleaseTimer);
+    this.compactReleaseTimer = null;
   }
 
   onNavGroupPointerEnter(event) {

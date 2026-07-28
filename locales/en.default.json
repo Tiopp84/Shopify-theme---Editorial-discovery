@@ -44,6 +44,7 @@
   },
   "accessibility": {
     "announcement": "Announcement",
+    "breadcrumb": "Breadcrumb",
     "close_menu": "Close menu",
     "mobile_navigation": "Mobile navigation",
     "open_menu": "Open menu",
@@ -62,7 +63,10 @@
   },
   "navigation": {
     "back": "Back",
+    "home": "Home",
     "menu": "Explore",
+    "products": "Products",
+    "search": "Search",
     "view_all": "View all {{ title }}"
   },
   "customers": {
@@ -128,9 +132,13 @@
       "zoomed_media": "Expanded product media"
     },
     "card": {
+      "close_quick_add": "Close quick add",
+      "quick_add": "Quick add",
+      "quick_add_error": "This item could not be added. Please try again.",
       "sale": "Sale",
       "sold_out": "Sold out",
       "unavailable": "Currently unavailable",
+      "verifying_availability": "Verifying availability…",
       "view_product": "View product"
     },
     "form": {

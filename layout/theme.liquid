@@ -32,11 +32,13 @@
     {% sections 'header-group' %}
 
     <main id="MainContent" tabindex="-1">
+      {% render 'breadcrumbs' %}
       {{ content_for_layout }}
     </main>
 
     {% sections 'footer-group' %}
     {% section 'cart-drawer' %}
+    <script src="{{ 'quick-add.js' | asset_url }}" defer></script>
     <script src="{{ 'cart.js' | asset_url }}" defer></script>
   </body>
 </html>
