@@ -46,6 +46,7 @@ class HomeRevealController {
           start: 'top 92%',
           once: true,
           onEnter: () => this.play(element),
+          onEnterBack: () => this.play(element),
         });
       }
     });
