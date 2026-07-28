@@ -33,7 +33,6 @@
           <details class="header-shell__nav-group">
             <summary>{{ link.title | escape }}</summary>
             <div class="header-shell__submenu">
-              <a href="{{ link.url }}">{{ 'navigation.view_all' | t: title: link.title }}</a>
               {% for child_link in link.links %}
                 <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
               {% endfor %}
@@ -100,7 +99,6 @@
                 {{ link.title | escape }}
               </summary>
               <div class="header-shell__mobile-nav-fallback">
-                <a href="{{ link.url }}">{{ 'navigation.view_all' | t: title: link.title }}</a>
                 {% for child_link in link.links %}
                   <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
                 {% endfor %}
@@ -126,7 +124,6 @@
               {{ 'navigation.back' | t }}
             </button>
             <h3 id="{{ submenu_id }}Title">{{ link.title | escape }}</h3>
-            <a href="{{ link.url }}">{{ 'navigation.view_all' | t: title: link.title }}</a>
             {% for child_link in link.links %}
               <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
             {% endfor %}
@@ -378,7 +375,20 @@
 
   .header-shell__submenu a {
     padding: var(--space-3);
+    border-radius: 0.35rem;
     text-decoration: none;
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .header-shell__submenu a:is(:hover, :focus-visible) {
+    background: var(--color-accent-tint);
+    color: var(--color-foreground);
+    transform: translateX(0.2rem);
+  }
+
+  .header-shell__submenu a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   .header-shell__actions {
