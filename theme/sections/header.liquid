@@ -450,8 +450,8 @@
     padding: var(--space-4);
     border: 0;
     opacity: 0;
-    transform: translateX(-1.5rem);
-    transition: opacity 180ms ease, transform 220ms ease, display 220ms allow-discrete, overlay 220ms allow-discrete;
+    transform: translateX(-2.5rem);
+    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1), display 360ms allow-discrete, overlay 360ms allow-discrete;
   }
 
   .header-shell__drawer[open] {
@@ -460,14 +460,13 @@
     transform: translateX(0);
   }
 
-  .header-shell__drawer::backdrop {
-    background: rgb(0 0 0 / 45%);
-  }
+  .header-shell__drawer::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
+  .header-shell__drawer[open]::backdrop { background: rgb(0 0 0 / 45%); }
 
   @starting-style {
     .header-shell__drawer[open] {
       opacity: 0;
-      transform: translateX(-1.5rem);
+      transform: translateX(-2.5rem);
     }
   }
 
@@ -481,8 +480,8 @@
     border: 0;
     border-radius: 0.75rem 0 0 0.75rem;
     opacity: 0;
-    transform: translateX(1.5rem);
-    transition: opacity 180ms ease, transform 220ms ease, display 220ms allow-discrete, overlay 220ms allow-discrete;
+    transform: translateX(2.5rem);
+    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1), display 360ms allow-discrete, overlay 360ms allow-discrete;
   }
 
   .header-shell__search-dialog[open] {
@@ -492,14 +491,13 @@
     transform: translateX(0);
   }
 
-  .header-shell__search-dialog::backdrop {
-    background: rgb(0 0 0 / 38%);
-  }
+  .header-shell__search-dialog::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
+  .header-shell__search-dialog[open]::backdrop { background: rgb(0 0 0 / 38%); }
 
   @starting-style {
     .header-shell__search-dialog[open] {
       opacity: 0;
-      transform: translateX(1.5rem);
+      transform: translateX(2.5rem);
     }
   }
 
@@ -705,7 +703,7 @@
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
       border-radius: 0.9rem 0.9rem 0 0;
       overflow: hidden;
-      transform: translateY(1.5rem);
+      transform: translateY(3rem);
     }
 
     .header-shell__search-dialog[open] {
@@ -721,7 +719,7 @@
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
       border-radius: 0.9rem 0.9rem 0 0;
       overflow: auto;
-      transform: translateY(1.5rem);
+      transform: translateY(3rem);
     }
 
     .header-shell__drawer[open] {
@@ -747,12 +745,12 @@
     @starting-style {
       .header-shell__drawer[open] {
         opacity: 0;
-        transform: translateY(1.5rem);
+        transform: translateY(3rem);
       }
 
       .header-shell__search-dialog[open] {
         opacity: 0;
-        transform: translateY(1.5rem);
+        transform: translateY(3rem);
       }
     }
   }

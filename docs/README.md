@@ -25,6 +25,7 @@ docs/
 - Visual design tokens: [`Specifications/visual-design-tokens.md`](Specifications/visual-design-tokens.md)
 - Phase 7 differentiation contract: [`Specifications/differentiation-contract.md`](Specifications/differentiation-contract.md)
 - Motion architecture: [`Specifications/motion-architecture.md`](Specifications/motion-architecture.md)
+- Theme motion implementation: [`Specifications/theme-motion-implementation.md`](Specifications/theme-motion-implementation.md)
 - Source/license policy: [`Governance/source-provenance-and-licenses.md`](Governance/source-provenance-and-licenses.md)
 
 ## Quy tắc phân loại

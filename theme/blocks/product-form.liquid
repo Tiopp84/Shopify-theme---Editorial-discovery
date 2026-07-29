@@ -102,7 +102,7 @@
 
 {% if size_guide_page != blank %}
   <size-guide {{ block.shopify_attributes }}>
-    <dialog class="main-product__size-guide-dialog" data-size-guide-dialog aria-labelledby="SizeGuideTitle-{{ section.id }}">
+    <dialog class="main-product__size-guide-dialog" data-size-guide-dialog data-overlay-motion="modal" aria-labelledby="SizeGuideTitle-{{ section.id }}">
       <div class="main-product__size-guide-dialog-inner">
         <div class="main-product__size-guide-dialog-header">
           <h2 id="SizeGuideTitle-{{ section.id }}">{{ size_guide_page.title | escape }}</h2>

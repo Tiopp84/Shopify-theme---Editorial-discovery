@@ -44,6 +44,7 @@
     "search": "Search",
     "secondary": "Secondary",
     "section": "Section",
+    "style": "Style",
     "shoppable_story": "Shoppable story",
     "pinned_visual_story": "Pinned visual story",
     "story_chapter": "Story chapter",
@@ -57,7 +58,9 @@
   },
   "labels": {
     "alignment": "Alignment",
+    "background_color": "Background color",
     "columns_desktop": "Desktop columns",
+    "content_alignment": "Content alignment",
     "content": "Content",
     "collection": "Collection",
     "background": "Background",
@@ -71,11 +74,13 @@
     "grid_gap": "Grid spacing",
     "grid_item_width": "Grid item width",
     "image": "Image",
+    "image_overlay": "Image overlay",
     "image_one": "First image",
     "image_two": "Second image",
     "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
     "look_image": "Look image",
+    "media_position": "Media position",
     "link": "Link",
     "link_label": "Link label",
     "logo": "Logo",
@@ -83,7 +88,10 @@
     "menu": "Menu",
     "customer_account_menu": "Customer account menu",
     "desktop_filter_layout": "Desktop filter layout",
+    "desktop_product_columns": "Large desktop products per row",
+    "enable_editorial_motion": "Enable editorial scroll motion",
     "eyebrow": "Eyebrow",
+    "fallback_background": "Text-only background",
     "hero_height_desktop": "Desktop media height",
     "hero_height_mobile": "Mobile media height",
     "padding": "Padding",
@@ -103,9 +111,12 @@
     "show_availability": "Show availability",
     "show_quantity": "Show quantity selector",
     "show_vendor": "Show vendor",
+    "section_spacing": "Vertical spacing",
+    "story_intro_position": "Story introduction position",
     "sticky_header": "Sticky header",
     "text_style": "Text style",
     "text": "Text",
+    "text_color": "Text color",
     "type_scale": "Type scale",
     "collection_story_position": "Story position"
   },
@@ -133,6 +144,10 @@
       "center": "Center",
       "right": "Right"
     },
+    "columns": {
+      "three": "3 columns",
+      "four": "4 columns"
+    },
     "direction": {
       "horizontal": "Horizontal",
       "vertical": "Vertical"
@@ -142,10 +157,24 @@
       "standard": "Standard",
       "tall": "Tall"
     },
+    "overlay": {
+      "light": "Light",
+      "standard": "Standard",
+      "strong": "Strong"
+    },
     "page_width": {
       "narrow": "Narrow",
       "standard": "Standard",
       "wide": "Wide"
+    },
+    "position": {
+      "left": "Left",
+      "right": "Right"
+    },
+    "spacing": {
+      "compact": "Compact",
+      "standard": "Standard",
+      "spacious": "Spacious"
     },
     "size": {
       "large": "Large",
