@@ -62,6 +62,10 @@
     to { transform: translateX(0); }
   }
 
+  @media (min-width: 48rem) {
+    .announcement-bar__marquee-group { gap: 0; inline-size: max-content; justify-content: space-around; min-inline-size: 100vw; padding-inline-end: 0; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .announcement-bar__marquee-track { animation: none; inline-size: 100%; }
     .announcement-bar__marquee-group { inline-size: 100%; justify-content: center; padding-inline-end: 0; }
