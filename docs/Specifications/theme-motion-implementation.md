@@ -75,6 +75,27 @@ The inline bootstrap has a 2.5-second failsafe. If GSAP or ScrollTrigger cannot 
 | Shoppable story | Introduction entrance; product-row stagger | One viewport entry per bounded group | One-time reveal only | No motion setting |
 | Outfit composition | Lead entrance; product-card group stagger | One viewport entry per bounded group | One-time reveal only | No motion setting |
 
+### Announcement bar
+
+`announcement-bar.liquid` uses a CSS-only marquee only when the merchant enables **Continuously scroll text**. It runs from left to right at one of three named speeds (Slow, Standard, Fast), with no JavaScript or global animation runtime.
+
+- A linked announcement uses an end arrow rather than underlining the message; the arrow shifts slightly on hover or keyboard focus.
+- Background colour, text colour, text size and bar height are direct Theme Editor settings. The height is a minimum, so longer non-marquee text can still wrap without being clipped.
+- Merchants can choose 1–8 text repeats to fill a wider bar; every repeat, including the final repeat before the loop restarts, is separated by a prominent `·`. A single fixed gap is used between text, separator and sequence boundary, so the rhythm stays even at every repeat count. Every visual linked repeat remains clickable, while only one link is exposed to keyboard and assistive technology.
+- Each marquee sequence grows with its selected content while every repeat retains its intrinsic width. This prevents longer labels or higher repeat counts from shrinking and painting over adjacent copies. Reduced motion shows only the first stationary message.
+- The marquee pauses on hover or keyboard focus so the link remains usable. `prefers-reduced-motion` renders one stationary copy of the message instead.
+
+### Footer panel transition
+
+`footer-panel.js` provides a small native scroll treatment for the optional footer setting **Enable page panel transition into footer**. The footer is fixed behind the page at the bottom of the viewport, while a same-height spacer after `main` supplies the reveal travel. One `requestAnimationFrame`-scheduled scroll reader maps the main panel's bottom edge across that spacer to scoped CSS properties.
+
+- Scrolling down through the spacer moves the main panel up and reveals the fixed footer. Scrolling back up from the footer moves that panel down over it, like a window closing.
+- The panel adds a responsive 3.5–6.5 rem lower safe space before its footer reveal, so the final storefront content does not sit against the footer edge.
+- The panel has no extra transform; natural scrolling alone moves it over the fixed footer. Its lower corners follow a short midpoint pulse: they grow to 32 px only in the middle of the overlap, then return to zero before the footer is fully revealed. Its contents are clipped only during that pulse, so the panel is square at both ends of the interaction.
+- As the panel covers the footer, the footer remains opaque but dims and softens by up to 1.5 px of blur, then shifts down by at most 20 px. It returns to its full visual clarity and resting position as the panel reveals it; no panel shadow is used.
+- Only `transform`, `filter` and `border-radius` change; document flow, links and footer content remain unchanged. `will-change` is present only while the progress is active.
+- JavaScript failure, the merchant setting being off and `prefers-reduced-motion` preserve the ordinary static footer.
+
 ### Pinned visual story choreography
 
 The `pinned-visual-story` section is the current editorial showcase because it already has a long-form image-and-chapter layout.
