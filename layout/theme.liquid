@@ -53,6 +53,7 @@
       {{ content_for_layout }}
     </main>
 
+    <div class="footer-panel-spacer" aria-hidden="true"></div>
     {% sections 'footer-group' %}
     {% section 'cart-drawer' %}
     {% if template.name == 'index' %}
@@ -60,6 +61,7 @@
       <script src="{{ 'scroll-trigger-3.13.0.min.js' | asset_url }}" defer onerror="window.homeRevealBoot?.release()"></script>
       <script src="{{ 'home-reveal.js' | asset_url }}" defer></script>
     {% endif %}
+    <script src="{{ 'footer-panel.js' | asset_url }}" defer></script>
     <script src="{{ 'overlay-motion.js' | asset_url }}" defer></script>
     <script src="{{ 'quick-add.js' | asset_url }}" defer></script>
     <script src="{{ 'cart.js' | asset_url }}" defer></script>

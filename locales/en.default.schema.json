@@ -64,6 +64,7 @@
     "content": "Content",
     "collection": "Collection",
     "background": "Background",
+    "bar_height": "Bar height",
     "caption": "Caption",
     "accent": "Accent",
     "border": "Border",
@@ -80,6 +81,9 @@
     "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
     "look_image": "Look image",
+    "marquee": "Scrolling text",
+    "marquee_repetitions": "Number of text repeats",
+    "marquee_speed": "Scroll speed",
     "media_position": "Media position",
     "link": "Link",
     "link_label": "Link label",
@@ -90,6 +94,8 @@
     "desktop_filter_layout": "Desktop filter layout",
     "desktop_product_columns": "Large desktop products per row",
     "enable_editorial_motion": "Enable editorial scroll motion",
+    "enable_footer_panel_transition": "Enable page panel transition into footer",
+    "enable_marquee": "Continuously scroll text",
     "eyebrow": "Eyebrow",
     "fallback_background": "Text-only background",
     "hero_height_desktop": "Desktop media height",
@@ -117,8 +123,26 @@
     "text_style": "Text style",
     "text": "Text",
     "text_color": "Text color",
+    "text_size": "Text size",
     "type_scale": "Type scale",
-    "collection_story_position": "Story position"
+    "collection_story_position": "Story position",
+    "brand_description": "Brand description",
+    "footer_accent_color": "Footer accent color",
+    "footer_background_color": "Footer background color",
+    "footer_base_background_color": "Footer bottom bar color",
+    "footer_brand": "Brand",
+    "footer_content": "Footer content",
+    "footer_spacing": "Footer spacing",
+    "footer_style": "Footer style",
+    "footer_text_color": "Footer text color",
+    "legal_menu": "Legal links menu",
+    "show_social": "Show social links",
+    "show_newsletter_copy": "Show newsletter supporting text",
+    "show_tag_cloud": "Show tag cloud",
+    "social_heading": "Social links heading",
+    "social_menu": "Social links menu",
+    "tag_cloud": "Tag cloud labels",
+    "tag_cloud_heading": "Tag cloud heading"
   },
   "options": {
     "search_behavior": {
@@ -179,6 +203,11 @@
     "size": {
       "large": "Large",
       "small": "Small"
+    },
+    "speed": {
+      "slow": "Slow",
+      "standard": "Standard",
+      "fast": "Fast"
     },
     "text_style": {
       "title": "Title",

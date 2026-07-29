@@ -1,13 +1,15 @@
-<nav class="footer-menu" aria-label="{{ block.settings.heading | escape }}" {{ block.shopify_attributes }}>
-  {% if block.settings.heading != blank %}
-    <h2>{{ block.settings.heading | escape }}</h2>
-  {% endif %}
-  <ul role="list">
-    {% for link in block.settings.menu.links %}
-      <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
-    {% endfor %}
-  </ul>
-</nav>
+{% if block.settings.menu != blank and block.settings.menu.links.size > 0 %}
+  <nav class="footer-menu" aria-label="{{ block.settings.heading | escape }}" {{ block.shopify_attributes }}>
+    {% if block.settings.heading != blank %}
+      <h2>{{ block.settings.heading | escape }}</h2>
+    {% endif %}
+    <ul role="list">
+      {% for link in block.settings.menu.links %}
+        <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}
 
 {% stylesheet %}
   .footer-menu h2 {
