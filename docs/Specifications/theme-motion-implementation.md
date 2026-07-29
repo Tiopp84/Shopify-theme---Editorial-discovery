@@ -81,7 +81,7 @@ The inline bootstrap has a 2.5-second failsafe. If GSAP or ScrollTrigger cannot 
 
 - A linked announcement uses an end arrow rather than underlining the message; the arrow shifts slightly on hover or keyboard focus.
 - Background colour, text colour, text size and bar height are direct Theme Editor settings. The height is a minimum, so longer non-marquee text can still wrap without being clipped.
-- Merchants can choose 1–8 text repeats to fill a wider bar; every repeat, including the final repeat before the loop restarts, is separated by a prominent `·`. A single fixed gap is used between text, separator and sequence boundary, so the rhythm stays even at every repeat count. Every visual linked repeat remains clickable, while only one link is exposed to keyboard and assistive technology.
+- Merchants can choose 1–8 text repeats to fill a wider bar; every repeat, including the final repeat before the loop restarts, is separated by a prominent `·`. Mobile uses one fixed gap between text, separator and sequence boundary; tablet/desktop distribute a sequence across at least one viewport. Every visual linked repeat remains clickable, while only one link is exposed to keyboard and assistive technology.
 - Each marquee sequence grows with its selected content while every repeat retains its intrinsic width. This prevents longer labels or higher repeat counts from shrinking and painting over adjacent copies. Reduced motion shows only the first stationary message.
 - The marquee pauses on hover or keyboard focus so the link remains usable. `prefers-reduced-motion` renders one stationary copy of the message instead.
 
