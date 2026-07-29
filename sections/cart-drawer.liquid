@@ -6,7 +6,7 @@
 %}
 
 <cart-drawer class="cart-drawer" data-cart-drawer data-cart-url="{{ routes.cart_url }}" data-cart-currency="{{ cart.currency.iso_code }}" data-cart-total-cents="{{ cart.total_price }}" data-cart-discount-cents="{{ cart_discount_total }}" data-cart-note="{{ cart.note | escape }}" data-cart-empty-text="{{ 'cart.empty_text' | t | escape }}" data-cart-continue-shopping="{{ 'cart.continue_shopping' | t | escape }}" data-cart-view-cart="{{ 'cart.view_cart' | t | escape }}" data-cart-subtotal-label="{{ 'cart.subtotal' | t | escape }}" data-cart-checkout-label="{{ 'cart.checkout' | t | escape }}" data-cart-updating-label="{{ 'cart.updating' | t | escape }}" data-cart-taxes-note="{{ 'cart.taxes_and_shipping_at_checkout' | t | escape }}" data-cart-remove-label="{{ 'cart.remove' | t | escape }}" data-cart-decrease-label="{{ 'cart.decrease_quantity' | t | escape }}" data-cart-increase-label="{{ 'cart.increase_quantity' | t | escape }}" data-cart-each-label="{{ 'cart.each' | t | escape }}">
-  <dialog class="cart-drawer__dialog" aria-labelledby="CartDrawerTitle-{{ section.id }}" data-cart-dialog scroll-lock>
+  <dialog class="cart-drawer__dialog" aria-labelledby="CartDrawerTitle-{{ section.id }}" data-cart-dialog data-overlay-motion="drawer-end" scroll-lock>
     <div class="cart-drawer__header">
       <h2 id="CartDrawerTitle-{{ section.id }}">{{ 'cart.title' | t }}</h2>
       <button type="button" aria-label="{{ 'cart.close' | t }}" data-cart-close>×</button>
@@ -103,8 +103,9 @@
   @media (prefers-reduced-motion: reduce) { .cart-drawer__footer [name='checkout'][data-cart-checkout-loading]::before { animation: none; } }
   @keyframes cart-checkout-spin { to { transform: rotate(1turn); } }
   .cart-drawer__footer > a { justify-self: center; font-size: .9em; text-underline-offset: .18em; }
-  .cart-drawer__dialog::backdrop { background: rgb(0 0 0 / .45); }
-  @media (max-width: 749px) { .cart-drawer__dialog[open] { inline-size: 100%; block-size: min(82svh, 44rem); margin: auto 0 0; border-radius: 1.25rem 1.25rem 0 0; } }
+  .cart-drawer__dialog::backdrop { background: transparent; }
+  .cart-drawer__dialog[open][data-overlay-visible]::backdrop { background: rgb(0 0 0 / .45); }
+  @media (max-width: 749px) { .cart-drawer__dialog { --overlay-enter-transform: translate3d(0, 3rem, 0); } .cart-drawer__dialog[open] { inline-size: 100%; block-size: min(82svh, 44rem); margin: auto 0 0; border-radius: 1.25rem 1.25rem 0 0; } }
 {% endstylesheet %}
 
 {% schema %}

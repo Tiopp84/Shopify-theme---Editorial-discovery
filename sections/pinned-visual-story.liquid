@@ -8,7 +8,7 @@
   endfor
 %}
 
-<section class="pinned-visual-story" data-home-reveal="pinned-visual-story" {% if section.settings.heading != blank %}aria-labelledby="PinnedVisualStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="pinned-visual-story full-width pinned-visual-story--media-{{ section.settings.media_position }} pinned-visual-story--spacing-{{ section.settings.section_spacing }}" data-home-reveal="pinned-visual-story"{% if section.settings.enable_motion %} data-motion="editorial-chapters"{% endif %} style="--pinned-story-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="PinnedVisualStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <header class="pinned-visual-story__intro">
     {% if section.settings.eyebrow != blank %}<p>{{ section.settings.eyebrow | escape }}</p>{% endif %}
     {% if section.settings.heading != blank %}<h2 id="PinnedVisualStoryHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
@@ -39,7 +39,9 @@
 </section>
 
 {% stylesheet %}
-  .pinned-visual-story { background: var(--color-panel-01); border-block: 1px solid var(--color-border); margin-block-end: var(--space-chapter); padding: clamp(4rem, 7vw, 7rem) max(var(--page-margin), calc((100vw - var(--page-width)) / 2)); }
+  .pinned-visual-story { background: var(--pinned-story-background, var(--color-panel-01)); border-block: 1px solid var(--color-border); margin-block-end: var(--space-chapter); padding: clamp(4rem, 7vw, 7rem) max(var(--page-margin), calc((100vw - var(--page-width)) / 2)); }
+  .pinned-visual-story--spacing-compact { padding-block: var(--space-6); }
+  .pinned-visual-story--spacing-spacious { padding-block: clamp(5rem, 10vw, 10rem); }
   .pinned-visual-story__intro { margin-block-end: clamp(2.5rem, 5vw, 5rem); max-width: 35rem; }
   .pinned-visual-story__intro p, .pinned-visual-story__number { font-size: .6875rem; font-weight: 600; letter-spacing: .1em; margin: 0 0 var(--space-3); text-transform: uppercase; }
   .pinned-visual-story__intro h2 { font-family: var(--font-campaign); font-size: clamp(2.4rem, 4.7vw, 5rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .94; margin: 0; }
@@ -57,6 +59,9 @@
   @media (min-width: 60rem) {
     .pinned-visual-story__layout { align-items: start; grid-template-columns: minmax(0, 1fr) minmax(18rem, .72fr); }
     .pinned-visual-story__media { position: sticky; top: 6rem; }
+    .pinned-visual-story--media-right .pinned-visual-story__layout { grid-template-columns: minmax(18rem, .72fr) minmax(0, 1fr); }
+    .pinned-visual-story--media-right .pinned-visual-story__media { grid-column: 2; }
+    .pinned-visual-story--media-right .pinned-visual-story__chapters { grid-column: 1; grid-row: 1; }
   }
   @media (max-width: 59.99rem) {
     .pinned-visual-story { margin-block-end: var(--space-chapter-mobile); padding-block: var(--space-6); }
@@ -74,7 +79,12 @@
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "The approach" },
     { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Built around the way a day moves" },
-    { "type": "image_picker", "id": "image", "label": "t:labels.story_image" }
+    { "type": "image_picker", "id": "image", "label": "t:labels.story_image" },
+    { "type": "header", "content": "t:general.style" },
+    { "type": "checkbox", "id": "enable_motion", "label": "t:labels.enable_editorial_motion", "default": true },
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#EBE7DD" },
+    { "type": "select", "id": "media_position", "label": "t:labels.media_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
+    { "type": "select", "id": "section_spacing", "label": "t:labels.section_spacing", "options": [{ "value": "compact", "label": "t:options.spacing.compact" }, { "value": "standard", "label": "t:options.spacing.standard" }, { "value": "spacious", "label": "t:options.spacing.spacious" }], "default": "standard" }
   ],
   "blocks": [
     {
