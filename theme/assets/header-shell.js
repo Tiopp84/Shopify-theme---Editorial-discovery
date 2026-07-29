@@ -88,11 +88,12 @@ class HeaderShell extends HTMLElement {
     const scrollY = window.scrollY;
     const delta = scrollY - this.lastScrollY;
     const dialogOpen = this.querySelector('dialog[open]');
-    const focusInside = this.contains(document.activeElement);
+    const activeElement = document.activeElement;
+    const keyboardFocusInside = this.contains(activeElement) && activeElement?.matches?.(':focus-visible');
 
     this.classList.toggle('header-shell--scrolled', scrollY > 40);
 
-    if (!this.classList.contains('header-shell--compact') && !dialogOpen && !focusInside && scrollY > 120 && delta > 4) {
+    if (!this.classList.contains('header-shell--compact') && !dialogOpen && !keyboardFocusInside && scrollY > 120) {
       this.cancelCompactRelease();
       this.classList.add('header-shell--compact');
       this.compactAnchorY = scrollY;
@@ -101,7 +102,7 @@ class HeaderShell extends HTMLElement {
       this.compactAnchorY = scrollY;
     }
 
-    if (scrollY <= 40 || dialogOpen || focusInside) {
+    if (scrollY <= 40 || dialogOpen || keyboardFocusInside) {
       this.cancelCompactRelease();
       this.classList.remove('header-shell--compact');
       this.compactAnchorY = null;
