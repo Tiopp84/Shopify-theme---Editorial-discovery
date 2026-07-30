@@ -8,12 +8,13 @@
 <section
   class="editorial-hero full-width editorial-hero--desktop-{{ section.settings.desktop_height }} editorial-hero--mobile-{{ section.settings.mobile_height }} editorial-hero--content-{{ section.settings.content_alignment }} editorial-hero--overlay-{{ section.settings.overlay_strength }}{% if section.settings.image == blank %} editorial-hero--text-only{% endif %}"
   data-home-reveal="editorial-hero"
+  data-aos-section
   {% if section.settings.heading != blank %}aria-labelledby="EditorialHeroHeading-{{ section.id }}"{% endif %}
   style="--editorial-hero-fallback: {{ section.settings.fallback_background }};"
   {{ section.shopify_attributes }}
 >
   <div class="editorial-hero__grid">
-    <div class="editorial-hero__content">
+    <div class="editorial-hero__content" data-aos="fade-right">
       {% if section.settings.eyebrow != blank %}
         <p class="editorial-hero__eyebrow">{{ section.settings.eyebrow | escape }}</p>
       {% endif %}
@@ -64,6 +65,10 @@
   .editorial-hero__action:is(:hover, :focus-visible) { background: var(--color-accent); color: var(--color-background); }
   .editorial-hero__media, .editorial-hero__fallback { background: var(--editorial-hero-fallback, var(--color-panel-02)); inset: 0; position: absolute; z-index: 0; }
   .editorial-hero__media::after { background: linear-gradient(90deg, color-mix(in srgb, var(--color-background) 92%, transparent) 0%, color-mix(in srgb, var(--color-background) 55%, transparent) 34%, transparent 66%); content: ''; inset: 0; pointer-events: none; position: absolute; }
+  @media (prefers-reduced-motion: no-preference) {
+    html.aos-enabled .editorial-hero__media .editorial-hero__image { transform: scale(1.025); transition: transform 900ms cubic-bezier(.22, 1, .36, 1); }
+    html.aos-enabled .editorial-hero--media-settled .editorial-hero__image { transform: scale(1); }
+  }
   .editorial-hero--content-center .editorial-hero__content { justify-items: center; text-align: center; }
   .editorial-hero--content-center .editorial-hero__action { justify-self: center; }
   .editorial-hero--overlay-light .editorial-hero__media::after { opacity: .7; }

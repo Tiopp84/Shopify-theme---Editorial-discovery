@@ -16,6 +16,40 @@ Motion is never required to reveal content, enable a purchase, communicate price
 
 ## 2. Technology and ownership
 
+> **Experiment note — `feat/AOS`, 2026-07-30:** this branch replaces the homepage GSAP runtime with self-hosted AOS 2.3.4 CSS plus a small local one-time reveal controller. CSS sticky layout remains native; there is no scroll scrub, JavaScript pinning or effect on commerce/overlay flows. This is an `IN REVIEW` comparison, not a replacement for the approved motion architecture until preview, device and Theme Editor evidence is recorded.
+
+### AOS homepage implementation snapshot
+
+This is the source of truth for the AOS experiment on `feat/AOS`. It overrides the GSAP homepage rows below only on that branch; the rest of this document remains the approved theme-wide motion reference.
+
+| Concern | Implemented rule |
+|---|---|
+| Assets | Homepage loads self-hosted `aos-2.3.4.css` and local `aos-home.js` only. The AOS JavaScript bundle was intentionally removed: the local controller owns the non-default one-time trigger rules, while AOS CSS provides the fade transforms/easing. |
+| Hero | Image is visible on first paint for LCP. It makes only a 900 ms scale settle from 1.025 to 1.0; hero text enters with `fade-right` after two render frames. |
+| Section lead | A section root carries `data-aos-section`. Except for the initially visible hero, a lead is considered only after scroll/resize, then runs once when it reaches the 60% viewport line (or the equivalent 40% line when entering from above). |
+| Product/item phase | `data-aos-products` marks a card grid, `data-aos-product-item` marks an individual Shoppable Story row, and `data-aos-item` marks each Pinned Story chapter. These start only after their parent section lead and when the item/group itself reaches the trigger line. |
+| Sequence | At ordinary speed, a small global queue serializes stages so adjacent visible sections do not compete. Markers are removed after completion, therefore an animated target cannot replay until reload. |
+| Fast scroll | Scroll velocity at or above `0.65 px/ms` uses a 350 ms catch-up reveal for visible stages. Queued stages that have left the viewport are returned to eligible state rather than running off-screen and delaying content. This prevents a blank viewport during rapid scrolling. |
+| Timing | Standard duration is 400 ms (AOS-like); catch-up is 350 ms. Existing card delays provide the bounded stagger inside a grid. |
+| Fallback | The head bootstrap enables the prepared state only when motion is allowed and releases it after three seconds if the controller fails. JavaScript blocked/failed and `prefers-reduced-motion: reduce` leave all content in final visible state. |
+| Scope | Index template only. Cart, dialogs, product media, forms, prices, availability, focus and scrolling ownership are untouched. |
+
+Implementation map:
+
+```text
+layout/theme.liquid
+  ├─ index-only AOS CSS + first-paint fallback
+  └─ index-only aos-home.js
+
+sections
+  ├─ editorial-hero: text stage + non-blocking media settle
+  ├─ featured-edit / outfit-composition: lead stage → product-grid stage
+  ├─ shoppable-story: lead stage → per-product-row stage
+  └─ pinned-visual-story: intro/media stage → per-chapter stage
+```
+
+Before this experiment can replace the approved GSAP treatment, record Shopify-preview and Theme Editor lifecycle evidence, desktop/mobile real-device smoothness, and Lighthouse/LCP evidence. The asset licence and removal path are tracked under `DEP-002` in `../Governance/asset-license-register.md`.
+
 | Layer | Technology | Owner | Use it for | Do not use it for |
 |---|---|---|---|---|
 | Small UI state | Scoped CSS transitions | Component stylesheet | Hover/focus, disclosure, button and drawer visual state | Scroll choreography or layout changes |

@@ -8,9 +8,9 @@
   endfor
 %}
 
-<section class="outfit-composition full-width outfit-composition--media-{{ section.settings.media_position }} outfit-composition--spacing-{{ section.settings.section_spacing }}" data-home-reveal="outfit-composition" style="--outfit-background: {{ section.settings.background_color }}; --outfit-foreground: {{ section.settings.text_color }}; --outfit-columns: {{ section.settings.desktop_columns }};" {% if section.settings.heading != blank %}aria-labelledby="OutfitCompositionHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="outfit-composition full-width outfit-composition--media-{{ section.settings.media_position }} outfit-composition--spacing-{{ section.settings.section_spacing }}" data-home-reveal="outfit-composition" data-aos-section style="--outfit-background: {{ section.settings.background_color }}; --outfit-foreground: {{ section.settings.text_color }}; --outfit-columns: {{ section.settings.desktop_columns }};" {% if section.settings.heading != blank %}aria-labelledby="OutfitCompositionHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="outfit-composition__lead{% if section.settings.image == blank %} outfit-composition__lead--text-only{% endif %}">
-    <div class="outfit-composition__content">
+    <div class="outfit-composition__content" data-aos="fade-right">
       {% if section.settings.eyebrow != blank %}
         <p class="outfit-composition__eyebrow">{{ section.settings.eyebrow | escape }}</p>
       {% endif %}
@@ -22,7 +22,7 @@
       {% endif %}
     </div>
     {% if section.settings.image != blank %}
-      <div class="outfit-composition__media">
+      <div class="outfit-composition__media" data-aos="fade-left" data-aos-delay="100">
         {% render 'image',
           class: 'outfit-composition__image',
           image: section.settings.image,
@@ -36,10 +36,10 @@
   </div>
 
   {% if has_products %}
-    <ul class="outfit-composition__items" data-home-reveal-group="cards" role="list">
+    <ul class="outfit-composition__items" data-home-reveal-group="cards" data-aos-products role="list">
       {% for block in section.blocks %}
         {% if block.settings.product != blank %}
-          <li {{ block.shopify_attributes }}>
+          <li data-aos="fade-up" data-aos-delay="{{ forloop.index0 | times: 100 }}" {{ block.shopify_attributes }}>
             {% render 'product-card', product: block.settings.product, card_context: 'homepage', image_ratio: '4 / 5', sizes: '(min-width: 75rem) 22vw, (min-width: 48rem) 30vw, 88vw' %}
           </li>
         {% endif %}
