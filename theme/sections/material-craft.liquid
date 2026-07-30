@@ -5,7 +5,7 @@
       {% assign image = section.settings[image_key] %}
       <div class="material-craft__image material-craft__image--{{ index }}">
         {% if image != blank %}
-          {% render 'image', image: image, alt: image.alt, width: 1400, widths: '360, 540, 720, 960, 1200, 1400', sizes: '(min-width: 60rem) 32vw, 75vw' %}
+          {% render 'image', image: image, alt: image.alt, width: 1400, widths: '360, 540, 720, 960, 1200, 1400', sizes: '(min-width: 64rem) 32vw, 75vw' %}
         {% else %}
           {{ 'image' | placeholder_svg_tag: 'material-craft__placeholder' }}
         {% endif %}
@@ -37,8 +37,9 @@
   .material-craft__text > :last-child { margin-block-end: 0; }
   .material-craft__link { background: var(--color-foreground); color: var(--color-background); font-size: .6875rem; font-weight: 600; justify-self: start; letter-spacing: .1em; padding: .95rem 1.35rem; text-decoration: none; text-transform: uppercase; }
   .material-craft__link:is(:hover, :focus-visible) { background: var(--color-accent); }
-  @media (min-width: 60rem) { .material-craft { grid-template-columns: minmax(0, 1.15fr) minmax(18rem, .65fr); } .material-craft--media-right { grid-template-columns: minmax(18rem, .65fr) minmax(0, 1.15fr); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
-  @media (max-width: 59.99rem) { .material-craft { gap: var(--space-5); margin-block-end: var(--space-chapter-mobile); } }
+  @media (min-width: 64rem) { .material-craft { grid-template-columns: minmax(0, 1.15fr) minmax(18rem, .65fr); } .material-craft--media-right { grid-template-columns: minmax(18rem, .65fr) minmax(0, 1.15fr); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
+  @media (min-width: 48rem) and (max-width: 63.99rem) { .material-craft { grid-template-columns: minmax(0, 1.1fr) minmax(17rem, .9fr); } .material-craft--media-right { grid-template-columns: minmax(17rem, .9fr) minmax(0, 1.1fr); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
+  @media (max-width: 63.99rem) { .material-craft { gap: var(--space-5); margin-block-end: var(--space-chapter-mobile); } }
 {% endstylesheet %}
 
 {% schema %}

@@ -1,7 +1,7 @@
 class HomeRevealController {
   constructor() {
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    this.desktop = window.matchMedia('(min-width: 60rem)');
+    this.desktop = window.matchMedia('(min-width: 64rem)');
 
     if (!window.gsap || !window.ScrollTrigger || this.reducedMotion.matches) {
       window.homeRevealBoot?.release();

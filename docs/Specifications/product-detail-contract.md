@@ -23,7 +23,7 @@ The Phase 5 vertical slice has one stable `product-form` controller per main pro
 
 | Case | Server render / no-JS behavior | Enhanced behavior | Required result |
 |---|---|---|---|
-| Image media | Responsive `image_tag`, width/height and lazy loading outside the first visible item | Gallery selection may change the displayed image | Never broken media or CLS from missing dimensions |
+| Image media | Responsive `image_tag`, width/height and lazy loading outside the first visible item | Gallery selection may change the displayed image through thumbnails; desktop previous/next controls; or a horizontal touch swipe in either the inline gallery or zoom modal. During touch drag, the current media follows the finger; a committed swipe slides the adjacent media in from the opposite edge, while an uncommitted drag returns to its start. A normal media click still opens zoom. | Never broken media or CLS from missing dimensions; vertical touch gestures retain page scroll; reduced motion may resolve the transition without animation. |
 | Shopify-hosted video | Shopify `media_tag` with controls and poster | Future gallery/modal preserves controls and stops playback on close | No autoplay with sound; reduced-motion does not auto-play |
 | External video | Shopify `external_video_tag`, provider embed only when configured | Future modal is optional enhancement | Missing/blocked provider leaves title/link/fallback, not a blank frame |
 | 3D model | Shopify `model_viewer_tag` with model UI | Future modal follows the same selected-media state | Model viewer is not fabricated when no model exists |

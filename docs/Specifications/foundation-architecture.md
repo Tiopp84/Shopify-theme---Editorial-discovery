@@ -15,6 +15,26 @@ The Phase 1 prototype is an interaction and art-direction contract, not producti
 - `main` is the single page landmark and receives the skip-link target. Overlays must use native dialog semantics or equivalent focus/Escape/restore behavior.
 - Prototype CSS and JavaScript remain outside `theme/`; production components are implemented progressively and tested against real Shopify data.
 
+## Responsive layout contract
+
+Every storefront surface must explicitly support these three layout ranges. A range describes an interaction and composition mode, not only a different column count. Do not let a component inherit a compressed desktop or expanded mobile layout accidentally between breakpoints.
+
+| Range | CSS range | Required composition and interaction ownership |
+|---|---|---|
+| Compact | `<48rem` | Keep one clear reading sequence and the compact task/overlay composition. Essential commerce actions remain discoverable without hover. |
+| Tablet | `48rem–63.99rem` | Use a deliberate intermediate composition: retain drawer-based header navigation, search and collection facets; use the width for balanced two-column editorial/cards where appropriate; keep PDP details stacked; do not enable desktop-only pinned motion or compact-scrolling header behavior. A section may keep CSS-only sticky media when its tablet layout remains explicitly side-by-side and its contract documents the exception. |
+| Desktop | `≥64rem` | Enable desktop navigation, supported dense grid modes, desktop side panels and editorial sticky/pinned choreography. The component still owns its no-JavaScript fallback and keyboard behavior. |
+
+The pixel values assume the default 16 px root size: compact is below 768 px, tablet is 768–1023 px, and desktop begins at 1024 px. Wider media queries may tune density or spacing, but must not create a fourth interaction layout without an explicit contract update.
+
+### Implementation rules
+
+- Build mobile-first and make each component's behavior concrete in all three ranges. Use the same `64rem` boundary for desktop-only navigation, sticky/pinned choreography and desktop gallery controls unless the component contract documents a justified exception.
+- Hover is progressive enhancement only: put hover affordances inside `@media (hover: hover) and (pointer: fine)`, and provide an equivalent keyboard-focus state. On compact and tablet, an essential action must remain visible or have a clear non-hover trigger.
+- Preserve direct manipulation on touch: horizontal gestures must not steal ordinary vertical scrolling (`touch-action: pan-y` where relevant), and overlays use viewport-safe sizing/anchoring such as `dvh`.
+- Use viewport width, not device name or orientation, to choose ownership. A 1024 px landscape check is the desktop handoff test; a device's physical category never overrides the three declared CSS ranges.
+- Verify a responsive change at 320 px, 375 px, 768 × 1024, 820 × 1180, 1024 × 768 and 1440 px. Include long copy, missing media, 200% zoom, keyboard focus, reduced motion and—where applicable—the state after asynchronous DOM replacement.
+
 ## Definition of done for foundation changes
 
 - Theme Check has zero offenses.

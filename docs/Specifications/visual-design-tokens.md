@@ -60,7 +60,7 @@ The base unit is **8 px**. Approved major steps are **8 / 16 / 24 / 40 / 64 px**
 1. The forthcoming approved homepage design defines the composition and responsive layouts; this token document defines the reusable visual language.
 2. Update shared CSS variables and component primitives only after the homepage reference is accepted. Do not patch individual sections to imitate a visual direction in isolation.
 3. Every token migration must preserve existing accessibility, Shopify ownership and no-JavaScript behavior.
-4. Test the applied system at 1440, 375 and 320 px, including long copy, zoom 200%, keyboard focus and reduced motion.
+4. Test the applied system across the three responsive ranges: 320 and 375 px (compact), 768 × 1024 and 820 × 1180 (tablet), 1024 × 768 (desktop handoff), and 1440 px (desktop). Include long copy, missing media, zoom 200%, keyboard focus and reduced motion. The range ownership and interaction rules are defined in [`foundation-architecture.md`](foundation-architecture.md#responsive-layout-contract).
 
 ## Foundation migration — 2026-07-27
 

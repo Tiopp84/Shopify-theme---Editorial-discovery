@@ -98,7 +98,7 @@ The inline bootstrap has a 2.5-second failsafe. If GSAP or ScrollTrigger cannot 
 
 ### Pinned visual story choreography
 
-The `pinned-visual-story` section is the current editorial showcase because it already has a long-form image-and-chapter layout.
+The `pinned-visual-story` section is the current editorial showcase because it already has a long-form image-and-chapter layout. Its image is CSS-sticky whenever the section is in its explicit two-column layout (`≥48rem`); the additional GSAP chapter choreography remains desktop-only (`≥64rem`).
 
 ```text
 Desktop scroll
