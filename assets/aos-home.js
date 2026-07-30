@@ -7,8 +7,7 @@ class AOSHome {
     this.scrollVelocity = 0;
     this.lastScrollPosition = window.scrollY;
     this.lastScrollTime = performance.now();
-    this.queue = [];
-    this.isAnimating = false;
+    this.timers = new Map();
     this.isReady = false;
     this.sections = new Set();
     this.productStages = new Set();
@@ -20,7 +19,6 @@ class AOSHome {
     requestAnimationFrame(() => requestAnimationFrame(() => {
       this.isReady = true;
       this.queueHero();
-      this.flushQueue();
     }));
 
     this.onScroll = () => {
@@ -35,8 +33,16 @@ class AOSHome {
     };
     window.addEventListener('scroll', this.onScroll, { passive: true });
     window.addEventListener('resize', () => this.scheduleEvaluation());
-    document.addEventListener('shopify:section:load', (event) => this.registerSections(event.target));
-    document.addEventListener('shopify:section:reorder', () => this.registerSections(document));
+    document.addEventListener('shopify:section:load', (event) => {
+      this.unregisterSections(event.target);
+      this.registerSections(event.target);
+      this.scheduleEvaluation();
+    });
+    document.addEventListener('shopify:section:unload', (event) => this.unregisterSections(event.target));
+    document.addEventListener('shopify:section:reorder', () => {
+      this.registerSections(document);
+      this.scheduleEvaluation();
+    });
     window.aosHomeBoot?.release();
   }
 
@@ -49,6 +55,25 @@ class AOSHome {
       section.querySelectorAll('[data-aos-products], [data-aos-product-item], [data-aos-item]').forEach((stage) => {
         if (!stage.dataset.aosState) this.productStages.add(stage);
       });
+    });
+  }
+
+  unregisterSections(scope) {
+    const contains = (element) => scope === element || scope.contains?.(element);
+    this.sections.forEach((section) => {
+      if (!contains(section)) return;
+      delete section.dataset.aosState;
+      this.sections.delete(section);
+    });
+    this.productStages.forEach((stage) => {
+      if (!contains(stage)) return;
+      delete stage.dataset.aosState;
+      this.productStages.delete(stage);
+    });
+    this.timers.forEach((timer, element) => {
+      if (!contains(element)) return;
+      window.clearTimeout(timer);
+      this.timers.delete(element);
     });
   }
 
@@ -72,7 +97,6 @@ class AOSHome {
         const section = stage.closest('[data-aos-section]');
         if (!stage.dataset.aosState && section?.dataset.aosState === 'animated' && this.hasReachedTriggerLine(stage)) this.queueProductStage(stage);
       });
-      this.revealQueuedStagesInView();
     });
   }
 
@@ -104,50 +128,12 @@ class AOSHome {
   queueStage(type, element) {
     if (element.dataset.aosState) return;
     element.dataset.aosState = 'queued';
-    const duration = this.getDuration();
-    if (this.isFastScroll()) {
-      this.animateStage(type, element, duration);
-      return;
-    }
-    this.queue.push({ type, element, duration });
-    this.flushQueue();
+    this.animateStage(type, element, this.scrollVelocity >= 0.65 ? 350 : this.defaultDuration);
   }
 
-  getDuration() {
-    if (this.scrollVelocity >= 0.65) return 350;
-    return this.defaultDuration;
-  }
-
-  isFastScroll() {
-    return this.scrollVelocity >= 0.65;
-  }
-
-  revealQueuedStagesInView() {
-    if (!this.isFastScroll()) return;
-    const pending = this.queue.filter((stage) => this.isVisible(stage.element));
-    this.queue = this.queue.filter((stage) => !this.isVisible(stage.element));
-    pending.forEach((stage) => this.animateStage(stage.type, stage.element, 350));
-  }
-
-  flushQueue() {
-    if (!this.isReady || this.isAnimating || this.queue.length === 0) return;
-    const { type, element, duration } = this.queue.shift();
-    if (!this.isVisible(element)) {
-      delete element.dataset.aosState;
-      this.flushQueue();
-      return;
-    }
-    this.isAnimating = true;
-    this.animateStage(type, element, duration, () => {
-      this.isAnimating = false;
-      this.scheduleEvaluation();
-      this.flushQueue();
-    });
-  }
-
-  animateStage(type, element, duration, onComplete) {
-    if (element.dataset.aosState === 'animated') return;
-    element.dataset.aosState = 'animated';
+  animateStage(type, element, duration) {
+    if (element.dataset.aosState === 'animated' || element.dataset.aosState === 'animating') return;
+    element.dataset.aosState = 'animating';
 
     const candidates = [];
     if (element.matches('[data-aos]')) candidates.push(element);
@@ -162,15 +148,17 @@ class AOSHome {
       target.classList.add('aos-animate');
     });
 
-    window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
+      this.timers.delete(element);
       targets.forEach((target) => {
         target.removeAttribute('data-aos');
         target.removeAttribute('data-aos-delay');
         target.removeAttribute('data-aos-duration');
       });
+      element.dataset.aosState = 'animated';
       this.scheduleEvaluation();
-      onComplete?.();
     }, duration + maxDelay + 80);
+    this.timers.set(element, timer);
   }
 }
 

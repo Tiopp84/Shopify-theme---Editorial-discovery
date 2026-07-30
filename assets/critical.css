@@ -237,26 +237,6 @@ textarea {
   }
 }
 
-/* The inline homepage bootstrap sets this class before body content renders.
- * It prevents a first-paint flash while keeping the page fully visible without JavaScript. */
-@media (prefers-reduced-motion: no-preference) {
-  html.home-reveal-pending [data-home-reveal='featured-edit'] .featured-edit__header > *,
-  html.home-reveal-pending [data-home-reveal='editorial-hero'] .editorial-hero__content > *,
-  html.home-reveal-pending [data-home-reveal='editorial-hero'] .editorial-hero__media,
-  html.home-reveal-pending [data-home-reveal='pinned-visual-story'] .pinned-visual-story__intro > *,
-  html.home-reveal-pending [data-home-reveal='pinned-visual-story'] .pinned-visual-story__media,
-  html.home-reveal-pending [data-home-reveal='material-craft'] :is(.material-craft__images, .material-craft__content) > *,
-  html.home-reveal-pending [data-home-reveal='shoppable-story'] .shoppable-story__intro > *,
-  html.home-reveal-pending [data-home-reveal='outfit-composition'] .outfit-composition__content > *,
-  html.home-reveal-pending [data-home-reveal='outfit-composition'] .outfit-composition__media,
-  html.home-reveal-pending [data-home-reveal-group] > *,
-  html.home-reveal-pending [data-home-reveal-chapter] :is(.pinned-visual-story__number, h3, .pinned-visual-story__body, a) {
-    visibility: hidden;
-    opacity: 0;
-    transform: translate3d(0, 14px, 0);
-  }
-}
-
 /* AOS is progressive enhancement: without a successful initialization, every
  * marked element stays in its final readable state. */
 html:not(.aos-enabled) [data-aos] {

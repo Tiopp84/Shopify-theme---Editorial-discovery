@@ -17,7 +17,9 @@ class QuickAdd extends HTMLElement {
     this.sku = this.querySelector('[data-quick-add-sku]');
     this.skuValue = this.querySelector('[data-quick-add-sku-value]');
     this.availability = this.querySelector('[data-quick-add-availability]');
+    this.mediaStage = this.querySelector('[data-quick-add-media-stage]');
     this.media = [...this.querySelectorAll('[data-quick-add-media-id]')];
+    this.selectedMediaId = this.media.find((item) => !item.hidden)?.dataset.quickAddMediaId || this.media[0]?.dataset.quickAddMediaId;
     this.mediaButtons = [...this.querySelectorAll('[data-quick-add-media-select]')];
     this.variants = JSON.parse(this.querySelector('[data-quick-add-variants]')?.textContent || '[]');
     if (!this.dialog || !this.form || !this.variantInput || !this.quantity || !this.submit || !this.variants.length) return;
@@ -41,6 +43,16 @@ class QuickAdd extends HTMLElement {
     this.querySelector('[data-quick-add-quantity-decrease]')?.addEventListener('click', () => this.changeQuantity(-1), { signal });
     this.querySelector('[data-quick-add-quantity-increase]')?.addEventListener('click', () => this.changeQuantity(1), { signal });
     this.mediaButtons.forEach((button) => button.addEventListener('click', () => this.selectMedia(button.dataset.quickAddMediaSelect), { signal }));
+    this.querySelector('[data-quick-add-media-previous]')?.addEventListener('click', () => this.stepMedia(-1), { signal });
+    this.querySelector('[data-quick-add-media-next]')?.addEventListener('click', () => this.stepMedia(1), { signal });
+    this.mediaStage?.addEventListener('pointerdown', (event) => this.onMediaPointerDown(event), { signal });
+    this.mediaStage?.addEventListener('pointermove', (event) => this.onMediaPointerMove(event), { signal });
+    this.mediaStage?.addEventListener('pointerup', (event) => this.onMediaPointerUp(event), { signal });
+    this.mediaStage?.addEventListener('pointercancel', () => this.cancelMediaSwipe(), { signal });
+    this.mediaStage?.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') { event.preventDefault(); this.stepMedia(-1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); this.stepMedia(1); }
+    }, { signal });
     this.quantity.addEventListener('change', () => this.clampQuantity(), { signal });
     window.addEventListener('cart:state', (event) => this.applyCartState(event.detail?.quantities), { signal });
     this.fromControls();
@@ -245,8 +257,154 @@ class QuickAdd extends HTMLElement {
 
   selectMedia(id) {
     if (!id) return;
-    this.media.forEach((item) => { item.hidden = item.dataset.quickAddMediaId !== String(id); });
+    this.media.forEach((item) => {
+      const selected = item.dataset.quickAddMediaId === String(id);
+      item.hidden = !selected;
+      if (!selected) {
+        item.style.removeProperty('transform');
+        item.style.removeProperty('will-change');
+        delete item.dataset.quickAddMediaOffset;
+      }
+    });
     this.mediaButtons.forEach((button) => button.toggleAttribute('aria-current', button.dataset.quickAddMediaSelect === String(id)));
+    this.selectedMediaId = String(id);
+  }
+
+  stepMedia(direction) {
+    if (this.mediaTransitioning) return;
+    const index = this.media.findIndex((item) => item.dataset.quickAddMediaId === this.selectedMediaId);
+    const next = this.media[(index + direction + this.media.length) % this.media.length];
+    this.selectMedia(next?.dataset.quickAddMediaId);
+  }
+
+  onMediaPointerDown(event) {
+    if (event.pointerType !== 'touch' || this.media.length < 2 || this.mediaTransitioning || event.target.closest('button')) return;
+    this.mediaPointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    this.mediaStage?.setPointerCapture?.(event.pointerId);
+  }
+
+  onMediaPointerMove(event) {
+    const pointer = this.mediaPointer;
+    if (!pointer || pointer.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    const deltaY = event.clientY - pointer.y;
+    if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    event.preventDefault();
+    const direction = deltaX < 0 ? 1 : -1;
+    const target = this.prepareMediaPreview(direction);
+    const distance = Math.max(this.mediaStage?.clientWidth || 0, 1);
+    this.setMediaOffset(this.media.find((item) => item.dataset.quickAddMediaId === this.selectedMediaId), deltaX);
+    this.setMediaOffset(target, direction * distance + deltaX);
+  }
+
+  onMediaPointerUp(event) {
+    const pointer = this.mediaPointer;
+    this.mediaPointer = null;
+    if (!pointer || pointer.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    const deltaY = event.clientY - pointer.y;
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      this.snapBackMedia();
+      return;
+    }
+    this.transitionMedia(deltaX < 0 ? 1 : -1, deltaX);
+  }
+
+  cancelMediaSwipe() {
+    this.mediaPointer = null;
+    this.snapBackMedia();
+  }
+
+  prepareMediaPreview(direction) {
+    if (this.mediaSwipeTarget && this.mediaSwipeDirection === direction) return this.mediaSwipeTarget;
+    this.clearMediaPreview();
+    const index = this.media.findIndex((item) => item.dataset.quickAddMediaId === this.selectedMediaId);
+    const target = this.media[(index + direction + this.media.length) % this.media.length];
+    if (!target) return null;
+    target.hidden = false;
+    target.style.position = 'absolute';
+    target.style.inset = '0';
+    target.style.zIndex = '1';
+    this.mediaSwipeTarget = target;
+    this.mediaSwipeDirection = direction;
+    return target;
+  }
+
+  clearMediaPreview({ keepTarget = false } = {}) {
+    const target = this.mediaSwipeTarget;
+    if (!target) return;
+    if (!keepTarget) target.hidden = true;
+    target.style.removeProperty('position');
+    target.style.removeProperty('inset');
+    target.style.removeProperty('z-index');
+    target.style.removeProperty('transform');
+    target.style.removeProperty('will-change');
+    delete target.dataset.quickAddMediaOffset;
+    this.mediaSwipeTarget = null;
+    this.mediaSwipeDirection = null;
+  }
+
+  async snapBackMedia() {
+    const source = this.media.find((item) => item.dataset.quickAddMediaId === this.selectedMediaId);
+    const target = this.mediaSwipeTarget;
+    if (!target) return this.animateMediaOffset(source, this.currentMediaOffset(source), 0);
+    const distance = Math.max(this.mediaStage?.clientWidth || 0, 1);
+    await Promise.all([
+      this.animateMediaOffset(source, this.currentMediaOffset(source), 0),
+      this.animateMediaOffset(target, this.currentMediaOffset(target), this.mediaSwipeDirection * distance),
+    ]);
+    this.clearMediaPreview();
+  }
+
+  async transitionMedia(direction, offset = 0) {
+    if (this.mediaTransitioning) return;
+    const source = this.media.find((item) => item.dataset.quickAddMediaId === this.selectedMediaId);
+    const next = this.prepareMediaPreview(direction);
+    if (!source || !next) return;
+    this.mediaTransitioning = true;
+    const distance = Math.max(this.mediaStage?.clientWidth || 0, 1);
+    await Promise.all([
+      this.animateMediaOffset(source, this.currentMediaOffset(source) || offset, direction * -distance),
+      this.animateMediaOffset(next, this.currentMediaOffset(next) || direction * distance, 0),
+    ]);
+    this.selectMedia(next.dataset.quickAddMediaId);
+    this.clearMediaPreview({ keepTarget: true });
+    this.mediaTransitioning = false;
+  }
+
+  setMediaOffset(element, offset) {
+    if (!element) return;
+    element.style.transform = `translate3d(${offset}px, 0, 0)`;
+    element.style.willChange = 'transform';
+    element.dataset.quickAddMediaOffset = String(offset);
+  }
+
+  currentMediaOffset(element) {
+    const offset = Number(element?.dataset.quickAddMediaOffset);
+    return Number.isFinite(offset) ? offset : 0;
+  }
+
+  async animateMediaOffset(element, from, to) {
+    if (!element) return;
+    const apply = (offset) => {
+      element.style.transform = `translate3d(${offset}px, 0, 0)`;
+      element.dataset.quickAddMediaOffset = String(offset);
+    };
+    apply(from);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && typeof element.animate === 'function') {
+      const animation = element.animate(
+        [{ transform: `translate3d(${from}px, 0, 0)` }, { transform: `translate3d(${to}px, 0, 0)` }],
+        { duration: 220, easing: 'cubic-bezier(.22, .61, .36, 1)', fill: 'both' },
+      );
+      await animation.finished.catch(() => {});
+      animation.cancel();
+    }
+    apply(to);
+    if (to === 0) {
+      element.style.removeProperty('transform');
+      element.style.removeProperty('will-change');
+      delete element.dataset.quickAddMediaOffset;
+    }
   }
 
   lockPageScroll() {

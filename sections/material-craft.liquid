@@ -1,4 +1,4 @@
-<section class="material-craft full-width material-craft--media-{{ section.settings.media_position }} material-craft--spacing-{{ section.settings.section_spacing }}" data-home-reveal="material-craft" data-aos-section style="--material-craft-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="material-craft full-width material-craft--media-{{ section.settings.media_position }} material-craft--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--material-craft-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="material-craft__images">
     {% for index in (1..2) %}
       {% assign image_key = 'image_' | append: index %}

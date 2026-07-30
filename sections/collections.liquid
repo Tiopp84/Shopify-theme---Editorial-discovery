@@ -12,7 +12,7 @@
 
   <div class="collection-index__grid">
     {% for collection in collections %}
-      <a class="collection-card" href="{{ collection.url }}">
+      <a class="collection-card" href="{{ collection.url }}" data-catalog-reveal data-aos="fade-up">
         <span class="collection-card__media">
           {% if collection.featured_image %}
             {% render 'image',

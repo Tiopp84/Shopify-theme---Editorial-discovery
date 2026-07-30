@@ -6,7 +6,7 @@
   assign product_count = featured_collection.products_count | at_most: section.settings.product_limit
 %}
 
-<section class="featured-edit full-width featured-edit--spacing-{{ section.settings.section_spacing }}" data-home-reveal="featured-edit" data-aos-section style="--featured-edit-background: {{ section.settings.background_color }}; --featured-edit-columns: {{ section.settings.desktop_columns }};" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="featured-edit full-width featured-edit--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--featured-edit-background: {{ section.settings.background_color }}; --featured-edit-columns: {{ section.settings.desktop_columns }};" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <header class="featured-edit__header" data-aos="fade-down">
     <div class="featured-edit__intro">
       {% if section.settings.eyebrow != blank %}<p class="featured-edit__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
@@ -21,9 +21,9 @@
   </header>
 
   {% if featured_collection != blank and featured_collection.products_count > 0 %}
-    <ul class="featured-edit__grid" data-home-reveal-group="cards" data-aos-products role="list">
+    <ul class="featured-edit__grid" role="list">
       {% for product in featured_collection.products limit: section.settings.product_limit %}
-        <li data-aos="fade-up" data-aos-delay="{{ forloop.index0 | times: 100 }}">{% render 'product-card', product: product, card_context: 'homepage', card_index: forloop.index, card_count: product_count, image_ratio: '4 / 5', sizes: '(min-width: 64rem) 23vw, (min-width: 48rem) 44vw, 46vw' %}</li>
+        <li data-aos-product-item data-aos="fade-up" data-aos-delay="{{ forloop.index0 | at_most: 3 | times: 100 }}">{% render 'product-card', product: product, card_context: 'homepage', card_index: forloop.index, card_count: product_count, image_ratio: '4 / 5', sizes: '(min-width: 64rem) 23vw, (min-width: 48rem) 44vw, 46vw' %}</li>
       {% endfor %}
     </ul>
   {% endif %}

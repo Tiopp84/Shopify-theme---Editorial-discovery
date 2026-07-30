@@ -1,0 +1,11 @@
+/* Narrivelle keeps AOS entrances short and close to their final layout.
+ * The upstream defaults move content 100px, which is too abrupt on compact viewports. */
+html.aos-enabled [data-aos='fade-up'] { transform: translate3d(0, 2rem, 0); }
+html.aos-enabled [data-aos='fade-down'] { transform: translate3d(0, -2rem, 0); }
+html.aos-enabled [data-aos='fade-right'] { transform: translate3d(-2rem, 0, 0); }
+html.aos-enabled [data-aos='fade-left'] { transform: translate3d(2rem, 0, 0); }
+html.aos-enabled [data-aos='fade-up-right'] { transform: translate3d(-2rem, 2rem, 0); }
+html.aos-enabled [data-aos='fade-up-left'] { transform: translate3d(2rem, 2rem, 0); }
+html.aos-enabled [data-aos='fade-down-right'] { transform: translate3d(-2rem, -2rem, 0); }
+html.aos-enabled [data-aos='fade-down-left'] { transform: translate3d(2rem, -2rem, 0); }
+html.aos-enabled [data-aos^='fade'].aos-animate { transform: translate3d(0, 0, 0); }
