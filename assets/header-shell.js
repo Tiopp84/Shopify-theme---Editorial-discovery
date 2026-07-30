@@ -10,6 +10,7 @@ class HeaderShell extends HTMLElement {
     this.onNavGroupPointerLeave = this.onNavGroupPointerLeave.bind(this);
     this.onScroll = this.onScroll.bind(this);
     this.onMotionPreferenceChange = this.onMotionPreferenceChange.bind(this);
+    this.onDesktopLayoutChange = this.onDesktopLayoutChange.bind(this);
     this.hoverCloseTimer = null;
     this.scrollFrame = null;
     this.lastScrollY = window.scrollY;
@@ -18,6 +19,7 @@ class HeaderShell extends HTMLElement {
     this.compactReleaseDelay = 480;
     this.compactReleaseTimer = null;
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.desktopLayoutQuery = window.matchMedia('(min-width: 64rem)');
     this.addEventListener('click', this.onClick);
     document.addEventListener('click', this.onDocumentClick);
     document.addEventListener('keydown', this.onDocumentKeydown);
@@ -33,6 +35,7 @@ class HeaderShell extends HTMLElement {
     });
 
     this.reducedMotionQuery.addEventListener('change', this.onMotionPreferenceChange);
+    this.desktopLayoutQuery.addEventListener('change', this.onDesktopLayoutChange);
     this.startMotion();
   }
 
@@ -49,6 +52,7 @@ class HeaderShell extends HTMLElement {
     window.clearTimeout(this.compactReleaseTimer);
     window.removeEventListener('scroll', this.onScroll);
     this.reducedMotionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
+    this.desktopLayoutQuery?.removeEventListener('change', this.onDesktopLayoutChange);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
     this.scrollFrame = null;
     this.compactReleaseTimer = null;
@@ -75,6 +79,13 @@ class HeaderShell extends HTMLElement {
     this.startMotion();
   }
 
+  onDesktopLayoutChange() {
+    this.cancelCompactRelease();
+    this.classList.remove('header-shell--compact');
+    this.compactAnchorY = null;
+    this.updateScrollState();
+  }
+
   onScroll() {
     if (this.scrollFrame) return;
 
@@ -92,6 +103,14 @@ class HeaderShell extends HTMLElement {
     const keyboardFocusInside = this.contains(activeElement) && activeElement?.matches?.(':focus-visible');
 
     this.classList.toggle('header-shell--scrolled', scrollY > 40);
+
+    if (!this.desktopLayoutQuery.matches) {
+      this.cancelCompactRelease();
+      this.classList.remove('header-shell--compact');
+      this.compactAnchorY = null;
+      this.lastScrollY = scrollY;
+      return;
+    }
 
     if (!this.classList.contains('header-shell--compact') && !dialogOpen && !keyboardFocusInside && scrollY > 120) {
       this.cancelCompactRelease();

@@ -29,7 +29,7 @@
           alt: section.settings.image.alt,
           width: 1800,
           widths: '480, 720, 960, 1200, 1500, 1800',
-          sizes: '(min-width: 60rem) 50vw, 100vw'
+          sizes: '(min-width: 64rem) 50vw, 100vw'
         %}
       </div>
     {% endif %}
@@ -40,7 +40,7 @@
       {% for block in section.blocks %}
         {% if block.settings.product != blank %}
           <li {{ block.shopify_attributes }}>
-            {% render 'product-card', product: block.settings.product, card_context: 'homepage', image_ratio: '4 / 5', sizes: '(min-width: 75rem) 22vw, (min-width: 48rem) 30vw, 88vw' %}
+            {% render 'product-card', product: block.settings.product, card_context: 'homepage', image_ratio: '4 / 5', sizes: '(min-width: 64rem) 22vw, (min-width: 48rem) 42vw, 88vw' %}
           </li>
         {% endif %}
       {% endfor %}
@@ -74,12 +74,12 @@
   @media (min-width: 48rem) {
     .outfit-composition__lead { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
     .outfit-composition__lead--text-only { grid-template-columns: 1fr; }
-    .outfit-composition__items { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .outfit-composition__items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .outfit-composition--media-left .outfit-composition__lead { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
     .outfit-composition--media-left .outfit-composition__media { grid-column: 1; grid-row: 1; }
     .outfit-composition--media-left .outfit-composition__content { grid-column: 2; }
   }
-  @media (min-width: 75rem) {
+  @media (min-width: 64rem) {
     .outfit-composition__items { grid-template-columns: repeat(var(--outfit-columns, 4), minmax(0, 1fr)); }
   }
   @media (max-width: 35rem) {

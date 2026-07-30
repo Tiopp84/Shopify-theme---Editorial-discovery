@@ -16,7 +16,7 @@
   <div class="pinned-visual-story__layout">
     <div class="pinned-visual-story__media">
       {% if section.settings.image != blank %}
-        {% render 'image', class: 'pinned-visual-story__image', image: section.settings.image, alt: section.settings.image.alt, width: 1800, widths: '480, 720, 960, 1200, 1500, 1800', sizes: '(min-width: 60rem) 50vw, 100vw' %}
+        {% render 'image', class: 'pinned-visual-story__image', image: section.settings.image, alt: section.settings.image.alt, width: 1800, widths: '480, 720, 960, 1200, 1500, 1800', sizes: '(min-width: 48rem) 50vw, 100vw' %}
       {% else %}
         <div class="pinned-visual-story__placeholder" aria-hidden="true">{{ 'lifestyle-1' | placeholder_svg_tag }}</div>
       {% endif %}
@@ -56,14 +56,22 @@
   .pinned-visual-story__body > :last-child { margin-block-end: 0; }
   .pinned-visual-story__chapter a { color: currentcolor; font-size: .6875rem; font-weight: 600; letter-spacing: .08em; justify-self: start; text-decoration: underline; text-underline-offset: .25em; text-transform: uppercase; }
   .pinned-visual-story__chapter a:is(:hover, :focus-visible) { color: var(--color-accent); }
-  @media (min-width: 60rem) {
+  @media (min-width: 64rem) {
     .pinned-visual-story__layout { align-items: start; grid-template-columns: minmax(0, 1fr) minmax(18rem, .72fr); }
     .pinned-visual-story__media { position: sticky; top: 6rem; }
     .pinned-visual-story--media-right .pinned-visual-story__layout { grid-template-columns: minmax(18rem, .72fr) minmax(0, 1fr); }
     .pinned-visual-story--media-right .pinned-visual-story__media { grid-column: 2; }
     .pinned-visual-story--media-right .pinned-visual-story__chapters { grid-column: 1; grid-row: 1; }
   }
-  @media (max-width: 59.99rem) {
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .pinned-visual-story__layout { align-items: start; grid-template-columns: minmax(0, 1fr) minmax(16rem, .8fr); }
+    .pinned-visual-story__media { position: sticky; top: 6rem; }
+    .pinned-visual-story--media-right .pinned-visual-story__layout { grid-template-columns: minmax(16rem, .8fr) minmax(0, 1fr); }
+    .pinned-visual-story--media-right .pinned-visual-story__media { grid-column: 2; }
+    .pinned-visual-story--media-right .pinned-visual-story__chapters { grid-column: 1; grid-row: 1; }
+    .pinned-visual-story__chapter { min-height: clamp(20rem, 42vw, 28rem); }
+  }
+  @media (max-width: 63.99rem) {
     .pinned-visual-story { margin-block-end: var(--space-chapter-mobile); padding-block: var(--space-6); }
     .pinned-visual-story__intro { margin-block-end: var(--space-5); }
     .pinned-visual-story__media { aspect-ratio: 4 / 5; }

@@ -38,7 +38,7 @@
                     alt: block.settings.image.alt,
                     width: 1200,
                     widths: '360, 480, 640, 800, 960, 1200',
-                    sizes: '(min-width: 60rem) 42vw, 90vw'
+                    sizes: '(min-width: 64rem) 42vw, 90vw'
                   %}
                 {% elsif story_product.featured_image != blank %}
                   {% render 'image',
@@ -47,7 +47,7 @@
                     alt: story_product.featured_image.alt,
                     width: 1200,
                     widths: '360, 480, 640, 800, 960, 1200',
-                    sizes: '(min-width: 60rem) 42vw, 90vw'
+                    sizes: '(min-width: 64rem) 42vw, 90vw'
                   %}
                 {% else %}
                   <span class="shoppable-story__placeholder" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag }}</span>
@@ -96,7 +96,7 @@
   .shoppable-story__decision h3 a:is(:hover, :focus-visible) { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .16em; }
   .shoppable-story__price { justify-content: end; text-align: end; white-space: nowrap; }
   .shoppable-story__availability { color: var(--color-accent); }
-  @media (min-width: 60rem) {
+  @media (min-width: 64rem) {
     .shoppable-story { align-items: start; grid-template-columns: minmax(15rem, .72fr) minmax(0, 1.28fr); }
     .shoppable-story__intro { position: sticky; top: 6rem; }
     .shoppable-story__items { border-block-start: 1px solid var(--color-border); gap: 0; }
@@ -106,6 +106,14 @@
     .shoppable-story__product-content { border: 0; gap: var(--space-3); padding: 0; }
     .shoppable-story__decision { gap: var(--space-4); }
     .shoppable-story--intro-right { grid-template-columns: minmax(0, 1.28fr) minmax(15rem, .72fr); }
+    .shoppable-story--intro-right .shoppable-story__intro { grid-column: 2; }
+    .shoppable-story--intro-right .shoppable-story__items { grid-column: 1; grid-row: 1; }
+  }
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .shoppable-story { align-items: start; grid-template-columns: minmax(13rem, .62fr) minmax(0, 1.38fr); }
+    .shoppable-story__intro { max-inline-size: 18rem; }
+    .shoppable-story__items { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+    .shoppable-story--intro-right { grid-template-columns: minmax(0, 1.38fr) minmax(13rem, .62fr); }
     .shoppable-story--intro-right .shoppable-story__intro { grid-column: 2; }
     .shoppable-story--intro-right .shoppable-story__items { grid-column: 1; grid-row: 1; }
   }

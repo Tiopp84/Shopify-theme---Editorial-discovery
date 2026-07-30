@@ -24,7 +24,7 @@
           >
           {% case media.media_type %}
             {% when 'image' %}
-              {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 750px) 50vw, 100vw', loading: 'eager' %}
+              {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 50vw, 100vw', loading: 'eager' %}
             {% when 'video' %}
               {{ media | media_tag: image_size: '1200x', controls: true, preload: 'metadata' }}
             {% when 'external_video' %}
@@ -40,6 +40,10 @@
           ></button>
           </div>
         {% endfor %}
+        {% if product.media.size > 1 %}
+          <button class="main-product__media-nav main-product__media-nav--previous" type="button" data-product-gallery-stage-previous aria-label="{{ 'products.gallery.previous' | t }}" hidden>←</button>
+          <button class="main-product__media-nav main-product__media-nav--next" type="button" data-product-gallery-stage-next aria-label="{{ 'products.gallery.next' | t }}" hidden>→</button>
+        {% endif %}
       </div>
       {% if product.media.size > 1 and section.settings.show_thumbnails %}
         <div class="main-product__thumbnails" aria-label="{{ 'products.gallery.media_selection' | t }}">
@@ -110,13 +114,24 @@
 {% stylesheet %}
   .main-product { display: grid; gap: var(--space-6); margin: var(--space-6) auto; max-width: var(--page-width); padding-inline: var(--page-gutter); }
   .main-product__gallery { display: grid; gap: var(--space-3); min-width: 0; }
-  .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; scroll-margin-block-start: 5rem; }
+  .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; position: relative; scroll-margin-block-start: 5rem; touch-action: pan-y; }
   .main-product__media-placeholder { align-items: center; aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; overflow: hidden; }
   .main-product__media-placeholder svg { block-size: auto; inline-size: 42%; max-block-size: 42%; }
   .main-product__media { block-size: 100%; inline-size: 100%; position: relative; }
   .main-product__media > :not(.main-product__media-open) { block-size: 100%; display: block; inline-size: 100%; max-width: 100%; }
   .main-product__media-open, .main-product__media-open:is(:hover, :focus-visible) { --button-background: transparent; --button-background-hover: transparent; background: transparent; border: 0; box-shadow: none; cursor: zoom-in; inset: 0; position: absolute; z-index: 1; }
   .main-product__media-open:focus-visible { outline: var(--focus-ring); outline-offset: -0.25rem; }
+  .main-product__media-nav { --button-background: transparent; --button-background-hover: color-mix(in srgb, var(--color-foreground) 12%, transparent); --button-border-color: transparent; --button-color: var(--color-background); --button-min-block-size: 100%; --button-padding-inline: 0; --button-radius: 0; block-size: 100%; display: none; inset-block: 0; opacity: 0; position: absolute; transition: opacity 160ms ease, background-color 160ms ease; z-index: 2; }
+  .main-product__media-nav--previous { inset-inline-start: 0; }
+  .main-product__media-nav--next { inset-inline-end: 0; }
+  @media (min-width: 64rem) {
+    .main-product__media-nav { align-items: center; display: flex; inline-size: 20%; justify-content: center; }
+    .main-product__media-stage:focus-within .main-product__media-nav { opacity: 1; }
+  }
+  @media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+    .main-product__media-stage:is(:hover, :focus-within) .main-product__media-nav { opacity: 1; }
+  }
+  .main-product__media-nav[hidden] { display: none; }
   .main-product__media img, .main-product__media video { cursor: zoom-in; object-fit: cover; }
   .main-product__media :is(video, iframe, model-viewer) { border: 0; height: 100%; width: 100%; }
   .main-product__thumbnails { display: flex; gap: var(--space-2); overflow-x: auto; }
@@ -129,7 +144,7 @@
   .main-product__media-dialog-toolbar { display: flex; gap: 0; inset-block-end: max(var(--space-2), env(safe-area-inset-bottom)); inset-inline-start: 50%; pointer-events: auto; position: fixed; transform: translateX(-50%); z-index: 4; }
   .main-product__media-dialog-toolbar button, .main-product__media-dialog-count { align-content: center; backdrop-filter: blur(0.75rem); background: color-mix(in srgb, var(--color-foreground) 52%, transparent); border: 1px solid color-mix(in srgb, var(--color-background) 30%, transparent); color: var(--color-background); min-block-size: 2.75rem; min-inline-size: 3.5rem; text-align: center; }
   .main-product__media-dialog-count { inline-size: 6.5rem; }
-  .main-product__media-dialog-content { block-size: 100%; display: grid; inline-size: 100%; overflow: hidden; place-items: center; }
+  .main-product__media-dialog-content { block-size: 100%; display: grid; inline-size: 100%; overflow: hidden; place-items: center; touch-action: pan-y; }
   .main-product__media-dialog-content > * { block-size: 100%; inline-size: 100%; max-height: none; max-width: none; }
   .main-product__media-dialog-content .main-product__media { block-size: 100%; inline-size: 100%; }
   .main-product__media-dialog-content :is(img, video, iframe, model-viewer) { block-size: 100% !important; inline-size: 100% !important; object-fit: contain !important; }
@@ -194,7 +209,7 @@
   .main-product:not(.main-product--show-sku) .main-product__sku,
   .main-product:not(.main-product--show-availability) .main-product__availability,
   .main-product:not(.main-product--show-quantity) :is(.main-product__quantity, .main-product__quantity-note) { display: none; }
-  @media (min-width: 750px) { .main-product { grid-template-columns: minmax(0, 1.1fr) minmax(20rem, .9fr); align-items: start; } }
+  @media (min-width: 64rem) { .main-product { grid-template-columns: minmax(0, 1.1fr) minmax(20rem, .9fr); align-items: start; } }
 {% endstylesheet %}
 
 {% schema %}

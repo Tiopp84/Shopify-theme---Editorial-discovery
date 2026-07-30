@@ -273,16 +273,34 @@ class ProductGallery extends HTMLElement {
     this.dialogContent = this.querySelector('[data-product-gallery-dialog-content]');
     this.previousButton = this.querySelector('[data-product-gallery-previous]');
     this.nextButton = this.querySelector('[data-product-gallery-next]');
+    this.stagePreviousButton = this.querySelector('[data-product-gallery-stage-previous]');
+    this.stageNextButton = this.querySelector('[data-product-gallery-stage-next]');
     this.count = this.querySelector('[data-product-gallery-count]');
+    this.stagePreviousButton?.removeAttribute('hidden');
+    this.stageNextButton?.removeAttribute('hidden');
     this.buttons.forEach((button) => button.addEventListener('click', () => this.select(button.dataset.productMediaSelect, { reveal: true }), { signal }));
     this.stage?.addEventListener('click', (event) => {
+      if (this.suppressStageOpen) {
+        this.suppressStageOpen = false;
+        return;
+      }
       const opener = event.target.closest('[data-product-media-open]');
       if (!opener) return;
       this.select(opener.dataset.productMediaOpen);
       this.open(opener);
     }, { signal });
+    this.stage?.addEventListener('pointerdown', (event) => this.onStagePointerDown(event), { signal });
+    this.stage?.addEventListener('pointermove', (event) => this.onStagePointerMove(event), { signal });
+    this.stage?.addEventListener('pointerup', (event) => this.onStagePointerUp(event), { signal });
+    this.stage?.addEventListener('pointercancel', () => this.cancelStageSwipe(), { signal });
+    this.dialogContent?.addEventListener('pointerdown', (event) => this.onModalPointerDown(event), { signal });
+    this.dialogContent?.addEventListener('pointermove', (event) => this.onModalPointerMove(event), { signal });
+    this.dialogContent?.addEventListener('pointerup', (event) => this.onModalPointerUp(event), { signal });
+    this.dialogContent?.addEventListener('pointercancel', () => this.cancelModalSwipe(), { signal });
     this.previousButton?.addEventListener('click', () => this.step(-1), { signal });
     this.nextButton?.addEventListener('click', () => this.step(1), { signal });
+    this.stagePreviousButton?.addEventListener('click', () => this.stepSelected(-1), { signal });
+    this.stageNextButton?.addEventListener('click', () => this.stepSelected(1), { signal });
     this.dialog?.addEventListener('click', (event) => { if (event.target === this.dialog) this.dialog.close(); }, { signal });
     this.dialog?.addEventListener('close', () => {
       this.unlockPageScroll();
@@ -320,6 +338,272 @@ class ProductGallery extends HTMLElement {
       const bounds = this.stage.getBoundingClientRect();
       if (bounds.top < 0 || bounds.bottom > window.innerHeight) this.stage.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' });
     });
+  }
+
+  onStagePointerDown(event) {
+    if (event.pointerType !== 'touch' || this.media.length < 2 || this.stageTransitioning) return;
+    this.stagePointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    this.stage?.setPointerCapture?.(event.pointerId);
+  }
+
+  onStagePointerMove(event) {
+    const pointer = this.stagePointer;
+    if (!pointer || pointer.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    const deltaY = event.clientY - pointer.y;
+    if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    event.preventDefault();
+    const direction = deltaX < 0 ? 1 : -1;
+    const target = this.prepareStagePreview(direction);
+    const distance = Math.max(this.stage?.clientWidth || 0, 1);
+    this.setDragOffset(this.media.find((item) => item.dataset.productMediaId === this.selectedId), deltaX);
+    this.setDragOffset(target, direction * distance + deltaX);
+  }
+
+  onStagePointerUp(event) {
+    const pointer = this.stagePointer;
+    this.stagePointer = null;
+    if (!pointer || pointer.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    const deltaY = event.clientY - pointer.y;
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      if (Math.abs(deltaX) > 8 && Math.abs(deltaX) > Math.abs(deltaY)) this.suppressStageClick();
+      this.snapBackStage();
+      return;
+    }
+    this.suppressStageClick();
+    this.transitionStage(deltaX < 0 ? 1 : -1, deltaX);
+  }
+
+  cancelStageSwipe() {
+    this.stagePointer = null;
+    this.snapBackStage();
+  }
+
+  suppressStageClick() {
+    this.suppressStageOpen = true;
+    window.setTimeout(() => { this.suppressStageOpen = false; }, 0);
+  }
+
+  stepSelected(direction) {
+    const index = this.media.findIndex((item) => item.dataset.productMediaId === this.selectedId);
+    const next = this.media[(index + direction + this.media.length) % this.media.length];
+    this.select(next?.dataset.productMediaId);
+  }
+
+  prepareStagePreview(direction) {
+    if (this.stageSwipeTarget && this.stageSwipeDirection === direction) return this.stageSwipeTarget;
+    this.clearStagePreview();
+    const index = this.media.findIndex((item) => item.dataset.productMediaId === this.selectedId);
+    const target = this.media[(index + direction + this.media.length) % this.media.length];
+    if (!target) return null;
+    target.hidden = false;
+    target.style.position = 'absolute';
+    target.style.inset = '0';
+    target.style.zIndex = '1';
+    this.stageSwipeTarget = target;
+    this.stageSwipeDirection = direction;
+    return target;
+  }
+
+  clearStagePreview({ keepTarget = false } = {}) {
+    const target = this.stageSwipeTarget;
+    if (!target) return;
+    if (!keepTarget) target.hidden = true;
+    target.style.removeProperty('position');
+    target.style.removeProperty('inset');
+    target.style.removeProperty('z-index');
+    target.style.removeProperty('transform');
+    target.style.removeProperty('will-change');
+    delete target.dataset.productGalleryOffset;
+    this.stageSwipeTarget = null;
+    this.stageSwipeDirection = null;
+  }
+
+  async snapBackStage() {
+    const source = this.media.find((item) => item.dataset.productMediaId === this.selectedId);
+    const target = this.stageSwipeTarget;
+    if (!target) {
+      this.snapBack(source);
+      return;
+    }
+    const distance = Math.max(this.stage?.clientWidth || 0, 1);
+    await Promise.all([
+      this.snapBack(source),
+      this.animateOffset(target, this.currentOffset(target), this.stageSwipeDirection * distance),
+    ]);
+    this.clearStagePreview();
+  }
+
+  async transitionStage(direction, offset = 0) {
+    if (this.stageTransitioning) return;
+    const source = this.media.find((item) => item.dataset.productMediaId === this.selectedId);
+    const next = this.prepareStagePreview(direction);
+    if (!source || !next) return;
+    this.stageTransitioning = true;
+    const distance = Math.max(this.stage?.clientWidth || 0, 1);
+    const exitOffset = direction * -distance;
+    await Promise.all([
+      this.animateOffset(source, this.currentOffset(source) || offset, exitOffset),
+      this.animateOffset(next, this.currentOffset(next) || direction * distance, 0),
+    ]);
+    this.select(next.dataset.productMediaId);
+    this.clearStagePreview({ keepTarget: true });
+    this.stageTransitioning = false;
+  }
+
+  onModalPointerDown(event) {
+    if (event.pointerType !== 'touch' || this.media.length < 2 || this.modalTransitioning) return;
+    if (event.target.closest('video, iframe, model-viewer, button, a, input')) return;
+    this.modalPointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    this.dialogContent?.setPointerCapture?.(event.pointerId);
+  }
+
+  onModalPointerMove(event) {
+    const pointer = this.modalPointer;
+    if (!pointer || pointer.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    const deltaY = event.clientY - pointer.y;
+    if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    event.preventDefault();
+    const direction = deltaX < 0 ? 1 : -1;
+    const target = this.prepareModalPreview(direction);
+    const distance = Math.max(this.dialogContent?.clientWidth || 0, 1);
+    this.setDragOffset(this.dialogContent?.firstElementChild, deltaX);
+    this.setDragOffset(target, direction * distance + deltaX);
+  }
+
+  onModalPointerUp(event) {
+    const pointer = this.modalPointer;
+    this.modalPointer = null;
+    if (!pointer || pointer.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    const deltaY = event.clientY - pointer.y;
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      this.snapBackModal();
+      return;
+    }
+    this.transitionModal(deltaX < 0 ? 1 : -1, deltaX);
+  }
+
+  cancelModalSwipe() {
+    this.modalPointer = null;
+    this.snapBackModal();
+  }
+
+  prepareModalPreview(direction) {
+    if (this.modalSwipeTarget && this.modalSwipeDirection === direction) return this.modalSwipeTarget;
+    this.clearModalPreview();
+    const source = this.dialogContent?.firstElementChild;
+    const index = this.media.findIndex((item) => item.dataset.productMediaId === this.modalSelectedId);
+    const next = this.media[(index + direction + this.media.length) % this.media.length];
+    if (!source || !next) return null;
+    const target = next.cloneNode(true);
+    target.removeAttribute('hidden');
+    target.querySelector('[data-product-media-open]')?.remove();
+    source.style.gridArea = '1 / 1';
+    target.style.gridArea = '1 / 1';
+    this.dialogContent.append(target);
+    this.modalSwipeTarget = target;
+    this.modalSwipeDirection = direction;
+    return target;
+  }
+
+  clearModalPreview({ keepTarget = false } = {}) {
+    const target = this.modalSwipeTarget;
+    const source = this.dialogContent?.firstElementChild;
+    source?.style.removeProperty('grid-area');
+    if (!target) return;
+    if (!keepTarget) target.remove();
+    target.style.removeProperty('grid-area');
+    target.style.removeProperty('transform');
+    target.style.removeProperty('will-change');
+    delete target.dataset.productGalleryOffset;
+    this.modalSwipeTarget = null;
+    this.modalSwipeDirection = null;
+  }
+
+  async snapBackModal() {
+    const source = this.dialogContent?.firstElementChild;
+    const target = this.modalSwipeTarget;
+    if (!target) {
+      this.snapBack(source);
+      return;
+    }
+    const distance = Math.max(this.dialogContent?.clientWidth || 0, 1);
+    await Promise.all([
+      this.snapBack(source),
+      this.animateOffset(target, this.currentOffset(target), this.modalSwipeDirection * distance),
+    ]);
+    this.clearModalPreview();
+  }
+
+  setDragOffset(element, offset) {
+    if (!element) return;
+    element.style.transform = `translate3d(${offset}px, 0, 0)`;
+    element.style.willChange = 'transform';
+    element.dataset.productGalleryOffset = String(offset);
+  }
+
+  async snapBack(element) {
+    if (!element) return;
+    const offset = this.currentOffset(element);
+    await this.animateOffset(element, offset, 0);
+  }
+
+  currentOffset(element) {
+    const offset = Number(element.dataset.productGalleryOffset);
+    return Number.isFinite(offset) ? offset : 0;
+  }
+
+  async animateOffset(element, from, to) {
+    if (!element) return;
+    const apply = (offset) => {
+      element.style.transform = `translate3d(${offset}px, 0, 0)`;
+      element.dataset.productGalleryOffset = String(offset);
+    };
+    apply(from);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && typeof element.animate === 'function') {
+      const animation = element.animate(
+        [{ transform: `translate3d(${from}px, 0, 0)` }, { transform: `translate3d(${to}px, 0, 0)` }],
+        { duration: 220, easing: 'cubic-bezier(.22, .61, .36, 1)', fill: 'both' },
+      );
+      await animation.finished.catch(() => {});
+      animation.cancel();
+    }
+    apply(to);
+    if (to === 0) {
+      element.style.removeProperty('transform');
+      element.style.removeProperty('will-change');
+      delete element.dataset.productGalleryOffset;
+    }
+  }
+
+  async transitionModal(direction, offset = 0) {
+    if (this.modalTransitioning) return;
+    const source = this.dialogContent?.firstElementChild;
+    const index = this.media.findIndex((item) => item.dataset.productMediaId === this.modalSelectedId);
+    const nextIndex = (index + direction + this.media.length) % this.media.length;
+    const next = this.media[nextIndex];
+    if (!source || !next) return;
+    this.modalTransitioning = true;
+    const distance = Math.max(this.dialogContent?.clientWidth || 0, 1);
+    const incoming = this.prepareModalPreview(direction);
+    if (!incoming) {
+      this.modalTransitioning = false;
+      return;
+    }
+    await Promise.all([
+      this.animateOffset(source, this.currentOffset(source) || offset, direction * -distance),
+      this.animateOffset(incoming, this.currentOffset(incoming) || direction * distance, 0),
+    ]);
+    this.modalSelectedId = next.dataset.productMediaId;
+    this.dialogContent.replaceChildren(incoming);
+    this.clearModalPreview({ keepTarget: true });
+    this.enableHoverZoom(incoming.querySelector('img'));
+    this.setDialogAspect(incoming);
+    if (this.count) this.count.textContent = `${nextIndex + 1} / ${this.media.length}`;
+    this.modalTransitioning = false;
   }
 
   open(opener = null) {

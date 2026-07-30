@@ -41,7 +41,7 @@
           alt: section.settings.image.alt,
           width: 2400,
           widths: '480, 720, 960, 1200, 1600, 2000, 2400',
-          sizes: '(min-width: 60rem) 56vw, 100vw',
+          sizes: '(min-width: 64rem) 56vw, 100vw',
           loading: 'eager'
         %}
       </div>
@@ -72,17 +72,25 @@
   .editorial-hero--desktop-compact .editorial-hero__grid { min-height: 38rem; }
   .editorial-hero--desktop-standard .editorial-hero__grid { min-height: clamp(42rem, 80vh, 52rem); }
   .editorial-hero--desktop-tall .editorial-hero__grid { min-height: min(58rem, 90vh); }
-  @media (min-width: 60rem) {
+  @media (min-width: 64rem) {
     .editorial-hero--text-only .editorial-hero__grid { min-height: 32rem; }
     .editorial-hero--text-only .editorial-hero__content { max-inline-size: var(--page-width); padding-inline: var(--page-margin); width: 100%; }
   }
-  @media (max-width: 59.99rem) {
+  @media (max-width: 63.99rem) {
     .editorial-hero { margin-block-end: var(--space-chapter-mobile); }
-    .editorial-hero__grid { min-height: 41.5rem; }
     .editorial-hero__content { align-content: end; color: var(--color-background); padding: 2rem var(--page-margin); }
+    .editorial-hero__media::after { background: linear-gradient(0deg, rgb(0 0 0 / 72%) 0%, rgb(0 0 0 / 28%) 42%, transparent 75%); }
+  }
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .editorial-hero__grid { min-height: clamp(36rem, 76vw, 44rem); }
+    .editorial-hero__content { gap: var(--space-4); max-inline-size: 38rem; padding: clamp(2.5rem, 6vw, 4.5rem) var(--page-margin); }
+    .editorial-hero h1 { font-size: clamp(3rem, 6vw, 4.25rem); max-inline-size: 11ch; }
+    .editorial-hero__body { color: color-mix(in srgb, var(--color-background) 82%, transparent); display: block; max-inline-size: 30rem; }
+  }
+  @media (max-width: 47.99rem) {
+    .editorial-hero__grid { min-height: 41.5rem; }
     .editorial-hero h1 { font-size: clamp(2.4rem, 11vw, 3.25rem); max-inline-size: 12ch; }
     .editorial-hero__body, .editorial-hero__eyebrow { display: none; }
-    .editorial-hero__media::after { background: linear-gradient(0deg, rgb(0 0 0 / 72%) 0%, rgb(0 0 0 / 28%) 42%, transparent 75%); }
     .editorial-hero__action { background: var(--color-background); color: var(--color-foreground); }
     .editorial-hero--mobile-compact .editorial-hero__grid { min-height: 31rem; }
     .editorial-hero--mobile-standard .editorial-hero__grid { min-height: 41.5rem; }
