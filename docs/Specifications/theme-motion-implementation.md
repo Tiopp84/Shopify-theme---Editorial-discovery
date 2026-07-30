@@ -16,7 +16,7 @@ Motion is never required to reveal content, enable a purchase, communicate price
 
 ## 2. Technology and ownership
 
-> **Experiment note — `feat/AOS`, 2026-07-30:** this branch replaces the homepage GSAP runtime with self-hosted AOS 2.3.4 CSS plus a small local one-time reveal controller. CSS sticky layout remains native; there is no scroll scrub, JavaScript pinning or effect on commerce/overlay flows. This is an `IN REVIEW` comparison, not a replacement for the approved motion architecture until preview, device and Theme Editor evidence is recorded.
+> **Experiment note — `feat/AOS`, 2026-07-30:** AOS CSS plus the local one-time reveal controller own standard homepage entrances. Pinned Visual Story is the deliberate exception: its heading-to-image mapping needs reversible scroll state, so its isolated controller uses self-hosted GSAP/ScrollTrigger on desktop and a native `requestAnimationFrame` reader for the two-column media state. CSS sticky layout remains native; there is no JavaScript pinning or effect on commerce/overlay flows.
 
 ### AOS homepage implementation snapshot
 
@@ -24,10 +24,10 @@ This is the source of truth for the AOS experiment on `feat/AOS`. It overrides t
 
 | Concern | Implemented rule |
 |---|---|
-| Assets | Homepage loads self-hosted `aos-2.3.4.css` and local `aos-home.js` only. The AOS JavaScript bundle was intentionally removed: the local controller owns the non-default one-time trigger rules, while AOS CSS provides the fade transforms/easing. |
+| Assets | Homepage loads self-hosted `aos-2.3.4.css`, local `aos-home.js`, and—only for the isolated Pinned Visual Story choreography—self-hosted GSAP Core/ScrollTrigger plus `home-reveal.js`. The AOS JavaScript bundle remains intentionally absent. |
 | Hero | Image is visible on first paint for LCP. It makes only a 900 ms scale settle from 1.025 to 1.0; hero text enters with `fade-right` after two render frames. |
 | Section lead | A section root carries `data-aos-section`. Except for the initially visible hero, a lead is considered only after scroll/resize, then runs once when it reaches the 60% viewport line (or the equivalent 40% line when entering from above). |
-| Product/item phase | `data-aos-products` marks a card grid, `data-aos-product-item` marks an individual Shoppable Story row, and `data-aos-item` marks each Pinned Story chapter. These start only after their parent section lead and when the item/group itself reaches the trigger line. |
+| Product/item phase | `data-aos-products` marks a card grid and `data-aos-product-item` marks an individual Shoppable Story row. These start only after their parent section lead and when the item/group itself reaches the trigger line. Pinned Story chapter motion is owned by its dedicated controller, not AOS. |
 | Sequence | At ordinary speed, a small global queue serializes stages so adjacent visible sections do not compete. Markers are removed after completion, therefore an animated target cannot replay until reload. |
 | Fast scroll | Scroll velocity at or above `0.65 px/ms` uses a 350 ms catch-up reveal for visible stages. Queued stages that have left the viewport are returned to eligible state rather than running off-screen and delaying content. This prevents a blank viewport during rapid scrolling. |
 | Timing | Standard duration is 400 ms (AOS-like); catch-up is 350 ms. Existing card delays provide the bounded stagger inside a grid. |
@@ -39,7 +39,8 @@ Implementation map:
 ```text
 layout/theme.liquid
   ├─ index-only AOS CSS + first-paint fallback
-  └─ index-only aos-home.js
+  ├─ index-only aos-home.js
+  └─ index-only GSAP Core → ScrollTrigger → home-reveal.js
 
 sections
   ├─ editorial-hero: text stage + non-blocking media settle
@@ -57,6 +58,8 @@ Before this experiment can replace the approved GSAP treatment, record Shopify-p
 | Editorial entrance | GSAP timeline + one viewport trigger | `home-reveal.js` | A short one-time section or card-group entrance | Commerce feedback or every catalog card |
 | Editorial choreography | GSAP timeline + ScrollTrigger | Section-specific code in `home-reveal.js` | A section whose visual sequence follows scroll progress | JavaScript pinning, parallax everywhere, or a global site runtime |
 | Overlay semantics | Native dialog and component controller | Menu, search, cart and media controller | Focus trap, Escape and focus restoration | Animation-dependent accessibility |
+
+**Desktop compact-header policy.** Header state follows sustained scroll intent, not the absolute page offset: 40 px of continuous downward travel compacts it; 96 px of continuous upward travel expands it; deltas of 2 px or less are ignored. Reversing direction resets the opposing counter. This prevents a compact/full loop at a shared `scrollY` threshold while retaining the compact design. A marked CSS-sticky region may temporarily hold the compact state, with a 16 px release buffer at its boundaries.
 
 GSAP Core and ScrollTrigger are self-hosted, pinned at 3.13.0, and are loaded only on the home template. Their licence and removal path are recorded in `../Governance/asset-license-register.md` and `../Governance/source-provenance-and-licenses.md`.
 
@@ -104,7 +107,7 @@ The inline bootstrap has a 2.5-second failsafe. If GSAP or ScrollTrigger cannot 
 |---|---|---|---|---|
 | Editorial hero | Text and media entrance | Plays once after controller hydration | Final state immediately for reduced motion | No motion setting; section remains readable without it |
 | Featured edit | Header entrance; product card group stagger | One viewport entry per bounded group | One-time reveal only | No motion setting |
-| Pinned visual story | Intro entrance plus chapter choreography; sticky media gently scales from 1.045 to 1 | One GSAP timeline, scrubbed from story-layout entry to exit; CSS owns sticky positioning | Chapters use ordinary one-time reveal; no scrub | `Enable editorial scroll motion` checkbox, enabled by default |
+| Pinned visual story | Intro entrance plus chapter choreography; sticky media gently scales from 1.045 to 1 | One GSAP timeline, scrubbed from story-layout entry to exit; CSS owns sticky positioning | Chapters use ordinary one-time reveal; no scrub | Master motion checkbox plus independent image-flip and chapter-wheel toggles |
 | Material & craft | Bounded image/text entrance | One viewport entry | One-time reveal only | No motion setting |
 | Shoppable story | Introduction entrance; product-row stagger | One viewport entry per bounded group | One-time reveal only | No motion setting |
 | Outfit composition | Lead entrance; product-card group stagger | One viewport entry per bounded group | One-time reveal only | No motion setting |
@@ -139,13 +142,63 @@ Desktop scroll
 
 Story introduction enters once
   → CSS keeps the story image sticky
-  → chapter 01 content fades/translates into its final reading position
-  → chapter 02 enters as the reader progresses
-  → chapter 03 enters as the reader progresses
-  → image settles from 1.045 scale to 1.0
+  → each chapter heading crosses the image midpoint
+  → the matching image changes with a short AOS-style 3D flip/fade
+  → chapters follow a shallow horizontal arc: the centred chapter is fully clear and gains an accent badge/rule, while neighbours recede
+  → image visuals settle from 1.045 scale to 1.0
 ```
 
-The sequence deliberately does not fade prior chapters away. A shopper can pause and read all preceding copy, while the newest chapter receives the motion emphasis. It uses no JavaScript pin, no filter/clip-path animation and no looping motion.
+The chapter arc uses only transform and opacity, keeps document flow and links unchanged, and clears when keyboard focus enters a chapter. It uses no JavaScript pin, no filter/clip-path animation and no looping motion. On mobile and with reduced motion, chapters remain static and fully legible.
+
+#### Pinned Story implementation contract
+
+**Purpose.** Each Story chapter owns an image. In a two-column layout, the sticky image must always identify the chapter whose **heading midpoint** is nearest the sticky-image midpoint. The active chapter receives the strongest visual emphasis, so the relationship remains understandable without relying on the image transition alone.
+
+**Ownership and boundaries.** `pinned-visual-story.liquid` renders all images and owns the CSS state. `home-reveal.js` is the only runtime that changes the Pinned Story image/chapter state. AOS may reveal the section introduction, but it must not receive `data-aos`/`data-aos-item` on a Pinned Story chapter; otherwise AOS, GSAP and the wheel state can compete for transform or opacity.
+
+```text
+Liquid blocks
+  └─ one image + one chapter heading per story
+      └─ CSS sticky media stage at ≥48rem
+          └─ one requestAnimationFrame scroll reader
+              ├─ measures media bounds once
+              ├─ measures each heading bounds once
+              ├─ chooses the active image with hysteresis
+              └─ optionally writes chapter wheel CSS variables
+```
+
+**Merchant controls.** The controls are intentionally named by visible effect, not implementation detail.
+
+| Setting | Result when enabled | Result when disabled |
+|---|---|---|
+| `Enable image flip transition` | The active image uses a reversible AOS-style `rotateY`/opacity transition. | Images still map to the active chapter, but switch immediately. |
+| `Enable chapter wheel effect` | Chapters follow the shallow arc; the centred chapter receives full opacity, accent badge/rule and heading colour. | Chapters remain in normal, fully readable flow without arc or active styling. |
+
+**Geometry and breakpoints.** The sticky media stage is active only from `48rem` upward, including either image-left or image-right two-column layout. JavaScript measures the actual media height with `ResizeObserver` and inserts a top/bottom chapter spacer equal to half that height. This lets the first and final headings travel through the media midpoint. Below `48rem`, the stage is hidden and each chapter renders its own image in document flow; no scroll reader is installed.
+
+**Sticky navigation context.** A sticky section that should not make the desktop header bar oscillate declares `data-header-scroll-policy="hold-compact-header"` on its boundary and `data-header-scroll-target` on the CSS-sticky item. On desktop header layouts, `header-shell.js` verifies that target is genuinely pinned at its computed sticky offset and that its section has not reached the release edge. During that interval, the compact header bar remains the sole header state; minor reverse-scroll corrections cannot expand it. Leaving the sticky phase while scrolling upward restores the full header immediately, while leaving downward preserves the compact bar. This contract is DOM/CSS based, so it remains active when the independent visual effects are disabled or `prefers-reduced-motion` is enabled.
+
+**Image transition.** The active image transition is deliberately moderate: `rotateY(10deg)`, `scale(.98)`, and a 460 ms opacity/transform transition. The prior and next image remain stacked in the same media box, so no layout or `display` change can flash the panel. `will-change` is applied only during the 500 ms transition window. The controller marks the immediately previous and next images as eager and calls `decode()` opportunistically, limiting preloading to adjacent stories rather than all chapter assets.
+
+**Wheel treatment.** On every scheduled frame, the controller derives a normalized distance between each heading centre and the media centre. It writes only three custom properties per chapter: opacity, scale and a maximum 38 px horizontal arc offset. The curve reverses when media is on the right. The current chapter uses an accent number badge, heading colour and rule; `:focus-within` overrides the muted/translated visual state so links remain easy to use by keyboard. The former bounce treatment was removed because it added motion at the same moment as the image change and made slow scrolling feel less stable.
+
+**Known risks and resolved safeguards.**
+
+| Risk or observed issue | Safeguard / resolution |
+|---|---|
+| A single section-level image made all stories appear to share media. | Image picker belongs to each chapter block; the obsolete parent image setting is removed. |
+| Scroll state was coded but never ran in preview. | Homepage explicitly loads GSAP → ScrollTrigger → `home-reveal.js` after `aos-home.js`. Script order is required. |
+| Tablet kept the first image because desktop-only GSAP was the only swap path. | The native media-state reader runs from `48rem`; GSAP remains desktop-only for the additional chapter entrance choreography. |
+| Image changed at an arbitrary timeline position or the article centre. | The trigger is the measured `h3` midpoint against the measured sticky-media midpoint. |
+| First/final heading could not reach the image midpoint. | Dynamic half-media-height spacers are rendered before and after the chapter list. |
+| Trackpad jitter near a chapter boundary caused rapid image switching. | A 28 px hysteresis requires the proposed heading to be materially nearer before it replaces the active image. |
+| Strong/fast flip felt like a visual flash. | The flip was reduced to 10°, scale to `.98`, duration increased to 460 ms, and adjacent media is decoded ahead of use. |
+| Wheel, AOS and GSAP all tried to animate a chapter. | Pinned Story chapters no longer participate in AOS item reveals; the section controller is the sole state owner. |
+| A redundant master motion setting obscured which visible effect would be disabled. | The section always keeps its content-to-image mapping; only the independent flip and chapter-wheel controls govern their respective visual effects. |
+| Small upward corrections inside sticky content expanded the compact desktop header and made it jump. | The header owns a reusable sticky navigation context; it holds the compact header only while the marked target is actually CSS-sticky, independently of motion scripts. |
+| Theme Editor reload/reorder leaked state or listeners. | The controller stores cleanup in a map and removes scroll/resize listeners, `ResizeObserver`, timers, classes and inline variables on `shopify:section:unload`. |
+
+**Performance budget and review.** The reader is passive-scroll plus one `requestAnimationFrame`; it performs one media rect read and one rect read per heading, then writes compositor-friendly opacity/transform values. It does not animate layout, blur, filters, clip paths or commerce UI. Keep the section to a small editorial set (the intended range is 3–6 chapters); if a future design permits many more, replace per-frame DOM measurement with a bounded observer/progress strategy and profile again. Before approving a release, verify slow and fast scroll, resize across 48/64rem, image-left/right, one and six chapters, reduced motion, blocked JavaScript, and Theme Editor add/remove/reorder lifecycle.
 
 ## 6. Dialog, modal and drawer motion
 

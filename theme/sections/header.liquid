@@ -76,6 +76,53 @@
     </div>
   </header>
 
+  <nav class="header-shell__mobile-taskbar" aria-label="{{ 'accessibility.mobile_navigation' | t }}">
+    <a class="header-shell__task" href="{{ routes.root_url }}">
+      {% render 'icon', name: 'home' %}
+      <span>{{ 'navigation.home' | t }}</span>
+    </a>
+    <button
+      class="header-shell__task"
+      type="button"
+      aria-label="{{ 'accessibility.open_menu' | t }}"
+      data-dialog-open="menu"
+    >
+      {% render 'icon', name: 'menu' %}
+      <span>{{ 'navigation.menu' | t }}</span>
+    </button>
+    {% if section.settings.search_behavior == 'drawer' %}
+      <button
+        class="header-shell__task"
+        type="button"
+        aria-label="{{ 'search.open' | t }}"
+        data-dialog-open="search"
+      >
+        {% render 'icon', name: 'search' %}
+        <span>{{ 'search.title' | t }}</span>
+      </button>
+    {% else %}
+      <a class="header-shell__task" href="{{ routes.search_url }}">
+        {% render 'icon', name: 'search' %}
+        <span>{{ 'search.title' | t }}</span>
+      </a>
+    {% endif %}
+    <a class="header-shell__task" href="{{ routes.all_products_collection_url }}">
+      {% render 'icon', name: 'shop' %}
+      <span>{{ 'navigation.products' | t }}</span>
+    </a>
+    <a class="header-shell__task header-shell__task--cart" href="{{ routes.cart_url }}" data-cart-open>
+      {% render 'icon', name: 'cart' %}
+      <span>{{ 'cart.title' | t }}</span>
+      <span class="header-shell__task-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+    </a>
+    {% if shop.customer_accounts_enabled %}
+      <a class="header-shell__task" href="{{ routes.account_url }}">
+        {% render 'icon', name: 'account' %}
+        <span>{{ 'customer.account' | t }}</span>
+      </a>
+    {% endif %}
+  </nav>
+
   <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" scroll-lock>
     <div class="header-shell__drawer-header">
       <h2 id="MobileMenuTitle">{{ 'navigation.menu' | t }}</h2>
@@ -165,7 +212,6 @@
     position: relative;
     z-index: 1;
     transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
-    will-change: transform;
   }
 
   .header-shell--scrolled {
@@ -195,7 +241,7 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: clamp(var(--space-6), 3vw, var(--space-8));
-    transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1), min-height 280ms cubic-bezier(0.22, 1, 0.36, 1), margin 280ms cubic-bezier(0.22, 1, 0.36, 1), padding 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease, box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1), min-height 280ms cubic-bezier(0.22, 1, 0.36, 1), margin 280ms cubic-bezier(0.22, 1, 0.36, 1), padding 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 180ms ease, box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @media (min-width: 64rem) {
@@ -440,6 +486,10 @@
     display: none;
   }
 
+  .header-shell__mobile-taskbar {
+    display: none;
+  }
+
   .header-shell__drawer {
     width: min(75vw, 28rem);
     max-width: none;
@@ -668,6 +718,13 @@
   }
 
   @media (max-width: 63.99rem) {
+    /* A backdrop-filter creates a containing block for fixed descendants.
+     * Keep the task bar viewport-fixed while it trades places with the header. */
+    .header-shell--scrolled {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
     .header-shell__desktop-nav {
       display: none;
     }
@@ -677,6 +734,97 @@
       grid-row: 1;
       justify-self: start;
       display: grid;
+    }
+
+    .header-shell--mobile-taskbar {
+      background: transparent;
+      border-block-end-color: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .header-shell--mobile-taskbar .header-shell__inner {
+      pointer-events: none;
+      transform: translateY(-100%);
+    }
+
+    .header-shell__mobile-taskbar {
+      position: fixed;
+      display: grid;
+      z-index: 50;
+      inset-inline: max(var(--space-2), env(safe-area-inset-left)) max(var(--space-2), env(safe-area-inset-right));
+      inset-block-end: max(var(--space-2), env(safe-area-inset-bottom));
+      min-height: 4.25rem;
+      padding: var(--space-2);
+      border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+      border-radius: 1rem;
+      background: color-mix(in srgb, var(--color-background) 94%, transparent);
+      box-shadow: 0 0.75rem 2rem rgb(36 33 25 / 16%);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      grid-template-columns: repeat(auto-fit, minmax(2.75rem, 1fr));
+      align-items: stretch;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(calc(100% + env(safe-area-inset-bottom) + var(--space-4)));
+      transition: opacity 180ms ease, transform 260ms cubic-bezier(.16, 1, .3, 1), visibility 0s linear 260ms;
+      visibility: hidden;
+    }
+
+    .header-shell--mobile-taskbar .header-shell__mobile-taskbar {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      transition-delay: 40ms, 40ms, 0s;
+      visibility: visible;
+    }
+
+    .header-shell__task {
+      position: relative;
+      display: grid;
+      min-width: 0;
+      min-height: 3.5rem;
+      padding: var(--space-1) var(--space-2);
+      border: 0;
+      border-radius: 0.65rem;
+      background: transparent;
+      color: currentcolor;
+      font-size: .55rem;
+      font-weight: 700;
+      gap: .2rem;
+      justify-items: center;
+      line-height: 1.1;
+      place-content: center;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .header-shell__task .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .header-shell__task:is(:hover, :focus-visible) {
+      background: var(--color-accent-tint);
+      color: var(--color-foreground);
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .header-shell__task-count {
+      position: absolute;
+      inset-block-start: .2rem;
+      inset-inline-end: max(.3rem, 14%);
+      min-width: 1rem;
+      min-height: 1rem;
+      padding-inline: .16rem;
+      border-radius: 999px;
+      background: var(--color-accent);
+      color: var(--color-background);
+      font-size: .58rem;
+      line-height: 1rem;
+      text-align: center;
     }
   }
 
@@ -694,6 +842,21 @@
 
     .header-shell__actions {
       grid-column: 3;
+    }
+
+    .header-shell__mobile-taskbar {
+      inset-inline: 0;
+      inline-size: min(calc(100% - 2 * var(--space-5)), 34rem);
+      margin-inline: auto;
+      min-height: 4.5rem;
+      padding: var(--space-2) var(--space-3);
+      border-radius: 1.125rem;
+    }
+
+    .header-shell__task {
+      min-height: 3.625rem;
+      padding-inline: var(--space-3);
+      font-size: .625rem;
     }
   }
 
@@ -776,6 +939,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .header-shell,
+    .header-shell__mobile-taskbar,
     .header-shell__icon-button,
     .header-shell__drawer,
     .header-shell__search-dialog {

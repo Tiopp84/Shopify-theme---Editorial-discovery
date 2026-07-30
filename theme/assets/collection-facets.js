@@ -5,6 +5,8 @@ class CollectionDiscovery extends HTMLElement {
     this.addEventListener('change', this.handleChange);
     this.addEventListener('submit', this.handleSubmit);
     this.addEventListener('close', this.handleDialogClose, true);
+    this.addEventListener('keydown', this.handleSortMenuKeydown);
+    document.addEventListener('pointerdown', this.handleDocumentPointerDown);
     window.addEventListener('popstate', this.handlePopState);
   }
 
@@ -14,6 +16,8 @@ class CollectionDiscovery extends HTMLElement {
     this.removeEventListener('change', this.handleChange);
     this.removeEventListener('submit', this.handleSubmit);
     this.removeEventListener('close', this.handleDialogClose, true);
+    this.removeEventListener('keydown', this.handleSortMenuKeydown);
+    document.removeEventListener('pointerdown', this.handleDocumentPointerDown);
     window.removeEventListener('popstate', this.handlePopState);
   }
 
@@ -81,6 +85,53 @@ class CollectionDiscovery extends HTMLElement {
     this.drawerOpener = null;
   };
 
+  handleDocumentPointerDown = (event) => {
+    const openMenu = this.querySelector('.facets__sort-menu--popover[open]');
+    if (openMenu && !openMenu.contains(event.target)) openMenu.open = false;
+  };
+
+  handleSortMenuKeydown = (event) => {
+    const menu = event.target.closest('.facets__sort-menu--popover');
+    if (!menu) return;
+
+    const summary = menu.querySelector('summary');
+    const options = Array.from(menu.querySelectorAll('input[type="radio"]'));
+    const currentOption = event.target.closest('input[type="radio"]');
+
+    if (event.key === 'Escape' && menu.open) {
+      event.preventDefault();
+      menu.open = false;
+      summary?.focus();
+      return;
+    }
+
+    if (event.target === summary && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      menu.open = true;
+      const selected = menu.querySelector('input[type="radio"]:checked');
+      (event.key === 'ArrowUp' ? options.at(-1) : selected || options[0])?.focus();
+      return;
+    }
+
+    if (currentOption && event.key === 'Enter') {
+      event.preventDefault();
+      currentOption.click();
+      return;
+    }
+
+    if (!currentOption || !['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+
+    event.preventDefault();
+    const currentIndex = options.indexOf(currentOption);
+    const nextIndex = {
+      ArrowDown: (currentIndex + 1) % options.length,
+      ArrowUp: (currentIndex - 1 + options.length) % options.length,
+      Home: 0,
+      End: options.length - 1,
+    }[event.key];
+    options[nextIndex]?.focus();
+  };
+
   handlePopState = () => {
     this.updateCollection(new URL(window.location.href), {
       pushHistory: false,
@@ -111,6 +162,7 @@ class CollectionDiscovery extends HTMLElement {
             (group) => group.querySelector('summary span')?.textContent.trim() || '',
           )
         : [],
+      sortMenuOpen: Boolean(dialog?.querySelector('[data-facets-sort-menu][open]')),
       formId: form?.id || '',
       controlName: control?.name || '',
       controlValue: control?.value || '',
@@ -146,7 +198,7 @@ class CollectionDiscovery extends HTMLElement {
 
       if (!nextCollection) throw new Error('Collection section missing from response');
 
-      this.innerHTML = nextCollection.innerHTML;
+      this.patchCollection(nextCollection);
 
       if (pushHistory) history.pushState({}, '', url);
 
@@ -171,8 +223,10 @@ class CollectionDiscovery extends HTMLElement {
           group.open = state.openGroups.includes(label);
         });
 
+        const sortMenu = dialog.querySelector('[data-facets-sort-menu]');
+        if (sortMenu) sortMenu.open = state.sortMenuOpen;
+
         this.drawerOpener = dialog.closest('[data-facets-panel]')?.querySelector('[data-facets-open]');
-        dialog.showModal();
       }
     }
 
@@ -187,6 +241,35 @@ class CollectionDiscovery extends HTMLElement {
       if (matchingControl) matchingControl.focus();
       else if (focusSelector) this.querySelector(focusSelector)?.focus({ preventScroll: true });
     });
+  }
+
+  patchCollection(nextCollection) {
+    this.patchContent('[data-collection-count]', nextCollection);
+    this.patchContent('[data-collection-active-facets]', nextCollection);
+
+    this.querySelectorAll('dialog[data-facet-dialog]').forEach((dialog) => {
+      const nextDialog = nextCollection.querySelector(`dialog[data-facet-dialog="${CSS.escape(dialog.dataset.facetDialog)}"]`);
+      const header = dialog.querySelector('.collection-facets-dialog__header');
+      const nextHeader = nextDialog?.querySelector('.collection-facets-dialog__header');
+      if (header && nextHeader) header.innerHTML = nextHeader.innerHTML;
+    });
+
+    this.querySelectorAll('.facets').forEach((form) => {
+      const nextForm = nextCollection.querySelector(`#${CSS.escape(form.id)}`);
+      if (!nextForm) return;
+      form.action = nextForm.action;
+      form.innerHTML = nextForm.innerHTML;
+    });
+
+    const results = this.querySelector('[data-collection-results]');
+    const nextResults = nextCollection.querySelector('[data-collection-results]');
+    if (results && nextResults) results.replaceWith(nextResults.cloneNode(true));
+  }
+
+  patchContent(selector, nextCollection) {
+    const current = this.querySelector(selector);
+    const next = nextCollection.querySelector(selector);
+    if (current && next) current.innerHTML = next.innerHTML;
   }
 
   setLoading(isLoading) {
