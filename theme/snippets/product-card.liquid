@@ -8,6 +8,7 @@
   @param {number} [card_index] - One-based position in the current result set.
   @param {number} [card_count] - Number of products in the current result set.
   @param {string} [card_context] - Presentation context; use `recommendation` for compact PDP suggestions or `homepage` to omit Quick Add.
+  @param {number} [entrance_delay] - Optional initial page-load AOS delay in milliseconds.
 
   @example
   {% render 'product-card', product: product, show_vendor: true, image_ratio: '4 / 5' %}
@@ -34,7 +35,7 @@
   endfor
 %}
 
-<article class="product-card product-card--{{ card_context }}{% unless product.available %} product-card--unavailable{% endunless %}" aria-labelledby="{{ card_id }}">
+<article class="product-card product-card--{{ card_context }}{% unless product.available %} product-card--unavailable{% endunless %}"{% if entrance_delay != blank %} data-catalog-reveal data-aos="fade-up" data-aos-delay="{{ entrance_delay }}"{% endif %} aria-labelledby="{{ card_id }}">
   <div class="product-card__media" style="--product-card-ratio: {{ image_ratio }};">
     {% if product.featured_image %}
       {% render 'image',
@@ -81,12 +82,16 @@
               <div class="quick-add__product">
                 <div class="quick-add__media">
                   {% if product.media.size > 0 %}
-                    <div class="quick-add__media-stage">
+                    <div class="quick-add__media-stage" data-quick-add-media-stage tabindex="0" aria-label="{{ 'products.gallery.media_selection' | t }}">
                       {% for media in product.media %}
                         <div class="quick-add__media-item" data-quick-add-media-id="{{ media.id }}"{% unless media.id == product.selected_or_first_available_variant.featured_media.id or forloop.first %} hidden{% endunless %}>
                           {{ media.preview_image | image_url: width: 720 | image_tag: alt: media.alt, widths: '320, 480, 720', sizes: '(min-width: 750px) 18rem, 40vw', loading: 'lazy' }}
                         </div>
                       {% endfor %}
+                      {% if product.media.size > 1 %}
+                        <button class="quick-add__media-nav quick-add__media-nav--previous" type="button" data-quick-add-media-previous aria-label="{{ 'products.gallery.previous' | t }}">←</button>
+                        <button class="quick-add__media-nav quick-add__media-nav--next" type="button" data-quick-add-media-next aria-label="{{ 'products.gallery.next' | t }}">→</button>
+                      {% endif %}
                     </div>
                     {% if product.media.size > 1 %}
                       <div class="quick-add__media-thumbnails" aria-label="{{ 'products.gallery.media_selection' | t }}">
@@ -302,9 +307,13 @@
   .quick-add__header button { background: transparent; border: 0; color: currentcolor; font-size: 1.5rem; min-block-size: 2.75rem; min-inline-size: 2.75rem; padding: 0; }
   .quick-add__product { display: grid; grid-template-columns: minmax(15rem, .9fr) minmax(20rem, 1.1fr); }
   .quick-add__media { align-content: start; background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); display: grid; gap: var(--space-3); min-block-size: 100%; padding: var(--space-4); }
-  .quick-add__media-stage { overflow: hidden; }
+  .quick-add__media-stage { overflow: hidden; position: relative; touch-action: pan-y; }
   .quick-add__media-item, .quick-add__media-item img, .quick-add__media-placeholder, .quick-add__media-placeholder svg { block-size: 100%; inline-size: 100%; }
   .quick-add__media-item img { aspect-ratio: 4 / 5; border-radius: .5rem; display: block; object-fit: cover; }
+  .quick-add__media-nav { align-items: center; background: rgb(255 255 255 / .88); border: 0; border-radius: 50%; color: var(--color-foreground); display: grid; inset-block-start: 50%; min-block-size: 2.5rem; min-inline-size: 2.5rem; padding: 0; place-items: center; position: absolute; transform: translateY(-50%); z-index: 1; }
+  .quick-add__media-nav--previous { inset-inline-start: var(--space-2); }
+  .quick-add__media-nav--next { inset-inline-end: var(--space-2); }
+  .quick-add__media-nav:is(:hover, :focus-visible) { background: var(--color-background); outline: var(--focus-ring); outline-offset: 2px; }
   .quick-add__media-placeholder { align-items: center; display: grid; padding: var(--space-6); place-items: center; }
   .quick-add__media-thumbnails { display: flex; gap: var(--space-2); overflow-x: auto; padding-block-end: .15rem; }
   .quick-add__media-thumbnails button { background: transparent; border: 1px solid var(--color-border); border-radius: .45rem; flex: 0 0 3.5rem; overflow: hidden; padding: 0; }

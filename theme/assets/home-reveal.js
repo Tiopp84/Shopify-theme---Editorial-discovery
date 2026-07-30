@@ -5,13 +5,11 @@ class HomeRevealController {
     this.stickyMedia = window.matchMedia('(min-width: 48rem)');
 
     if (!window.gsap || !window.ScrollTrigger || this.reducedMotion.matches) {
-      window.homeRevealBoot?.release();
       return;
     }
 
     window.gsap.registerPlugin(window.ScrollTrigger);
     window.ScrollTrigger.config({ limitCallbacks: true });
-    this.reveals = new Map();
     this.choreographies = new Map();
     this.mediaSwaps = new Map();
     this.refreshFrame = null;
@@ -21,7 +19,6 @@ class HomeRevealController {
     };
 
     this.hydrate(document);
-    window.homeRevealBoot?.release();
     this.desktop.addEventListener('change', this.onViewportChange);
     this.stickyMedia.addEventListener('change', this.onViewportChange);
     document.addEventListener('shopify:section:load', (event) => this.hydrate(event.target));
@@ -36,32 +33,6 @@ class HomeRevealController {
   }
 
   hydrate(scope) {
-    this.elementsIn(scope, '[data-home-reveal], [data-home-reveal-group], [data-home-reveal-chapter]').forEach((element) => {
-      if (this.reveals.has(element) || this.isChoreographedChapter(element)) return;
-      const targets = this.targetsFor(element);
-      if (!targets.length) return;
-
-      window.gsap.set(targets, { autoAlpha: 0, y: 14 });
-      const timeline = this.createRevealTimeline(element, targets);
-      const reveal = { completed: false, started: false, targets, timeline, trigger: null };
-      timeline.eventCallback('onComplete', () => {
-        reveal.completed = true;
-        window.gsap.set(targets, { clearProps: 'opacity,transform,visibility,will-change' });
-      });
-      this.reveals.set(element, reveal);
-
-      if (element.dataset.homeReveal === 'editorial-hero') {
-        this.playReveal(element);
-      } else {
-        reveal.trigger = window.ScrollTrigger.create({
-          trigger: element,
-          start: 'top 88%',
-          once: true,
-          onEnter: () => this.playReveal(element),
-        });
-      }
-    });
-
     if (this.desktop.matches) {
       this.elementsIn(scope, '[data-motion="editorial-chapters"]').forEach((section) => this.createEditorialChoreography(section));
     }
@@ -74,12 +45,6 @@ class HomeRevealController {
     this.scheduleRefresh();
   }
 
-  isChoreographedChapter(element) {
-    return this.desktop.matches
-      && element.hasAttribute('data-home-reveal-chapter')
-      && Boolean(element.closest('[data-motion="editorial-chapters"]'));
-  }
-
   createEditorialChoreography(section) {
     if (this.choreographies.has(section)) return;
 
@@ -88,6 +53,7 @@ class HomeRevealController {
     const mediaItems = [...media?.querySelectorAll('[data-pinned-story-media]') || []];
     if (!media || !chapters.length || !mediaItems.length) return;
 
+    const introTargets = [...section.querySelectorAll('.pinned-visual-story__intro > *')];
     const chapterTargets = chapters.map((chapter) => [
       ...chapter.querySelectorAll('.pinned-visual-story__number, h3, .pinned-visual-story__body, a'),
     ]).filter((targets) => targets.length);
@@ -97,6 +63,7 @@ class HomeRevealController {
       const mediaVisuals = mediaItems.map((item) => item.querySelector('img, svg')).filter(Boolean);
       window.gsap.set(media, { autoAlpha: 1 });
       if (mediaVisuals.length) window.gsap.set(mediaVisuals, { scale: 1.045, transformOrigin: 'center center' });
+      if (introTargets.length) window.gsap.set(introTargets, { autoAlpha: 0, y: 14 });
       chapterTargets.forEach((targets) => window.gsap.set(targets, { autoAlpha: 0, y: 20 }));
 
       const timeline = window.gsap.timeline({
@@ -110,13 +77,14 @@ class HomeRevealController {
         },
       });
 
+      if (introTargets.length) timeline.to(introTargets, { autoAlpha: 1, duration: 0.5, stagger: 0.1, y: 0 }, 0);
       if (mediaVisuals.length) timeline.to(mediaVisuals, { duration: chapterTargets.length, scale: 1 }, 0);
       chapterTargets.forEach((targets, index) => {
         timeline.to(targets, { autoAlpha: 1, duration: 0.7, y: 0 }, index * 0.72);
       });
     }, section);
 
-    this.choreographies.set(section, { context, media, chapterTargets });
+    this.choreographies.set(section, { context, media, chapterTargets, introTargets });
   }
 
   createEditorialMediaSwap(section) {
@@ -215,22 +183,7 @@ class HomeRevealController {
     } });
   }
 
-  playReveal(element) {
-    const reveal = this.reveals.get(element);
-    if (!reveal || reveal.started) return;
-    reveal.started = true;
-    window.gsap.set(reveal.targets, { willChange: 'transform,opacity' });
-    reveal.timeline.play();
-  }
-
   destroy(scope) {
-    this.reveals.forEach((reveal, element) => {
-      if (scope !== element && !scope.contains(element)) return;
-      reveal.trigger?.kill();
-      reveal.timeline.kill();
-      window.gsap.set(reveal.targets, { clearProps: 'opacity,transform,visibility,will-change' });
-      this.reveals.delete(element);
-    });
     this.choreographies.forEach((choreography, section) => {
       if (scope !== section && !scope.contains(section)) return;
       choreography.context.revert();
@@ -252,36 +205,6 @@ class HomeRevealController {
     });
   }
 
-  targetsFor(element) {
-    if (element.hasAttribute('data-home-reveal-group')) return [...element.children];
-    switch (element.dataset.homeReveal) {
-      case 'editorial-hero': return [...element.querySelectorAll('.editorial-hero__content > *'), element.querySelector('.editorial-hero__media')].filter(Boolean);
-      case 'featured-edit': return [...element.querySelectorAll('.featured-edit__header > *')];
-      case 'pinned-visual-story': {
-        const media = element.querySelector('.pinned-visual-story__media');
-        return [
-          ...element.querySelectorAll('.pinned-visual-story__intro > *'),
-          ...(element.dataset.motion === 'editorial-chapters' ? [] : [media]),
-        ].filter(Boolean);
-      }
-      case 'material-craft': return [...element.querySelectorAll('.material-craft__images > *, .material-craft__content > *')];
-      case 'shoppable-story': return [...element.querySelectorAll('.shoppable-story__intro > *')];
-      case 'outfit-composition': return [...element.querySelectorAll('.outfit-composition__content > *'), element.querySelector('.outfit-composition__media')].filter(Boolean);
-      default: return [];
-    }
-  }
-
-  createRevealTimeline(element, targets) {
-    const isCardGroup = element.hasAttribute('data-home-reveal-group');
-    const isHero = element.dataset.homeReveal === 'editorial-hero';
-    const duration = isHero ? 0.5 : isCardGroup ? 0.4 : 0.34;
-    const stagger = isHero ? 0.12 : isCardGroup ? 0.08 : 0.1;
-    const timeline = window.gsap.timeline({ paused: true, defaults: { ease: 'power2.out', overwrite: 'auto' } });
-    targets.forEach((target, index) => {
-      timeline.to(target, { autoAlpha: 1, duration, y: 0 }, index * stagger);
-    });
-    return timeline;
-  }
 }
 
 if (!window.homeRevealController) window.homeRevealController = new HomeRevealController();

@@ -1,6 +1,6 @@
 # Theme motion implementation guide
 
-Status: **ACTIVE IMPLEMENTATION REFERENCE — 2026-07-29**
+Status: **ACTIVE IMPLEMENTATION REFERENCE — 2026-07-30**
 
 This document records how motion is organised in the Narrivelle theme. It complements `motion-architecture.md`: that document defines the policy; this one maps the policy to actual files, controllers and storefront behaviour.
 
@@ -16,23 +16,24 @@ Motion is never required to reveal content, enable a purchase, communicate price
 
 ## 2. Technology and ownership
 
-> **Experiment note — `feat/AOS`, 2026-07-30:** AOS CSS plus the local one-time reveal controller own standard homepage entrances. Pinned Visual Story is the deliberate exception: its heading-to-image mapping needs reversible scroll state, so its isolated controller uses self-hosted GSAP/ScrollTrigger on desktop and a native `requestAnimationFrame` reader for the two-column media state. CSS sticky layout remains native; there is no JavaScript pinning or effect on commerce/overlay flows.
+> **Homepage ownership — 2026-07-30:** AOS CSS plus the local one-time reveal controller own all standard homepage entrances. Pinned Visual Story is the deliberate exception: its heading-to-image mapping needs reversible scroll state, so its isolated controller uses self-hosted GSAP/ScrollTrigger on desktop and a native `requestAnimationFrame` reader for the two-column media state. No standard entrance may also receive a GSAP transform/opacity timeline. CSS sticky layout remains native; there is no JavaScript pinning or effect on commerce/overlay flows.
 
 ### AOS homepage implementation snapshot
 
-This is the source of truth for the AOS experiment on `feat/AOS`. It overrides the GSAP homepage rows below only on that branch; the rest of this document remains the approved theme-wide motion reference.
+This is the source of truth for homepage entrance motion.
 
 | Concern | Implemented rule |
 |---|---|
-| Assets | Homepage loads self-hosted `aos-2.3.4.css`, local `aos-home.js`, and—only for the isolated Pinned Visual Story choreography—self-hosted GSAP Core/ScrollTrigger plus `home-reveal.js`. The AOS JavaScript bundle remains intentionally absent. |
+| Assets | Homepage loads self-hosted `aos-2.3.4.css`, local `aos-home.js`, and—only for the isolated Pinned Visual Story choreography—self-hosted GSAP Core/ScrollTrigger plus `home-reveal.js`. Collection and List collections load the same local AOS CSS plus `catalog-reveal.js`, which sets the required 400 ms AOS duration before its two-frame reveal. The AOS JavaScript bundle remains intentionally absent. |
 | Hero | Image is visible on first paint for LCP. It makes only a 900 ms scale settle from 1.025 to 1.0; hero text enters with `fade-right` after two render frames. |
 | Section lead | A section root carries `data-aos-section`. Except for the initially visible hero, a lead is considered only after scroll/resize, then runs once when it reaches the 60% viewport line (or the equivalent 40% line when entering from above). |
 | Product/item phase | `data-aos-products` marks a card grid and `data-aos-product-item` marks an individual Shoppable Story row. These start only after their parent section lead and when the item/group itself reaches the trigger line. Pinned Story chapter motion is owned by its dedicated controller, not AOS. |
-| Sequence | At ordinary speed, a small global queue serializes stages so adjacent visible sections do not compete. Markers are removed after completion, therefore an animated target cannot replay until reload. |
-| Fast scroll | Scroll velocity at or above `0.65 px/ms` uses a 350 ms catch-up reveal for visible stages. Queued stages that have left the viewport are returned to eligible state rather than running off-screen and delaying content. This prevents a blank viewport during rapid scrolling. |
-| Timing | Standard duration is 400 ms (AOS-like); catch-up is 350 ms. Existing card delays provide the bounded stagger inside a grid. |
+| Sequence | Eligible stages begin independently on their own trigger line. There is no page-wide queue, so a visible section never waits for another section's decorative entrance. Markers are removed after completion, therefore an animated target cannot replay until reload. |
+| Fast scroll | Scroll velocity at or above `0.65 px/ms` uses a 350 ms reveal. |
+| Timing | Standard duration is 400 ms (AOS-like); catch-up is 350 ms. Featured Edit and Outfit Composition cards use independent `fade-up` stages with a 0–300 ms stagger in AOS-supported 100 ms steps. One `IntersectionObserver` reveals each catalog card once when it reaches the lower 18% trigger boundary; cards entering in the same visual row are ordered left-to-right with a bounded 0–300 ms delay. All fade vectors are 2 rem rather than AOS's 100 px default. |
+| Theme Editor | `aos-home.js` unregisters removed sections, product stages and pending timers on `shopify:section:unload`; a loaded section is re-registered from clean state. |
 | Fallback | The head bootstrap enables the prepared state only when motion is allowed and releases it after three seconds if the controller fails. JavaScript blocked/failed and `prefers-reduced-motion: reduce` leave all content in final visible state. |
-| Scope | Index template only. Cart, dialogs, product media, forms, prices, availability, focus and scrolling ownership are untouched. |
+| Scope | Homepage standard entrances plus first-load card entrances on Collection and List collections. Search, predictive search, recommendations, cart, dialogs, product media, forms, prices, availability, focus and scrolling ownership are untouched. |
 
 Implementation map:
 
@@ -44,18 +45,23 @@ layout/theme.liquid
 
 sections
   ├─ editorial-hero: text stage + non-blocking media settle
-  ├─ featured-edit / outfit-composition: lead stage → product-grid stage
+  ├─ featured-edit / outfit-composition: AOS lead stage → product-grid stage
+  ├─ material-craft: AOS image/text stage
   ├─ shoppable-story: lead stage → per-product-row stage
-  └─ pinned-visual-story: intro/media stage → per-chapter stage
+  └─ pinned-visual-story: GSAP intro/media/chapter choreography only
+
+catalog templates
+  ├─ collection: initial product-card `fade-up` only
+  └─ list-collections: initial collection-card `fade-up` only
 ```
 
-Before this experiment can replace the approved GSAP treatment, record Shopify-preview and Theme Editor lifecycle evidence, desktop/mobile real-device smoothness, and Lighthouse/LCP evidence. The asset licence and removal path are tracked under `DEP-002` in `../Governance/asset-license-register.md`.
+Record Shopify-preview and Theme Editor lifecycle evidence, desktop/mobile real-device smoothness, and Lighthouse/LCP evidence before closing the motion gate. The asset licence and removal path are tracked under `DEP-002` in `../Governance/asset-license-register.md`.
 
 | Layer | Technology | Owner | Use it for | Do not use it for |
 |---|---|---|---|---|
 | Small UI state | Scoped CSS transitions | Component stylesheet | Hover/focus, disclosure, button and drawer visual state | Scroll choreography or layout changes |
 | Header state | Passive scroll listener + `requestAnimationFrame` | `header-shell.js` | Sticky/compact header state | ScrollTrigger |
-| Editorial entrance | GSAP timeline + one viewport trigger | `home-reveal.js` | A short one-time section or card-group entrance | Commerce feedback or every catalog card |
+| Editorial entrance | AOS CSS + `aos-home.js` | Homepage section markup | A short one-time section or card-group entrance | Scroll choreography, commerce feedback or a second animation owner |
 | Editorial choreography | GSAP timeline + ScrollTrigger | Section-specific code in `home-reveal.js` | A section whose visual sequence follows scroll progress | JavaScript pinning, parallax everywhere, or a global site runtime |
 | Overlay semantics | Native dialog and component controller | Menu, search, cart and media controller | Focus trap, Escape and focus restoration | Animation-dependent accessibility |
 
@@ -76,12 +82,13 @@ GSAP Core and ScrollTrigger are self-hosted, pinned at 3.13.0, and are loaded on
 
 ```text
 layout/theme.liquid (home only)
-  ├─ bootstrap class: home-reveal-pending
+  ├─ AOS CSS + Narrivelle AOS vector overrides
+  ├─ AOS first-paint fallback
+  ├─ aos-home.js
   ├─ GSAP Core 3.13.0
   ├─ ScrollTrigger 3.13.0
   └─ home-reveal.js
-       ├─ generic one-time reveal controller
-       ├─ desktop editorial choreography controller
+       ├─ Pinned Visual Story desktop choreography controller
        ├─ Shopify section load/unload handling
        └─ breakpoint rebuild and ScrollTrigger refresh
 
@@ -89,28 +96,25 @@ layout/theme.liquid (all storefront routes)
   └─ overlay-motion.js
        └─ coordinates native-dialog enter/exit state only
 
-critical.css
-  └─ temporary first-paint concealment, only when motion is allowed
-
 section markup
-  ├─ data-home-reveal: a short section entrance
-  ├─ data-home-reveal-group: a bounded card/row stagger
-  ├─ data-home-reveal-chapter: a story chapter target
-  └─ data-motion="editorial-chapters": an approved choreography boundary
+  ├─ data-aos-section / data-aos*: standard AOS entrance boundaries
+  ├─ data-aos-products / data-aos-product-item: dependent product stages
+  ├─ data-home-reveal-chapter: Pinned Visual Story chapter target
+  └─ data-motion="editorial-chapters": Pinned Visual Story choreography boundary
 ```
 
-The inline bootstrap has a 2.5-second failsafe. If GSAP or ScrollTrigger cannot load, `homeRevealBoot.release()` removes the temporary concealment. Do not add a new selector to the pending CSS unless the controller will always release it.
+The AOS bootstrap has a 3-second failsafe. If its controller cannot load, it removes the prepared AOS class and all marked content renders in its final state. GSAP has no first-paint concealment dependency.
 
 ## 5. Homepage inventory
 
 | Surface | Current treatment | Trigger/model | Mobile and reduced motion | Merchant control |
 |---|---|---|---|---|
-| Editorial hero | Text and media entrance | Plays once after controller hydration | Final state immediately for reduced motion | No motion setting; section remains readable without it |
-| Featured edit | Header entrance; product card group stagger | One viewport entry per bounded group | One-time reveal only | No motion setting |
+| Editorial hero | AOS text entrance; CSS-only image settle | Hero queues after two render frames | Final state immediately for reduced motion | No motion setting; section remains readable without it |
+| Featured edit | AOS header entrance; bounded product-card stagger | Independent section and grid trigger | One-time reveal only | No motion setting |
 | Pinned visual story | Intro entrance plus chapter choreography; sticky media gently scales from 1.045 to 1 | One GSAP timeline, scrubbed from story-layout entry to exit; CSS owns sticky positioning | Chapters use ordinary one-time reveal; no scrub | Master motion checkbox plus independent image-flip and chapter-wheel toggles |
-| Material & craft | Bounded image/text entrance | One viewport entry | One-time reveal only | No motion setting |
-| Shoppable story | Introduction entrance; product-row stagger | One viewport entry per bounded group | One-time reveal only | No motion setting |
-| Outfit composition | Lead entrance; product-card group stagger | One viewport entry per bounded group | One-time reveal only | No motion setting |
+| Material & craft | AOS image/text entrance | Independent section trigger | One-time reveal only | No motion setting |
+| Shoppable story | AOS introduction entrance; per-product-row stages | Independent section/item triggers | One-time reveal only | No motion setting |
+| Outfit composition | AOS lead entrance; bounded product-card stagger | Independent section and grid trigger | One-time reveal only | No motion setting |
 
 ### Announcement bar
 

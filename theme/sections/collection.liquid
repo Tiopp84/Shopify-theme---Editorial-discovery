@@ -165,7 +165,8 @@
                 image_ratio: section.settings.image_ratio,
                 sizes: '(min-width: 60rem) 25vw, 50vw',
                 card_index: forloop.index,
-                card_count: forloop.length
+                card_count: forloop.length,
+                entrance_delay: 0
               %}
               {% if show_collection_story and forloop.index == story_insert_after %}
                 <article class="collection-story-card" aria-labelledby="CollectionStory-{{ section.id }}">

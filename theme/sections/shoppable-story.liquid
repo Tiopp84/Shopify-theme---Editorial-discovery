@@ -9,7 +9,7 @@
   endfor
 %}
 
-<section class="shoppable-story full-width shoppable-story--intro-{{ section.settings.intro_position }} shoppable-story--spacing-{{ section.settings.section_spacing }}" data-home-reveal="shoppable-story" data-aos-section style="--shoppable-story-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="shoppable-story full-width shoppable-story--intro-{{ section.settings.intro_position }} shoppable-story--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--shoppable-story-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="shoppable-story__intro" data-aos="fade-up-right">
     {% if section.settings.eyebrow != blank %}
       <p class="shoppable-story__eyebrow">{{ section.settings.eyebrow | escape }}</p>
@@ -23,7 +23,7 @@
   </div>
 
   {% if has_products %}
-    <ol class="shoppable-story__items" data-home-reveal-group="rows">
+    <ol class="shoppable-story__items">
       {% for block in section.blocks %}
         {% assign story_product = block.settings.product %}
         {% if story_product != blank %}

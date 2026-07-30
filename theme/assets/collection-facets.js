@@ -263,7 +263,16 @@ class CollectionDiscovery extends HTMLElement {
 
     const results = this.querySelector('[data-collection-results]');
     const nextResults = nextCollection.querySelector('[data-collection-results]');
-    if (results && nextResults) results.replaceWith(nextResults.cloneNode(true));
+    if (results && nextResults) {
+      const replacement = nextResults.cloneNode(true);
+      replacement.querySelectorAll('[data-catalog-reveal]').forEach((target) => {
+        target.classList.add('aos-animate');
+        target.removeAttribute('data-aos');
+        target.removeAttribute('data-aos-delay');
+        target.removeAttribute('data-aos-duration');
+      });
+      results.replaceWith(replacement);
+    }
   }
 
   patchContent(selector, nextCollection) {
