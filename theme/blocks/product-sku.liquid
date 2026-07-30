@@ -1,0 +1,13 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+{% assign current_variant = product.selected_or_first_available_variant %}
+<p class="main-product__sku" data-product-sku {% if current_variant.sku == blank %}hidden{% endif %} {{ block.shopify_attributes }}>
+  <span>{{ 'products.form.sku' | t }}</span> <span data-product-sku-value>{{ current_variant.sku | escape }}</span>
+</p>
+
+{% schema %}
+{
+  "name": "t:general.product_sku",
+  "presets": [{ "name": "t:general.product_sku" }]
+}
+{% endschema %}
+{% # theme-check-enable ValidScopedCSSClass %}

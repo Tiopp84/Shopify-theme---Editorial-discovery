@@ -1,4 +1,7 @@
 <script src="{{ 'header-shell.js' | asset_url }}" defer></script>
+{% if section.settings.search_behavior == 'drawer' and request.page_type != 'search' %}
+  <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
+{% endif %}
 
 <header-shell class="header-shell full-width{% if section.settings.sticky_header %} header-shell--sticky{% endif %}">
   <header class="header-shell__inner">
@@ -6,7 +9,7 @@
       class="header-shell__icon-button header-shell__menu-button"
       type="button"
       aria-label="{{ 'accessibility.open_menu' | t }}"
-      data-drawer-open
+      data-dialog-open="menu"
     >
       {% render 'icon', name: 'menu' %}
     </button>
@@ -30,7 +33,6 @@
           <details class="header-shell__nav-group">
             <summary>{{ link.title | escape }}</summary>
             <div class="header-shell__submenu">
-              <a href="{{ link.url }}">{{ 'navigation.view_all' | t: title: link.title }}</a>
               {% for child_link in link.links %}
                 <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
               {% endfor %}
@@ -43,10 +45,21 @@
     </nav>
 
     <div class="header-shell__actions">
-      <a class="header-shell__icon-button" href="{{ routes.search_url }}">
-        <span class="visually-hidden">{{ 'search.title' | t }}</span>
-        {% render 'icon', name: 'search' %}
-      </a>
+      {% if section.settings.search_behavior == 'drawer' %}
+        <button
+          class="header-shell__icon-button"
+          type="button"
+          aria-label="{{ 'search.open' | t }}"
+          data-dialog-open="search"
+        >
+          {% render 'icon', name: 'search' %}
+        </button>
+      {% else %}
+        <a class="header-shell__icon-button" href="{{ routes.search_url }}">
+          <span class="visually-hidden">{{ 'search.title' | t }}</span>
+          {% render 'icon', name: 'search' %}
+        </a>
+      {% endif %}
 
       {% if shop.customer_accounts_enabled %}
         <a class="header-shell__icon-button header-shell__account" href="{{ routes.account_url }}">
@@ -55,47 +68,140 @@
         </a>
       {% endif %}
 
-      <a class="header-shell__icon-button" href="{{ routes.cart_url }}">
+      <a class="header-shell__icon-button" href="{{ routes.cart_url }}" data-cart-open>
         <span class="visually-hidden">{{ 'cart.title' | t }}</span>
         {% render 'icon', name: 'cart' %}
-        {% if cart.item_count > 0 %}
-          <span class="header-shell__cart-count" aria-hidden="true">{{ cart.item_count }}</span>
-        {% endif %}
+        <span class="header-shell__cart-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
       </a>
     </div>
   </header>
 
-  <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" scroll-lock>
+  <nav class="header-shell__mobile-taskbar" aria-label="{{ 'accessibility.mobile_navigation' | t }}">
+    <a class="header-shell__task" href="{{ routes.root_url }}">
+      {% render 'icon', name: 'home' %}
+      <span>{{ 'navigation.home' | t }}</span>
+    </a>
+    <button
+      class="header-shell__task"
+      type="button"
+      aria-label="{{ 'accessibility.open_menu' | t }}"
+      data-dialog-open="menu"
+    >
+      {% render 'icon', name: 'menu' %}
+      <span>{{ 'navigation.menu' | t }}</span>
+    </button>
+    {% if section.settings.search_behavior == 'drawer' %}
+      <button
+        class="header-shell__task"
+        type="button"
+        aria-label="{{ 'search.open' | t }}"
+        data-dialog-open="search"
+      >
+        {% render 'icon', name: 'search' %}
+        <span>{{ 'search.title' | t }}</span>
+      </button>
+    {% else %}
+      <a class="header-shell__task" href="{{ routes.search_url }}">
+        {% render 'icon', name: 'search' %}
+        <span>{{ 'search.title' | t }}</span>
+      </a>
+    {% endif %}
+    <a class="header-shell__task" href="{{ routes.all_products_collection_url }}">
+      {% render 'icon', name: 'shop' %}
+      <span>{{ 'navigation.products' | t }}</span>
+    </a>
+    <a class="header-shell__task header-shell__task--cart" href="{{ routes.cart_url }}" data-cart-open>
+      {% render 'icon', name: 'cart' %}
+      <span>{{ 'cart.title' | t }}</span>
+      <span class="header-shell__task-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+    </a>
+    {% if shop.customer_accounts_enabled %}
+      <a class="header-shell__task" href="{{ routes.account_url }}">
+        {% render 'icon', name: 'account' %}
+        <span>{{ 'customer.account' | t }}</span>
+      </a>
+    {% endif %}
+  </nav>
+
+  <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" scroll-lock>
     <div class="header-shell__drawer-header">
       <h2 id="MobileMenuTitle">{{ 'navigation.menu' | t }}</h2>
       <button
         class="header-shell__icon-button"
         type="button"
         aria-label="{{ 'accessibility.close_menu' | t }}"
-        data-drawer-close
+        data-dialog-close
       >
         {% render 'icon', name: 'close' %}
       </button>
     </div>
 
-    <nav class="header-shell__mobile-nav" aria-label="{{ 'accessibility.mobile_navigation' | t }}">
+    <nav class="header-shell__mobile-nav" aria-label="{{ 'accessibility.mobile_navigation' | t }}" data-mobile-menu>
+      <div class="header-shell__mobile-menu-root" data-mobile-menu-root>
+        {% for link in section.settings.menu.links %}
+          {% if link.links != blank %}
+            {% assign submenu_id = 'MobileSubmenu-' | append: section.id | append: '-' | append: forloop.index %}
+            <details class="header-shell__mobile-nav-group">
+              <summary data-mobile-menu-open="{{ submenu_id }}" aria-controls="{{ submenu_id }}">
+                {{ link.title | escape }}
+              </summary>
+              <div class="header-shell__mobile-nav-fallback">
+                {% for child_link in link.links %}
+                  <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                {% endfor %}
+              </div>
+            </details>
+          {% else %}
+            <a href="{{ link.url }}">{{ link.title | escape }}</a>
+          {% endif %}
+        {% endfor %}
+      </div>
+
       {% for link in section.settings.menu.links %}
         {% if link.links != blank %}
-          <details>
-            <summary>{{ link.title | escape }}</summary>
-            <div>
-              <a href="{{ link.url }}">{{ 'navigation.view_all' | t: title: link.title }}</a>
-              {% for child_link in link.links %}
-                <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
-              {% endfor %}
-            </div>
-          </details>
-        {% else %}
-          <a href="{{ link.url }}">{{ link.title | escape }}</a>
+          {% assign submenu_id = 'MobileSubmenu-' | append: section.id | append: '-' | append: forloop.index %}
+          <section
+            id="{{ submenu_id }}"
+            class="header-shell__mobile-submenu"
+            data-mobile-submenu-panel="{{ submenu_id }}"
+            aria-labelledby="{{ submenu_id }}Title"
+            hidden
+          >
+            <button class="header-shell__mobile-menu-back" type="button" data-mobile-menu-back="{{ submenu_id }}">
+              {{ 'navigation.back' | t }}
+            </button>
+            <h3 id="{{ submenu_id }}Title">{{ link.title | escape }}</h3>
+            {% for child_link in link.links %}
+              <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+            {% endfor %}
+          </section>
         {% endif %}
       {% endfor %}
     </nav>
   </dialog>
+
+  {% if section.settings.search_behavior == 'drawer' %}
+    <dialog
+      class="header-shell__search-dialog"
+      aria-labelledby="HeaderSearchTitle"
+      data-header-dialog="search"
+      scroll-lock
+    >
+      <div class="header-shell__drawer-header">
+        <h2 id="HeaderSearchTitle">{{ 'search.title' | t }}</h2>
+        <button
+          class="header-shell__icon-button"
+          type="button"
+          aria-label="{{ 'search.close' | t }}"
+          data-dialog-close
+        >
+          {% render 'icon', name: 'close' %}
+        </button>
+      </div>
+      {% render 'predictive-search-form', context_id: 'HeaderSearch', in_drawer: true %}
+      <a class="header-shell__search-page-link" href="{{ routes.search_url }}">{{ 'search.view_page' | t }}</a>
+    </dialog>
+  {% endif %}
 </header-shell>
 
 {% stylesheet %}
@@ -103,11 +209,27 @@
     display: block;
     border-block-end: 1px solid var(--color-border);
     background: var(--color-background);
+    position: relative;
+    z-index: 1;
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .header-shell--scrolled {
+    background: color-mix(in srgb, var(--color-background) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px -10px rgb(0 0 0 / 8%);
+    border-block-end-color: color-mix(in srgb, var(--color-border) 40%, transparent);
+  }
+
+  .shopify-section:has(> .header-shell) {
+    isolation: isolate;
+    position: relative;
+    z-index: 40;
   }
 
   .shopify-section:has(> .header-shell--sticky) {
     position: sticky;
-    z-index: 20;
     inset-block-start: 0;
   }
 
@@ -116,15 +238,59 @@
     min-height: 4.5rem;
     margin-inline: auto;
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: var(--space-4);
+    gap: clamp(var(--space-6), 3vw, var(--space-8));
+    transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1), min-height 280ms cubic-bezier(0.22, 1, 0.36, 1), margin 280ms cubic-bezier(0.22, 1, 0.36, 1), padding 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 180ms ease, box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (min-width: 64rem) {
+    .header-shell--compact {
+      background: transparent;
+      border-block-end-color: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .header-shell--compact .header-shell__inner {
+      width: min(42rem, calc(100% - var(--page-margin) * 2));
+      max-width: calc(100% - var(--page-margin) * 2);
+      min-height: 3.25rem;
+      margin-block: var(--space-2);
+      margin-inline: auto;
+      padding-inline: 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: 0.75rem;
+      background: var(--color-background);
+      box-shadow: 0 0.75rem 1.5rem rgb(36 33 25 / 10%);
+      grid-template-columns: auto auto;
+      gap: 1rem;
+    }
+
+    .header-shell--compact .header-shell__brand {
+      font-size: 1.4rem;
+    }
+
+    .header-shell--compact .header-shell__desktop-nav {
+      gap: 0.25rem;
+      font-size: 0.8rem;
+    }
+
+    .header-shell--compact .header-shell__desktop-nav > a,
+    .header-shell--compact .header-shell__nav-group > summary {
+      padding-block: 0.5rem;
+    }
+
+    .header-shell--compact .header-shell__actions {
+      display: none;
+    }
   }
 
   .header-shell__brand {
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1;
-    font-family: var(--font-heading--family);
+    font-family: var(--font-campaign);
     font-size: clamp(1.5rem, 3vw, 2rem);
     font-style: var(--font-heading--style);
     line-height: 1;
@@ -137,39 +303,138 @@
   }
 
   .header-shell__desktop-nav {
-    grid-column: 1;
+    min-width: 0;
+    grid-column: 2;
     grid-row: 1;
+    justify-self: start;
     display: flex;
     align-items: center;
-    gap: var(--space-6);
+    gap: clamp(var(--space-3), 2vw, var(--space-6));
+    font-size: 0.9rem;
+    line-height: 1.2;
   }
 
   .header-shell__desktop-nav > a,
   .header-shell__nav-group > summary {
     padding-block: var(--space-3);
+    white-space: nowrap;
     text-decoration: none;
     cursor: pointer;
+  }
+
+  .header-shell__desktop-nav > a {
+    padding-inline: var(--space-2);
+    border-radius: 999px;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .header-shell__desktop-nav > a:hover,
+  .header-shell__desktop-nav > a:focus-visible {
+    color: var(--color-background);
+    background: var(--color-foreground);
+  }
+
+  .header-shell__desktop-nav > a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .header-shell__nav-group > summary {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: calc(var(--space-2) + 0.4rem);
+    border-radius: 999px;
+    list-style: none;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .header-shell__nav-group > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .header-shell__nav-group > summary::after {
+    --header-chevron-rest: 0turn;
+    content: '›';
+    display: inline-block;
+    margin-inline-start: 0.3rem;
+    font-size: 0.95em;
+    font-weight: 300;
+    line-height: 1;
+    transform: rotate(var(--header-chevron-rest));
+    transition: transform 180ms ease;
+  }
+
+  .header-shell__nav-group[open] > summary::after {
+    --header-chevron-rest: 0.25turn;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .header-shell__nav-group > summary:hover::after,
+    .header-shell__nav-group > summary:focus-visible::after {
+      animation: header-shell-chevron-spin 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+  }
+
+  .header-shell__nav-group[open] > summary,
+  .header-shell__nav-group > summary:hover,
+  .header-shell__nav-group > summary:focus-visible {
+    color: var(--color-background);
+    background: var(--color-foreground);
+  }
+
+  .header-shell__nav-group > summary:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   .header-shell__nav-group {
     position: relative;
   }
 
+  .header-shell__nav-group::after {
+    position: absolute;
+    content: '';
+    inset-block-start: 100%;
+    inset-inline: 0;
+    block-size: var(--space-4);
+  }
+
   .header-shell__submenu {
     position: absolute;
-    z-index: 2;
-    inset-block-start: 100%;
+    z-index: 31;
+    inset-block-start: calc(100% + var(--space-4));
     inset-inline-start: 0;
     min-width: 14rem;
     padding: var(--space-3);
     border: 1px solid var(--color-border);
+    border-radius: max(0.5rem, var(--style-border-radius-inputs));
     background: var(--color-background);
+    box-shadow: 0 0.75rem 1.5rem color-mix(in srgb, var(--color-foreground) 12%, transparent);
     display: grid;
+  }
+
+  .header-shell__nav-group[open] > .header-shell__submenu {
+    animation: header-shell-submenu-in 180ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
   }
 
   .header-shell__submenu a {
     padding: var(--space-3);
+    border-radius: 0.35rem;
     text-decoration: none;
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .header-shell__submenu a:is(:hover, :focus-visible) {
+    background: var(--color-accent-tint);
+    color: var(--color-foreground);
+    transform: translateX(0.2rem);
+  }
+
+  .header-shell__submenu a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   .header-shell__actions {
@@ -192,6 +457,14 @@
     display: grid;
     place-items: center;
     text-decoration: none;
+    transition: transform 160ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .header-shell__icon-button:hover,
+    .header-shell__icon-button:focus-visible {
+      transform: scale(1.08) rotate(2deg);
+    }
   }
 
   .header-shell__cart-count {
@@ -213,6 +486,10 @@
     display: none;
   }
 
+  .header-shell__mobile-taskbar {
+    display: none;
+  }
+
   .header-shell__drawer {
     width: min(75vw, 28rem);
     max-width: none;
@@ -222,10 +499,82 @@
     margin-inline-end: auto;
     padding: var(--space-4);
     border: 0;
+    opacity: 0;
+    transform: translateX(-2.5rem);
+    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1), display 360ms allow-discrete, overlay 360ms allow-discrete;
   }
 
-  .header-shell__drawer::backdrop {
-    background: rgb(0 0 0 / 45%);
+  .header-shell__drawer[open] {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .header-shell__drawer::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
+  .header-shell__drawer[open]::backdrop { background: rgb(0 0 0 / 45%); }
+
+  @starting-style {
+    .header-shell__drawer[open] {
+      opacity: 0;
+      transform: translateX(-2.5rem);
+    }
+  }
+
+  .header-shell__search-dialog {
+    width: min(32rem, 90vw);
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0 0 0 auto;
+    padding: var(--space-6);
+    border: 0;
+    border-radius: 0.75rem 0 0 0.75rem;
+    opacity: 0;
+    transform: translateX(2.5rem);
+    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1), display 360ms allow-discrete, overlay 360ms allow-discrete;
+  }
+
+  .header-shell__search-dialog[open] {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .header-shell__search-dialog::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
+  .header-shell__search-dialog[open]::backdrop { background: rgb(0 0 0 / 38%); }
+
+  @starting-style {
+    .header-shell__search-dialog[open] {
+      opacity: 0;
+      transform: translateX(2.5rem);
+    }
+  }
+
+  .header-shell__search-dialog .predictive-search {
+    min-height: 0;
+    margin-block-start: var(--space-6);
+  }
+
+  .header-shell__search-dialog .header-shell__drawer-header {
+    padding-block-end: var(--space-5);
+  }
+
+  .header-shell__search-dialog .header-shell__drawer-header h2 {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .header-shell__search-page-link {
+    margin-block-start: auto;
+    padding-block-start: var(--space-6);
+    display: inline-block;
+    align-self: flex-start;
+    color: currentcolor;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-underline-offset: 0.2em;
   }
 
   .header-shell__drawer-header {
@@ -237,32 +586,143 @@
   }
 
   .header-shell__mobile-nav,
-  .header-shell__mobile-nav details > div {
+  .header-shell__mobile-menu-root,
+  .header-shell__mobile-nav details > div,
+  .header-shell__mobile-submenu {
     display: grid;
   }
 
-  .header-shell__mobile-nav > a,
+  .header-shell__mobile-menu-root[hidden],
+  .header-shell__mobile-submenu[hidden] {
+    display: none;
+  }
+
+  .header-shell__mobile-menu-root > a,
   .header-shell__mobile-nav summary,
-  .header-shell__mobile-nav details a {
+  .header-shell__mobile-nav details a,
+  .header-shell__mobile-submenu > a {
     padding: var(--space-4) 0;
     border-block-end: 1px solid var(--color-border);
     text-decoration: none;
     cursor: pointer;
   }
 
-  .header-shell__mobile-nav > a,
+  .header-shell__mobile-menu-root > a,
   .header-shell__mobile-nav summary {
-    font-family: var(--font-heading--family);
+    font-family: var(--font-commerce);
     font-size: 1.75rem;
+  }
+
+  .header-shell__mobile-nav summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    list-style: none;
+  }
+
+  .header-shell__mobile-nav summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .header-shell__mobile-nav summary::after {
+    content: '';
+    inline-size: 0.45rem;
+    block-size: 0.45rem;
+    border-block-end: 0.125rem solid currentcolor;
+    border-inline-end: 0.125rem solid currentcolor;
+    transform: rotate(-45deg);
   }
 
   .header-shell__mobile-nav details a {
     padding-inline-start: var(--space-4);
   }
 
-  @media (max-width: 47.99rem) {
-    .header-shell__inner {
-      min-height: 3.75rem;
+  .header-shell__mobile-nav[data-mobile-menu-enhanced] .header-shell__mobile-nav-fallback {
+    display: none;
+  }
+
+  .header-shell__mobile-submenu {
+    align-content: start;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .header-shell__mobile-menu-back {
+    width: fit-content;
+    padding: var(--space-2) 0;
+    border: 0;
+    background: transparent;
+    color: color-mix(in srgb, currentcolor 72%, transparent);
+    font: inherit;
+    font-size: 0.8rem;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .header-shell__mobile-menu-back::before {
+    content: '';
+    display: inline-block;
+    inline-size: 0.32rem;
+    block-size: 0.32rem;
+    margin-inline-end: var(--space-2);
+    border-block-end: 0.125rem solid currentcolor;
+    border-inline-start: 0.125rem solid currentcolor;
+    transform: rotate(45deg);
+  }
+
+  .header-shell__mobile-submenu h3 {
+    margin: 0;
+    justify-self: end;
+    padding: var(--space-2) 0;
+    font-family: var(--font-commerce);
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .header-shell__mobile-submenu > a {
+    grid-column: 1 / -1;
+  }
+
+  .header-shell__mobile-submenu > a:first-of-type {
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .header-shell__mobile-submenu:not([hidden]) {
+    animation: header-shell-submenu-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+
+  .header-shell__mobile-submenu:not([hidden]) > :is(a, button, h3) {
+    animation: header-shell-mobile-submenu-item 280ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+
+  .header-shell__mobile-submenu:not([hidden]) > :nth-child(1) { animation-delay: 20ms; }
+  .header-shell__mobile-submenu:not([hidden]) > :nth-child(2) { animation-delay: 70ms; }
+  .header-shell__mobile-submenu:not([hidden]) > :nth-child(3) { animation-delay: 120ms; }
+  .header-shell__mobile-submenu:not([hidden]) > :nth-child(4) { animation-delay: 170ms; }
+  .header-shell__mobile-submenu:not([hidden]) > :nth-child(n + 5) { animation-delay: 220ms; }
+
+  @keyframes header-shell-submenu-in {
+    from { opacity: 0; transform: translateY(0.5rem) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes header-shell-chevron-spin {
+    from { transform: rotate(var(--header-chevron-rest)); }
+    to { transform: rotate(calc(var(--header-chevron-rest) + 1turn)); }
+  }
+
+  @keyframes header-shell-mobile-submenu-item {
+    from { opacity: 0; transform: translateX(1.25rem); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @media (max-width: 63.99rem) {
+    /* A backdrop-filter creates a containing block for fixed descendants.
+     * Keep the task bar viewport-fixed while it trades places with the header. */
+    .header-shell--scrolled {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     .header-shell__desktop-nav {
@@ -276,8 +736,221 @@
       display: grid;
     }
 
+    .header-shell--mobile-taskbar {
+      background: transparent;
+      border-block-end-color: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .header-shell--mobile-taskbar .header-shell__inner {
+      pointer-events: none;
+      transform: translateY(-100%);
+    }
+
+    .header-shell__mobile-taskbar {
+      position: fixed;
+      display: grid;
+      z-index: 50;
+      inset-inline: max(var(--space-2), env(safe-area-inset-left)) max(var(--space-2), env(safe-area-inset-right));
+      inset-block-end: max(var(--space-2), env(safe-area-inset-bottom));
+      min-height: 4.25rem;
+      padding: var(--space-2);
+      border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+      border-radius: 1rem;
+      background: color-mix(in srgb, var(--color-background) 94%, transparent);
+      box-shadow: 0 0.75rem 2rem rgb(36 33 25 / 16%);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      grid-template-columns: repeat(auto-fit, minmax(2.75rem, 1fr));
+      align-items: stretch;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(calc(100% + env(safe-area-inset-bottom) + var(--space-4)));
+      transition: opacity 180ms ease, transform 260ms cubic-bezier(.16, 1, .3, 1), visibility 0s linear 260ms;
+      visibility: hidden;
+    }
+
+    .header-shell--mobile-taskbar .header-shell__mobile-taskbar {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      transition-delay: 40ms, 40ms, 0s;
+      visibility: visible;
+    }
+
+    .header-shell__task {
+      position: relative;
+      display: grid;
+      min-width: 0;
+      min-height: 3.5rem;
+      padding: var(--space-1) var(--space-2);
+      border: 0;
+      border-radius: 0.65rem;
+      background: transparent;
+      color: currentcolor;
+      font-size: .55rem;
+      font-weight: 700;
+      gap: .2rem;
+      justify-items: center;
+      line-height: 1.1;
+      place-content: center;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .header-shell__task .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .header-shell__task:is(:hover, :focus-visible) {
+      background: var(--color-accent-tint);
+      color: var(--color-foreground);
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .header-shell__task-count {
+      position: absolute;
+      inset-block-start: .2rem;
+      inset-inline-end: max(.3rem, 14%);
+      min-width: 1rem;
+      min-height: 1rem;
+      padding-inline: .16rem;
+      border-radius: 999px;
+      background: var(--color-accent);
+      color: var(--color-background);
+      font-size: .58rem;
+      line-height: 1rem;
+      text-align: center;
+    }
+  }
+
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .header-shell__inner {
+      min-height: 4.25rem;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: var(--space-3);
+    }
+
+    .header-shell__brand {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .header-shell__actions {
+      grid-column: 3;
+    }
+
+    .header-shell__mobile-taskbar {
+      inset-inline: 0;
+      inline-size: min(calc(100% - 2 * var(--space-5)), 34rem);
+      margin-inline: auto;
+      min-height: 4.5rem;
+      padding: var(--space-2) var(--space-3);
+      border-radius: 1.125rem;
+    }
+
+    .header-shell__task {
+      min-height: 3.625rem;
+      padding-inline: var(--space-3);
+      font-size: .625rem;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .header-shell__inner {
+      min-height: 3.75rem;
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--space-2);
+    }
+
+    .header-shell__brand {
+      grid-column: 2;
+      justify-self: center;
+    }
+
     .header-shell__account {
       display: none;
+    }
+
+    .header-shell__search-dialog {
+      inset: auto 0 0;
+      width: 100%;
+      height: auto;
+      max-height: 82dvh;
+      margin: 0;
+      padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+      border-radius: 0.9rem 0.9rem 0 0;
+      overflow: hidden;
+      transform: translateY(3rem);
+    }
+
+    .header-shell__search-dialog[open] {
+      transform: translateY(0);
+    }
+
+    .header-shell__drawer {
+      inset: auto 0 0;
+      width: 100%;
+      height: auto;
+      max-height: 82dvh;
+      margin: 0;
+      padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+      border-radius: 0.9rem 0.9rem 0 0;
+      overflow: auto;
+      transform: translateY(3rem);
+    }
+
+    .header-shell__drawer[open] {
+      transform: translateY(0);
+    }
+
+    .header-shell__search-dialog .header-shell__drawer-header {
+      padding-block-end: var(--space-3);
+    }
+
+    .header-shell__search-dialog .header-shell__drawer-header h2 {
+      font-size: 1.65rem;
+    }
+
+    .header-shell__search-dialog .predictive-search {
+      margin-block-start: var(--space-4);
+    }
+
+    .header-shell__search-page-link {
+      padding-block-start: var(--space-4);
+    }
+
+    @starting-style {
+      .header-shell__drawer[open] {
+        opacity: 0;
+        transform: translateY(3rem);
+      }
+
+      .header-shell__search-dialog[open] {
+        opacity: 0;
+        transform: translateY(3rem);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header-shell,
+    .header-shell__mobile-taskbar,
+    .header-shell__icon-button,
+    .header-shell__drawer,
+    .header-shell__search-dialog {
+      transition: none;
+    }
+
+    .header-shell__nav-group[open] > .header-shell__submenu,
+    .header-shell__nav-group > summary::after,
+    .header-shell__mobile-submenu:not([hidden]),
+    .header-shell__mobile-submenu:not([hidden]) > :is(a, button, h3) {
+      animation: none;
     }
   }
 {% endstylesheet %}
@@ -311,6 +984,22 @@
       "id": "sticky_header",
       "label": "t:labels.sticky_header",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "search_behavior",
+      "label": "t:labels.search_behavior",
+      "options": [
+        {
+          "value": "page",
+          "label": "t:options.search_behavior.page"
+        },
+        {
+          "value": "drawer",
+          "label": "t:options.search_behavior.drawer"
+        }
+      ],
+      "default": "drawer"
     }
   ]
 }

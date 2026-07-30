@@ -1,0 +1,126 @@
+{% liquid
+  assign featured_collection = section.settings.collection
+  if featured_collection == blank
+    assign featured_collection = collections['all']
+  endif
+  assign product_count = featured_collection.products_count | at_most: section.settings.product_limit
+%}
+
+<section class="featured-edit full-width featured-edit--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--featured-edit-background: {{ section.settings.background_color }}; --featured-edit-columns: {{ section.settings.desktop_columns }};" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+  <header class="featured-edit__header" data-aos="fade-down">
+    <div class="featured-edit__intro">
+      {% if section.settings.eyebrow != blank %}<p class="featured-edit__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
+      {% if section.settings.heading != blank %}<h2 id="FeaturedEditHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
+      {% if section.settings.description != blank %}<p class="featured-edit__description">{{ section.settings.description | escape }}</p>{% endif %}
+    </div>
+    {% if section.settings.link_label != blank and section.settings.link != blank %}
+      <a class="featured-edit__link" href="{{ section.settings.link }}">{{ section.settings.link_label | escape }}</a>
+    {% elsif featured_collection != blank %}
+      <a class="featured-edit__link" href="{{ featured_collection.url }}">{{ 'navigation.view_all' | t: title: featured_collection.title }}</a>
+    {% endif %}
+  </header>
+
+  {% if featured_collection != blank and featured_collection.products_count > 0 %}
+    <ul class="featured-edit__grid" role="list">
+      {% for product in featured_collection.products limit: section.settings.product_limit %}
+        <li data-aos-product-item data-aos="fade-up" data-aos-delay="{{ forloop.index0 | at_most: 3 | times: 100 }}">{% render 'product-card', product: product, card_context: 'homepage', card_index: forloop.index, card_count: product_count, image_ratio: '4 / 5', sizes: '(min-width: 64rem) 23vw, (min-width: 48rem) 44vw, 46vw' %}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</section>
+
+{% stylesheet %}
+  .featured-edit { --featured-edit-gutter: clamp(1.25rem, 3.3vw, 3.75rem); background: var(--featured-edit-background, transparent); margin: 0 0 var(--space-chapter); max-width: none; padding: clamp(1.5rem, 4vw, 3rem) var(--featured-edit-gutter); }
+  .featured-edit--spacing-compact { margin-block-end: var(--space-6); }
+  .featured-edit--spacing-spacious { margin-block-end: calc(var(--space-chapter) + var(--space-5)); padding-block: clamp(var(--space-6), 6vw, var(--space-8)); }
+  .featured-edit__header { align-items: start; display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1fr) auto; justify-content: space-between; margin-block-end: clamp(1.5rem, 5vw, 3rem); }
+  .featured-edit__intro { max-inline-size: 34rem; }
+  .featured-edit__eyebrow { font-size: .6875rem; font-weight: 700; letter-spacing: .12em; margin: 0 0 var(--space-2); text-transform: uppercase; }
+  .featured-edit h2 { font-family: var(--font-campaign); font-size: clamp(2.35rem, 4.2vw, 4rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .93; margin: 0; }
+  .featured-edit__description { font-size: clamp(.9rem, 1.15vw, 1.05rem); line-height: 1.45; margin: var(--space-3) 0 0; max-inline-size: 29rem; }
+  .featured-edit__link { align-items: center; color: currentcolor; display: inline-flex; flex: 0 0 auto; font-size: .6875rem; font-weight: 700; gap: .6rem; letter-spacing: .12em; padding-block: .35rem; text-decoration: none; text-transform: uppercase; }
+  .featured-edit__link::after { content: '→'; font-size: 1.15rem; font-weight: 400; line-height: .7; transition: transform 180ms ease; }
+  .featured-edit__link:is(:hover, :focus-visible) { color: var(--color-accent); }
+  .featured-edit__link:is(:hover, :focus-visible)::after { transform: translateX(.25rem); }
+  .featured-edit__grid { --featured-edit-active-columns: 2; align-items: start; display: grid; gap: clamp(var(--space-3), 2vw, var(--space-5)); grid-template-columns: repeat(var(--featured-edit-active-columns), minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
+  .featured-edit__grid > li { min-width: 0; }
+  .featured-edit .product-card { align-content: start; gap: var(--space-3); min-height: 0; }
+  .featured-edit .product-card__media { background: color-mix(in srgb, var(--featured-edit-background, var(--color-background)) 82%, white); border: 0; padding: 0; }
+  .featured-edit .product-card__media::after { content: none; }
+  .featured-edit .product-card__content { display: grid; gap: var(--space-2); min-width: 0; padding-block-start: var(--space-3); }
+  .featured-edit .product-card__meta { display: block; font-size: .625rem; font-weight: 700; letter-spacing: .12em; }
+  .featured-edit .product-card__decision { align-items: start; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr) max-content; min-width: 0; }
+  .featured-edit .product-card__title { font-family: var(--font-campaign); font-size: clamp(.95rem, 1.2vw, 1.15rem); font-weight: var(--font-heading--weight); line-height: 1.12; min-block-size: 2.24em; }
+  .featured-edit .product-card__price { align-self: start; font-size: .875rem; font-weight: 700; justify-content: flex-end; min-inline-size: 0; }
+
+  /* When Featured Edit directly follows the hero, its introduction becomes a
+   * continuation panel rather than starting a visually separate chapter. The
+   * product grid remains in normal flow, so section editing and long copy stay safe. */
+  @supports selector(.shopify-section:has(> .editorial-hero)) {
+    .shopify-section:has(> .editorial-hero) > .editorial-hero { border-block-end: 0; margin-block-end: 0; }
+    .shopify-section:has(> .editorial-hero) + .shopify-section:has(> .featured-edit) > .featured-edit {
+      --featured-edit-bridge: clamp(2.5rem, 5vw, 4.5rem);
+      margin-block-end: 0;
+      padding-block-end: var(--space-chapter);
+      padding-block-start: 0;
+      position: relative;
+    }
+    .shopify-section:has(> .editorial-hero) + .shopify-section:has(> .featured-edit) .featured-edit__header {
+      background: var(--featured-edit-background, var(--color-background));
+      border-radius: clamp(1.25rem, 2.4vw, 2rem) clamp(1.25rem, 2.4vw, 2rem) 0 0;
+      margin-block-start: calc(var(--featured-edit-bridge) * -1);
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      position: relative;
+      z-index: 2;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .featured-edit { padding-inline: clamp(7.5rem, 10vw, 12rem); }
+    .featured-edit__grid { --featured-edit-active-columns: var(--featured-edit-columns, 4); }
+  }
+  @media (max-width: 47.99rem) {
+    .featured-edit { margin-block-end: var(--space-chapter-mobile); padding-block: var(--space-5); }
+    .featured-edit__header { gap: var(--space-4); grid-template-columns: minmax(0, 1fr); margin-block-end: var(--space-5); }
+    .featured-edit h2 { font-size: 2.25rem; }
+    .featured-edit__link { font-size: .5625rem; }
+    .featured-edit__grid { gap: var(--space-3); }
+    .featured-edit .product-card { gap: var(--space-2); }
+    .featured-edit .product-card__status { padding: .3rem .4rem; }
+    .featured-edit .product-card__content { gap: .35rem; padding-block-start: var(--space-2); }
+    .featured-edit .product-card__meta { font-size: .55rem; letter-spacing: .09em; }
+    .featured-edit .product-card__decision { gap: var(--space-2); }
+    .featured-edit .product-card__title { font-size: .9rem; line-height: 1.08; min-inline-size: 0; }
+    .featured-edit .product-card__price { font-size: .75rem; max-inline-size: 100%; min-inline-size: 0; }
+  }
+  @media (max-width: 30rem) {
+    .featured-edit .product-card__decision { grid-template-columns: minmax(0, 1fr); }
+    .featured-edit .product-card__price { justify-content: flex-start; text-align: start; }
+  }
+  @media (max-width: 47.99rem) {
+    @supports selector(.shopify-section:has(> .editorial-hero)) {
+      .shopify-section:has(> .editorial-hero) + .shopify-section:has(> .featured-edit) > .featured-edit { --featured-edit-bridge: 1.5rem; margin-block-end: 0; padding-block-end: var(--space-chapter-mobile); }
+      .shopify-section:has(> .editorial-hero) + .shopify-section:has(> .featured-edit) .featured-edit__header { border-radius: 1.25rem 1.25rem 0 0; padding: var(--space-5); }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.featured_edit",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "t:labels.collection" },
+    { "type": "range", "id": "product_limit", "label": "t:labels.product_limit", "min": 3, "max": 8, "step": 1, "default": 4 },
+    { "type": "header", "content": "t:general.style" },
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#F5F3EE" },
+    { "type": "select", "id": "desktop_columns", "label": "t:labels.desktop_product_columns", "options": [{ "value": "3", "label": "t:options.columns.three" }, { "value": "4", "label": "t:options.columns.four" }], "default": "4" },
+    { "type": "select", "id": "section_spacing", "label": "t:labels.section_spacing", "options": [{ "value": "compact", "label": "t:options.spacing.compact" }, { "value": "standard", "label": "t:options.spacing.standard" }, { "value": "spacious", "label": "t:options.spacing.spacious" }], "default": "standard" },
+    { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "The edit" },
+    { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Pieces for right now" },
+    { "type": "textarea", "id": "description", "label": "t:labels.description", "default": "Four essentials worth building the week around — a tailored topcoat and the everyday layers that carry it." },
+    { "type": "text", "id": "link_label", "label": "t:labels.link_label" },
+    { "type": "url", "id": "link", "label": "t:labels.link" }
+  ],
+  "presets": [{ "name": "t:general.featured_edit" }]
+}
+{% endschema %}

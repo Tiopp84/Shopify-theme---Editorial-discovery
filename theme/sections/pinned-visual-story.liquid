@@ -1,0 +1,158 @@
+{% liquid
+  assign has_chapters = false
+  for block in section.blocks
+    if block.settings.heading != blank or block.settings.text != blank or block.settings.image != blank
+      assign has_chapters = true
+      break
+    endif
+  endfor
+%}
+
+<section class="pinned-visual-story full-width pinned-visual-story--media-{{ section.settings.media_position }} pinned-visual-story--spacing-{{ section.settings.section_spacing }}{% if section.settings.enable_image_flip %} pinned-visual-story--image-flip{% endif %}" data-header-scroll-policy="hold-compact-header" data-motion="editorial-chapters"{% if section.settings.enable_image_flip %} data-pinned-story-flip{% endif %}{% if section.settings.enable_chapter_wheel %} data-pinned-story-wheel{% endif %} style="--pinned-story-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="PinnedVisualStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+  <header class="pinned-visual-story__intro">
+    {% if section.settings.eyebrow != blank %}<p>{{ section.settings.eyebrow | escape }}</p>{% endif %}
+    {% if section.settings.heading != blank %}<h2 id="PinnedVisualStoryHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
+  </header>
+  <div class="pinned-visual-story__layout">
+    <div class="pinned-visual-story__media" data-header-scroll-target>
+      {% assign media_index = 0 %}
+      {% for block in section.blocks %}
+        {% if block.settings.heading != blank or block.settings.text != blank or block.settings.image != blank %}
+          {% assign story_image = block.settings.image %}
+          <div class="pinned-visual-story__media-item{% if media_index == 0 %} is-active{% endif %}" data-pinned-story-media>
+            {% if story_image != blank %}
+              {% render 'image', class: 'pinned-visual-story__image', image: story_image, alt: story_image.alt, width: 1800, widths: '480, 720, 960, 1200, 1500, 1800', sizes: '(min-width: 64rem) 50vw, 100vw' %}
+            {% else %}
+              <div class="pinned-visual-story__placeholder" aria-hidden="true">{{ 'lifestyle-1' | placeholder_svg_tag }}</div>
+            {% endif %}
+          </div>
+          {% assign media_index = media_index | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+      {% unless has_chapters %}
+        <div class="pinned-visual-story__placeholder" aria-hidden="true">{{ 'lifestyle-1' | placeholder_svg_tag }}</div>
+      {% endunless %}
+    </div>
+    {% if has_chapters %}
+      <div class="pinned-visual-story__chapters">
+        <div class="pinned-visual-story__chapter-spacer" aria-hidden="true"></div>
+        {% for block in section.blocks %}
+          {% if block.settings.heading != blank or block.settings.text != blank or block.settings.image != blank %}
+            {% assign story_image = block.settings.image %}
+            <article class="pinned-visual-story__chapter" data-home-reveal-chapter {{ block.shopify_attributes }}>
+              {% if story_image != blank %}
+                <div class="pinned-visual-story__chapter-media">
+                  {% render 'image', class: 'pinned-visual-story__chapter-image', image: story_image, alt: story_image.alt, width: 1200, widths: '480, 720, 960, 1200', sizes: '100vw' %}
+                </div>
+              {% endif %}
+              <p class="pinned-visual-story__number" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
+              {% if block.settings.heading != blank %}<h3 data-pinned-story-heading>{{ block.settings.heading | escape }}</h3>{% endif %}
+              {% if block.settings.text != blank %}<div class="pinned-visual-story__body">{{ block.settings.text }}</div>{% endif %}
+              {% if block.settings.link_label != blank and block.settings.link != blank %}<a href="{{ block.settings.link }}">{{ block.settings.link_label | escape }}</a>{% endif %}
+            </article>
+          {% endif %}
+        {% endfor %}
+        <div class="pinned-visual-story__chapter-spacer" aria-hidden="true"></div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .pinned-visual-story { background: var(--pinned-story-background, var(--color-panel-01)); border-block: 1px solid var(--color-border); margin-block-end: var(--space-chapter); padding: clamp(4rem, 7vw, 7rem) max(var(--page-margin), calc((100vw - var(--page-width)) / 2)); }
+  .pinned-visual-story--spacing-compact { padding-block: var(--space-6); }
+  .pinned-visual-story--spacing-spacious { padding-block: clamp(5rem, 10vw, 10rem); }
+  .pinned-visual-story__intro { margin-block-end: clamp(2.5rem, 5vw, 5rem); max-width: 35rem; }
+  .pinned-visual-story__intro p, .pinned-visual-story__number { font-size: .6875rem; font-weight: 600; letter-spacing: .1em; margin: 0 0 var(--space-3); text-transform: uppercase; }
+  .pinned-visual-story__intro h2 { font-family: var(--font-campaign); font-size: clamp(2.4rem, 4.7vw, 5rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .94; margin: 0; }
+  .pinned-visual-story__layout { display: grid; gap: clamp(2.5rem, 7vw, 8rem); }
+  .pinned-visual-story__media { aspect-ratio: 4 / 5; background: var(--color-panel-02); overflow: hidden; position: relative; }
+  .pinned-visual-story__media-item { backface-visibility: hidden; inset: 0; opacity: 0; position: absolute; transform: perspective(75rem) rotateY(-10deg) scale(.98); }
+  .pinned-visual-story--image-flip .pinned-visual-story__media-item { transition: opacity 460ms ease, transform 460ms cubic-bezier(.22, .61, .36, 1); }
+  .pinned-visual-story--media-right .pinned-visual-story__media-item { transform: perspective(75rem) rotateY(10deg) scale(.98); }
+  .pinned-visual-story__media-item.is-active { opacity: 1; transform: perspective(75rem) rotateY(0) scale(1); }
+  .pinned-visual-story--media-right .pinned-visual-story__media-item.is-active { transform: perspective(75rem) rotateY(0) scale(1); }
+  .pinned-visual-story__media.is-transitioning .pinned-visual-story__media-item { will-change: opacity, transform; }
+  .pinned-visual-story__image, .pinned-visual-story__image > img, .pinned-visual-story__placeholder, .pinned-visual-story__placeholder > svg, .pinned-visual-story__chapter-image, .pinned-visual-story__chapter-image > img { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
+  .pinned-visual-story__chapters { display: grid; }
+  .pinned-visual-story__chapter-spacer { min-block-size: var(--pinned-story-edge-space, clamp(12rem, 30vw, 24rem)); }
+  .pinned-visual-story__chapter { align-content: center; border-block-start: 1px solid var(--color-border); display: grid; gap: var(--space-3); min-height: clamp(24rem, 52vh, 38rem); opacity: var(--pinned-story-chapter-opacity, 1); padding-block: var(--space-6); transform: translate3d(var(--pinned-story-chapter-arc, 0), 0, 0) scale(var(--pinned-story-chapter-scale, 1)); transform-origin: center; }
+  .pinned-visual-story__chapter:focus-within { opacity: 1; transform: none; }
+  .pinned-visual-story__chapter-media { display: none; }
+  .pinned-visual-story__chapter h3 { font-family: var(--font-campaign); font-size: clamp(2rem, 3.6vw, 3.8rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.035em; line-height: .98; margin: 0; max-width: 12ch; }
+  .pinned-visual-story__body { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); font-size: .9375rem; line-height: 1.65; max-width: 29rem; }
+  .pinned-visual-story__body > :first-child { margin-block-start: 0; }
+  .pinned-visual-story__body > :last-child { margin-block-end: 0; }
+  .pinned-visual-story__chapter a { color: currentcolor; font-size: .6875rem; font-weight: 600; letter-spacing: .08em; justify-self: start; text-decoration: underline; text-underline-offset: .25em; text-transform: uppercase; }
+  .pinned-visual-story__chapter a:is(:hover, :focus-visible) { color: var(--color-accent); }
+  @media (min-width: 64rem) {
+    .pinned-visual-story__layout { align-items: start; grid-template-columns: minmax(0, 1fr) minmax(18rem, .72fr); }
+    .pinned-visual-story__media { position: sticky; top: 6rem; }
+    .pinned-visual-story--media-right .pinned-visual-story__layout { grid-template-columns: minmax(18rem, .72fr) minmax(0, 1fr); }
+    .pinned-visual-story--media-right .pinned-visual-story__media { grid-column: 2; }
+    .pinned-visual-story--media-right .pinned-visual-story__chapters { grid-column: 1; grid-row: 1; }
+  }
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .pinned-visual-story__layout { align-items: start; grid-template-columns: minmax(0, 1fr) minmax(16rem, .8fr); }
+    .pinned-visual-story__media { position: sticky; top: 6rem; }
+    .pinned-visual-story--media-right .pinned-visual-story__layout { grid-template-columns: minmax(16rem, .8fr) minmax(0, 1fr); }
+    .pinned-visual-story--media-right .pinned-visual-story__media { grid-column: 2; }
+    .pinned-visual-story--media-right .pinned-visual-story__chapters { grid-column: 1; grid-row: 1; }
+    .pinned-visual-story__chapter { min-height: clamp(20rem, 42vw, 28rem); }
+  }
+  @media (min-width: 48rem) {
+    .pinned-visual-story__chapter { padding-inline-start: 1.25rem; }
+    .pinned-visual-story__chapter h3 { position: relative; }
+    .pinned-visual-story__chapter h3::before { background: var(--color-accent); block-size: 100%; content: ''; inline-size: 2px; inset-block-start: 0; inset-inline-start: -1.25rem; opacity: 0; position: absolute; transform: scaleY(.25); transform-origin: center; transition: opacity 180ms ease, transform 240ms ease; }
+    .pinned-visual-story__number { align-items: center; block-size: 2rem; border: 1px solid transparent; border-radius: 50%; display: inline-flex; inline-size: 2rem; justify-content: center; margin-block-end: 0; transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease; }
+    .pinned-visual-story__chapter.is-centered h3::before { opacity: 1; transform: scaleY(1); }
+    .pinned-visual-story__chapter.is-centered .pinned-visual-story__number { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-background); }
+    .pinned-visual-story__chapter.is-centered h3 { color: var(--color-accent); }
+    .pinned-visual-story--media-right .pinned-visual-story__chapter { padding-inline-end: 1.25rem; padding-inline-start: 0; }
+    .pinned-visual-story--media-right .pinned-visual-story__chapter h3::before { inset-inline-end: -1.25rem; inset-inline-start: auto; }
+  }
+  @media (max-width: 47.99rem) {
+    .pinned-visual-story { margin-block-end: var(--space-chapter-mobile); padding-block: var(--space-6); }
+    .pinned-visual-story__intro { margin-block-end: var(--space-5); }
+    .pinned-visual-story__media { display: none; }
+    .pinned-visual-story__layout { display: block; }
+    .pinned-visual-story__chapter-spacer { display: none; }
+    .pinned-visual-story__chapter { min-height: 0; opacity: 1; padding-block: var(--space-5); transform: none; }
+    .pinned-visual-story__chapter-media { aspect-ratio: 4 / 5; display: block; margin-block-end: var(--space-3); overflow: hidden; }
+    .pinned-visual-story__chapter h3 { font-size: 2rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pinned-visual-story__media-item { transition: none; }
+    .pinned-visual-story__chapter { opacity: 1; transform: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.pinned_visual_story",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "The approach" },
+    { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Built around the way a day moves" },
+    { "type": "header", "content": "t:general.style" },
+    { "type": "checkbox", "id": "enable_image_flip", "label": "Enable image flip transition", "default": true },
+    { "type": "checkbox", "id": "enable_chapter_wheel", "label": "Enable chapter wheel effect", "default": true },
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#EBE7DD" },
+    { "type": "select", "id": "media_position", "label": "t:labels.media_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
+    { "type": "select", "id": "section_spacing", "label": "t:labels.section_spacing", "options": [{ "value": "compact", "label": "t:options.spacing.compact" }, { "value": "standard", "label": "t:options.spacing.standard" }, { "value": "spacious", "label": "t:options.spacing.spacious" }], "default": "standard" }
+  ],
+  "blocks": [
+    {
+      "type": "chapter",
+      "name": "t:general.story_chapter",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "t:labels.story_image" },
+        { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Made for movement" },
+        { "type": "richtext", "id": "text", "label": "t:labels.text", "default": "<p>Quiet proportions and useful details keep the wardrobe considered from the first appointment to the last plan.</p>" },
+        { "type": "text", "id": "link_label", "label": "t:labels.link_label" },
+        { "type": "url", "id": "link", "label": "t:labels.link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "t:general.pinned_visual_story", "blocks": [{ "type": "chapter" }, { "type": "chapter" }, { "type": "chapter" }] }]
+}
+{% endschema %}

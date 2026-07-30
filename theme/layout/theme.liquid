@@ -19,6 +19,40 @@
 
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+    {% if template.name == 'index' %}
+      {{ 'aos-2.3.4.css' | asset_url | stylesheet_tag }}
+      {{ 'aos-overrides.css' | asset_url | stylesheet_tag }}
+      <script>
+        (() => {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const root = document.documentElement;
+          root.classList.add('aos-enabled', 'aos-pending');
+          const fallbackTimer = window.setTimeout(releaseFallback, 3000);
+          window.aosHomeBoot = { release: releaseSuccess };
+
+          function releaseSuccess() {
+            root.classList.remove('aos-pending');
+            window.clearTimeout(fallbackTimer);
+          }
+
+          function releaseFallback() {
+            root.classList.remove('aos-enabled', 'aos-pending');
+          }
+        })();
+      </script>
+    {% elsif template.name == 'collection' or template.name == 'list-collections' %}
+      {{ 'aos-2.3.4.css' | asset_url | stylesheet_tag }}
+      {{ 'aos-overrides.css' | asset_url | stylesheet_tag }}
+      <script>
+        (() => {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const root = document.documentElement;
+          root.classList.add('aos-enabled');
+          const fallbackTimer = window.setTimeout(() => root.classList.remove('aos-enabled'), 3000);
+          window.catalogRevealBoot = { release: () => window.clearTimeout(fallbackTimer) };
+        })();
+      </script>
+    {% endif %}
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
@@ -32,9 +66,26 @@
     {% sections 'header-group' %}
 
     <main id="MainContent" tabindex="-1">
+      {% render 'breadcrumbs' %}
       {{ content_for_layout }}
     </main>
 
+    {% # theme-check-disable ValidScopedCSSClass %}
+    <div class="footer-panel-spacer" aria-hidden="true"></div>
+    {% # theme-check-enable ValidScopedCSSClass %}
     {% sections 'footer-group' %}
+    {% section 'cart-drawer' %}
+    {% if template.name == 'index' %}
+      <script src="{{ 'aos-home.js' | asset_url }}" defer></script>
+      <script src="{{ 'gsap-3.13.0.min.js' | asset_url }}" defer></script>
+      <script src="{{ 'scroll-trigger-3.13.0.min.js' | asset_url }}" defer></script>
+      <script src="{{ 'home-reveal.js' | asset_url }}" defer></script>
+    {% elsif template.name == 'collection' or template.name == 'list-collections' %}
+      <script src="{{ 'catalog-reveal.js' | asset_url }}" defer></script>
+    {% endif %}
+    <script src="{{ 'footer-panel.js' | asset_url }}" defer></script>
+    <script src="{{ 'overlay-motion.js' | asset_url }}" defer></script>
+    <script src="{{ 'quick-add.js' | asset_url }}" defer></script>
+    <script src="{{ 'cart.js' | asset_url }}" defer></script>
   </body>
 </html>

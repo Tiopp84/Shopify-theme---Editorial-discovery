@@ -14,14 +14,39 @@
     "comment_form_title": "Add a comment"
   },
   "cart": {
+    "close": "Close cart",
     "checkout": "Checkout",
+    "continue_shopping": "Continue shopping",
+    "decrease_quantity": "Decrease quantity",
+    "each": "each",
+    "empty_text": "Your bag is ready when you are.",
+    "empty_title": "Your bag is empty",
+    "eyebrow": "Your selection",
+    "increase_quantity": "Increase quantity",
+    "item_count": "{{ count }} item(s)",
+    "note": "Order note",
+    "note_error": "Order note could not be saved. Edit it to try again.",
+    "note_placeholder": "Add a note to your order (optional)",
+    "note_saved": "Order note saved.",
+    "note_saving": "Saving order note…",
+    "order_summary": "Order summary",
+    "page_title": "Your bag",
+    "quantity": "Quantity",
+    "quantity_updated": "Quantity updated.",
+    "secure_checkout": "Secure checkout. Your information is safe.",
     "title": "Cart",
+    "subtotal": "Subtotal",
+    "taxes_and_shipping_at_checkout": "Taxes and shipping are calculated at checkout.",
     "update": "Update",
-    "remove": "Remove"
+    "updating": "Updating cart…",
+    "remove": "Remove",
+    "view_cart": "View cart"
   },
   "accessibility": {
     "announcement": "Announcement",
+    "breadcrumb": "Breadcrumb",
     "close_menu": "Close menu",
+    "footer_navigation": "Footer navigation",
     "mobile_navigation": "Mobile navigation",
     "open_menu": "Open menu",
     "payment_methods": "Payment methods",
@@ -38,7 +63,11 @@
     "success": "Thanks for subscribing."
   },
   "navigation": {
+    "back": "Back",
+    "home": "Home",
     "menu": "Explore",
+    "products": "Products",
+    "search": "Search",
     "view_all": "View all {{ title }}"
   },
   "customers": {
@@ -52,6 +81,7 @@
   "collections": {
     "title": "Collections",
     "eyebrow": "The collection",
+    "view_collection": "View collection",
     "product_count": "{{ count }} products",
     "empty_title": "This collection is waiting",
     "empty_text": "Products added to this collection will appear here.",
@@ -92,27 +122,72 @@
     "previous": "Previous"
   },
   "products": {
+    "gallery": {
+      "close": "Close media viewer",
+      "media_unavailable": "Product image unavailable",
+      "media_selection": "Product media",
+      "next": "Next media",
+      "previous": "Previous media",
+      "select_media": "View product media {{ index }}",
+      "zoom_media": "Expand product media {{ index }}",
+      "zoomed_media": "Expanded product media"
+    },
     "card": {
+      "close_quick_add": "Close quick add",
+      "quick_add": "Quick add",
+      "quick_add_error": "This item could not be added. Please try again.",
       "sale": "Sale",
       "sold_out": "Sold out",
       "unavailable": "Currently unavailable",
+      "verifying_availability": "Verifying availability…",
+      "view_details": "View details",
       "view_product": "View product"
     },
     "form": {
       "add_to_cart": "Add to cart",
+      "available": "Available",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity",
+      "sold_out": "Sold out",
+      "unavailable_combination": "This combination is unavailable.",
       "quantity": "Quantity",
+      "quantity_pricing_available": "Volume pricing is available for this variant.",
+      "purchase_option": "Purchase option",
+      "one_time_purchase": "One-time purchase",
+      "selling_plan_notice": "Subscription availability and pricing are confirmed by Shopify at checkout.",
+      "sku": "SKU",
+      "size_guide": "Size guide",
       "variant": "Choose an option"
     },
     "price": {
       "regular": "Regular price",
       "unit": "Unit price"
+    },
+    "recommendations": {
+      "loading": "Loading product recommendations",
+      "unavailable": "Product recommendations are unavailable right now."
     }
   },
   "search": {
     "title": "Search",
+    "open": "Open search",
+    "close": "Close search",
+    "view_page": "View full search page",
+    "eyebrow": "Discover",
     "placeholder": "Search articles, pages, or products",
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
-    "results_for_html": "{{ count }} results found for {{ terms }}"
+    "result_for_html": "{{ count }} result found for {{ terms }}",
+    "results_for_html": "{{ count }} results found for {{ terms }}",
+    "predictive": {
+      "articles": "Articles",
+      "collections": "Collections",
+      "error": "Suggestions are unavailable. Submit the form to search.",
+      "loading": "Loading suggestions",
+      "no_results": "No suggestions found",
+      "pages": "Pages",
+      "products": "Products",
+      "updated": "Suggestions updated"
+    }
   }
 }

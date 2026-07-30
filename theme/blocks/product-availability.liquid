@@ -1,0 +1,18 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+<p class="main-product__availability" data-product-availability data-state="{% if current_variant.available %}available{% else %}sold-out{% endif %}" aria-live="polite" {{ block.shopify_attributes }}>
+  {% if current_variant.available %}
+    {{ 'products.form.available' | t }}
+  {% else %}
+    {{ 'products.form.sold_out' | t }}
+  {% endif %}
+</p>
+
+{% schema %}
+{
+  "name": "t:general.product_availability",
+  "presets": [{ "name": "t:general.product_availability" }]
+}
+{% endschema %}
+{% # theme-check-enable ValidScopedCSSClass %}

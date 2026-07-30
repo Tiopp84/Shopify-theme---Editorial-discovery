@@ -1,0 +1,40 @@
+{% doc %}
+  Renders a merchant-authored, progressively disclosed PDP information block.
+{% enddoc %}
+
+{% if block.settings.content != blank %}
+  <details class="product-collapsible" {{ block.shopify_attributes }}>
+    <summary>{{ block.settings.heading | escape }}</summary>
+    <div class="product-collapsible__content">{{ block.settings.content }}</div>
+  </details>
+{% endif %}
+
+{% stylesheet %}
+  .product-collapsible { border-block: 1px solid var(--color-border); padding-block: 1rem; }
+  .product-collapsible + .product-collapsible { border-block-start: 0; }
+  .product-collapsible summary { cursor: pointer; font-weight: 700; }
+  .product-collapsible__content { line-height: 1.6; padding-block-start: .8rem .15rem; }
+  .product-collapsible__content > :first-child { margin-top: 0; }
+  .product-collapsible__content > :last-child { margin-bottom: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.product_details",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Details"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "t:labels.content",
+      "default": "<p>Add fit, material, care, delivery, or returns guidance here.</p>"
+    }
+  ],
+  "presets": [{ "name": "t:general.product_details" }]
+}
+{% endschema %}
