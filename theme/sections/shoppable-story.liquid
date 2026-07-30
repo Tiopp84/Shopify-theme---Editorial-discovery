@@ -9,8 +9,8 @@
   endfor
 %}
 
-<section class="shoppable-story full-width shoppable-story--intro-{{ section.settings.intro_position }} shoppable-story--spacing-{{ section.settings.section_spacing }}" data-home-reveal="shoppable-story" style="--shoppable-story-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
-  <div class="shoppable-story__intro">
+<section class="shoppable-story full-width shoppable-story--intro-{{ section.settings.intro_position }} shoppable-story--spacing-{{ section.settings.section_spacing }}" data-home-reveal="shoppable-story" data-aos-section style="--shoppable-story-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+  <div class="shoppable-story__intro" data-aos="fade-up-right">
     {% if section.settings.eyebrow != blank %}
       <p class="shoppable-story__eyebrow">{{ section.settings.eyebrow | escape }}</p>
     {% endif %}
@@ -28,7 +28,8 @@
         {% assign story_product = block.settings.product %}
         {% if story_product != blank %}
           {% assign story_index = story_index | plus: 1 %}
-          <li class="shoppable-story__item" {{ block.shopify_attributes }}>
+          {% assign story_direction = story_index | modulo: 2 %}
+          <li class="shoppable-story__item" data-aos-product-item data-aos="{% if story_direction == 0 %}fade-left{% else %}fade-right{% endif %}" {{ block.shopify_attributes }}>
             <article class="shoppable-story__product" aria-labelledby="StoryProductTitle-{{ block.id }}">
               <a class="shoppable-story__media" href="{{ story_product.url }}" aria-label="{{ story_product.title | escape }}">
                 {% if block.settings.image != blank %}
