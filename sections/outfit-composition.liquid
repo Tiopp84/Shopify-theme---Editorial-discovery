@@ -39,13 +39,8 @@
     <ul class="outfit-composition__items" data-home-reveal-group="cards" data-aos-products role="list">
       {% for block in section.blocks %}
         {% if block.settings.product != blank %}
-<<<<<<< HEAD
-          <li {{ block.shopify_attributes }}>
-            {% render 'product-card', product: block.settings.product, card_context: 'homepage', image_ratio: '4 / 5', sizes: '(min-width: 64rem) 22vw, (min-width: 48rem) 42vw, 88vw' %}
-=======
           <li data-aos="fade-up" data-aos-delay="{{ forloop.index0 | times: 100 }}" {{ block.shopify_attributes }}>
-            {% render 'product-card', product: block.settings.product, card_context: 'homepage', image_ratio: '4 / 5', sizes: '(min-width: 75rem) 22vw, (min-width: 48rem) 30vw, 88vw' %}
->>>>>>> feat/AOS
+            {% render 'product-card', product: block.settings.product, card_context: 'homepage', image_ratio: '4 / 5', sizes: '(min-width: 64rem) 22vw, (min-width: 48rem) 42vw, 88vw' %}
           </li>
         {% endif %}
       {% endfor %}
