@@ -1,9 +1,9 @@
-<section class="material-craft full-width material-craft--media-{{ section.settings.media_position }} material-craft--spacing-{{ section.settings.section_spacing }}" data-home-reveal="material-craft" style="--material-craft-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="material-craft full-width material-craft--media-{{ section.settings.media_position }} material-craft--spacing-{{ section.settings.section_spacing }}" data-home-reveal="material-craft" data-aos-section style="--material-craft-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="material-craft__images">
     {% for index in (1..2) %}
       {% assign image_key = 'image_' | append: index %}
       {% assign image = section.settings[image_key] %}
-      <div class="material-craft__image material-craft__image--{{ index }}">
+      <div class="material-craft__image material-craft__image--{{ index }}" data-aos="{% if index == 1 %}fade-right{% else %}fade-up-left{% endif %}"{% if index == 2 %} data-aos-delay="120"{% endif %}>
         {% if image != blank %}
           {% render 'image', image: image, alt: image.alt, width: 1400, widths: '360, 540, 720, 960, 1200, 1400', sizes: '(min-width: 60rem) 32vw, 75vw' %}
         {% else %}
@@ -12,7 +12,7 @@
       </div>
     {% endfor %}
   </div>
-  <div class="material-craft__content">
+  <div class="material-craft__content" data-aos="fade-left" data-aos-delay="80">
     {% if section.settings.eyebrow != blank %}<p class="material-craft__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
     {% if section.settings.heading != blank %}<h2 id="MaterialCraftHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
     {% if section.settings.text != blank %}<div class="material-craft__text">{{ section.settings.text }}</div>{% endif %}

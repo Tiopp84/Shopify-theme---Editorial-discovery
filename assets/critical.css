@@ -256,6 +256,17 @@ textarea {
   }
 }
 
+/* AOS is progressive enhancement: without a successful initialization, every
+ * marked element stays in its final readable state. */
+html:not(.aos-enabled) [data-aos] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-aos] { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
 /** Section layout utilities */
 
 /**
