@@ -38,7 +38,7 @@
             {% render 'icon', name: 'filter' %}
             <span>{{ 'collections.facets.filters' | t }}</span>
           </button>
-          <dialog class="collection-facets-dialog" aria-labelledby="DesktopFacetsTitle" data-overlay-motion="drawer-start" scroll-lock>
+          <dialog class="collection-facets-dialog" aria-labelledby="DesktopFacetsTitle" data-facet-dialog="desktop" data-overlay-motion="drawer-start" scroll-lock>
             <div class="collection-facets-dialog__header">
               <div>
                 <h2 id="DesktopFacetsTitle">{{ 'collections.facets.filters' | t }}</h2>
@@ -58,7 +58,7 @@
         </div>
       {% endif %}
 
-      <p class="collection-controls__count" role="status">
+      <p class="collection-controls__count" role="status" data-collection-count>
         {{ 'collections.product_count' | t: count: collection.products_count }}
       </p>
 
@@ -69,7 +69,7 @@
             <span aria-hidden="true">+</span>
           {%- endif %}
         </button>
-        <dialog class="collection-facets-dialog" aria-labelledby="MobileFacetsTitle" data-overlay-motion="sheet" scroll-lock>
+        <dialog class="collection-facets-dialog" aria-labelledby="MobileFacetsTitle" data-facet-dialog="mobile" data-overlay-motion="sheet" scroll-lock>
           <div class="collection-facets-dialog__header">
             <h2 id="MobileFacetsTitle">{{ 'collections.facets.filter_and_sort' | t }}</h2>
             <button type="button" aria-label="{{ 'collections.facets.close' | t }}" data-facets-close>
@@ -80,13 +80,14 @@
             results: collection,
             form_id: 'CollectionFiltersMobile',
             show_sort: true,
+            sort_as_radios: true,
             open_groups: false
           %}
         </dialog>
       </div>
 
       <div class="collection-sort">
-        {% render 'facets', results: collection, form_id: 'CollectionSort', show_sort: true, sort_only: true %}
+        {% render 'facets', results: collection, form_id: 'CollectionSort', show_sort: true, sort_as_menu: true, sort_only: true %}
       </div>
     </div>
 
@@ -100,29 +101,32 @@
       {% endif %}
     {% endfor %}
 
-    {% if active_filter_count > 0 %}
-      <div class="active-facets" aria-label="{{ 'collections.facets.active_filters' | t }}">
-        {% for filter in collection.filters %}
-          {% for value in filter.active_values %}
-            <a href="{{ value.url_to_remove }}">
-              {{- value.label | escape }}
-              <span aria-hidden="true">×</span></a
-            >
+    <div data-collection-active-facets>
+      {% if active_filter_count > 0 %}
+        <div class="active-facets" aria-label="{{ 'collections.facets.active_filters' | t }}">
+          {% for filter in collection.filters %}
+            {% for value in filter.active_values %}
+              <a href="{{ value.url_to_remove }}">
+                {{- value.label | escape }}
+                <span aria-hidden="true">×</span></a
+              >
+            {% endfor %}
+            {% if filter.type == 'price_range' and filter.min_value.value or filter.max_value.value %}
+              <a href="{{ filter.url_to_remove }}">
+                {{ filter.min_value.value | default: 0 | money }}–
+                {{- filter.max_value.value | default: filter.range_max | money }}
+                <span aria-hidden="true">×</span>
+              </a>
+            {% endif %}
           {% endfor %}
-          {% if filter.type == 'price_range' and filter.min_value.value or filter.max_value.value %}
-            <a href="{{ filter.url_to_remove }}">
-              {{ filter.min_value.value | default: 0 | money }}–
-              {{- filter.max_value.value | default: filter.range_max | money }}
-              <span aria-hidden="true">×</span>
-            </a>
-          {% endif %}
-        {% endfor %}
-        <a class="active-facets__clear" href="{{ collection.url }}">{{ 'collections.facets.clear_all' | t }}</a>
-      </div>
-    {% endif %}
+          <a class="active-facets__clear" href="{{ collection.url }}">{{ 'collections.facets.clear_all' | t }}</a>
+        </div>
+      {% endif %}
+    </div>
 
     <div
       class="collection-results"
+      data-collection-results
       {% if collection.filters == empty or section.settings.desktop_filter_layout == 'drawer' %}
         data-without-filters
       {% endif %}
@@ -222,12 +226,7 @@
   }
 
   collection-discovery[aria-busy] .collection-results__products {
-    opacity: 0.55;
     pointer-events: none;
-  }
-
-  .collection-results__products {
-    transition: opacity 150ms ease;
   }
 
   .collection-header__eyebrow {
@@ -415,26 +414,82 @@
     padding-block: var(--space-6);
   }
 
-  .collection-sort .facets__sort {
-    grid-template-columns: auto minmax(9rem, 12rem);
-    align-items: center;
-    gap: var(--space-2);
-  }
-
   .collection-sort .facets {
+    position: relative;
+    min-block-size: 2.5rem;
     gap: 0;
   }
 
-  .collection-sort .facets__sort label {
-    color: color-mix(in srgb, currentcolor 62%, transparent);
-    font-size: 0.75rem;
+  .collection-sort .facets__sort-menu--popover {
+    position: absolute;
+    z-index: 3;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    min-inline-size: 12rem;
+    border: 0;
   }
 
-  .collection-sort .facets__sort select {
-    min-height: 2.25rem;
-    padding: 0.4rem 2rem 0.4rem 0.65rem;
-    border-color: color-mix(in srgb, var(--color-border) 70%, transparent);
-    font-size: 0.85rem;
+  .collection-sort .facets__sort-menu--popover summary {
+    min-height: 2.5rem;
+    padding: .4rem .75rem;
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 48%, var(--color-border));
+    border-radius: .625rem;
+    background: var(--color-background);
+    font-size: .85rem;
+  }
+
+  .collection-sort .facets__sort-menu--popover summary > span {
+    display: none;
+  }
+
+  .collection-sort .facets__sort-menu--popover summary strong {
+    font: inherit;
+  }
+
+  .collection-sort .facets__sort-menu--popover summary:is(:hover, :focus-visible) {
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+  }
+
+  .collection-sort .facets__sort-menu--popover .facets__sort-options {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: calc(100% + var(--space-2));
+    inset-inline-end: 0;
+    min-inline-size: 100%;
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: .625rem;
+    background: var(--color-background);
+    box-shadow: 0 .75rem 1.5rem color-mix(in srgb, var(--color-foreground) 12%, transparent);
+  }
+
+  .collection-sort .facets__sort-menu--popover .facets__sort-option {
+    position: relative;
+    min-height: 2.4rem;
+    border-radius: .35rem;
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .collection-sort .facets__sort-menu--popover .facets__sort-option:hover {
+    background: var(--color-accent-tint);
+    transform: translateX(.2rem);
+  }
+
+  .collection-sort .facets__sort-menu--popover .facets__sort-option:has(input:checked) {
+    background: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .collection-sort .facets__sort-menu--popover .facets__sort-option:has(input:focus-visible) {
+    box-shadow: var(--focus-ring);
+  }
+
+  .collection-sort .facets__sort-menu--popover .facets__sort-option input[type='radio'] {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    opacity: 0;
   }
 
   .collection-results {
@@ -518,10 +573,6 @@
     .collection-mobile-facets {
       display: block;
       flex: none;
-    }
-
-    .collection-mobile-facets .collection-facets-dialog {
-      --overlay-enter-transform: translate3d(-3rem, 0, 0);
     }
 
     .collection-mobile-facets__open {

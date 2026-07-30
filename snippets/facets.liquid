@@ -4,6 +4,8 @@
   @param {collection} results - Collection whose filters and sort options are rendered.
   @param {string} form_id - Unique ID for labels and controls.
   @param {boolean} [show_sort] - Render the sort selector.
+  @param {boolean} [sort_as_radios] - Render sort options as radios inside a native details disclosure.
+  @param {boolean} [sort_as_menu] - Render the sort disclosure as a desktop popover menu.
   @param {boolean} [sort_only] - Render a sort-only form that preserves active filters.
   @param {boolean} [open_groups] - Expand filter groups on initial render.
 
@@ -13,17 +15,40 @@
 
 <form class="facets" id="{{ form_id }}" action="{{ results.url }}" method="get">
   {% if show_sort %}
-    <div class="facets__sort">
-      <label for="SortBy-{{ form_id }}">{{ 'collections.facets.sort_by' | t }}</label>
-      <select id="SortBy-{{ form_id }}" name="sort_by" data-sort-by>
-        {% assign sort_by = results.sort_by | default: results.default_sort_by %}
+    {% assign sort_by = results.sort_by | default: results.default_sort_by %}
+    {% if sort_as_radios or sort_as_menu %}
+      {% assign selected_sort_label = '' %}
+      {% for option in results.sort_options %}
+        {% if option.value == sort_by %}
+          {% assign selected_sort_label = option.name %}
+        {% endif %}
+      {% endfor %}
+      <details class="facets__sort-menu{% if sort_as_menu %} facets__sort-menu--popover{% endif %}" data-facets-sort-menu>
+        <summary>
+          <span>{{ 'collections.facets.sort_by' | t }}</span>
+          <strong>{{ selected_sort_label | escape }}</strong>
+        </summary>
+        <div class="facets__sort-options">
+          {% for option in results.sort_options %}
+            <label class="facets__sort-option">
+              <input type="radio" name="sort_by" value="{{ option.value | escape }}"{% if option.value == sort_by %} checked{% endif %}>
+              <span>{{ option.name | escape }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </details>
+    {% else %}
+      <div class="facets__sort">
+        <label for="SortBy-{{ form_id }}">{{ 'collections.facets.sort_by' | t }}</label>
+        <select id="SortBy-{{ form_id }}" name="sort_by" data-sort-by>
         {% for option in results.sort_options %}
           <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected{% endif %}>
             {{ option.name | escape }}
           </option>
         {% endfor %}
-      </select>
-    </div>
+        </select>
+      </div>
+    {% endif %}
   {% endif %}
 
   {% if sort_only %}
@@ -117,6 +142,53 @@
   .facets__sort {
     display: grid;
     gap: var(--space-2);
+  }
+
+  .facets__sort-menu {
+    border-block: 1px solid var(--color-border);
+  }
+
+  .facets__sort-menu summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .facets__sort-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .facets__sort-menu summary::after {
+    content: '→';
+    margin-inline-start: auto;
+    transition: transform 150ms ease;
+  }
+
+  .facets__sort-menu[open] summary::after {
+    transform: rotate(90deg);
+  }
+
+  .facets__sort-menu summary strong {
+    font-size: .875rem;
+    font-weight: 500;
+  }
+
+  .facets__sort-options {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: 0 var(--space-4);
+  }
+
+  .facets__sort-option {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 2.75rem;
+    padding-inline: var(--space-2);
   }
 
   .facets__group {

@@ -62,6 +62,9 @@
     {% section 'cart-drawer' %}
     {% if template.name == 'index' %}
       <script src="{{ 'aos-home.js' | asset_url }}" defer></script>
+      <script src="{{ 'gsap-3.13.0.min.js' | asset_url }}" defer></script>
+      <script src="{{ 'scroll-trigger-3.13.0.min.js' | asset_url }}" defer></script>
+      <script src="{{ 'home-reveal.js' | asset_url }}" defer></script>
     {% endif %}
     <script src="{{ 'footer-panel.js' | asset_url }}" defer></script>
     <script src="{{ 'overlay-motion.js' | asset_url }}" defer></script>
