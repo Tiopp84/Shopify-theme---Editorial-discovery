@@ -5,9 +5,23 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/page
 {% endcomment %}
 
-<h1>{{ page.title }}</h1>
+<section class="page-template" aria-labelledby="PageTitle-{{ section.id }}">
+  <header class="page-template__header">
+    <h1 id="PageTitle-{{ section.id }}">{{ page.title | escape }}</h1>
+  </header>
 
-{{ page.content }}
+  {% if page.content != blank %}
+    <div class="page-template__content rte">{{ page.content }}</div>
+  {% endif %}
+</section>
+
+{% stylesheet %}
+  .page-template { margin: var(--space-8) auto; max-inline-size: min(100% - (var(--page-margin) * 2), 42rem); }
+  .page-template__header h1 { font-size: clamp(2.25rem, 4.25vw, 3.5rem); letter-spacing: -.03em; line-height: 1.02; margin: 0; max-inline-size: 16ch; }
+  .page-template__content { font-size: 1.0625rem; line-height: 1.75; margin-block-start: var(--space-5); }
+  .page-template__content > :first-child { margin-block-start: 0; }
+  .page-template__content > :last-child { margin-block-end: 0; }
+{% endstylesheet %}
 
 {% schema %}
 {

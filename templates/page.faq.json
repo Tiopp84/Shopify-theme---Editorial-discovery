@@ -1,0 +1,7 @@
+{
+  "sections": {
+    "main": { "type": "page", "settings": {} },
+    "faq": { "type": "faq", "settings": {} }
+  },
+  "order": ["main", "faq"]
+}
