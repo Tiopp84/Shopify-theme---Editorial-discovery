@@ -7,20 +7,17 @@
   elsif section.settings.media_ratio == 'landscape'
     assign media_ratio = '3 / 2'
   endif
-  if initial_media.preview_image.aspect_ratio != blank
-    assign media_ratio = initial_media.preview_image.aspect_ratio
-  endif
 %}
 
-<section class="main-product{% if section.settings.show_vendor %} main-product--show-vendor{% endif %}{% if section.settings.show_sku %} main-product--show-sku{% endif %}{% if section.settings.show_availability %} main-product--show-availability{% endif %}{% if section.settings.show_quantity %} main-product--show-quantity{% endif %}" data-product-section data-section-id="{{ section.id }}" style="--pdp-media-ratio: {{ media_ratio }};">
+<section class="main-product main-product--gallery-{{ section.settings.gallery_layout }} main-product--media-{{ section.settings.desktop_media_position }}{% if section.settings.show_vendor %} main-product--show-vendor{% endif %}{% if section.settings.show_sku %} main-product--show-sku{% endif %}{% if section.settings.show_availability %} main-product--show-availability{% endif %}{% if section.settings.show_quantity %} main-product--show-quantity{% endif %}" data-product-section data-section-id="{{ section.id }}" data-gallery-layout="{{ section.settings.gallery_layout }}" style="--pdp-media-ratio: {{ media_ratio }}; {% render 'section-color-scheme', scheme: section.settings.color_scheme %}">
   {% if product.media.size > 0 %}
-    <product-gallery class="main-product__gallery" data-product-gallery data-initial-media-id="{{ initial_media.id }}" aria-label="{{ product.title | escape }}">
+    <product-gallery class="main-product__gallery main-product__gallery--{{ section.settings.gallery_layout }}" data-product-gallery data-gallery-layout="{{ section.settings.gallery_layout }}" data-initial-media-id="{{ initial_media.id }}" aria-label="{{ product.title | escape }}">
       <div class="main-product__media-stage">
         {% for media in product.media %}
           <div
             class="main-product__media"
             data-product-media-id="{{ media.id }}"
-            data-product-media-ratio="{{ media.preview_image.aspect_ratio | default: media_ratio }}"
+            data-product-media-ratio="{{ media_ratio }}"
           >
           {% case media.media_type %}
             {% when 'image' %}
@@ -40,12 +37,12 @@
           ></button>
           </div>
         {% endfor %}
-        {% if product.media.size > 1 %}
+        {% if product.media.size > 1 and section.settings.gallery_layout != 'stacked' %}
           <button class="main-product__media-nav main-product__media-nav--previous" type="button" data-product-gallery-stage-previous aria-label="{{ 'products.gallery.previous' | t }}" hidden>←</button>
           <button class="main-product__media-nav main-product__media-nav--next" type="button" data-product-gallery-stage-next aria-label="{{ 'products.gallery.next' | t }}" hidden>→</button>
         {% endif %}
       </div>
-      {% if product.media.size > 1 and section.settings.show_thumbnails %}
+      {% if product.media.size > 1 and section.settings.gallery_layout == 'thumbnails' and section.settings.show_thumbnails %}
         <div class="main-product__thumbnails" aria-label="{{ 'products.gallery.media_selection' | t }}">
           {% for media in product.media %}
             <button
@@ -209,7 +206,14 @@
   .main-product:not(.main-product--show-sku) .main-product__sku,
   .main-product:not(.main-product--show-availability) .main-product__availability,
   .main-product:not(.main-product--show-quantity) :is(.main-product__quantity, .main-product__quantity-note) { display: none; }
-  @media (min-width: 64rem) { .main-product { grid-template-columns: minmax(0, 1.1fr) minmax(20rem, .9fr); align-items: start; } }
+  .main-product__gallery--stacked .main-product__media-stage { aspect-ratio: auto; display: grid; gap: var(--space-3); }
+  .main-product__gallery--stacked .main-product__media { aspect-ratio: var(--pdp-media-ratio); }
+  @media (min-width: 64rem) {
+    .main-product { grid-template-columns: minmax(0, 1.1fr) minmax(20rem, .9fr); align-items: start; }
+    .main-product--media-right .main-product__gallery { grid-column: 2; }
+    .main-product--media-right .main-product__details { grid-column: 1; grid-row: 1; }
+    .main-product--gallery-stacked .main-product__details { position: sticky; inset-block-start: calc(4.5rem + var(--space-6)); }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -232,6 +236,9 @@
       "id": "size_guide_page",
       "label": "Size guide page"
     },
+    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" },
+    { "type": "select", "id": "gallery_layout", "label": "t:labels.product_gallery_layout", "options": [{ "value": "thumbnails", "label": "t:options.product_gallery_layout.thumbnails" }, { "value": "stacked", "label": "t:options.product_gallery_layout.stacked" }], "default": "thumbnails" },
+    { "type": "select", "id": "desktop_media_position", "label": "t:labels.desktop_media_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
     {
       "type": "select",
       "id": "media_ratio",
@@ -274,6 +281,6 @@
       "default": true
     }
   ],
-  "disabled_on": { "groups": ["header", "footer"] }
+  "enabled_on": { "templates": ["product"] }
 }
 {% endschema %}

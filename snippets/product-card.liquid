@@ -3,6 +3,8 @@
 
   @param {product} product - Product represented by the card.
   @param {boolean} [show_vendor] - Show the product vendor above the title.
+  @param {boolean} [show_badge] - Show sale and sold-out badges.
+  @param {boolean} [show_quick_add] - Show the variant-safe quick-add control where this context supports it.
   @param {string} [image_ratio] - CSS aspect ratio used by the media frame.
   @param {string} [sizes] - Responsive image sizes hint.
   @param {number} [card_index] - One-based position in the current result set.
@@ -52,12 +54,12 @@
         {{ 'product-1' | placeholder_svg_tag }}
       </a>
     {% endif %}
-    {% if product.available == false %}
+    {% if show_badge != false and product.available == false %}
       <span class="product-card__status">{{ 'products.card.sold_out' | t }}</span>
-    {% elsif on_sale %}
+    {% elsif show_badge != false and on_sale %}
       <span class="product-card__status">{{ 'products.card.sale' | t }}</span>
     {% endif %}
-    {% if product.available and card_context != 'recommendation' and card_context != 'homepage' %}
+    {% if show_quick_add != false and product.available and card_context != 'recommendation' and card_context != 'homepage' %}
       <div class="product-card__quick-add-wrap">
         {% if available_variant_count == 1 %}
           <quick-add class="product-card__quick-add-shell" data-product-form data-quick-add-direct data-product-url="{{ product.url }}" data-variant-id="{{ quick_add_variant.id }}" data-error="{{ 'products.card.quick_add_error' | t }}">

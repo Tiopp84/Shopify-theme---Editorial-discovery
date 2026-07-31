@@ -12,6 +12,7 @@
     "collection_card": "Collection card",
     "collections_grid": "Collections grid",
     "colors": "Colors",
+    "color_schemes": "Color schemes",
     "column": "Column",
     "content": "Content",
     "custom_section": "Custom section",
@@ -58,6 +59,18 @@
   },
   "labels": {
     "alignment": "Alignment",
+    "color_scheme": "Color scheme",
+    "collection_header_layout": "Collection header layout",
+    "desktop_header_alignment": "Desktop header alignment",
+    "desktop_media_position": "Desktop media position",
+    "featured_edit_card_style": "Card style",
+    "mobile_product_columns": "Mobile products per row",
+    "product_gallery_layout": "Product gallery layout",
+    "show_account": "Show account",
+    "show_announcement": "Show announcement bar",
+    "show_localization": "Show country/language selector",
+    "show_product_badges": "Show sale and sold-out badges",
+    "show_quick_add": "Show Quick Add",
     "background_color": "Background color",
     "columns_desktop": "Desktop columns",
     "content_alignment": "Content alignment",
@@ -68,7 +81,7 @@
     "caption": "Caption",
     "accent": "Accent",
     "border": "Border",
-    "foreground": "Foreground",
+    "foreground": "Text color (foreground)",
     "heading_font": "Heading font",
     "image_ratio": "Image ratio",
     "heading": "Heading",
@@ -76,6 +89,7 @@
     "grid_item_width": "Grid item width",
     "image": "Image",
     "image_overlay": "Image overlay",
+    "image_banner_overlay": "Image banner overlay",
     "image_one": "First image",
     "image_two": "Second image",
     "input_corner_radius": "Input corner radius",
@@ -138,11 +152,8 @@
     "legal_menu": "Legal links menu",
     "show_social": "Show social links",
     "show_newsletter_copy": "Show newsletter supporting text",
-    "show_tag_cloud": "Show tag cloud",
     "social_heading": "Social links heading",
-    "social_menu": "Social links menu",
-    "tag_cloud": "Tag cloud labels",
-    "tag_cloud_heading": "Tag cloud heading"
+    "social_menu": "Social links menu"
   },
   "options": {
     "search_behavior": {
@@ -168,7 +179,13 @@
       "center": "Center",
       "right": "Right"
     },
+    "color_scheme": { "base": "Primary", "soft": "Subtle", "dark": "Contrast" },
+    "collection_header_layout": { "text_only": "Text only", "image_beside": "Image beside text", "image_banner": "Image banner" },
+    "product_gallery_layout": { "thumbnails": "Thumbnails", "stacked": "Stacked media" },
+    "featured_edit_card_style": { "editorial": "Editorial", "compact_commerce": "Compact commerce" },
     "columns": {
+      "one": "1 column",
+      "two": "2 columns",
       "three": "3 columns",
       "four": "4 columns"
     },

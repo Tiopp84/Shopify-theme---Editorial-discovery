@@ -1,0 +1,16 @@
+{% doc %}
+  Emits inherited colour-role custom properties for a merchant-selected section scheme.
+
+  @param {string} [scheme] - One of `base`, `soft`, or `dark`.
+{% enddoc %}
+
+{% liquid
+  assign scheme = scheme | default: 'base'
+%}
+--color-background: var(--scheme-{{ scheme }}-background); --color-foreground: var(--scheme-{{ scheme }}-foreground);
+--color-accent: var(--scheme-{{ scheme }}-accent); --color-border: var(--scheme-{{ scheme }}-border);
+--color-accent-tint: color-mix(in srgb, var(--color-accent) 14%, var(--color-background));
+background-color: var(--color-background); color: var(--color-foreground);
+--button-background: var(--color-foreground); --button-background-hover: color-mix(in srgb, var(--color-foreground) 86%, var(--color-background));
+--button-border-color: var(--color-foreground); --button-color: var(--color-background);
+--button-focus-ring: 0 0 0 0.1875rem color-mix(in srgb, var(--color-accent) 75%, transparent);

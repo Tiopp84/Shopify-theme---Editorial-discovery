@@ -77,30 +77,6 @@
     "name": "t:general.colors",
     "settings": [
       {
-        "type": "color",
-        "id": "background_color",
-        "default": "#F5F3EE",
-        "label": "t:labels.background"
-      },
-      {
-        "type": "color",
-        "id": "foreground_color",
-        "default": "#242119",
-        "label": "t:labels.foreground"
-      },
-      {
-        "type": "color",
-        "id": "accent_color",
-        "default": "#5C6A4B",
-        "label": "t:labels.accent"
-      },
-      {
-        "type": "color",
-        "id": "border_color",
-        "default": "#D6CFBC",
-        "label": "t:labels.border"
-      },
-      {
         "type": "range",
         "id": "input_corner_radius",
         "min": 0,
@@ -110,6 +86,26 @@
         "label": "t:labels.input_corner_radius",
         "default": 0
       }
+    ]
+  },
+  {
+    "name": "t:general.color_schemes",
+    "settings": [
+      { "type": "header", "content": "t:options.color_scheme.base" },
+      { "type": "color", "id": "scheme_base_background", "default": "#FAF8F5", "label": "t:labels.background" },
+      { "type": "color", "id": "scheme_base_foreground", "default": "#1A1A1A", "label": "t:labels.foreground" },
+      { "type": "color", "id": "scheme_base_accent", "default": "#8B7355", "label": "t:labels.accent" },
+      { "type": "color", "id": "scheme_base_border", "default": "#E5DFD6", "label": "t:labels.border" },
+      { "type": "header", "content": "t:options.color_scheme.soft" },
+      { "type": "color", "id": "scheme_soft_background", "default": "#F0EBE3", "label": "t:labels.background" },
+      { "type": "color", "id": "scheme_soft_foreground", "default": "#2B2B2B", "label": "t:labels.foreground" },
+      { "type": "color", "id": "scheme_soft_accent", "default": "#A08D6F", "label": "t:labels.accent" },
+      { "type": "color", "id": "scheme_soft_border", "default": "#D9D0C3", "label": "t:labels.border" },
+      { "type": "header", "content": "t:options.color_scheme.dark" },
+      { "type": "color", "id": "scheme_dark_background", "default": "#1A1A1A", "label": "t:labels.background" },
+      { "type": "color", "id": "scheme_dark_foreground", "default": "#FAF8F5", "label": "t:labels.foreground" },
+      { "type": "color", "id": "scheme_dark_accent", "default": "#C4A876", "label": "t:labels.accent" },
+      { "type": "color", "id": "scheme_dark_border", "default": "#4A4540", "label": "t:labels.border" }
     ]
   }
 ]
