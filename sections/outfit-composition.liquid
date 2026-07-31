@@ -8,7 +8,7 @@
   endfor
 %}
 
-<section class="outfit-composition full-width outfit-composition--media-{{ section.settings.media_position }} outfit-composition--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--outfit-background: {{ section.settings.background_color }}; --outfit-foreground: {{ section.settings.text_color }}; --outfit-columns: {{ section.settings.desktop_columns }};" {% if section.settings.heading != blank %}aria-labelledby="OutfitCompositionHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="outfit-composition full-width outfit-composition--media-{{ section.settings.media_position }} outfit-composition--columns-{{ section.settings.desktop_columns }} outfit-composition--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--outfit-background: {{ section.settings.background_color }}; --outfit-foreground: {{ section.settings.text_color }};" {% if section.settings.heading != blank %}aria-labelledby="OutfitCompositionHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="outfit-composition__lead{% if section.settings.image == blank %} outfit-composition__lead--text-only{% endif %}">
     <div class="outfit-composition__content" data-aos="fade-right">
       {% if section.settings.eyebrow != blank %}
@@ -36,7 +36,7 @@
   </div>
 
   {% if has_products %}
-    <ul class="outfit-composition__items" role="list">
+    <ul class="outfit-composition__items curated-grid--center-incomplete" role="list">
       {% for block in section.blocks %}
         {% if block.settings.product != blank %}
           <li data-aos-product-item data-aos="fade-up" data-aos-delay="{{ forloop.index0 | at_most: 3 | times: 100 }}" {{ block.shopify_attributes }}>
@@ -74,13 +74,15 @@
   @media (min-width: 48rem) {
     .outfit-composition__lead { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
     .outfit-composition__lead--text-only { grid-template-columns: 1fr; }
-    .outfit-composition__items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .outfit-composition__items { display: flex; flex-wrap: wrap; justify-content: center; }
+    .outfit-composition__items > li { flex: 0 0 calc((100% - var(--space-3)) / 2); }
     .outfit-composition--media-left .outfit-composition__lead { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
     .outfit-composition--media-left .outfit-composition__media { grid-column: 1; grid-row: 1; }
     .outfit-composition--media-left .outfit-composition__content { grid-column: 2; }
   }
   @media (min-width: 64rem) {
-    .outfit-composition__items { grid-template-columns: repeat(var(--outfit-columns, 4), minmax(0, 1fr)); }
+    .outfit-composition--columns-3 .outfit-composition__items > li { flex-basis: calc((100% - var(--space-3) - var(--space-3)) / 3); }
+    .outfit-composition--columns-4 .outfit-composition__items > li { flex-basis: calc((100% - var(--space-3) - var(--space-3) - var(--space-3)) / 4); }
   }
   @media (max-width: 35rem) {
     .outfit-composition { gap: 0; margin-block-end: var(--space-chapter-mobile); }
@@ -89,7 +91,8 @@
     .outfit-composition h2 { font-family: var(--font-primary--family); font-size: 1.25rem; font-style: normal; font-weight: 500; letter-spacing: -.015em; }
     .outfit-composition__body { font-size: .625rem; max-width: none; }
     .outfit-composition__media { aspect-ratio: 16 / 9; margin-block-start: var(--space-3); }
-    .outfit-composition__items { gap: var(--space-3); grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: var(--space-5) var(--page-margin); }
+    .outfit-composition__items { gap: var(--space-3); margin: 0; padding: var(--space-5) var(--page-margin); }
+    .outfit-composition__items > li { flex: 0 0 calc((100% - var(--space-3)) / 2); }
     .outfit-composition .product-card__decision { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
     .outfit-composition .product-card__title { font-size: .55rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .outfit-composition .product-card__price { font-size: .6875rem; justify-content: flex-start; text-align: start; }
