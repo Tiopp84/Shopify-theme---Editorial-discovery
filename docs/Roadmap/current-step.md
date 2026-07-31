@@ -16,7 +16,7 @@
 | Trường | Giá trị |
 |---|---|
 | Cập nhật lần cuối | 2026-07-31 (Asia/Ho_Chi_Minh) |
-| Phase | Phase 7 — Differentiation |
+| Phase | Phase 8 — Secondary templates |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
@@ -24,7 +24,7 @@
 
 ## Mục tiêu đang thực hiện
 
-Triển khai Phase 7 Differentiation: editorial hero, shoppable story và outfit composition theo contract đã khóa; giữ Shopify product/cart/checkout là nguồn sự thật.
+Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các template phụ với dữ liệu thật/rỗng, giữ Shopify là nguồn sự thật và không mở rộng scope ngoài roadmap đã khóa.
 
 ## Đã hoàn thành
 
@@ -53,6 +53,10 @@ Triển khai Phase 7 Differentiation: editorial hero, shoppable story và outfit
 - [x] Review Phase 2 exit criteria: clean development-store render, local validator, Theme Check và CI đều đạt; cho phép chuyển sang Phase 3.
 
 ## Đang thực hiện
+
+- [x] Phase 7 — Differentiation được owner tạm chấp nhận hoàn tất ngày 2026-07-31. Editorial hero, shoppable story và outfit composition đã có vertical slice theo contract; các Shopify-preview, Theme Editor và fixture evidence chưa có vẫn được giữ là regression/deferred work, không chặn việc bắt đầu Phase 8.
+
+- [x] Phase 8 Page/contact/FAQ static vertical slice: `page.liquid` là reading composition server-rendered; `contact-form` dùng Shopify native contact form với success/error POST fallback; `faq` dùng native `details`/`summary`; `page.contact` và `page.faq` là alternate templates rõ ràng. Không có JavaScript/controller mới. Static gate pass: validator (102 files, 157 storefront keys, 232 schema keys), Theme Check (73 files, zero offenses) và `git diff --check`, 2026-07-31. Shopify preview, Theme Editor và real/empty-data evidence vẫn pending.
 
 - [x] Article được giản lược về một composition cố định: hierarchy title/context → media hỗ trợ → body; sidebar chỉ có Author và chỉ render khi profile được nhập, không còn layout/alignment toggle hay product surface trong Article. Dưới Article, section `related-stories` hiển thị tối đa bốn bài khác từ cùng blog, card ảnh/title/date và không commerce interaction. Sau khi owner xóa section type cũ trong Theme Editor, source đã đổi hẳn từ `shop-the-story` sang `related-stories`; không còn compatibility schema/type. Related grid dùng track 14–16rem và ảnh 3:2, nên 1–4 bài đều cân đối. Static gate pass: validator (98 files, 149 storefront keys, 226 schema keys), Theme Check (69 files, zero offenses) và `git diff --check`, 2026-07-31; Theme Editor/lifecycle evidence vẫn pending.
 
@@ -226,12 +230,14 @@ Triển khai Phase 7 Differentiation: editorial hero, shoppable story và outfit
 
 ## Việc tiếp theo — theo thứ tự
 
-1. On Shopify preview, verify homepage motion at desktop, 1024 px, 768 px, 375 px and 320 px: slow/fast/reverse scroll, reduced motion, loaded/blocked JavaScript, and Theme Editor add/remove/reorder/rapid setting changes. Confirm standard sections do not pause, snap or replay, while Pinned Visual Story retains its isolated choreography.
-2. On Shopify preview, verify cart drawer at desktop, 375 and 320 px: open it after the page has scrolled; drag/wheel beyond both ends of the drawer body; close with Close, Escape and backdrop; then confirm the page returns to exactly its prior position without a bottom gap or scroll bleed.
-3. Configure real hero/story/composition images, links and product blocks in Theme Editor, then run the Phase 7 visual gate at 768×1024, 820×1180, 1024×768, desktop, 375 and 320 px. Record long-copy, missing-resource, product-state, keyboard, zoom and Theme Editor lifecycle evidence before closing Phase 7.
-4. Khi một accelerated checkout provider hợp lệ được bật, chạy và ghi smoke test native handoff; khi có tracked deny-oversell fixture, chạy lại inventory-preflight row của Cart runbook.
-5. Khi merchant thêm selling plan, Shopify-hosted/external video hoặc 3D model, chạy lại rows NOT EVIDENCED của PDP runbook.
-6. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
+1. Trên Shopify preview, gán `page.contact` và `page.faq` cho hai Page fixtures rồi kiểm tra Page base, Contact success/error/no-JS và FAQ empty/long blocks tại 320/375/768/1024/desktop, keyboard, zoom, reduced motion và Theme Editor lifecycle.
+2. Triển khai vertical slice 404, Password và Gift card theo inventory tại [`../Specifications/secondary-templates-contract.md`](../Specifications/secondary-templates-contract.md), giữ native Shopify recovery/form/balance ownership và no-JS first.
+3. Hoàn thiện các secondary template còn thiếu theo inventory tại [`../Specifications/secondary-templates-contract.md`](../Specifications/secondary-templates-contract.md); giữ Blog/Article composition hiện có là điểm xuất phát và không tái sử dụng product/cart controller ở content surface.
+3. Trên Shopify preview, chạy Phase 8 gate cho từng template với dữ liệu thật và rỗng, long content, missing image/resource, 320/375/768/1024/desktop, keyboard, zoom, reduced motion và Theme Editor lifecycle. Ghi evidence trước khi đóng Phase 8.
+4. Deferred regression: verify homepage motion at desktop, 1024 px, 768 px, 375 px and 320 px; verify cart drawer at desktop, 375 and 320 px after page scroll; and run the Phase 7 visual gate after real hero/story/composition resources are configured.
+5. Khi một accelerated checkout provider hợp lệ được bật, chạy và ghi smoke test native handoff; khi có tracked deny-oversell fixture, chạy lại inventory-preflight row của Cart runbook.
+6. Khi merchant thêm selling plan, Shopify-hosted/external video hoặc 3D model, chạy lại rows NOT EVIDENCED của PDP runbook.
+7. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
 
 ## Nhật ký phiên làm việc
 

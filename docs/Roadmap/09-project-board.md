@@ -7,7 +7,7 @@ Cập nhật ít nhất mỗi tuần.
 | Field | Value |
 |---|---|
 | Overall | IN PROGRESS |
-| Current phase | Phase 7 — Differentiation |
+| Current phase | Phase 8 — Secondary templates |
 | Target submission | TBD |
 | Product/Design/Engineering/QA/Support owners | Project owner (single-owner plan); Codex supports planning/documentation |
 
@@ -31,8 +31,8 @@ Cập nhật ít nhất mỗi tuần.
 | Research/design | COMPLETE FOR FOUNDATION | Project owner | Visual refinement continues during component reviews |
 | Architecture/shell | COMPLETE FOR M2 | Project owner | Continue component refinement during downstream reviews |
 | Discovery/product/cart | COMPLETE FOR CURRENT FIXTURES | Project owner | Deferred accelerated-checkout and inventory-preflight regression when eligible fixtures exist |
-| Differentiation | IN PROGRESS | Project owner | Three consistent editorial/shoppable experiences across presets |
-| Content/templates | PLANNED | Project owner | Feature complete — 2026-12-27 |
+| Differentiation | TEMPORARILY COMPLETE | Project owner | Deferred Shopify-preview/Theme Editor and real-resource regression evidence remains open |
+| Content/templates | IN PROGRESS | Project owner | Required secondary templates render with real and empty data |
 | Accessibility/performance | PLANNED | Project owner | Hardening complete — 2027-01-10 |
 | Demo/docs/support | PLANNED | Project owner | Commercial ready — 2027-01-10 |
 | Submission | PLANNED | Project owner | Release gate signed — TBD |
