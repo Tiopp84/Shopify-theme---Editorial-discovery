@@ -3,7 +3,7 @@
   <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
 {% endif %}
 
-<header-shell class="header-shell full-width{% if section.settings.sticky_header %} header-shell--sticky{% endif %}">
+<header-shell class="header-shell full-width header-shell--desktop-{{ section.settings.desktop_alignment }}{% if section.settings.sticky_header %} header-shell--sticky{% endif %}" style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %}">
   <header class="header-shell__inner">
     <button
       class="header-shell__icon-button header-shell__menu-button"
@@ -61,11 +61,31 @@
         </a>
       {% endif %}
 
-      {% if shop.customer_accounts_enabled %}
+      {% if section.settings.show_account and shop.customer_accounts_enabled %}
         <a class="header-shell__icon-button header-shell__account" href="{{ routes.account_url }}">
           <span class="visually-hidden">{{ 'customer.account' | t }}</span>
           {% render 'icon', name: 'account' %}
         </a>
+      {% endif %}
+
+      {% if section.settings.show_localization and localization.available_countries.size > 1 or section.settings.show_localization and localization.available_languages.size > 1 %}
+        <details class="header-shell__localization">
+          <summary>{{ localization.country.iso_code | default: localization.language.iso_code }}</summary>
+          <div class="header-shell__localization-panel">
+            {% if localization.available_countries.size > 1 %}
+              {% form 'localization', class: 'header-shell__localization-form' %}
+                <label for="HeaderCountry-{{ section.id }}">{{ 'localization.country' | t }}</label>
+                <select id="HeaderCountry-{{ section.id }}" name="country_code" onchange="this.form.submit()">{% for country in localization.available_countries %}<option value="{{ country.iso_code }}"{% if country.iso_code == localization.country.iso_code %} selected{% endif %}>{{ country.name }} ({{ country.currency.iso_code }})</option>{% endfor %}</select>
+              {% endform %}
+            {% endif %}
+            {% if localization.available_languages.size > 1 %}
+              {% form 'localization', class: 'header-shell__localization-form' %}
+                <label for="HeaderLanguage-{{ section.id }}">{{ 'localization.language' | t }}</label>
+                <select id="HeaderLanguage-{{ section.id }}" name="locale_code" onchange="this.form.submit()">{% for language in localization.available_languages %}<option value="{{ language.iso_code }}"{% if language.iso_code == localization.language.iso_code %} selected{% endif %}>{{ language.endonym_name }}</option>{% endfor %}</select>
+              {% endform %}
+            {% endif %}
+          </div>
+        </details>
       {% endif %}
 
       <a class="header-shell__icon-button" href="{{ routes.cart_url }}" data-cart-open>
@@ -115,7 +135,7 @@
       <span>{{ 'cart.title' | t }}</span>
       <span class="header-shell__task-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
     </a>
-    {% if shop.customer_accounts_enabled %}
+    {% if section.settings.show_account and shop.customer_accounts_enabled %}
       <a class="header-shell__task" href="{{ routes.account_url }}">
         {% render 'icon', name: 'account' %}
         <span>{{ 'customer.account' | t }}</span>
@@ -245,6 +265,8 @@
   }
 
   @media (min-width: 64rem) {
+    .header-shell--desktop-centered .header-shell__inner { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+    .header-shell--desktop-centered .header-shell__desktop-nav { justify-self: center; }
     .header-shell--compact {
       background: transparent;
       border-block-end-color: transparent;
@@ -445,6 +467,13 @@
     align-items: center;
     gap: var(--space-2);
   }
+
+  .header-shell__localization { position: relative; }
+  .header-shell__localization summary { cursor: pointer; font-size: .7rem; letter-spacing: .08em; list-style: none; padding: var(--space-2); text-transform: uppercase; }
+  .header-shell__localization summary::-webkit-details-marker { display: none; }
+  .header-shell__localization-panel { background: var(--color-background); border: 1px solid var(--color-border); display: grid; gap: var(--space-3); inset-block-start: calc(100% + var(--space-2)); inset-inline-end: 0; min-inline-size: 15rem; padding: var(--space-3); position: absolute; z-index: 31; }
+  .header-shell__localization-form { display: grid; font-size: .75rem; gap: var(--space-1); }
+  .header-shell__localization-form select { background: var(--color-background); color: var(--color-foreground); font-size: .75rem; min-block-size: 2.25rem; }
 
   .header-shell__icon-button {
     position: relative;
@@ -729,6 +758,8 @@
       display: none;
     }
 
+    .header-shell__localization { display: none; }
+
     .header-shell__menu-button {
       grid-column: 1;
       grid-row: 1;
@@ -979,6 +1010,10 @@
       "id": "menu",
       "label": "t:labels.menu"
     },
+    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" },
+    { "type": "select", "id": "desktop_alignment", "label": "t:labels.desktop_header_alignment", "options": [{ "value": "left", "label": "t:options.alignment.left" }, { "value": "centered", "label": "t:options.alignment.center" }], "default": "left" },
+    { "type": "checkbox", "id": "show_account", "label": "t:labels.show_account", "default": true },
+    { "type": "checkbox", "id": "show_localization", "label": "t:labels.show_localization", "default": true },
     {
       "type": "checkbox",
       "id": "sticky_header",
@@ -1001,6 +1036,7 @@
       ],
       "default": "drawer"
     }
-  ]
+  ],
+  "enabled_on": { "groups": ["header"] }
 }
 {% endschema %}

@@ -43,7 +43,7 @@
 {% schema %}
 {
   "name": "t:general.custom_section",
-  "blocks": [{ "type": "@theme" }],
+  "blocks": [{ "type": "text" }, { "type": "group" }],
   "settings": [
     {
       "type": "image_picker",
@@ -51,6 +51,7 @@
       "label": "t:labels.background"
     }
   ],
+  "enabled_on": { "templates": ["index", "page", "article", "blog"] },
   "presets": [
     {
       "name": "t:general.custom_section"

@@ -1,10 +1,10 @@
-{% if section.settings.text != blank %}
+{% if section.settings.show_announcement and section.settings.text != blank %}
   {% assign marquee_repetitions = section.settings.marquee_repetitions | default: 3 %}
   <div
     class="announcement-bar full-width{% if section.settings.enable_marquee %} announcement-bar--marquee{% endif %}"
     role="region"
     aria-label="{{ 'accessibility.announcement' | t }}"
-    style="--announcement-background: {{ section.settings.background_color | default: '#242119' }}; --announcement-color: {{ section.settings.text_color | default: '#F5F3EE' }}; --announcement-min-height: {{ section.settings.bar_height | default: 32 }}px; --announcement-font-size: {{ section.settings.text_size | default: 12 }}px; --announcement-marquee-duration: {{ section.settings.marquee_speed | default: 18 }}s;"
+    style="--announcement-background: {{ section.settings.background_color | default: '#1A1A1A' }}; --announcement-color: {{ section.settings.text_color | default: '#FAF8F5' }}; --announcement-min-height: {{ section.settings.bar_height | default: 32 }}px; --announcement-font-size: {{ section.settings.text_size | default: 12 }}px; --announcement-marquee-duration: {{ section.settings.marquee_speed | default: 18 }}s;"
     {{ section.shopify_attributes }}
   >
     {% if section.settings.enable_marquee %}
@@ -78,11 +78,12 @@
 {
   "name": "t:general.announcement_bar",
   "settings": [
+    { "type": "checkbox", "id": "show_announcement", "label": "t:labels.show_announcement", "default": true },
     { "type": "text", "id": "text", "label": "t:labels.text", "default": "Complimentary delivery over $150" },
     { "type": "url", "id": "link", "label": "t:labels.link" },
     { "type": "header", "content": "t:general.colors" },
-    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#242119" },
-    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#F5F3EE" },
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#1A1A1A" },
+    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#FAF8F5" },
     { "type": "range", "id": "bar_height", "label": "t:labels.bar_height", "min": 28, "max": 72, "step": 2, "unit": "px", "default": 32 },
     { "type": "range", "id": "text_size", "label": "t:labels.text_size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
     { "type": "header", "content": "t:labels.marquee" },
@@ -100,6 +101,7 @@
       "default": "18"
     }
   ],
+  "enabled_on": { "templates": ["*"], "groups": ["header"] },
   "presets": [{ "name": "t:general.announcement_bar" }]
 }
 {% endschema %}

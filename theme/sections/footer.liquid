@@ -1,6 +1,5 @@
 {% liquid
   assign footer_logo_width = section.settings.logo_width | times: 2
-  assign footer_tags = section.settings.tag_cloud | split: ','
   assign has_footer_menu = false
   for block in section.blocks
     if block.type == 'footer-menu' and block.settings.menu != blank
@@ -12,7 +11,7 @@
 
 <footer
   class="footer full-width footer--spacing-{{ section.settings.footer_spacing }}{% unless has_footer_menu %} footer--without-menu{% endunless %}{% unless section.settings.show_newsletter_copy %} footer--newsletter-copy-hidden{% endunless %}"
-  style="--footer-background: {{ section.settings.background_color | default: '#242424' }}; --footer-color: {{ section.settings.text_color | default: '#F4F1EA' }}; --footer-accent: {{ section.settings.accent_color | default: '#EAB84E' }}; --footer-base-background: {{ section.settings.base_background_color | default: '#171717' }};"
+  style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %} --footer-background: var(--color-background); --footer-color: var(--color-foreground); --footer-accent: var(--color-accent); --footer-base-background: color-mix(in srgb, var(--color-background) 86%, #000);"
   {% if section.settings.enable_panel_transition != false %}data-footer-panel{% endif %}
   {{ section.shopify_attributes }}
 >
@@ -35,23 +34,9 @@
         {% content_for 'blocks' %}
       </div>
 
-      {% if section.settings.show_tag_cloud or section.settings.show_social %}
+      {% if section.settings.show_social %}
         <div class="footer__aside">
-          {% if section.settings.show_tag_cloud and section.settings.tag_cloud != blank %}
-            <section class="footer__tag-cloud" aria-labelledby="FooterTags-{{ section.id }}">
-              {% if section.settings.tag_cloud_heading != blank %}
-                <h2 id="FooterTags-{{ section.id }}">{{ section.settings.tag_cloud_heading | escape }}</h2>
-              {% endif %}
-              <div class="footer__tags">
-                {% for tag in footer_tags %}
-                  {% assign clean_tag = tag | strip %}
-                  {% if clean_tag != blank %}<span>{{ clean_tag | escape }}</span>{% endif %}
-                {% endfor %}
-              </div>
-            </section>
-          {% endif %}
-
-          {% if section.settings.show_social and section.settings.social_menu != blank %}
+          {% if section.settings.social_menu != blank %}
             <nav class="footer__social" aria-label="{{ section.settings.social_heading | escape }}">
               {% if section.settings.social_heading != blank %}<h2>{{ section.settings.social_heading | escape }}</h2>{% endif %}
               <ul role="list">
@@ -136,8 +121,6 @@
   .footer .newsletter__form input::placeholder { color: color-mix(in srgb, var(--footer-color, var(--color-background)) 48%, transparent); }
   .footer .newsletter__form button { background: var(--footer-accent, var(--color-accent)); border-color: var(--footer-accent, var(--color-accent)); color: var(--footer-background, var(--color-foreground)); min-block-size: 2.75rem; padding-inline: 1rem; }
   .footer__aside { align-content: start; display: grid; gap: var(--space-7); }
-  .footer__tags { display: flex; flex-wrap: wrap; gap: .45rem; }
-  .footer__tags span { border: 1px solid color-mix(in srgb, var(--footer-color, var(--color-background)) 26%, transparent); color: color-mix(in srgb, var(--footer-color, var(--color-background)) 82%, transparent); font-size: .625rem; letter-spacing: .04em; padding: .38rem .52rem; text-transform: uppercase; }
   .footer__social ul { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; margin: 0; padding: 0; }
   .footer__social a { align-items: center; border: 1px solid color-mix(in srgb, var(--footer-color, var(--color-background)) 26%, transparent); color: inherit; display: inline-flex; font-size: .625rem; font-weight: 700; height: 1.9rem; justify-content: center; text-decoration: none; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; width: 1.9rem; }
   .footer__social a:is(:hover, :focus-visible) { background: var(--footer-accent, var(--color-accent)); border-color: var(--footer-accent, var(--color-accent)); color: var(--footer-background, var(--color-foreground)); }
@@ -162,25 +145,20 @@
   "settings": [
     { "type": "header", "content": "t:labels.footer_brand" },
     { "type": "image_picker", "id": "logo", "label": "t:labels.logo" },
+    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "dark" },
     { "type": "range", "id": "logo_width", "label": "t:labels.logo_width", "min": 60, "max": 240, "step": 10, "unit": "px", "default": 120 },
     { "type": "richtext", "id": "brand_description", "label": "t:labels.brand_description" },
     { "type": "header", "content": "t:labels.footer_content" },
     { "type": "checkbox", "id": "show_newsletter_copy", "label": "t:labels.show_newsletter_copy", "default": false },
-    { "type": "checkbox", "id": "show_tag_cloud", "label": "t:labels.show_tag_cloud", "default": true },
-    { "type": "text", "id": "tag_cloud_heading", "label": "t:labels.tag_cloud_heading", "default": "Discover" },
-    { "type": "textarea", "id": "tag_cloud", "label": "t:labels.tag_cloud", "default": "New arrivals, Wardrobe essentials, Materials, Gift ideas" },
     { "type": "checkbox", "id": "show_social", "label": "t:labels.show_social", "default": true },
     { "type": "text", "id": "social_heading", "label": "t:labels.social_heading", "default": "Follow us" },
     { "type": "link_list", "id": "social_menu", "label": "t:labels.social_menu" },
     { "type": "link_list", "id": "legal_menu", "label": "t:labels.legal_menu" },
     { "type": "header", "content": "t:labels.footer_style" },
-    { "type": "color", "id": "background_color", "label": "t:labels.footer_background_color", "default": "#242424" },
-    { "type": "color", "id": "text_color", "label": "t:labels.footer_text_color", "default": "#F4F1EA" },
-    { "type": "color", "id": "accent_color", "label": "t:labels.footer_accent_color", "default": "#EAB84E" },
-    { "type": "color", "id": "base_background_color", "label": "t:labels.footer_base_background_color", "default": "#171717" },
     { "type": "select", "id": "footer_spacing", "label": "t:labels.footer_spacing", "options": [{ "value": "compact", "label": "t:options.spacing.compact" }, { "value": "standard", "label": "t:options.spacing.standard" }, { "value": "spacious", "label": "t:options.spacing.spacious" }], "default": "standard" },
     { "type": "checkbox", "id": "show_payment_icons", "label": "t:labels.show_payment_icons", "default": true },
     { "type": "checkbox", "id": "enable_panel_transition", "label": "t:labels.enable_footer_panel_transition", "default": true }
-  ]
+  ],
+  "enabled_on": { "groups": ["footer"] }
 }
 {% endschema %}

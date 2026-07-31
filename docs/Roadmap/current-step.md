@@ -15,7 +15,7 @@
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-07-27 (Asia/Bangkok) |
+| Cập nhật lần cuối | 2026-07-31 (Asia/Ho_Chi_Minh) |
 | Phase | Phase 7 — Differentiation |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
@@ -53,6 +53,10 @@ Triển khai Phase 7 Differentiation: editorial hero, shoppable story và outfit
 - [x] Review Phase 2 exit criteria: clean development-store render, local validator, Theme Check và CI đều đạt; cho phép chuyển sang Phase 3.
 
 ## Đang thực hiện
+
+- [x] Refactor placement governance cho section/block: mọi Liquid section giờ bắt buộc có `enabled_on` hoặc `disabled_on`, được repository validator kiểm tra ở mỗi lần thêm mới; Header/Footer chỉ vào section group tương ứng, static commerce/content sections chỉ vào template owner, các editorial sections (bao gồm Pinned Visual Story) chỉ vào `index`, Product recommendations chỉ vào `product`. Announcement bar là ngoại lệ có chủ đích: dùng được trong Header group và body của mọi JSON template. Custom section và Group đổi từ generic `@theme` sang allowlist `text`/`group`, nên Product blocks chỉ còn xuất hiện trong Product section và Newsletter/Footer menu chỉ còn trong Footer. Validator, Theme Check và `git diff --check` pass, 2026-07-31; cần smoke test Theme Editor Add section/blocks để xác nhận picker hiển thị đúng trên Shopify preview.
+
+- [x] Mở rộng merchant decisions có chọn lọc cho shell, catalog và PDP: global Primary/Subtle/Contrast schemes và section-scoped inherited colour roles cho các surface nền lớn; defaults Editorial Minimal là Primary `#FAF8F5/#1A1A1A/#8B7355/#E5DFD6`, Subtle `#F0EBE3/#2B2B2B/#A08D6F/#D9D0C3`, Contrast `#1A1A1A/#FAF8F5/#C4A876/#4A4540`. Mỗi scheme có Background và Text color (foreground) riêng; helper section áp trực tiếp cả background lẫn text color, nên text không kế thừa màu cũ sau khi merchant đổi scheme. Announcement bar vẫn có background/text độc lập vì đây là utility accent, không bị bó vào ba scheme. Collection có 1/2 cột compact, vendor/badge/variant-safe Quick Add, header text/beside/banner với text-only fallback; Header có desktop left/center và account/localization/announcement visibility; PDP có thumbnails/stacked gallery, media left/right và sticky product details ở desktop chỉ khi gallery stacked, mà không đổi variant/media ownership; media ratio luôn áp vào gallery frame, không còn bị aspect ratio ảnh gốc ghi đè. Featured Edit có editorial/compact-commerce cùng ratio theo context. Footer preset và tag cloud bị loại khỏi scope/theme editor. Không thêm px/duration/easing control hoặc controller mới. Stacked gallery giữ toàn bộ media server-rendered và variant featured-media chỉ cập nhật selected state, không ẩn media. Static gate pass: JavaScript syntax, validator (96 files, 145 storefront keys, 208 schema keys), Theme Check (67 files, zero offenses) và `git diff --check`, 2026-07-31. Shopify preview và Theme Editor lifecycle evidence cho các setting mới vẫn pending.
 
 - [x] Chốt inventory không dùng Storefront API/token: PDP vẫn chỉ hiển thị Available/Sold out; ngay trước Ajax add, PDP đọc `cart.js` mới nhất và render lại selected variant qua Online Store Section Rendering để kiểm tra `requested ≤ inventory hiện tại − quantity cùng variant trong cart`. Nếu vượt, PDP chặn add, không mở drawer và báo lỗi tại form. Cart vẫn phản hồi local ngay; `cart/change.js`/`cart/add.js` là xác nhận cuối cùng cho race condition tồn kho và rollback về last confirmed khi Shopify từ chối.
 
