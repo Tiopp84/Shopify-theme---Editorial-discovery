@@ -6,7 +6,7 @@
   assign product_count = featured_collection.products_count | at_most: section.settings.product_limit
 %}
 
-<section class="featured-edit full-width featured-edit--{{ section.settings.card_style }} featured-edit--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--featured-edit-background: var(--color-background); --featured-edit-columns: {{ section.settings.desktop_columns }}; {% render 'section-color-scheme', scheme: section.settings.color_scheme %}" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="featured-edit full-width featured-edit--{{ section.settings.card_style }} featured-edit--columns-{{ section.settings.desktop_columns }} featured-edit--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--featured-edit-background: var(--color-background); {% render 'section-color-scheme', scheme: section.settings.color_scheme %}" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <header class="featured-edit__header" data-aos="fade-down">
     <div class="featured-edit__intro">
       {% if section.settings.eyebrow != blank %}<p class="featured-edit__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
@@ -21,7 +21,7 @@
   </header>
 
   {% if featured_collection != blank and featured_collection.products_count > 0 %}
-    <ul class="featured-edit__grid" role="list">
+    <ul class="featured-edit__grid curated-grid--center-incomplete" role="list">
       {% for product in featured_collection.products limit: section.settings.product_limit %}
         <li data-aos-product-item data-aos="fade-up" data-aos-delay="{{ forloop.index0 | at_most: 3 | times: 100 }}">{% render 'product-card', product: product, card_context: 'homepage', card_index: forloop.index, card_count: product_count, image_ratio: section.settings.image_ratio, sizes: '(min-width: 64rem) 23vw, (min-width: 48rem) 44vw, 46vw' %}</li>
       {% endfor %}
@@ -42,8 +42,8 @@
   .featured-edit__link::after { content: '→'; font-size: 1.15rem; font-weight: 400; line-height: .7; transition: transform 180ms ease; }
   .featured-edit__link:is(:hover, :focus-visible) { color: var(--color-accent); }
   .featured-edit__link:is(:hover, :focus-visible)::after { transform: translateX(.25rem); }
-  .featured-edit__grid { --featured-edit-active-columns: 2; align-items: start; display: grid; gap: clamp(var(--space-3), 2vw, var(--space-5)); grid-template-columns: repeat(var(--featured-edit-active-columns), minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
-  .featured-edit__grid > li { min-width: 0; }
+  .featured-edit__grid { --featured-edit-grid-gap: clamp(var(--space-3), 2vw, var(--space-5)); align-items: start; display: flex; flex-wrap: wrap; gap: var(--featured-edit-grid-gap); justify-content: center; list-style: none; margin: 0; padding: 0; }
+  .featured-edit__grid > li { flex: 0 0 calc((100% - var(--featured-edit-grid-gap)) / 2); min-width: 0; }
   .featured-edit .product-card { align-content: start; gap: var(--space-3); min-height: 0; }
   .featured-edit .product-card__media { background: color-mix(in srgb, var(--featured-edit-background, var(--color-background)) 82%, white); border: 0; padding: 0; }
   .featured-edit .product-card__media::after { content: none; }
@@ -82,14 +82,15 @@
 
   @media (min-width: 64rem) {
     .featured-edit { padding-inline: clamp(7.5rem, 10vw, 12rem); }
-    .featured-edit__grid { --featured-edit-active-columns: var(--featured-edit-columns, 4); }
+    .featured-edit--columns-3 .featured-edit__grid > li { flex-basis: calc((100% - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap)) / 3); }
+    .featured-edit--columns-4 .featured-edit__grid > li { flex-basis: calc((100% - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap)) / 4); }
   }
   @media (max-width: 47.99rem) {
     .featured-edit { margin-block-end: var(--space-chapter-mobile); padding-block: var(--space-5); }
     .featured-edit__header { gap: var(--space-4); grid-template-columns: minmax(0, 1fr); margin-block-end: var(--space-5); }
     .featured-edit h2 { font-size: 2.25rem; }
     .featured-edit__link { font-size: .5625rem; }
-    .featured-edit__grid { gap: var(--space-3); }
+    .featured-edit__grid { --featured-edit-grid-gap: var(--space-3); }
     .featured-edit .product-card { gap: var(--space-2); }
     .featured-edit .product-card__status { padding: .3rem .4rem; }
     .featured-edit .product-card__content { gap: .35rem; padding-block-start: var(--space-2); }

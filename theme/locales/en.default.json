@@ -6,7 +6,11 @@
   },
   "blog": {
     "article_comments": "Comments",
+    "article_sidebar": "Article sidebar",
+    "author_profile": "Author profile",
     "article_metadata_html": "{{ date }} by {{ author }}",
+    "read_time": "{{ count }} min read",
+    "other_stories": "Other stories",
     "comment_form_body": "Comment",
     "comment_form_email": "Email",
     "comment_form_name": "Name",

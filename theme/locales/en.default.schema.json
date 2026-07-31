@@ -2,6 +2,7 @@
   "general": {
     "404": "Not found",
     "article": "Article",
+    "article_sidebar": "Article sidebar",
     "announcement_bar": "Announcement bar",
     "block": "Block",
     "blog": "Blog",
@@ -38,9 +39,11 @@
     "product_form": "Product form",
     "product_price": "Product price",
     "product_recommendations": "Product recommendations",
+    "product_reassurance": "Product reassurance",
     "product_sku": "Product SKU",
     "product_title": "Product title",
     "product_vendor": "Product vendor",
+    "related_stories": "Related stories",
     "row": "Row",
     "search": "Search",
     "secondary": "Secondary",
@@ -59,7 +62,9 @@
   },
   "labels": {
     "alignment": "Alignment",
+    "article_media_presentation": "Article media presentation",
     "color_scheme": "Color scheme",
+    "blog_card_density": "Article card density",
     "collection_header_layout": "Collection header layout",
     "desktop_header_alignment": "Desktop header alignment",
     "desktop_media_position": "Desktop media position",
@@ -67,10 +72,15 @@
     "mobile_product_columns": "Mobile products per row",
     "product_gallery_layout": "Product gallery layout",
     "show_account": "Show account",
+    "show_author": "Show author",
+    "show_article_media": "Show article media",
     "show_announcement": "Show announcement bar",
+    "show_date": "Show publication date",
     "show_localization": "Show country/language selector",
+    "show_media": "Show article media",
     "show_product_badges": "Show sale and sold-out badges",
     "show_quick_add": "Show Quick Add",
+    "show_read_time": "Show reading time",
     "background_color": "Background color",
     "columns_desktop": "Desktop columns",
     "content_alignment": "Content alignment",
@@ -121,6 +131,10 @@
     "products_per_page": "Products per page",
     "product_limit": "Number of products",
     "recommendation_intent": "Recommendation type",
+    "reassurance_content": "Reassurance content",
+    "reassurance_heading": "Reassurance heading",
+    "reassurance_page": "Policy or care page",
+    "related_stories_heading": "Heading",
     "search_behavior": "Search behavior",
     "show_payment_icons": "Show payment icons",
     "show_collection_image": "Show collection image",
@@ -131,6 +145,10 @@
     "show_availability": "Show availability",
     "show_quantity": "Show quantity selector",
     "show_vendor": "Show vendor",
+    "sidebar_author_bio": "Author bio",
+    "sidebar_author_image": "Author image",
+    "sidebar_author_name": "Author name",
+    "sidebar_author_role": "Author role",
     "section_spacing": "Vertical spacing",
     "story_intro_position": "Story introduction position",
     "sticky_header": "Sticky header",
@@ -156,6 +174,15 @@
     "social_menu": "Social links menu"
   },
   "options": {
+    "article_media_presentation": {
+      "original": "Original image ratio",
+      "portrait": "Portrait crop (4:5)",
+      "landscape": "Landscape crop (16:9)"
+    },
+    "blog_card_density": {
+      "editorial": "Editorial",
+      "compact": "Compact"
+    },
     "search_behavior": {
       "page": "Search page",
       "drawer": "Search drawer"
