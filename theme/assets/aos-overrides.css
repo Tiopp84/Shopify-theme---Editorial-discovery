@@ -1,5 +1,8 @@
 /* Narrivelle keeps AOS entrances short and close to their final layout.
  * The upstream defaults move content 100px, which is too abrupt on compact viewports. */
+/* Each section owns its entrance overflow, so an off-screen stage cannot widen
+ * the document and expose the fixed footer panel behind the page. */
+html.aos-enabled .shopify-section:has(> [data-aos-section]) { overflow-x: clip; }
 html.aos-enabled [data-aos='fade-up'] { transform: translate3d(0, 2rem, 0); }
 html.aos-enabled [data-aos='fade-down'] { transform: translate3d(0, -2rem, 0); }
 html.aos-enabled [data-aos='fade-right'] { transform: translate3d(-2rem, 0, 0); }

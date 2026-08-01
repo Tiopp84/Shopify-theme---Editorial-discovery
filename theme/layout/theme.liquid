@@ -63,12 +63,14 @@
   <body>
     <a class="skip-link" href="#MainContent">{{ 'accessibility.skip_to_content' | t }}</a>
 
-    {% sections 'header-group' %}
+    <div class="site-panel" data-site-panel>
+      {% sections 'header-group' %}
 
-    <main id="MainContent" tabindex="-1">
-      {% render 'breadcrumbs' %}
-      {{ content_for_layout }}
-    </main>
+      <main id="MainContent" tabindex="-1">
+        {% render 'breadcrumbs' %}
+        {{ content_for_layout }}
+      </main>
+    </div>
 
     {% # theme-check-disable ValidScopedCSSClass %}
     <div class="footer-panel-spacer" aria-hidden="true"></div>
