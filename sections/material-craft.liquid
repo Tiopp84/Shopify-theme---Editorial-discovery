@@ -3,11 +3,11 @@
     {% for index in (1..2) %}
       {% assign image_key = 'image_' | append: index %}
       {% assign image = section.settings[image_key] %}
-      <div class="material-craft__image material-craft__image--{{ index }}" data-aos="{% if index == 1 %}fade-right{% else %}fade-up-left{% endif %}"{% if index == 2 %} data-aos-delay="120"{% endif %}>
+      <div class="material-craft__image material-craft__image--{{ index }}"{% unless request.visual_preview_mode %} data-aos="{% if index == 1 %}fade-right{% else %}fade-up-left{% endif %}"{% if index == 2 %} data-aos-delay="120"{% endif %}{% endunless %}>
         {% if image != blank %}
           {% render 'image', image: image, alt: image.alt, width: 1400, widths: '360, 540, 720, 960, 1200, 1400', sizes: '(min-width: 64rem) 32vw, 75vw' %}
         {% else %}
-          {{ 'image' | placeholder_svg_tag: 'material-craft__placeholder' }}
+          <span class="material-craft__placeholder" aria-hidden="true">{{ 'lifestyle-' | append: index | placeholder_svg_tag }}</span>
         {% endif %}
       </div>
     {% endfor %}
@@ -28,7 +28,8 @@
   .material-craft__image { background: var(--color-panel-02); overflow: hidden; }
   .material-craft__image--1 { aspect-ratio: 4 / 5; }
   .material-craft__image--2 { aspect-ratio: 3 / 4; margin-block-end: clamp(1.5rem, 7vw, 7rem); }
-  .material-craft__image .image, .material-craft__image .image > img, .material-craft__placeholder { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
+  .material-craft__image .image, .material-craft__image .image > img, .material-craft__placeholder, .material-craft__placeholder svg { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
+  .material-craft__placeholder { background: var(--color-panel-02); color: color-mix(in srgb, var(--color-foreground) 30%, var(--color-panel-02)); }
   .material-craft__content { display: grid; gap: var(--space-4); max-width: 31rem; }
   .material-craft__eyebrow { font-size: .6875rem; font-weight: 600; letter-spacing: .1em; margin: 0; text-transform: uppercase; }
   .material-craft h2 { font-family: var(--font-campaign); font-size: clamp(2.4rem, 4.1vw, 4.2rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .95; margin: 0; }
@@ -59,6 +60,6 @@
     { "type": "select", "id": "section_spacing", "label": "t:labels.section_spacing", "options": [{ "value": "compact", "label": "t:options.spacing.compact" }, { "value": "standard", "label": "t:options.spacing.standard" }, { "value": "spacious", "label": "t:options.spacing.spacious" }], "default": "standard" }
   ],
   "enabled_on": { "templates": ["index"] },
-  "presets": [{ "name": "t:general.material_craft" }]
+  "presets": [{ "name": "t:general.material_craft", "category": "Campaign & editorial" }]
 }
 {% endschema %}
