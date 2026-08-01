@@ -111,6 +111,7 @@
     "heading_font": "Heading font",
     "heading_size": "Heading size",
     "image_ratio": "Image ratio",
+    "image_fit": "Image fit",
     "heading": "Heading",
     "hotspot_color": "Hotspot color",
     "hotspot_horizontal_position": "Horizontal position",
@@ -233,6 +234,7 @@
       "square": "Square (1:1)",
       "tall": "Tall (3:4)"
     },
+    "image_fit": { "cover": "Cover", "contain": "Contain" },
     "alignment": {
       "left": "Left",
       "center": "Center",
