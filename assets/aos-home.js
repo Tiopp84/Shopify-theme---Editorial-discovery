@@ -13,7 +13,7 @@ class AOSHome {
     this.productStages = new Set();
     this.registerSections(document);
 
-    // The hero is intentionally the sole initial animation. The inline head
+    // The first hero is intentionally the sole initial animation. The inline head
     // bootstrap prepared its AOS state before body paint; two frames guarantee
     // the browser paints that state before adding `aos-animate`.
     requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -78,9 +78,8 @@ class AOSHome {
   }
 
   queueHero() {
-    const hero = [...this.sections].find((section) => section.matches('.editorial-hero'));
+    const hero = [...this.sections].find((section) => section.matches('.editorial-hero, .shoppable-hero'));
     if (hero && this.isVisible(hero)) {
-      hero.classList.add('editorial-hero--media-settled');
       this.queueSection(hero);
     }
   }
@@ -118,6 +117,7 @@ class AOSHome {
   }
 
   queueSection(section) {
+    if (section.matches('.editorial-hero, .shoppable-hero')) section.classList.add('hero--media-settled');
     this.queueStage('section', section);
   }
 
