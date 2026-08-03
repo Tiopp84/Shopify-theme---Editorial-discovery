@@ -93,7 +93,6 @@ Blocks stay scoped to their owner:
 - Product detail blocks are Product-owned and are allowed only by `product.liquid`.
 - Footer menu and newsletter blocks are Footer-owned and are allowed only by `footer.liquid`.
 - Story-product and outfit-item are external Theme Blocks, each allowlisted only by its respective editorial section. Their product presentation is implemented by the shared `product-card` snippet rather than by a generic merchant-facing product block.
-- Generic text/group blocks may appear only in a deliberately constrained flexible-content surface.
 
 Blocks have their own picker categories only when the block picker contains enough distinct merchant choices to benefit from grouping. Block categories do not replace the parent section's allowlist.
 
@@ -138,7 +137,6 @@ This table is the migration target. `Picker` means the section has an addable pr
 | `collections.liquid` | Collections | — | List collections | No | Fixed template owner; always renders the store's collection inventory. |
 | `collection-list.liquid` | Collection list | Products & collections | Home | Yes | Explicit `collection-card` Theme Block allowlist; never substitutes for the all-collections template. |
 | `product-recommendations.liquid` | Product recommendations | Products & collections | Product | Yes | Product-context-only recommendation surface. |
-| `custom-section.liquid` | Custom section | Content | Home, page, article, blog | Yes | Keep block allowlist narrow; it must not become a commerce or shell backdoor. |
 | `related-stories.liquid` | Related stories | Content | Article | No | Fixed article continuation, not a generic product/content grid. |
 | `page.liquid` | Page | — | Page | Fixed | Template reading composition. |
 | `contact-form.liquid` | Contact form | Forms & utility | Page/contact template | No | Fixed native form; only make generally addable after a separate form-placement contract. |
