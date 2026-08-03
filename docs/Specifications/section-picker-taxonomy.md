@@ -135,7 +135,8 @@ This table is the migration target. `Picker` means the section has an addable pr
 | `shoppable-story.liquid` | Shoppable story | Shop the story | Home | Yes | Retain explicit `story-product` allowlist. |
 | `outfit-composition.liquid` | Outfit composition | Shop the story | Home | Yes | Retain independent item state; never represent a bundle. |
 | `featured-edit.liquid` | Featured edit | Products & collections | Home | Yes | Collection-based home merchandising. |
-| `collections.liquid` | Collection list | Products & collections | List collections | Yes | Candidate for broader editorial-template placement only after a separate contract review. |
+| `collections.liquid` | Collections | — | List collections | No | Fixed template owner; always renders the store's collection inventory. |
+| `collection-list.liquid` | Collection list | Products & collections | Home | Yes | Explicit `collection-card` Theme Block allowlist; never substitutes for the all-collections template. |
 | `product-recommendations.liquid` | Product recommendations | Products & collections | Product | Yes | Product-context-only recommendation surface. |
 | `custom-section.liquid` | Custom section | Content | Home, page, article, blog | Yes | Keep block allowlist narrow; it must not become a commerce or shell backdoor. |
 | `related-stories.liquid` | Related stories | Content | Article | No | Fixed article continuation, not a generic product/content grid. |

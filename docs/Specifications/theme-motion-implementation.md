@@ -27,11 +27,11 @@ This is the source of truth for homepage entrance motion.
 | Assets | Homepage loads self-hosted `aos-2.3.4.css`, local `aos-home.js`, and—only for the isolated Pinned Visual Story choreography—self-hosted GSAP Core/ScrollTrigger plus `home-reveal.js`. Collection and List collections load the same local AOS CSS plus `catalog-reveal.js`, which sets the required 400 ms AOS duration before its two-frame reveal. The AOS JavaScript bundle remains intentionally absent. |
 | Hero | Image is visible on first paint for LCP. It makes only a 900 ms scale settle from 1.025 to 1.0; hero text enters with `fade-right` after two render frames. |
 | Section lead | A section root carries `data-aos-section`. Except for the initially visible hero, a lead is considered only after scroll/resize, then runs once when it reaches the 60% viewport line (or the equivalent 40% line when entering from above). |
-| Product/item phase | `data-aos-products` marks a card grid and `data-aos-product-item` marks an individual Shoppable Story row. These start only after their parent section lead and when the item/group itself reaches the trigger line. Pinned Story chapter motion is owned by its dedicated controller, not AOS. |
+| Product/item phase | `data-aos-products` marks a card grid and `data-aos-product-item` marks an individual Shoppable Story row or card. These start only after their parent section lead and when the item/group itself reaches the trigger line. A grid marked `data-aos-sequence="row"` staggers each visible row from left to right; adding `data-aos-trigger="early"` starts card entrances at the 85% viewport line rather than the standard 60%, preventing an empty card footprint on compact screens. Pinned Story chapter motion is owned by its dedicated controller, not AOS. |
 | Sequence | Eligible stages begin independently on their own trigger line. There is no page-wide queue, so a visible section never waits for another section's decorative entrance. Markers are removed after completion, therefore an animated target cannot replay until reload. |
 | Fast scroll | Scroll velocity at or above `0.65 px/ms` uses a 350 ms reveal. |
-| Timing | Standard duration is 400 ms (AOS-like); catch-up is 350 ms. Featured Edit and Outfit Composition cards use independent `fade-up` stages with a 0–300 ms stagger in AOS-supported 100 ms steps. One `IntersectionObserver` reveals each catalog card once when it reaches the lower 18% trigger boundary; cards entering in the same visual row are ordered left-to-right with a bounded 0–300 ms delay. All fade vectors are 2 rem rather than AOS's 100 px default. |
-| Theme Editor | `aos-home.js` unregisters removed sections, product stages and pending timers on `shopify:section:unload`; a loaded section is re-registered from clean state. |
+| Timing | Standard duration is 400 ms (AOS-like); catch-up is 350 ms. Featured Edit, Collection List and Outfit Composition cards use independent `fade-up` stages with a 0–300 ms left-to-right stagger per visual row, in AOS-supported 100 ms steps. One `IntersectionObserver` reveals each catalog card once when it reaches the lower 18% trigger boundary; cards entering in the same visual row are ordered left-to-right with the same bounded delay. All fade vectors are 2 rem rather than AOS's 100 px default. |
+| Theme Editor | `aos-home.js` and `catalog-reveal.js` unregister removed sections, targets and pending timers on `shopify:section:unload`; a loaded section is re-registered from clean state. Section-picker visual previews use `request.visual_preview_mode` to render card placeholders without AOS markers, so preview availability never depends on a runtime animation; section lead text retains its normal entrance marker. |
 | Fallback | The head bootstrap enables the prepared state only when motion is allowed and releases it after three seconds if the controller fails. JavaScript blocked/failed and `prefers-reduced-motion: reduce` leave all content in final visible state. |
 | Scope | Homepage standard entrances plus first-load card entrances on Collection and List collections. Search, predictive search, recommendations, cart, dialogs, product media, forms, prices, availability, focus and scrolling ownership are untouched. |
 
@@ -45,7 +45,7 @@ layout/theme.liquid
 
 sections
   ├─ editorial-hero: text stage + non-blocking media settle
-  ├─ featured-edit / outfit-composition: AOS lead stage → product-grid stage
+  ├─ featured-edit / collection-list / outfit-composition: AOS lead stage → card stage
   ├─ material-craft: AOS image/text stage
   ├─ shoppable-story: lead stage → per-product-row stage
   └─ pinned-visual-story: GSAP intro/media/chapter choreography only
@@ -177,6 +177,8 @@ Liquid blocks
 |---|---|---|
 | `Enable image flip transition` | The active image uses a reversible AOS-style `rotateY`/opacity transition. | Images still map to the active chapter, but switch immediately. |
 | `Enable chapter wheel effect` | Chapters follow the shallow arc; the centred chapter receives full opacity, accent badge/rule and heading colour. | Chapters remain in normal, fully readable flow without arc or active styling. |
+
+**Theme Editor organisation.** The section groups settings as Content → Layout → Motion → Style. Content provides eyebrow, heading, heading size and alignment; alignment changes text inside the intro frame only. Layout provides the left/center/right position of that whole intro frame, image width and image height sliders, media side, plus a **Story chapters** group. That group controls the shared chapter index visibility, chapter heading size, text size and left/center/right alignment for every chapter. Width adjusts the desktop/tablet media-to-text grid ratio; height directly sets the sticky stage. Mobile keeps its in-flow portrait chapter media. The former vertical-spacing control is intentionally absent.
 
 **Geometry and breakpoints.** The sticky media stage is active only from `48rem` upward, including either image-left or image-right two-column layout. JavaScript measures the actual media height with `ResizeObserver` and inserts a top/bottom chapter spacer equal to half that height. This lets the first and final headings travel through the media midpoint. Below `48rem`, the stage is hidden and each chapter renders its own image in document flow; no scroll reader is installed.
 
