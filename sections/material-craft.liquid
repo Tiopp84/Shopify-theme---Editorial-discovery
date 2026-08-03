@@ -1,4 +1,9 @@
-<section class="material-craft full-width material-craft--media-{{ section.settings.media_position }} material-craft--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--material-craft-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+{% liquid
+  assign image_width = section.settings.image_width | default: 58
+  assign text_width = 100 | minus: image_width
+%}
+
+<section class="material-craft full-width material-craft--media-{{ section.settings.media_position }} material-craft--heading-{{ section.settings.heading_size }} material-craft--text-align-{{ section.settings.text_alignment }} material-craft--text-{{ section.settings.text_position }} material-craft--text-size-{{ section.settings.text_size }}" data-aos-section style="--material-craft-background: {{ section.settings.background_color }}; --material-craft-image-height: {{ section.settings.image_height | default: 600 }}px; --material-craft-image-width: {{ image_width }}fr; --material-craft-text-width: {{ text_width }}fr;" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="material-craft__images">
     {% for index in (1..2) %}
       {% assign image_key = 'image_' | append: index %}
@@ -12,7 +17,7 @@
       </div>
     {% endfor %}
   </div>
-  <div class="material-craft__content" data-aos="fade-left" data-aos-delay="80">
+  <div class="material-craft__content"{% unless request.visual_preview_mode %} data-aos="fade-left" data-aos-delay="80"{% endunless %}>
     {% if section.settings.eyebrow != blank %}<p class="material-craft__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
     {% if section.settings.heading != blank %}<h2 id="MaterialCraftHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
     {% if section.settings.text != blank %}<div class="material-craft__text">{{ section.settings.text }}</div>{% endif %}
@@ -22,24 +27,40 @@
 
 {% stylesheet %}
   .material-craft { align-items: center; background: var(--material-craft-background, var(--color-background)); display: grid; gap: clamp(2.5rem, 7vw, 8rem); margin: 0 0 var(--space-chapter); padding-inline: max(var(--page-margin), calc((100vw - var(--page-width)) / 2)); }
-  .material-craft--spacing-compact { margin-block-end: var(--space-6); }
-  .material-craft--spacing-spacious { margin-block-end: calc(var(--space-chapter) + var(--space-5)); padding-block: var(--space-5); }
-  .material-craft__images { align-items: end; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
-  .material-craft__image { background: var(--color-panel-02); overflow: hidden; }
-  .material-craft__image--1 { aspect-ratio: 4 / 5; }
-  .material-craft__image--2 { aspect-ratio: 3 / 4; margin-block-end: clamp(1.5rem, 7vw, 7rem); }
+  .material-craft__images { align-items: end; block-size: var(--material-craft-image-height, 600px); display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+  .material-craft__image { background: var(--color-panel-02); block-size: 100%; overflow: hidden; }
+  .material-craft__image--2 { block-size: 75%; margin-block-end: clamp(1.5rem, 7vw, 7rem); }
   .material-craft__image .image, .material-craft__image .image > img, .material-craft__placeholder, .material-craft__placeholder svg { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
   .material-craft__placeholder { background: var(--color-panel-02); color: color-mix(in srgb, var(--color-foreground) 30%, var(--color-panel-02)); }
   .material-craft__content { display: grid; gap: var(--space-4); max-width: 31rem; }
   .material-craft__eyebrow { font-size: .6875rem; font-weight: 600; letter-spacing: .1em; margin: 0; text-transform: uppercase; }
   .material-craft h2 { font-family: var(--font-campaign); font-size: clamp(2.4rem, 4.1vw, 4.2rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .95; margin: 0; }
+  .material-craft--heading-small h2 { font-size: clamp(1.85rem, 3vw, 2.75rem); }
+  .material-craft--heading-medium h2 { font-size: clamp(2.4rem, 4.1vw, 4.2rem); }
+  .material-craft--heading-large h2 { font-size: clamp(2.8rem, 5.2vw, 5.2rem); }
+  .material-craft--text-align-left .material-craft__content { text-align: start; }
+  .material-craft--text-align-center .material-craft__content { text-align: center; }
+  .material-craft--text-align-right .material-craft__content { text-align: end; }
   .material-craft__text { color: color-mix(in srgb, var(--color-foreground) 74%, var(--color-background)); font-size: .9375rem; line-height: 1.6; }
+  .material-craft--text-size-small .material-craft__text { font-size: .8125rem; }
+  .material-craft--text-size-medium .material-craft__text { font-size: .9375rem; }
+  .material-craft--text-size-large .material-craft__text { font-size: 1.0625rem; }
   .material-craft__text > :first-child { margin-block-start: 0; }
   .material-craft__text > :last-child { margin-block-end: 0; }
   .material-craft__link { background: var(--color-foreground); color: var(--color-background); font-size: .6875rem; font-weight: 600; justify-self: start; letter-spacing: .1em; padding: .95rem 1.35rem; text-decoration: none; text-transform: uppercase; }
+  .material-craft--text-align-center .material-craft__link { justify-self: center; }
+  .material-craft--text-align-right .material-craft__link { justify-self: end; }
   .material-craft__link:is(:hover, :focus-visible) { background: var(--color-accent); }
-  @media (min-width: 64rem) { .material-craft { grid-template-columns: minmax(0, 1.15fr) minmax(18rem, .65fr); } .material-craft--media-right { grid-template-columns: minmax(18rem, .65fr) minmax(0, 1.15fr); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
-  @media (min-width: 48rem) and (max-width: 63.99rem) { .material-craft { grid-template-columns: minmax(0, 1.1fr) minmax(17rem, .9fr); } .material-craft--media-right { grid-template-columns: minmax(17rem, .9fr) minmax(0, 1.1fr); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
+  .material-craft--text-top .material-craft__content { align-self: start; }
+  .material-craft--text-center .material-craft__content { align-self: center; }
+  .material-craft--text-bottom .material-craft__content { align-self: end; }
+  @media (min-width: 64rem) { .material-craft { grid-template-columns: minmax(0, var(--material-craft-image-width)) minmax(18rem, var(--material-craft-text-width)); } .material-craft--media-right { grid-template-columns: minmax(18rem, var(--material-craft-text-width)) minmax(0, var(--material-craft-image-width)); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
+  @media (min-width: 48rem) and (max-width: 63.99rem) { .material-craft { grid-template-columns: minmax(0, var(--material-craft-image-width)) minmax(17rem, var(--material-craft-text-width)); } .material-craft--media-right { grid-template-columns: minmax(17rem, var(--material-craft-text-width)) minmax(0, var(--material-craft-image-width)); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
+  @media (min-width: 48rem) {
+    .material-craft--media-right .material-craft__images { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+    .material-craft--media-right .material-craft__image--1 { grid-column: 2; }
+    .material-craft--media-right .material-craft__image--2 { grid-column: 1; grid-row: 1; }
+  }
   @media (max-width: 63.99rem) { .material-craft { gap: var(--space-5); margin-block-end: var(--space-chapter-mobile); } }
 {% endstylesheet %}
 
@@ -47,17 +68,24 @@
 {
   "name": "t:general.material_craft",
   "settings": [
+    { "type": "header", "content": "t:general.content" },
     { "type": "image_picker", "id": "image_1", "label": "t:labels.image_one" },
     { "type": "image_picker", "id": "image_2", "label": "t:labels.image_two" },
     { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "Material note" },
     { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "The details make the difference" },
+    { "type": "select", "id": "heading_size", "label": "t:labels.heading_size", "options": [{ "value": "small", "label": "t:options.heading_size.small" }, { "value": "medium", "label": "t:options.heading_size.medium" }, { "value": "large", "label": "t:options.heading_size.large" }], "default": "medium" },
     { "type": "richtext", "id": "text", "label": "t:labels.text", "default": "<p>Fabric, finish and proportion are considered together, so everyday pieces feel distinct without asking for attention.</p>" },
+    { "type": "select", "id": "text_size", "label": "t:labels.text_size", "options": [{ "value": "small", "label": "t:options.heading_size.small" }, { "value": "medium", "label": "t:options.heading_size.medium" }, { "value": "large", "label": "t:options.heading_size.large" }], "default": "medium" },
     { "type": "text", "id": "link_label", "label": "t:labels.link_label" },
     { "type": "url", "id": "link", "label": "t:labels.link" },
-    { "type": "header", "content": "t:general.style" },
-    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#F5F3EE" },
+    { "type": "header", "content": "t:general.layout" },
+    { "type": "select", "id": "text_alignment", "label": "t:labels.text_alignment", "options": [{ "value": "left", "label": "t:options.alignment.left" }, { "value": "center", "label": "t:options.alignment.center" }, { "value": "right", "label": "t:options.alignment.right" }], "default": "left" },
+    { "type": "select", "id": "text_position", "label": "t:labels.vertical_content_position", "options": [{ "value": "top", "label": "t:options.vertical_alignment.top" }, { "value": "center", "label": "t:options.vertical_alignment.center" }, { "value": "bottom", "label": "t:options.vertical_alignment.bottom" }], "default": "center" },
+    { "type": "range", "id": "image_width", "label": "t:labels.image_width", "min": 40, "max": 65, "step": 1, "unit": "%", "default": 58 },
+    { "type": "range", "id": "image_height", "label": "t:labels.image_height", "min": 360, "max": 900, "step": 20, "unit": "px", "default": 600 },
     { "type": "select", "id": "media_position", "label": "t:labels.media_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
-    { "type": "select", "id": "section_spacing", "label": "t:labels.section_spacing", "options": [{ "value": "compact", "label": "t:options.spacing.compact" }, { "value": "standard", "label": "t:options.spacing.standard" }, { "value": "spacious", "label": "t:options.spacing.spacious" }], "default": "standard" }
+    { "type": "header", "content": "t:general.style" },
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#F5F3EE" }
   ],
   "enabled_on": { "templates": ["index"] },
   "presets": [{ "name": "t:general.material_craft", "category": "Campaign & editorial" }]
