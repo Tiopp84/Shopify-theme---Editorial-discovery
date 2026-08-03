@@ -69,7 +69,7 @@
     {% endif %}
   </div>
 
-  <div class="shoppable-hero__hotspots">
+  <shoppable-hero-hotspots class="shoppable-hero__hotspots">
     {% for block in section.blocks %}
       {% assign hotspot_product = block.settings.product %}
       {% if hotspot_product != blank %}
@@ -97,6 +97,7 @@
         {% endif %}
         <details
           class="shoppable-hero__hotspot shoppable-hero__hotspot--preview-inline-{{ preview_inline_position }} shoppable-hero__hotspot--preview-block-{{ preview_block_position }} shoppable-hero__hotspot--mobile-preview-inline-{{ mobile_preview_inline_position }} shoppable-hero__hotspot--mobile-preview-block-{{ mobile_preview_block_position }}"
+          name="ShoppableHeroHotspots-{{ section.id }}"
           style="--shoppable-hero-hotspot-x: {{ block.settings.horizontal_position }}%; --shoppable-hero-hotspot-y: {{ block.settings.vertical_position }}%; --shoppable-hero-hotspot-mobile-x: {{ hotspot_mobile_x }}%; --shoppable-hero-hotspot-mobile-y: {{ hotspot_mobile_y }}%;"
           {{ block.shopify_attributes }}
         >
@@ -131,7 +132,7 @@
         </details>
       {% endif %}
     {% endfor %}
-  </div>
+  </shoppable-hero-hotspots>
 </section>
 
 {% stylesheet %}
@@ -168,7 +169,7 @@
   .shoppable-hero__hotspot-symbol--tag { font-size: 1.1rem; font-weight: 700; }
   .shoppable-hero__hotspot-symbol--bag { font-size: 1rem; }
   .shoppable-hero__hotspot-symbol--bag .icon { block-size: 1.15rem; inline-size: 1.15rem; }
-  .shoppable-hero__product-preview { align-items: center; background: var(--shoppable-hero-desktop-hotspot-color); box-shadow: 0 .4rem 1.25rem rgb(0 0 0 / 16%); color: var(--color-foreground); display: grid; gap: .7rem; grid-template-columns: 4rem minmax(0, 1fr); inline-size: min(12rem, calc(100vw - 2rem)); inset-block-start: 50%; inset-inline-start: 100%; opacity: 0; overflow: hidden; padding: .5rem; pointer-events: none; position: absolute; text-align: start; text-decoration: none; transform: translate(-.25rem, -50%); transition: opacity 160ms ease 180ms, transform 160ms ease 180ms, visibility 0s linear 340ms; visibility: hidden; }
+  .shoppable-hero__product-preview { align-items: center; background: var(--shoppable-hero-desktop-hotspot-color); box-shadow: 0 .4rem 1.25rem rgb(0 0 0 / 16%); color: var(--color-foreground); display: grid; gap: .7rem; grid-template-columns: 4rem minmax(0, 1fr); inline-size: min(12rem, calc(100vw - 2rem)); inset-block-start: 50%; inset-inline-start: 100%; opacity: 0; overflow: hidden; padding: .5rem; pointer-events: none; position: absolute; text-align: start; text-decoration: none; transform: translate(-.25rem, -50%); translate: var(--shoppable-hero-preview-shift-x, 0px) var(--shoppable-hero-preview-shift-y, 0px); transition: opacity 160ms ease 180ms, transform 160ms ease 180ms, visibility 0s linear 340ms; visibility: hidden; }
   .shoppable-hero__product-preview-media { aspect-ratio: 4 / 5; background: color-mix(in srgb, var(--color-foreground) 7%, var(--shoppable-hero-desktop-hotspot-color)); display: block; inline-size: 4rem; }
   .shoppable-hero__product-preview-image, .shoppable-hero__product-preview-placeholder { block-size: 100%; display: block; inline-size: 100%; object-fit: cover; }
   .shoppable-hero__product-preview-placeholder { color: color-mix(in srgb, var(--color-foreground) 35%, transparent); }
@@ -176,17 +177,12 @@
   .shoppable-hero__hotspot--preview-inline-start .shoppable-hero__product-preview { inset-inline-end: 100%; inset-inline-start: auto; transform: translate(.25rem, -50%); }
   .shoppable-hero__hotspot--preview-block-below .shoppable-hero__product-preview { inset-block-start: 100%; inset-inline-start: 50%; transform: translate(-50%, -.25rem); }
   .shoppable-hero__hotspot--preview-block-above .shoppable-hero__product-preview { inset-block-end: 100%; inset-block-start: auto; inset-inline-start: 50%; transform: translate(-50%, .25rem); }
-  @media (hover: hover) and (pointer: fine) {
-    /* Native details hides non-summary children while closed. Override that only
-       on fine pointers so the first hover can reveal the preview without a click. */
-    .shoppable-hero__hotspot > .shoppable-hero__product-preview { display: grid; }
-    .shoppable-hero__hotspot:is(:hover, :focus-within, [open]) { z-index: 3; }
-    .shoppable-hero__hotspot:is(:hover, :focus-within, [open]) .shoppable-hero__hotspot-symbol { background: var(--color-accent); transform: scale(1.06); }
-    .shoppable-hero__hotspot:is(:hover, :focus-within, [open]) .shoppable-hero__product-preview { opacity: 1; pointer-events: auto; transform: translate(0, -50%); transition-delay: 0s; visibility: visible; }
-    .shoppable-hero__hotspot--preview-inline-start:is(:hover, :focus-within, [open]) .shoppable-hero__product-preview { transform: translate(0, -50%); }
-    .shoppable-hero__hotspot--preview-block-below:is(:hover, :focus-within, [open]) .shoppable-hero__product-preview { transform: translate(-50%, 0); }
-    .shoppable-hero__hotspot--preview-block-above:is(:hover, :focus-within, [open]) .shoppable-hero__product-preview { transform: translate(-50%, 0); }
-  }
+  .shoppable-hero__hotspot[open] { z-index: 3; }
+  .shoppable-hero__hotspot[open] .shoppable-hero__hotspot-symbol { background: var(--color-accent); transform: scale(1.06); }
+  .shoppable-hero__hotspot[open] .shoppable-hero__product-preview { opacity: 1; pointer-events: auto; transform: translate(0, -50%); transition-delay: 0s; visibility: visible; }
+  .shoppable-hero__hotspot--preview-inline-start[open] .shoppable-hero__product-preview { transform: translate(0, -50%); }
+  .shoppable-hero__hotspot--preview-block-below[open] .shoppable-hero__product-preview { transform: translate(-50%, 0); }
+  .shoppable-hero__hotspot--preview-block-above[open] .shoppable-hero__product-preview { transform: translate(-50%, 0); }
   .shoppable-hero__product-preview:focus-visible { box-shadow: var(--focus-ring), 0 .4rem 1.25rem rgb(0 0 0 / 16%); outline: 0; }
   .shoppable-hero__hotspot-trigger:focus-visible { border-radius: 50%; box-shadow: var(--focus-ring); outline: 0; }
   @media (max-width: 63.99rem) {
@@ -199,6 +195,11 @@
     .shoppable-hero__content { gap: var(--space-4); padding: clamp(2.5rem, 6vw, 4.5rem) var(--page-margin); }
     .shoppable-hero h2 { font-size: clamp(3rem, 6vw, 4.25rem); }
     .shoppable-hero__body { max-inline-size: 30rem; }
+  }
+  @media (min-width: 64rem) {
+    .shoppable-hero__product-preview { gap: var(--space-3); grid-template-columns: 5.5rem minmax(0, 1fr); inline-size: min(17rem, calc(100vw - 3rem)); padding: var(--space-3); }
+    .shoppable-hero__product-preview-media { inline-size: 5.5rem; }
+    .shoppable-hero__product-preview-title { font-size: .75rem; }
   }
   @media (max-width: 47.99rem) {
     .shoppable-hero { grid-template-rows: minmax(var(--shoppable-hero-mobile-min-height), auto); }

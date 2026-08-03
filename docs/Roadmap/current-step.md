@@ -54,7 +54,11 @@ Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các 
 
 ## Đang thực hiện
 
-- [x] Sửa Shoppable hero hotspot preview ở desktop: native `<details>` mặc định ẩn child ngoài `<summary>` khi closed, khiến lần hover đầu không thể tạo preview layout. Fine-pointer hover/focus nay override riêng sự ẩn mặc định này, nhưng preview vẫn `visibility: hidden`, không nhận pointer/focus cho đến khi mở; click vẫn giữ native `open` state cho touch/keyboard. Static verification pass, 2026-08-03.
+- [x] Shoppable hero hotspot dùng native click/touch disclosure (`details[name]`) làm no-JavaScript baseline: click lần hai đóng preview và một section chỉ có một preview mở. Progressive enhancement riêng `shoppable-hero-hotspots.js` mở ngay khi hover chuột, nhưng chỉ đóng sau 180 ms kể từ lúc rời hotspot; quay lại hotspot trong thời gian đó hủy close để người dùng đi qua preview không bị nháy. Click ngoài hotspot đóng mọi preview và blur focus còn nằm trong hotspot. CSS chỉ reveal trạng thái `[open]`, nên focus ring keyboard không giữ preview/visual active sau khi close. JavaScript syntax và static verification pass, 2026-08-03.
+
+- [x] Shoppable hero mở rộng product preview ở desktop `≥64rem`: khung tăng tối đa từ 12rem lên 17rem, media từ 4rem lên 5.5rem; tablet và compact giữ khung hiện hữu để tránh che content/hotspot hoặc vượt viewport. Static verification pass, 2026-08-03.
+
+- [x] Shoppable hero mobile viewport guard: mỗi preview mở được đo sau render và chỉ dịch đủ để giữ 12px inset với bốn mép viewport; reset khi đóng và đo lại khi resize. Desktop giữ vị trí art-directed nếu không có nguy cơ tràn. JavaScript syntax và static verification pass, 2026-08-03.
 
 - [x] Khôi phục Outfit Composition item reveal theo hàng: grid khai báo `data-aos-sequence="row"` cùng early trigger để controller gán delay 0–300 ms từ trái sang phải cho từng hàng. Product item vẫn là các stage độc lập; placeholder Add section không có AOS marker và luôn hiển thị an toàn. Static verification pass, 2026-08-03.
 
