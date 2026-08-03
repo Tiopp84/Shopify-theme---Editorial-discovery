@@ -1,0 +1,39 @@
+{% liquid
+  assign listed_collection = block.settings.collection
+  assign collection_title = block.settings.title | default: listed_collection.title
+%}
+
+{% if listed_collection != blank %}
+  <li{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
+    <a class="collection-list__card" href="{{ listed_collection.url }}">
+      <span class="collection-list__media" style="--collection-list-focal-point: {{ block.settings.focal_point }};">
+        {% if listed_collection.featured_image %}
+          {% render 'image', class: 'collection-list__image', image: listed_collection.featured_image, alt: listed_collection.featured_image.alt, width: 1200, widths: '360, 540, 720, 960, 1200', sizes: '(min-width: 64rem) 23vw, (min-width: 48rem) 44vw, 46vw' %}
+        {% else %}
+          <span class="collection-list__placeholder" aria-hidden="true">{{ 'collection-1' | placeholder_svg_tag }}</span>
+        {% endif %}
+      </span>
+      <span class="collection-list__content">
+        <span class="collection-list__title">{{ collection_title | escape }}</span>
+        <span class="collection-list__action">{{ 'collections.view_collection' | t }}</span>
+      </span>
+    </a>
+  </li>
+{% elsif request.design_mode or request.visual_preview_mode %}
+  <li class="collection-list__preview-card"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
+    <span class="collection-list__preview-media" style="--collection-list-preview-ratio: {{ section.settings.image_ratio }};">{{ 'collection-1' | placeholder_svg_tag }}</span>
+    <span class="collection-list__preview-title">{{ 'collections.placeholder_title' | t }}</span>
+  </li>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:general.collection",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "t:labels.collection" },
+    { "type": "text", "id": "title", "label": "t:labels.title", "info": "t:descriptions.collection_card_title" },
+    { "type": "select", "id": "focal_point", "label": "t:labels.focal_point", "options": [{ "value": "left top", "label": "t:options.content_position.top_left" }, { "value": "center top", "label": "t:options.content_position.top_center" }, { "value": "right top", "label": "t:options.content_position.top_right" }, { "value": "left center", "label": "t:options.content_position.center_left" }, { "value": "center", "label": "t:options.content_position.center_center" }, { "value": "right center", "label": "t:options.content_position.center_right" }, { "value": "left bottom", "label": "t:options.content_position.bottom_left" }, { "value": "center bottom", "label": "t:options.content_position.bottom_center" }, { "value": "right bottom", "label": "t:options.content_position.bottom_right" }], "default": "center" }
+  ],
+  "presets": [{ "name": "t:general.collection" }]
+}
+{% endschema %}
