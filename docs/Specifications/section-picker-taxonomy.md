@@ -92,7 +92,7 @@ Blocks stay scoped to their owner:
 
 - Product detail blocks are Product-owned and are allowed only by `product.liquid`.
 - Footer menu and newsletter blocks are Footer-owned and are allowed only by `footer.liquid`.
-- Story-product and outfit-item blocks belong only to their respective editorial sections.
+- Story-product and outfit-item are external Theme Blocks, each allowlisted only by its respective editorial section. Their product presentation is implemented by the shared `product-card` snippet rather than by a generic merchant-facing product block.
 - Generic text/group blocks may appear only in a deliberately constrained flexible-content surface.
 
 Blocks have their own picker categories only when the block picker contains enough distinct merchant choices to benefit from grouping. Block categories do not replace the parent section's allowlist.
@@ -132,8 +132,8 @@ This table is the migration target. `Picker` means the section has an addable pr
 | `pinned-visual-story.liquid` | Pinned visual story | Campaign & editorial | Home | Yes | Preserve documented desktop-only choreography/fallback. |
 | `material-craft.liquid` | Material craft | Campaign & editorial | Home | Yes | Remains an optional editorial module. |
 | `shoppable-hero.liquid` | Shoppable hero | Shop the story | Home | Yes | Full-bleed campaign media with product-linked hotspot blocks; hotspots must lead to a product page, never imply a variant-safe add. |
-| `shoppable-story.liquid` | Shoppable story | Shop the story | Home | Yes | Retain explicit `story-product` allowlist. |
-| `outfit-composition.liquid` | Outfit composition | Shop the story | Home | Yes | Retain independent item state; never represent a bundle. |
+| `shoppable-story.liquid` | Shoppable story | Shop the story | Home | Yes | Retain the explicit external `story-product` Theme Block allowlist. |
+| `outfit-composition.liquid` | Outfit composition | Shop the story | Home | Yes | Allowlist the external, movable `outfit-item` Theme Block; retain independent item state and never represent a bundle. |
 | `featured-edit.liquid` | Featured edit | Products & collections | Home | Yes | Collection-based home merchandising. |
 | `collections.liquid` | Collections | — | List collections | No | Fixed template owner; always renders the store's collection inventory. |
 | `collection-list.liquid` | Collection list | Products & collections | Home | Yes | Explicit `collection-card` Theme Block allowlist; never substitutes for the all-collections template. |

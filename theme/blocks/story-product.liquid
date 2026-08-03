@@ -1,0 +1,122 @@
+{% liquid
+  assign story_product = block.settings.product
+  assign color_option = blank
+  assign size_option = blank
+  assign has_exact_swatches = false
+  for option in story_product.options_with_values
+    assign option_name = option.name | downcase
+    if color_option == blank
+      if option_name == 'color' or option_name == 'colour' or option_name == 'màu'
+        assign color_option = option
+      endif
+    endif
+    if size_option == blank
+      if option_name == 'size' or option_name == 'kích cỡ' or option_name == 'kích thước'
+        assign size_option = option
+      endif
+    endif
+  endfor
+  if color_option != blank
+    assign has_exact_swatches = true
+    for value in color_option.values
+      unless value.swatch.image or value.swatch.color
+        assign has_exact_swatches = false
+        break
+      endunless
+    endfor
+  endif
+%}
+
+{% if story_product != blank %}
+  <li class="shoppable-story__item"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
+    <article class="shoppable-story__product" aria-labelledby="StoryProductTitle-{{ block.id }}">
+      <a class="shoppable-story__media" href="{{ story_product.url }}" aria-label="{{ story_product.title | escape }}">
+        {% if block.settings.image != blank %}
+          {% render 'image',
+            class: 'shoppable-story__image',
+            image: block.settings.image,
+            alt: block.settings.image.alt,
+            width: 1200,
+            widths: '360, 480, 640, 800, 960, 1200',
+            sizes: '(min-width: 64rem) 42vw, 90vw'
+          %}
+        {% elsif story_product.featured_image != blank %}
+          {% render 'image',
+            class: 'shoppable-story__image',
+            image: story_product.featured_image,
+            alt: story_product.featured_image.alt,
+            width: 1200,
+            widths: '360, 480, 640, 800, 960, 1200',
+            sizes: '(min-width: 64rem) 42vw, 90vw'
+          %}
+        {% else %}
+          <span class="shoppable-story__placeholder" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag }}</span>
+        {% endif %}
+      </a>
+      <div class="shoppable-story__product-content">
+        <p class="shoppable-story__caption">{% if block.settings.caption != blank %}{{ block.settings.caption | escape }}{% endif %}</p>
+        <div class="shoppable-story__decision">
+          <h3 id="StoryProductTitle-{{ block.id }}"><a href="{{ story_product.url }}">{{ story_product.title | escape }}</a></h3>
+          {% render 'price', item: story_product, class: 'shoppable-story__price' %}
+        </div>
+        {% if section.settings.show_variants and color_option != blank %}
+          <div class="shoppable-story__color-options">
+            <span class="shoppable-story__color-label">{{ color_option.name | escape }}:</span>
+            {% if has_exact_swatches %}
+              <ul class="shoppable-story__swatches" role="list" aria-label="{{ color_option.name | escape }}">
+                {% for value in color_option.values limit: 6 %}
+                  {% liquid
+                    assign swatch_value = blank
+                    if value.swatch.image
+                      assign swatch_image_url = value.swatch.image | image_url: width: 96
+                      assign swatch_value = 'url(' | append: swatch_image_url | append: ')'
+                    elsif value.swatch.color
+                      assign swatch_value = 'rgb(' | append: value.swatch.color.rgb | append: ')'
+                    endif
+                  %}
+                  <li><span class="shoppable-story__swatch" style="--shoppable-story-swatch: {{ swatch_value }};" title="{{ value.name | escape }}" aria-label="{{ value.name | escape }}"></span></li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span class="shoppable-story__color-names">{% for value in color_option.values limit: 6 %}{{ value.name | escape }}{% unless forloop.last %}, {% endunless %}{% endfor %}</span>
+            {% endif %}
+          </div>
+        {% endif %}
+        {% if section.settings.show_variants and size_option != blank %}
+          <div class="shoppable-story__size-options">
+            <span class="shoppable-story__size-label">{{ size_option.name | escape }}:</span>
+            <span class="shoppable-story__size-names">{% for value in size_option.values limit: 8 %}{{ value.name | escape }}{% unless forloop.last %}, {% endunless %}{% endfor %}</span>
+          </div>
+        {% endif %}
+        {% unless story_product.available %}
+          <p class="shoppable-story__availability">{{ 'products.card.sold_out' | t }}</p>
+        {% endunless %}
+      </div>
+    </article>
+  </li>
+{% elsif request.design_mode or request.visual_preview_mode %}
+  <li class="shoppable-story__item shoppable-story__preview-card"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
+    <article class="shoppable-story__product">
+      <span class="shoppable-story__media">{{ 'product-1' | placeholder_svg_tag }}</span>
+      <div class="shoppable-story__product-content">
+        <p class="shoppable-story__caption"></p>
+        <div class="shoppable-story__decision">
+          <p class="shoppable-story__preview-title">{{ 'products.card.placeholder_title' | t }}</p>
+          <span class="shoppable-story__preview-price">{{ 'products.card.placeholder_price' | t }}</span>
+        </div>
+      </div>
+    </article>
+  </li>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:general.story_product",
+  "settings": [
+    { "type": "product", "id": "product", "label": "t:labels.product" },
+    { "type": "image_picker", "id": "image", "label": "t:labels.story_image" },
+    { "type": "text", "id": "caption", "label": "t:labels.caption" }
+  ],
+  "presets": [{ "name": "t:general.story_product" }]
+}
+{% endschema %}

@@ -112,7 +112,7 @@ The AOS bootstrap has a 3-second failsafe. If its controller cannot load, it rem
 | Editorial hero | AOS text entrance; CSS-only image settle | Hero queues after two render frames | Final state immediately for reduced motion | No motion setting; section remains readable without it |
 | Featured edit | AOS header entrance; bounded product-card stagger | Independent section and grid trigger | One-time reveal only | No motion setting |
 | Pinned visual story | Intro entrance plus chapter choreography; sticky media gently scales from 1.045 to 1 | One GSAP timeline, scrubbed from story-layout entry to exit; CSS owns sticky positioning | Chapters use ordinary one-time reveal; no scrub | Master motion checkbox plus independent image-flip and chapter-wheel toggles |
-| Material & craft | AOS image/text entrance | Independent section trigger | One-time reveal only | No motion setting |
+| Material & craft | AOS image/text entrance; picker preview omits AOS markers | Independent section trigger | One-time reveal only | No motion setting |
 | Shoppable story | AOS introduction entrance; per-product-row stages | Independent section/item triggers | One-time reveal only | No motion setting |
 | Outfit composition | AOS lead entrance; bounded product-card stagger | Independent section and grid trigger | One-time reveal only | No motion setting |
 

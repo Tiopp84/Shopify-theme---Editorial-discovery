@@ -2,6 +2,7 @@
   Renders a product destination card with stable media, price, and availability.
 
   @param {product} product - Product represented by the card.
+  @param {string} [title] - Optional title override; defaults to the product title.
   @param {boolean} [show_vendor] - Show the product vendor above the title.
   @param {boolean} [show_badge] - Show sale and sold-out badges.
   @param {boolean} [show_index] - Show the card position within the current result set.
@@ -24,6 +25,7 @@
   assign card_context = card_context | default: 'standard'
   assign sizes = sizes | default: '(min-width: 60rem) 25vw, 50vw'
   assign card_id = 'ProductCard-' | append: product.id
+  assign card_title = title | default: product.title
   assign formatted_index = card_index | prepend: '0' | slice: -2, 2
   assign formatted_count = card_count | prepend: '0' | slice: -2, 2
   assign on_sale = false
@@ -188,7 +190,7 @@
 
     <div class="product-card__decision">
       <h2 id="{{ card_id }}" class="product-card__title">
-        <a href="{{ product.url }}">{{ product.title | escape }}</a>
+        <a href="{{ product.url }}">{{ card_title | escape }}</a>
       </h2>
       {% if show_price != false %}{% render 'price', item: product, class: 'product-card__price' %}{% endif %}
     </div>
