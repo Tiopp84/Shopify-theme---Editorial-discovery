@@ -1,18 +1,89 @@
 {% comment %}
-  This section is used in the page template to render store pages like About us
-  or Contact us.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/page
+  Page banner and reading composition. Contact keeps Page content for its
+  dedicated contact section, so it is not duplicated below the banner.
 {% endcomment %}
 
-<h1>{{ page.title }}</h1>
+<section class="page-template page-template--banner-{{ section.settings.banner_style }} page-template--position-{{ section.settings.text_position }} page-template--heading-{{ section.settings.heading_size }}{% if template.suffix != blank %} page-template--{{ template.suffix }}{% endif %}{% if section.settings.image != blank %} page-template--with-image{% endif %}" aria-labelledby="PageTitle-{{ section.id }}" style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %} --page-banner-height: {{ section.settings.banner_height }}px; --page-banner-protection: {{ section.settings.text_protection }}%; --page-banner-button-background: {{ section.settings.button_background }}; --page-banner-button-color: {{ section.settings.button_text_color }};">
+  <header class="page-template__banner">
+    {% if section.settings.image != blank %}
+      <div class="page-template__media">
+        <picture>
+          {% if section.settings.mobile_image != blank %}<source media="(max-width: 47.99rem)" srcset="{{ section.settings.mobile_image | image_url: width: 900 }}">{% endif %}
+          {{ section.settings.image | image_url: width: 2400 | image_tag: loading: 'eager', widths: '720, 960, 1440, 1920, 2400', sizes: '100vw' }}
+        </picture>
+      </div>
+    {% endif %}
+    <div class="page-template__banner-content">
+      {% if section.settings.eyebrow != blank %}<p class="page-template__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
+      <h1 id="PageTitle-{{ section.id }}">{{ page.title | escape }}</h1>
+      {% if section.settings.banner_text != blank %}<div class="page-template__banner-text rte">{{ section.settings.banner_text }}</div>{% endif %}
+      {% if section.settings.link_label != blank and section.settings.link != blank %}<a class="page-template__action" href="{{ section.settings.link }}">{{ section.settings.link_label | escape }}</a>{% endif %}
+    </div>
+  </header>
 
-{{ page.content }}
+  {% if page.content != blank and template.suffix != 'contact' %}
+    <div class="page-template__content rte">{{ page.content }}</div>
+  {% endif %}
+</section>
+
+{% stylesheet %}
+  .page-template { margin: 0; padding: 0; }
+  .page-template__banner { inline-size: 100%; position: relative; }
+  .page-template__content { margin-inline: auto; max-inline-size: min(100% - (var(--page-margin) * 2), 42rem); }
+  .page-template__media { background: color-mix(in srgb, var(--color-foreground) 6%, var(--color-background)); overflow: hidden; position: relative; }
+  .page-template__media, .page-template__media picture, .page-template__media img { block-size: 100%; display: block; inline-size: 100%; }
+  .page-template__media img { object-fit: cover; }
+  .page-template__banner-content { margin-inline: auto; max-inline-size: min(100% - (var(--page-margin) * 2), 72rem); position: relative; }
+  .page-template__eyebrow { font-size: .6875rem; font-weight: 700; letter-spacing: .12em; margin-block-end: var(--space-4); text-transform: uppercase; }
+  .page-template h1 { font-family: var(--font-campaign); font-size: clamp(3.5rem, 8vw, 7.5rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.06em; line-height: .85; margin: 0; max-inline-size: 12ch; }
+  .page-template--heading-small h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
+  .page-template--heading-medium h1 { font-size: clamp(3rem, 6.5vw, 6rem); }
+  .page-template__banner-text { font-size: clamp(1rem, 1.3vw, 1.125rem); line-height: 1.65; margin-block-start: var(--space-5); max-inline-size: 34rem; }
+  .page-template__banner-text > :first-child, .page-template__content > :first-child { margin-block-start: 0; }
+  .page-template__banner-text > :last-child, .page-template__content > :last-child { margin-block-end: 0; }
+  .page-template__action { align-items: center; background: var(--page-banner-button-background); color: var(--page-banner-button-color); display: inline-flex; font-size: .6875rem; font-weight: 700; justify-content: center; letter-spacing: .1em; margin-block-start: var(--space-5); min-block-size: 2.9rem; padding-inline: var(--space-5); text-decoration: none; text-transform: uppercase; }
+  .page-template__action:focus-visible { outline: .125rem solid var(--color-accent); outline-offset: .25rem; }
+  .page-template__content { color: color-mix(in srgb, var(--color-foreground) 82%, var(--color-background)); font-size: clamp(1rem, 1.3vw, 1.125rem); line-height: 1.7; margin-block-start: clamp(1.5rem, 3vw, 2.5rem); }
+  .page-template--with-image.page-template--banner-above .page-template__media { block-size: min(var(--page-banner-height), 72svh); }
+  .page-template--with-image.page-template--banner-above .page-template__banner-content { padding-block: clamp(1.75rem, 4vw, 3.5rem); }
+  .page-template--with-image.page-template--banner-overlay .page-template__media { block-size: min(var(--page-banner-height), 72svh); }
+  .page-template--with-image.page-template--banner-overlay .page-template__media::after { background: rgb(0 0 0 / var(--page-banner-protection)); content: ''; inset: 0; position: absolute; }
+  .page-template--with-image.page-template--banner-overlay .page-template__banner-content { color: #fff; display: grid; inset: 0; padding: clamp(1.75rem, 5vw, 5rem); position: absolute; z-index: 1; }
+  .page-template--position-top-left .page-template__banner-content { align-content: start; justify-items: start; text-align: start; }
+  .page-template--position-center-left .page-template__banner-content { align-content: center; justify-items: start; text-align: start; }
+  .page-template--position-bottom-left .page-template__banner-content { align-content: end; justify-items: start; text-align: start; }
+  .page-template--position-top-center .page-template__banner-content { align-content: start; justify-items: center; text-align: center; }
+  .page-template--position-center-center .page-template__banner-content { align-content: center; justify-items: center; text-align: center; }
+  .page-template--position-bottom-center .page-template__banner-content { align-content: end; justify-items: center; text-align: center; }
+  .page-template--with-image.page-template--banner-overlay .page-template__banner-content:is(.page-template__banner-content) h1, .page-template--with-image.page-template--banner-overlay .page-template__banner-content:is(.page-template__banner-content) .page-template__banner-text { margin-inline: 0; }
+  .page-template--position-top-center h1, .page-template--position-top-center .page-template__banner-text, .page-template--position-center-center h1, .page-template--position-center-center .page-template__banner-text, .page-template--position-bottom-center h1, .page-template--position-bottom-center .page-template__banner-text { margin-inline: auto; }
+  .page-template--with-image.page-template--banner-split .page-template__media { block-size: min(var(--page-banner-height), 72svh); }
+  @media (min-width: 48rem) { .page-template--with-image.page-template--banner-split .page-template__banner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } .page-template--with-image.page-template--banner-split .page-template__media { block-size: var(--page-banner-height); } .page-template--with-image.page-template--banner-split .page-template__banner-content { align-content: center; display: grid; max-inline-size: none; padding: clamp(2rem, 6vw, 6rem); } }
+  @media (min-width: 64rem) { .page-template__content { margin-inline-start: max(var(--page-margin), calc((100% - 44rem) / 2)); } .page-template--with-image.page-template--banner-split .page-template__banner-content { padding: clamp(3rem, 7vw, 8rem); } }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.page",
-  "settings": [],
+  "settings": [
+    { "type": "header", "content": "t:general.image" },
+    { "type": "image_picker", "id": "image", "label": "t:labels.page_banner_image" },
+    { "type": "image_picker", "id": "mobile_image", "label": "t:labels.page_banner_mobile_image" },
+    { "type": "range", "id": "text_protection", "label": "t:labels.text_protection", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 55 },
+    { "type": "header", "content": "t:general.content" },
+    { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow" },
+    { "type": "richtext", "id": "banner_text", "label": "t:labels.banner_text" },
+    { "type": "select", "id": "heading_size", "label": "t:labels.heading_size", "options": [{ "value": "small", "label": "t:options.heading_size.small" }, { "value": "medium", "label": "t:options.heading_size.medium" }, { "value": "large", "label": "t:options.heading_size.large" }], "default": "large" },
+    { "type": "text", "id": "link_label", "label": "t:labels.link_label" },
+    { "type": "url", "id": "link", "label": "t:labels.link" },
+    { "type": "header", "content": "t:general.style" },
+    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" },
+    { "type": "color", "id": "button_background", "label": "t:labels.button_background", "default": "#FFFFFF" },
+    { "type": "color", "id": "button_text_color", "label": "t:labels.button_text_color", "default": "#1A1A1A" },
+    { "type": "select", "id": "banner_style", "label": "t:labels.page_banner_style", "options": [{ "value": "above", "label": "t:options.page_banner_style.above" }, { "value": "overlay", "label": "t:options.page_banner_style.overlay" }, { "value": "split", "label": "t:options.page_banner_style.split" }], "default": "overlay" },
+    { "type": "range", "id": "banner_height", "label": "t:labels.page_banner_height", "min": 240, "max": 760, "step": 20, "unit": "px", "default": 420 }
+    ,{ "type": "select", "id": "text_position", "label": "t:labels.text_position", "options": [{ "value": "top_left", "label": "t:options.text_position.top_left" }, { "value": "center_left", "label": "t:options.text_position.center_left" }, { "value": "bottom_left", "label": "t:options.text_position.bottom_left" }, { "value": "top_center", "label": "t:options.text_position.top_center" }, { "value": "center_center", "label": "t:options.text_position.center_center" }, { "value": "bottom_center", "label": "t:options.text_position.bottom_center" }], "default": "center_center" }
+  ],
   "enabled_on": { "templates": ["page"] }
 }
 {% endschema %}

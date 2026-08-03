@@ -2,8 +2,12 @@
   Renders a product destination card with stable media, price, and availability.
 
   @param {product} product - Product represented by the card.
+  @param {string} [title] - Optional title override; defaults to the product title.
   @param {boolean} [show_vendor] - Show the product vendor above the title.
   @param {boolean} [show_badge] - Show sale and sold-out badges.
+  @param {boolean} [show_index] - Show the card position within the current result set.
+  @param {boolean} [show_price] - Show the product price.
+  @param {boolean} [show_second_image] - Reveal the second product image on hover/focus when available.
   @param {boolean} [show_quick_add] - Show the variant-safe quick-add control where this context supports it.
   @param {string} [image_ratio] - CSS aspect ratio used by the media frame.
   @param {string} [sizes] - Responsive image sizes hint.
@@ -21,11 +25,13 @@
   assign card_context = card_context | default: 'standard'
   assign sizes = sizes | default: '(min-width: 60rem) 25vw, 50vw'
   assign card_id = 'ProductCard-' | append: product.id
+  assign card_title = title | default: product.title
   assign formatted_index = card_index | prepend: '0' | slice: -2, 2
   assign formatted_count = card_count | prepend: '0' | slice: -2, 2
   assign on_sale = false
   assign available_variant_count = 0
   assign quick_add_variant = null
+  assign secondary_image = product.images[1]
   if product.compare_at_price_max > product.price
     assign on_sale = true
   endif
@@ -49,6 +55,9 @@
         widths: '240, 360, 480, 640, 800, 960',
         sizes: sizes
       %}
+      {% if show_second_image and secondary_image != blank %}
+        {{ secondary_image | image_url: width: 960 | image_tag: class: 'product-card__secondary-image', alt: '', widths: '240, 360, 480, 640, 800, 960', sizes: sizes, loading: 'lazy' }}
+      {% endif %}
     {% else %}
       <a class="product-card__placeholder" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
         {{ 'product-1' | placeholder_svg_tag }}
@@ -168,20 +177,22 @@
   </div>
 
   <div class="product-card__content">
-    <div class="product-card__meta">
-      {% if card_index %}
-        <span>{{ formatted_index }}{% if card_count %} / {{ formatted_count }}{% endif %}</span>
-      {% endif %}
-      {% if show_vendor and product.vendor != blank %}
-        <span>{{ product.vendor | escape }}</span>
-      {% endif %}
-    </div>
+    {% if show_index != false and card_index or show_vendor and product.vendor != blank %}
+      <div class="product-card__meta">
+        {% if show_index != false and card_index %}
+          <span>{{ formatted_index }}{% if card_count %} / {{ formatted_count }}{% endif %}</span>
+        {% endif %}
+        {% if show_vendor and product.vendor != blank %}
+          <span>{{ product.vendor | escape }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
 
     <div class="product-card__decision">
       <h2 id="{{ card_id }}" class="product-card__title">
-        <a href="{{ product.url }}">{{ product.title | escape }}</a>
+        <a href="{{ product.url }}">{{ card_title | escape }}</a>
       </h2>
-      {% render 'price', item: product, class: 'product-card__price' %}
+      {% if show_price != false %}{% render 'price', item: product, class: 'product-card__price' %}{% endif %}
     </div>
 
   </div>
@@ -216,6 +227,17 @@
     transition: transform 300ms ease;
   }
 
+  .product-card__secondary-image {
+    block-size: 100%;
+    inset: 0;
+    object-fit: cover;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 220ms ease;
+    inline-size: 100%;
+  }
+
   .product-card__status {
     position: absolute;
     inset-block-start: var(--space-3);
@@ -237,7 +259,11 @@
     .product-card:hover .product-card__image > img {
       transform: scale(1.015);
     }
+
+    .product-card:hover .product-card__secondary-image { opacity: 1; }
   }
+
+  .product-card:focus-within .product-card__secondary-image { opacity: 1; }
 
   .product-card__content {
     min-width: 0;
@@ -365,7 +391,16 @@
     .product-card__media { position: static; }
     .product-card__quick-add-wrap { inset-block-end: 0; inset-inline: 0; opacity: 1; transform: none; visibility: visible; }
   }
-  @media (max-width: 749px) { .quick-add__dialog { inline-size: calc(100vw - 3rem); } .quick-add__product { grid-template-columns: minmax(0, 1fr); } .quick-add__media { max-block-size: 18rem; } .quick-add__details { padding: var(--space-4); } .quick-add__view-details--mobile { display: inline; } .quick-add__view-details--desktop { display: none; } }
+  @media (max-width: 749px) {
+    .quick-add__dialog { inline-size: calc(100vw - 3rem); max-block-size: 65dvh; }
+    .quick-add__product { grid-template-columns: minmax(0, 1fr); }
+    .quick-add__media { max-block-size: none; }
+    .quick-add__media-stage { aspect-ratio: 4 / 5; background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); }
+    .quick-add__media-item img { aspect-ratio: auto; object-fit: contain; }
+    .quick-add__details { padding: var(--space-4); }
+    .quick-add__view-details--mobile { display: inline; }
+    .quick-add__view-details--desktop { display: none; }
+  }
   @media (prefers-reduced-motion: reduce) { .product-card__quick-add-wrap { transition: none; } }
 
   .product-card--unavailable .product-card__media {

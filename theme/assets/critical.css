@@ -13,6 +13,14 @@ body {
   min-height: 100svh;
 }
 
+.site-panel {
+  background: var(--color-background);
+  inline-size: 100%;
+  min-inline-size: 0;
+  position: relative;
+  z-index: 1;
+}
+
 html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
   overflow: hidden;
   overscroll-behavior: none;
@@ -20,6 +28,7 @@ html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
 
 html {
   -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
 }
 
 img,

@@ -1,16 +1,10 @@
 {% liquid
-  assign has_products = false
-  assign story_index = 0
-  for block in section.blocks
-    if block.settings.product != blank
-      assign has_products = true
-      break
-    endif
-  endfor
+  assign text_width = section.settings.text_width | default: 36
+  assign products_width = 100 | minus: text_width
 %}
 
-<section class="shoppable-story full-width shoppable-story--intro-{{ section.settings.intro_position }} shoppable-story--spacing-{{ section.settings.section_spacing }}" data-aos-section style="--shoppable-story-background: {{ section.settings.background_color }};" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
-  <div class="shoppable-story__intro" data-aos="fade-up-right">
+<section class="shoppable-story full-width shoppable-story--intro-{{ section.settings.intro_position }} shoppable-story--heading-{{ section.settings.heading_size }} shoppable-story--text-align-{{ section.settings.text_alignment }} shoppable-story--text-size-{{ section.settings.text_size }}" data-aos-section style="--shoppable-story-background: {{ section.settings.background_color }}; --shoppable-story-image-ratio: {{ section.settings.image_ratio }}; --shoppable-story-text-width: {{ text_width }}fr; --shoppable-story-products-width: {{ products_width }}fr;" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+  <div class="shoppable-story__intro"{% unless request.visual_preview_mode %} data-aos="fade-up-right"{% endunless %}>
     {% if section.settings.eyebrow != blank %}
       <p class="shoppable-story__eyebrow">{{ section.settings.eyebrow | escape }}</p>
     {% endif %}
@@ -22,99 +16,72 @@
     {% endif %}
   </div>
 
-  {% if has_products %}
-    <ol class="shoppable-story__items">
-      {% for block in section.blocks %}
-        {% assign story_product = block.settings.product %}
-        {% if story_product != blank %}
-          {% assign story_index = story_index | plus: 1 %}
-          {% assign story_direction = story_index | modulo: 2 %}
-          <li class="shoppable-story__item" data-aos-product-item data-aos="{% if story_direction == 0 %}fade-left{% else %}fade-right{% endif %}" {{ block.shopify_attributes }}>
-            <article class="shoppable-story__product" aria-labelledby="StoryProductTitle-{{ block.id }}">
-              <a class="shoppable-story__media" href="{{ story_product.url }}" aria-label="{{ story_product.title | escape }}">
-                {% if block.settings.image != blank %}
-                  {% render 'image',
-                    class: 'shoppable-story__image',
-                    image: block.settings.image,
-                    alt: block.settings.image.alt,
-                    width: 1200,
-                    widths: '360, 480, 640, 800, 960, 1200',
-                    sizes: '(min-width: 64rem) 42vw, 90vw'
-                  %}
-                {% elsif story_product.featured_image != blank %}
-                  {% render 'image',
-                    class: 'shoppable-story__image',
-                    image: story_product.featured_image,
-                    alt: story_product.featured_image.alt,
-                    width: 1200,
-                    widths: '360, 480, 640, 800, 960, 1200',
-                    sizes: '(min-width: 64rem) 42vw, 90vw'
-                  %}
-                {% else %}
-                  <span class="shoppable-story__placeholder" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag }}</span>
-                {% endif %}
-              </a>
-              <div class="shoppable-story__product-content">
-                <p class="shoppable-story__caption"><span aria-hidden="true">{{ story_index | prepend: '0' | slice: -2, 2 }}</span>{% if block.settings.caption != blank %} {{ block.settings.caption | escape }}{% endif %}</p>
-                <div class="shoppable-story__decision">
-                  <h3 id="StoryProductTitle-{{ block.id }}"><a href="{{ story_product.url }}">{{ story_product.title | escape }}</a></h3>
-                  {% render 'price', item: story_product, class: 'shoppable-story__price' %}
-                </div>
-                {% unless story_product.available %}
-                  <p class="shoppable-story__availability">{{ 'products.card.sold_out' | t }}</p>
-                {% endunless %}
-              </div>
-            </article>
-          </li>
-        {% endif %}
-      {% endfor %}
-    </ol>
-  {% endif %}
+  <ol class="shoppable-story__items" data-aos-trigger="early">
+    {% content_for 'blocks' %}
+  </ol>
 </section>
 
 {% stylesheet %}
   .shoppable-story { background: var(--shoppable-story-background, var(--color-panel-01)); border-block: 1px solid var(--color-border); display: grid; gap: clamp(2.5rem, 5vw, 5rem); margin: 0 0 var(--space-chapter); padding: clamp(4rem, 8vw, 7rem) max(var(--page-margin), calc((100vw - var(--page-width)) / 2)); }
-  .shoppable-story--spacing-compact { padding-block: var(--space-6); }
-  .shoppable-story--spacing-spacious { padding-block: clamp(5rem, 10vw, 10rem); }
   .shoppable-story__intro { align-content: center; display: grid; gap: var(--space-4); max-width: 22rem; }
   .shoppable-story__eyebrow, .shoppable-story__caption, .shoppable-story__availability { font-size: .6875rem; font-weight: 600; letter-spacing: .1em; margin: 0; text-transform: uppercase; }
   .shoppable-story__intro h2 { font-family: var(--font-campaign); font-size: clamp(2rem, 3.3vw, 3.25rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.03em; line-height: 1; margin: 0; overflow-wrap: anywhere; }
+  .shoppable-story--heading-small .shoppable-story__intro h2 { font-size: clamp(1.7rem, 2.6vw, 2.5rem); }
+  .shoppable-story--heading-medium .shoppable-story__intro h2 { font-size: clamp(2rem, 3.3vw, 3.25rem); }
+  .shoppable-story--heading-large .shoppable-story__intro h2 { font-size: clamp(2.4rem, 4.2vw, 4.25rem); }
+  .shoppable-story--text-align-left .shoppable-story__intro { text-align: start; }
+  .shoppable-story--text-align-center .shoppable-story__intro { text-align: center; }
+  .shoppable-story--text-align-right .shoppable-story__intro { text-align: end; }
   .shoppable-story__body { color: color-mix(in srgb, var(--color-foreground) 74%, var(--color-background)); font-size: .875rem; line-height: 1.55; max-width: 30rem; }
+  .shoppable-story--text-size-small .shoppable-story__body { font-size: .8125rem; }
+  .shoppable-story--text-size-medium .shoppable-story__body { font-size: .875rem; }
+  .shoppable-story--text-size-large .shoppable-story__body { font-size: 1rem; }
   .shoppable-story__body > :first-child { margin-block-start: 0; }
   .shoppable-story__body > :last-child { margin-block-end: 0; }
-  .shoppable-story__items { display: grid; gap: var(--space-5); margin: 0; padding-inline-start: 0; }
-  .shoppable-story__item { list-style: none; min-width: 0; }
+  .shoppable-story__items { counter-reset: shoppable-story; display: grid; gap: var(--space-5); margin: 0; padding-inline-start: 0; }
+  .shoppable-story__item { counter-increment: shoppable-story; list-style: none; min-width: 0; }
   .shoppable-story__product { background: var(--color-background); border: 1px solid var(--color-border); display: grid; gap: var(--space-4); min-width: 0; padding: var(--space-4); }
-  .shoppable-story__media { aspect-ratio: 4 / 5; background: var(--color-panel-02); display: block; overflow: hidden; }
+  .shoppable-story__media { aspect-ratio: var(--shoppable-story-image-ratio, 4 / 5); background: var(--color-panel-02); display: block; overflow: hidden; }
   .shoppable-story__image, .shoppable-story__image > img, .shoppable-story__placeholder, .shoppable-story__placeholder > svg { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
   .shoppable-story__media:is(:hover, :focus-visible) .shoppable-story__image > img { transform: scale(1.015); }
   .shoppable-story__image > img { transition: transform 180ms ease; }
   .shoppable-story__product-content { border-block-start: 1px solid var(--color-border); display: grid; gap: var(--space-2); padding-block-start: var(--space-3); }
-  .shoppable-story__caption span { margin-inline-end: var(--space-2); }
+  .shoppable-story__caption::before { content: counter(shoppable-story, decimal-leading-zero); margin-inline-end: var(--space-2); }
   .shoppable-story__decision { align-items: baseline; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr) auto; }
   .shoppable-story__decision h3 { font-size: .875rem; font-weight: 600; line-height: 1.25; margin: 0; min-width: 0; text-transform: uppercase; }
+  .shoppable-story__preview-title { font-size: .875rem; font-weight: 600; line-height: 1.25; margin: 0; text-transform: uppercase; }
+  .shoppable-story__preview-price { justify-self: end; white-space: nowrap; }
   .shoppable-story__decision h3 a { color: currentcolor; text-decoration: none; }
   .shoppable-story__decision h3 a:is(:hover, :focus-visible) { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .16em; }
-  .shoppable-story__price { justify-content: end; text-align: end; white-space: nowrap; }
+  .shoppable-story__price { justify-content: end; padding-inline: var(--space-3) var(--space-5); text-align: end; white-space: nowrap; }
+  .shoppable-story__color-options, .shoppable-story__size-options { align-items: center; display: flex; flex-wrap: wrap; gap: .6rem; }
+  .shoppable-story__color-label, .shoppable-story__size-label { font-size: .625rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .shoppable-story__color-names { font-size: .75rem; line-height: 1.35; }
+  .shoppable-story__size-names { font-size: .75rem; line-height: 1.35; }
+  .shoppable-story__swatches { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 0; padding: 0; }
+  .shoppable-story__swatch { background: var(--shoppable-story-swatch); background-position: center; background-size: cover; border: 1px solid color-mix(in srgb, var(--color-foreground) 32%, transparent); border-radius: 50%; block-size: 1.375rem; display: block; inline-size: 1.375rem; }
   .shoppable-story__availability { color: var(--color-accent); }
   @media (min-width: 64rem) {
-    .shoppable-story { align-items: start; grid-template-columns: minmax(15rem, .72fr) minmax(0, 1.28fr); }
-    .shoppable-story__intro { position: sticky; top: 6rem; }
+    .shoppable-story { align-items: start; grid-template-columns: minmax(15rem, var(--shoppable-story-text-width)) minmax(0, var(--shoppable-story-products-width)); }
+    .shoppable-story__intro { padding-block-start: clamp(2rem, 3vw, 3rem); position: sticky; top: 6rem; }
     .shoppable-story__items { border-block-start: 1px solid var(--color-border); gap: 0; }
     .shoppable-story__item { border-block-end: 1px solid var(--color-border); padding-block: var(--space-4); }
     .shoppable-story__product { align-items: center; background: transparent; border: 0; gap: var(--space-5); grid-template-columns: clamp(8rem, 15vw, 12rem) minmax(0, 1fr); padding: 0; }
     .shoppable-story__media { grid-row: 1; }
     .shoppable-story__product-content { border: 0; gap: var(--space-3); padding: 0; }
     .shoppable-story__decision { gap: var(--space-4); }
-    .shoppable-story--intro-right { grid-template-columns: minmax(0, 1.28fr) minmax(15rem, .72fr); }
+    .shoppable-story--intro-right { grid-template-columns: minmax(0, var(--shoppable-story-products-width)) minmax(15rem, var(--shoppable-story-text-width)); }
     .shoppable-story--intro-right .shoppable-story__intro { grid-column: 2; }
     .shoppable-story--intro-right .shoppable-story__items { grid-column: 1; grid-row: 1; }
+    @supports selector(.shoppable-story:has(.shoppable-story__item)) {
+      .shoppable-story:not(:has(.shoppable-story__item)) { grid-template-columns: minmax(0, 1fr); }
+    }
   }
   @media (min-width: 48rem) and (max-width: 63.99rem) {
-    .shoppable-story { align-items: start; grid-template-columns: minmax(13rem, .62fr) minmax(0, 1.38fr); }
-    .shoppable-story__intro { max-inline-size: 18rem; }
+    .shoppable-story { align-items: stretch; grid-template-columns: minmax(13rem, var(--shoppable-story-text-width)) minmax(0, var(--shoppable-story-products-width)); }
+    .shoppable-story__intro { align-self: center; max-inline-size: 18rem; }
     .shoppable-story__items { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
-    .shoppable-story--intro-right { grid-template-columns: minmax(0, 1.38fr) minmax(13rem, .62fr); }
+    .shoppable-story--intro-right { grid-template-columns: minmax(0, var(--shoppable-story-products-width)) minmax(13rem, var(--shoppable-story-text-width)); }
     .shoppable-story--intro-right .shoppable-story__intro { grid-column: 2; }
     .shoppable-story--intro-right .shoppable-story__items { grid-column: 1; grid-row: 1; }
   }
@@ -130,7 +97,12 @@
     .shoppable-story__caption { display: none; }
     .shoppable-story__decision { gap: var(--space-2); }
     .shoppable-story__decision h3 { font-size: .625rem; }
-    .shoppable-story__price { font-size: .75rem; justify-content: start; text-align: start; }
+    .shoppable-story__price { font-size: .75rem; justify-content: start; padding-inline: 0; text-align: start; }
+    .shoppable-story__color-options, .shoppable-story__size-options { align-items: flex-start; gap: .35rem .5rem; }
+    .shoppable-story__color-label, .shoppable-story__size-label { font-size: .5625rem; }
+    .shoppable-story__color-names, .shoppable-story__size-names { font-size: .6875rem; }
+    .shoppable-story__swatches { gap: .375rem; }
+    .shoppable-story__swatch { block-size: 1.125rem; inline-size: 1.125rem; }
   }
 {% endstylesheet %}
 
@@ -138,26 +110,24 @@
 {
   "name": "t:general.shoppable_story",
   "settings": [
+    { "type": "header", "content": "t:general.content" },
     { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "The story" },
     { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Pieces composed for a day in motion" },
+    { "type": "select", "id": "heading_size", "label": "t:labels.heading_size", "options": [{ "value": "small", "label": "t:options.heading_size.small" }, { "value": "medium", "label": "t:options.heading_size.medium" }, { "value": "large", "label": "t:options.heading_size.large" }], "default": "medium" },
     { "type": "richtext", "id": "body", "label": "t:labels.text", "default": "<p>Each piece is available independently. Follow the product link to choose the right option.</p>" },
+    { "type": "select", "id": "text_size", "label": "t:labels.text_size", "options": [{ "value": "small", "label": "t:options.heading_size.small" }, { "value": "medium", "label": "t:options.heading_size.medium" }, { "value": "large", "label": "t:options.heading_size.large" }], "default": "medium" },
+    { "type": "header", "content": "t:general.layout" },
+    { "type": "select", "id": "text_alignment", "label": "t:labels.text_alignment", "options": [{ "value": "left", "label": "t:options.alignment.left" }, { "value": "center", "label": "t:options.alignment.center" }, { "value": "right", "label": "t:options.alignment.right" }], "default": "left" },
+    { "type": "select", "id": "intro_position", "label": "t:labels.text_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
+    { "type": "range", "id": "text_width", "label": "t:labels.text_width", "min": 25, "max": 45, "step": 1, "unit": "%", "default": 36 },
+    { "type": "select", "id": "image_ratio", "label": "t:labels.image_size", "options": [{ "value": "1 / 1", "label": "t:options.image_ratio.square" }, { "value": "4 / 5", "label": "t:options.image_ratio.portrait" }, { "value": "3 / 4", "label": "t:options.image_ratio.tall" }], "default": "4 / 5" },
+    { "type": "checkbox", "id": "show_variants", "label": "t:labels.show_variants", "default": true },
     { "type": "header", "content": "t:general.style" },
-    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#EBE7DD" },
-    { "type": "select", "id": "intro_position", "label": "t:labels.story_intro_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
-    { "type": "select", "id": "section_spacing", "label": "t:labels.section_spacing", "options": [{ "value": "compact", "label": "t:options.spacing.compact" }, { "value": "standard", "label": "t:options.spacing.standard" }, { "value": "spacious", "label": "t:options.spacing.spacious" }], "default": "standard" }
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#EBE7DD" }
   ],
-  "blocks": [
-    {
-      "type": "story_product",
-      "name": "t:general.story_product",
-      "settings": [
-        { "type": "product", "id": "product", "label": "t:labels.product" },
-        { "type": "image_picker", "id": "image", "label": "t:labels.story_image" },
-        { "type": "text", "id": "caption", "label": "t:labels.caption" }
-      ]
-    }
-  ],
+  "blocks": [{ "type": "story-product" }],
+  "max_blocks": 8,
   "enabled_on": { "templates": ["index"] },
-  "presets": [{ "name": "t:general.shoppable_story" }]
+  "presets": [{ "name": "t:general.shoppable_story", "category": "Shop the story", "blocks": [{ "type": "story-product" }, { "type": "story-product" }] }]
 }
 {% endschema %}

@@ -1,0 +1,86 @@
+<section class="contact-form contact-form--layout-{{ section.settings.layout_style }} contact-form--surface-{{ section.settings.form_surface }}" aria-labelledby="ContactFormTitle-{{ section.id }}" style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %}">
+  <header class="contact-form__header">
+    <h2 id="ContactFormTitle-{{ section.id }}">
+      {% if section.settings.heading != blank %}
+        {{ section.settings.heading | escape }}
+      {% else %}
+        {{ 'contact.title' | t }}
+      {% endif %}
+    </h2>
+    {% if section.settings.intro != blank %}
+      <div class="contact-form__intro rte">{{ section.settings.intro }}</div>
+    {% elsif page.content != blank %}
+      <div class="contact-form__intro rte">{{ page.content }}</div>
+    {% endif %}
+  </header>
+
+  {% capture contact_form_id %}ContactForm-{{ section.id }}{% endcapture %}
+  {% form 'contact', id: contact_form_id %}
+    {% if form.posted_successfully? %}
+      <p class="contact-form__message" role="status">{{ 'contact.success' | t }}</p>
+    {% elsif form.errors %}
+      <div class="contact-form__message contact-form__message--error" role="alert">{{ form.errors | default_errors }}</div>
+    {% endif %}
+
+    <div class="contact-form__fields">
+      <div class="contact-form__field">
+        <label for="ContactName-{{ section.id }}">{{ 'contact.name' | t }}</label>
+        <input id="ContactName-{{ section.id }}" autocomplete="name" name="contact[name]" type="text" value="{% if form.name %}{{ form.name | escape }}{% elsif customer %}{{ customer.name | escape }}{% endif %}">
+      </div>
+      <div class="contact-form__field">
+        <label for="ContactEmail-{{ section.id }}">{{ 'contact.email' | t }}</label>
+        <input id="ContactEmail-{{ section.id }}" autocomplete="email" name="contact[email]" required type="email" value="{% if form.email %}{{ form.email | escape }}{% elsif customer %}{{ customer.email | escape }}{% endif %}">
+      </div>
+      <div class="contact-form__field">
+        <label for="ContactPhone-{{ section.id }}">{{ 'contact.phone' | t }}</label>
+        <input id="ContactPhone-{{ section.id }}" autocomplete="tel" name="contact[phone]" type="tel" value="{{ form.phone | escape }}">
+      </div>
+      <div class="contact-form__field contact-form__field--message">
+        <label for="ContactMessage-{{ section.id }}">{{ 'contact.message' | t }}</label>
+        <textarea id="ContactMessage-{{ section.id }}" name="contact[body]" required rows="7">{{ form.body }}</textarea>
+      </div>
+    </div>
+
+    <button class="contact-form__submit" type="submit">{{ 'contact.submit' | t }}</button>
+  {% endform %}
+</section>
+
+{% stylesheet %}
+  .contact-form { border-block-start: 1px solid var(--color-border); margin: clamp(2.5rem, 5vw, 5rem) auto clamp(4rem, 8vw, 8rem); max-inline-size: min(100% - (var(--page-margin) * 2), 72rem); padding-block-start: clamp(1.5rem, 3vw, 2.5rem); }
+  .contact-form__header, .contact-form form { min-inline-size: 0; }
+  .contact-form__header { margin-block-end: var(--space-6); }
+  .contact-form__header h2 { font-family: var(--font-campaign); font-size: clamp(2.5rem, 5vw, 4.5rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.05em; line-height: .9; margin: 0; }
+  .contact-form__intro { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); font-size: 1.05rem; line-height: 1.65; margin-block-start: var(--space-5); max-inline-size: 25rem; }
+  .contact-form__intro > :first-child { margin-block-start: 0; }
+  .contact-form__intro > :last-child { margin-block-end: 0; }
+  .contact-form form { background: color-mix(in srgb, var(--color-foreground) 3%, var(--color-background)); border: 1px solid var(--color-border); display: block; padding: clamp(1.25rem, 3vw, 2.5rem); }
+  .contact-form__fields { display: grid; gap: var(--space-5); }
+  .contact-form__field { display: grid; gap: var(--space-2); }
+  .contact-form__field label { font-size: .6875rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  .contact-form__field input, .contact-form__field textarea { background: var(--color-background); border: 1px solid color-mix(in srgb, var(--color-foreground) 22%, var(--color-background)); border-radius: 0; color: inherit; font: inherit; inline-size: 100%; min-block-size: 3.25rem; padding: .75rem .9rem; transition: border-color 160ms ease, background-color 160ms ease; }
+  .contact-form__field textarea { min-block-size: 10rem; resize: vertical; }
+  .contact-form__field input:hover, .contact-form__field textarea:hover { border-color: color-mix(in srgb, var(--color-foreground) 48%, var(--color-background)); }
+  .contact-form__field input:focus-visible, .contact-form__field textarea:focus-visible { background: var(--color-background); border-color: var(--color-accent); box-shadow: none; outline: .125rem solid var(--color-accent); outline-offset: .18rem; }
+  .contact-form__message { background: color-mix(in srgb, var(--color-accent) 12%, var(--color-background)); margin-block: 0 var(--space-5); padding: var(--space-3); }
+  .contact-form__message--error { background: color-mix(in srgb, #a33f2b 10%, var(--color-background)); border-inline-start: .2rem solid #a33f2b; }
+  .contact-form__submit { align-items: center; background: var(--color-foreground); border: 1px solid var(--color-foreground); border-radius: 0; color: var(--color-background); display: inline-flex; font: inherit; font-size: .75rem; font-weight: 700; justify-content: center; letter-spacing: .1em; margin-block-start: var(--space-6); min-block-size: 3.25rem; padding-inline: var(--space-5); text-transform: uppercase; transition: background-color 180ms ease, color 180ms ease; }
+  .contact-form__submit:focus-visible { outline: .125rem solid var(--color-accent); outline-offset: .25rem; }
+  .contact-form--surface-minimal form { background: transparent; border-color: transparent; padding: 0; }
+  @media (hover: hover) and (pointer: fine) { .contact-form__submit:hover { background: var(--color-background); color: var(--color-foreground); } }
+  @media (min-width: 48rem) { .contact-form__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } .contact-form__field--message { grid-column: 1 / -1; } }
+  @media (min-width: 64rem) { .contact-form { display: grid; gap: clamp(3rem, 8vw, 8rem); grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); } .contact-form__header { margin: 0; padding-inline-start: min(10%, 4rem); } .contact-form--layout-centered { display: block; max-inline-size: 48rem; } .contact-form--layout-centered .contact-form__header { margin: 0 auto var(--space-7); padding: 0; text-align: center; } .contact-form--layout-centered .contact-form__intro { margin-inline: auto; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.contact_form",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" },
+    { "type": "select", "id": "layout_style", "label": "t:labels.contact_layout", "options": [{ "value": "editorial", "label": "t:options.contact_layout.editorial" }, { "value": "centered", "label": "t:options.contact_layout.centered" }], "default": "editorial" },
+    { "type": "select", "id": "form_surface", "label": "t:labels.contact_form_surface", "options": [{ "value": "framed", "label": "t:options.contact_form_surface.framed" }, { "value": "minimal", "label": "t:options.contact_form_surface.minimal" }], "default": "framed" },
+    { "type": "text", "id": "heading", "label": "t:labels.heading" },
+    { "type": "richtext", "id": "intro", "label": "t:labels.intro" }
+  ],
+  "enabled_on": { "templates": ["page"] }
+}
+{% endschema %}
