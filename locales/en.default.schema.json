@@ -3,6 +3,7 @@
     "404": "Not found",
     "article": "Article",
     "article_sidebar": "Article sidebar",
+    "announcement": "Announcement",
     "announcement_bar": "Announcement bar",
     "block": "Block",
     "blog": "Blog",
@@ -77,6 +78,7 @@
   },
   "labels": {
     "alignment": "Alignment",
+    "announcement_animation": "Text animation",
     "article_media_presentation": "Article media presentation",
     "color_scheme": "Color scheme",
     "blog_card_density": "Article card density",
@@ -116,6 +118,7 @@
     "show_product_badges": "Show sale and sold-out badges",
     "show_quick_add": "Show Quick Add",
     "show_variants": "Show variants",
+    "slide_speed": "Slide speed",
     "show_read_time": "Show reading time",
     "background_color": "Background color",
     "columns_desktop": "Desktop columns",
@@ -161,7 +164,6 @@
     "layout_direction": "Layout direction",
     "look_image": "Look image",
     "marquee": "Scrolling text",
-    "marquee_repetitions": "Number of text repeats",
     "marquee_speed": "Scroll speed",
     "media_position": "Media position",
     "link": "Link",
@@ -178,7 +180,6 @@
     "enable_footer_panel_transition": "Enable page panel transition into footer",
     "enable_image_flip": "Enable image flip transition",
     "enable_chapter_wheel": "Enable chapter wheel effect",
-    "enable_marquee": "Continuously scroll text",
     "eyebrow": "Eyebrow",
     "hero_height_desktop": "Desktop media height",
     "hero_height_mobile": "Mobile media height",
@@ -277,6 +278,7 @@
       "tall": "Tall (3:4)"
     },
     "image_fit": { "cover": "Cover", "contain": "Contain" },
+    "announcement_animation": { "swap": "Slide and fade", "marquee": "Continuously scroll right to left" },
     "alignment": {
       "left": "Left",
       "center": "Center",
