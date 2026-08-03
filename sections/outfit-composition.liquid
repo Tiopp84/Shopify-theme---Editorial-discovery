@@ -37,7 +37,7 @@
   </div>
 
   {% if section.blocks.size > 0 %}
-    <ul class="outfit-composition__items curated-grid--center-incomplete" role="list">
+    <ul class="outfit-composition__items curated-grid--center-incomplete" data-aos-sequence="row" data-aos-trigger="early" role="list">
       {% content_for 'blocks' %}
     </ul>
   {% endif %}
@@ -127,6 +127,7 @@
     { "type": "select", "id": "desktop_columns", "label": "t:labels.desktop_product_columns", "options": [{ "value": "3", "label": "t:options.columns.three" }, { "value": "4", "label": "t:options.columns.four" }], "default": "4" },
     { "type": "range", "id": "item_spacing", "label": "t:labels.grid_gap", "min": 8, "max": 48, "step": 2, "unit": "px", "default": 24 },
     { "type": "checkbox", "id": "show_price", "label": "t:labels.show_price", "default": true },
+    { "type": "checkbox", "id": "show_second_image", "label": "t:labels.show_second_image", "default": true },
     { "type": "header", "content": "t:general.style" },
     { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#242119" },
     { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#F5F3EE" }
