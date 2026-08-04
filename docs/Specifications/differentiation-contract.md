@@ -14,7 +14,7 @@ Phase 7 turns Narrivelle's approved product direction into three reusable, merch
 | Shoppable story | `shoppable-story` section with ordered story-product blocks | A shopper reaches an actual product or an unambiguous product decision in two mobile interactions or fewer. |
 | Outfit composition | `outfit-composition` section with independent outfit-item blocks | A merchant can compose a multi-product look without implying a bundle, discount, or shared availability. |
 
-`collection_story` remains a collection-context insertion owned by `collection.liquid`; it is not duplicated or reimplemented by these sections. Video/material/fit story is deferred until the three required experiences pass their gate. Recently viewed, fake urgency, product bundles, automatic discounts, app/API-dependent personalization, and remote motion runtimes remain out of scope.
+Collection story insertion is not part of the Collection product grid. Video/material/fit story is deferred until the three required experiences pass their gate. Recently viewed, fake urgency, product bundles, automatic discounts, app/API-dependent personalization, and remote motion runtimes remain out of scope.
 
 ## Shared architecture
 

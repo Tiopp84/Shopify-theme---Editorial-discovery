@@ -4,7 +4,7 @@ Status: **GLOBAL SHELL GATE PASS — 2026-07-20**
 
 ## Ownership
 
-- `announcement-bar` owns optional, locale-safe announcement content and link behavior.
+- `announcement-bar` owns optional, locale-safe announcement content and link behavior. It has one canonical, preconfigured instance in the Header group; its schema `limit: 1` prevents duplicates and it has no add-section preset, while Enable announcement controls visibility.
 - `header` owns logo, desktop navigation, mobile drawer, search/account/cart entry points, and sticky behavior.
 - `footer` owns layout, localization controls, payment presentation, and the Theme Block integration point.
 - `footer-menu` and `newsletter` are merchant-addable Theme Blocks with independent settings.

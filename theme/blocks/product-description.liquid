@@ -6,6 +6,10 @@
   <div class="product-description" {{ block.shopify_attributes }}>
     {{ product.description }}
   </div>
+{% elsif request.visual_preview_mode %}
+  <div class="product-description" {{ block.shopify_attributes }}>
+    <p>{{ 'products.form.preview_description' | t }}</p>
+  </div>
 {% endif %}
 
 {% stylesheet %}
@@ -17,6 +21,7 @@
 {% schema %}
 {
   "name": "t:general.product_description",
+  "class": "product-block product-block--description",
   "presets": [{ "name": "t:general.product_description" }]
 }
 {% endschema %}

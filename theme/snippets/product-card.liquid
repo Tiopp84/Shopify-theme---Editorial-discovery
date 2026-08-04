@@ -9,6 +9,9 @@
   @param {boolean} [show_price] - Show the product price.
   @param {boolean} [show_second_image] - Reveal the second product image on hover/focus when available.
   @param {boolean} [show_quick_add] - Show the variant-safe quick-add control where this context supports it.
+  @param {string} [quick_add_label] - Optional merchant label for the Quick Add trigger.
+  @param {boolean} [show_swatches] - Show Shopify-native swatches on collection cards.
+  @param {boolean} [show_variant_options] - Show non-swatch variant options on collection cards.
   @param {string} [image_ratio] - CSS aspect ratio used by the media frame.
   @param {string} [sizes] - Responsive image sizes hint.
   @param {number} [card_index] - One-based position in the current result set.
@@ -26,6 +29,9 @@
   assign sizes = sizes | default: '(min-width: 60rem) 25vw, 50vw'
   assign card_id = 'ProductCard-' | append: product.id
   assign card_title = title | default: product.title
+  if quick_add_label == blank
+    assign quick_add_label = 'products.card.quick_add' | t
+  endif
   assign formatted_index = card_index | prepend: '0' | slice: -2, 2
   assign formatted_count = card_count | prepend: '0' | slice: -2, 2
   assign on_sale = false
@@ -76,12 +82,12 @@
               <input type="hidden" name="id" value="{{ quick_add_variant.id }}">
               <input type="hidden" name="quantity" value="{{ quick_add_variant.quantity_rule.min }}" data-quick-add-quantity>
               <p class="quick-add__error" data-quick-add-error role="alert" hidden></p>
-              <button type="submit" class="product-card__quick-add">{{ 'products.card.quick_add' | t }}</button>
+              <button type="submit" class="product-card__quick-add">{{ quick_add_label | escape }}</button>
             {% endform %}
           </quick-add>
         {% else %}
           <quick-add class="product-card__quick-add-shell" data-product-form data-product-url="{{ product.url }}" data-unavailable="{{ 'products.form.unavailable_combination' | t }}" data-add-to-cart="{{ 'products.form.add_to_cart' | t }}" data-available="{{ 'products.form.available' | t }}" data-sold-out="{{ 'products.form.sold_out' | t }}" data-verifying="{{ 'products.card.verifying_availability' | t }}" data-error="{{ 'products.card.quick_add_error' | t }}">
-            <button type="button" class="product-card__quick-add" data-quick-add-open aria-haspopup="dialog">{{ 'products.card.quick_add' | t }}</button>
+            <button type="button" class="product-card__quick-add" data-quick-add-open aria-haspopup="dialog">{{ quick_add_label | escape }}</button>
             <dialog class="quick-add__dialog" aria-labelledby="QuickAddTitle-{{ product.id }}" data-quick-add-dialog data-overlay-motion="modal">
               <div class="quick-add__header">
                 <div class="quick-add__header-copy">
@@ -180,10 +186,10 @@
     {% if show_index != false and card_index or show_vendor and product.vendor != blank %}
       <div class="product-card__meta">
         {% if show_index != false and card_index %}
-          <span>{{ formatted_index }}{% if card_count %} / {{ formatted_count }}{% endif %}</span>
+          <span class="product-card__index">{{ formatted_index }}{% if card_count %} / {{ formatted_count }}{% endif %}</span>
         {% endif %}
         {% if show_vendor and product.vendor != blank %}
-          <span>{{ product.vendor | escape }}</span>
+          <span class="product-card__vendor">{{ product.vendor | escape }}</span>
         {% endif %}
       </div>
     {% endif %}
@@ -194,6 +200,64 @@
       </h2>
       {% if show_price != false %}{% render 'price', item: product, class: 'product-card__price' %}{% endif %}
     </div>
+
+    {% if show_swatches or show_variant_options %}
+      <div class="product-card__options">
+        {% for option in product.options_with_values %}
+          {% assign has_swatch = false %}
+          {% for value in option.values %}
+            {% if value.swatch.image or value.swatch.color %}
+              {% assign has_swatch = true %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+
+          {% assign render_swatches = false %}
+          {% if show_swatches and has_swatch %}
+            {% assign render_swatches = true %}
+          {% endif %}
+          {% assign render_variants = false %}
+          {% if show_variant_options and render_swatches == false %}
+            {% assign render_variants = true %}
+          {% endif %}
+          {% if render_swatches or render_variants %}
+            <div class="product-card__option{% if render_swatches %} product-card__option--swatches{% endif %}">
+              <span class="visually-hidden">{{ option.name | escape }}</span>
+              <div class="product-card__option-values">
+                {% for value in option.values %}
+                  {% assign matching_variant = blank %}
+                  {% for variant in product.variants %}
+                    {% case option.position %}
+                      {% when 1 %}{% assign variant_option_value = variant.option1 %}
+                      {% when 2 %}{% assign variant_option_value = variant.option2 %}
+                      {% when 3 %}{% assign variant_option_value = variant.option3 %}
+                    {% endcase %}
+                    {% if variant_option_value == value.name %}
+                      {% assign matching_variant = variant %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                  {% if matching_variant != blank %}
+                    {% if render_swatches %}
+                      {% assign swatch_background = blank %}
+                      {% if value.swatch.image %}
+                        {% assign swatch_image_url = value.swatch.image | image_url: width: 96 %}
+                        {% assign swatch_background = 'url(' | append: swatch_image_url | append: ')' %}
+                      {% elsif value.swatch.color %}
+                        {% assign swatch_background = 'rgb(' | append: value.swatch.color.rgb | append: ')' %}
+                      {% endif %}
+                      <a class="product-card__swatch{% if value.selected %} is-selected{% endif %}" href="{{ matching_variant.url }}" aria-label="{{ option.name | escape }}: {{ value.name | escape }}"{% if swatch_background != blank %} style="--product-card-swatch: {{ swatch_background }};"{% endif %}></a>
+                    {% else %}
+                      <a class="product-card__variant{% if value.selected %} is-selected{% endif %}" href="{{ matching_variant.url }}">{{ value.name | escape }}</a>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
 
   </div>
 </article>
@@ -282,19 +346,20 @@
     text-transform: uppercase;
   }
 
+  .product-card__index { color: var(--color-accent); font-weight: 700; }
+  .product-card__vendor { margin-inline-start: auto; }
+
   .product-card__decision {
     min-width: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .product-card__title {
-    min-block-size: 2.24em;
-    font-size: clamp(1.2rem, 1.55vw, 1.5rem);
-    font-weight: 500;
-    line-height: 1.12;
+    min-block-size: 2.5em;
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    font-weight: 600;
+    line-height: 1.25;
   }
 
   .product-card__title a {
@@ -314,9 +379,54 @@
   }
 
   .product-card__price {
-    justify-content: flex-end;
-    text-align: end;
-    white-space: nowrap;
+    justify-content: flex-start;
+    font-size: .9375rem;
+    text-align: start;
+  }
+
+  .product-card__options {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .product-card__option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+  }
+
+  .product-card__swatch,
+  .product-card__variant {
+    min-block-size: 2rem;
+    text-decoration: none;
+  }
+
+  .product-card__swatch {
+    background: var(--product-card-swatch);
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 45%, var(--color-border));
+    border-radius: 999px;
+    display: block;
+    inline-size: 2rem;
+  }
+
+  .product-card__swatch:is(:hover, :focus-visible),
+  .product-card__swatch.is-selected {
+    outline: .125rem solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
+  .product-card__variant {
+    align-items: center;
+    border-block-end: 1px solid transparent;
+    color: color-mix(in srgb, var(--color-foreground) 72%, transparent);
+    display: inline-flex;
+    font-size: .75rem;
+  }
+
+  .product-card__variant:is(:hover, :focus-visible),
+  .product-card__variant.is-selected {
+    border-color: currentcolor;
+    color: var(--color-foreground);
   }
 
   .product-card__quick-add-wrap { inset-block-end: var(--space-3); inset-inline: var(--space-3); opacity: 0; position: absolute; transform: translateY(.5rem); transition: opacity 160ms ease 180ms, transform 160ms ease 180ms; visibility: hidden; z-index: 2; }

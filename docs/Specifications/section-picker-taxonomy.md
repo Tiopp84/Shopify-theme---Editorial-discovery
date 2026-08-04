@@ -106,6 +106,37 @@ Global settings own system-wide decisions: typography, color schemes, and other 
 
 Every public Liquid section declares exactly one `enabled_on` or `disabled_on` policy. Narrivelle defaults to the narrower `enabled_on` rule.
 
+### Singleton shell sections
+
+Use this pattern for a global shell surface that must always have one canonical place in a section group, such as Announcement bar. The merchant edits its settings and blocks in the Header group, but should not create a second instance through **Add section**.
+
+- Declare the section's placement narrowly, for example `"enabled_on": { "groups": ["header"] }`.
+- Set `"limit": 1` in the section schema to prevent a duplicate while the canonical instance exists.
+- Do not declare `presets`. Shopify only exposes sections with a preset in **Add section**; a section without a preset can be included by code in a JSON section group but cannot be added again through the editor.
+- Add exactly one canonical instance to the appropriate group JSON, using canonical hyphenated IDs for the section and its blocks. Include generic, locale-safe default blocks only—never store data.
+- Provide a visibility checkbox such as **Enable announcement**. This is the merchant control for hiding the surface; do not treat deletion as a normal visibility setting.
+
+Example for `sections/header-group.json`:
+
+```json
+{
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-1": {
+          "type": "announcement",
+          "settings": { "text": "Complimentary delivery over $150" }
+        }
+      },
+      "block_order": ["announcement-1"],
+      "settings": {}
+    }
+  },
+  "order": ["announcement-bar"]
+}
+```
+
 | Surface | Allowed placement | Notes |
 |---|---|---|
 | Header | `groups: ["header"]` | Header and Announcement Bar only; Announcement Bar is the documented cross-context exception. |
@@ -115,6 +146,7 @@ Every public Liquid section declares exactly one `enabled_on` or `disabled_on` p
 | Collection | `templates: ["collection"]` | Collection discovery owns its context; do not add generic product sections to it. |
 | Content templates | Their owning template only | Page, contact, FAQ, blog, article, and related stories remain narrow so the picker cannot create an incoherent template. |
 | Recovery templates | Their owning template only | Cart, search, 404, password, and gift card keep their native recovery/task ownership. |
+| 404 recovery discovery | `templates: ["404"]` | `Featured edit` and `Collection list` are the only addable exception. They appear below the fixed 404 recovery action and give the shopper an optional path back to real catalog content. |
 
 Template-owned main sections without a preset stay in their template JSON. A preset is for an addable composition, not evidence that every section should be addable everywhere.
 
@@ -124,7 +156,7 @@ This table is the migration target. `Picker` means the section has an addable pr
 
 | Current file | Target merchant label | Category | Placement | Picker | Refactor note |
 |---|---|---|---|---|---|
-| `announcement-bar.liquid` | Announcement bar | Forms & utility | Header group and documented body exception | Yes | One utility section, no campaign duplicate. |
+| `announcement-bar.liquid` | Announcement bar | Forms & utility | Header group | No | One canonical header instance (`limit: 1`); no preset means it cannot be added as another section. Enable announcement controls visibility. |
 | `header.liquid` | Header | — | Header group | Fixed | Shell owner. |
 | `footer.liquid` | Footer | — | Footer group | Fixed | Shell owner. |
 | `editorial-hero.liquid` | Editorial hero | Campaign & editorial | Home | Yes | First refactor; reduce local presentation controls to meaningful art-direction choices. |
@@ -133,9 +165,9 @@ This table is the migration target. `Picker` means the section has an addable pr
 | `shoppable-hero.liquid` | Shoppable hero | Shop the story | Home | Yes | Full-bleed campaign media with product-linked hotspot blocks; hotspots must lead to a product page, never imply a variant-safe add. |
 | `shoppable-story.liquid` | Shoppable story | Shop the story | Home | Yes | Retain the explicit external `story-product` Theme Block allowlist. |
 | `outfit-composition.liquid` | Outfit composition | Shop the story | Home | Yes | Allowlist the external, movable `outfit-item` Theme Block; retain independent item state and never represent a bundle. |
-| `featured-edit.liquid` | Featured edit | Products & collections | Home | Yes | Collection-based home merchandising. |
+| `featured-edit.liquid` | Featured edit | Products & collections | Home, 404 | Yes | Collection-based merchandising; optional 404 recovery discovery below the fixed recovery action. |
 | `collections.liquid` | Collections | — | List collections | No | Fixed template owner; always renders the store's collection inventory. |
-| `collection-list.liquid` | Collection list | Products & collections | Home | Yes | Explicit `collection-card` Theme Block allowlist; never substitutes for the all-collections template. |
+| `collection-list.liquid` | Collection list | Products & collections | Home, 404 | Yes | Explicit `collection-card` Theme Block allowlist; optional 404 recovery discovery, never substitutes for the all-collections template. |
 | `product-recommendations.liquid` | Product recommendations | Products & collections | Product | Yes | Product-context-only recommendation surface. |
 | `related-stories.liquid` | Related stories | Content | Article | No | Fixed article continuation, not a generic product/content grid. |
 | `page.liquid` | Page | — | Page | Fixed | Template reading composition. |
@@ -143,7 +175,8 @@ This table is the migration target. `Picker` means the section has an addable pr
 | `faq.liquid` | FAQ | Forms & utility | Page/FAQ template | No | Fixed information composition. |
 | `blog.liquid` | Blog | — | Blog | Fixed | Blog archive owner. |
 | `article.liquid` | Article | — | Article | Fixed | Article reading owner. |
-| `collection.liquid` | Collection | — | Collection | Fixed | Collection discovery owner. |
+| `collection-header.liquid` | Collection header | — | Collection | Fixed | Owns collection image/banner and title presentation only. |
+| `collection-product-grid.liquid` | Collection product grid | — | Collection | Fixed | Owns collection description, product grid, facets, sorting, pagination and AJAX discovery boundary. |
 | `product.liquid` | Product information | — | Product | Fixed | Product blocks own rearrangeable detail content. |
 | `cart.liquid` | Cart | — | Cart | Fixed | Native cart task owner. |
 | `cart-drawer.liquid` | Cart drawer | — | Global runtime surface | Fixed | Not a merchant-added page section. |
