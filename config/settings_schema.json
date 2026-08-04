@@ -76,36 +76,44 @@
   {
     "name": "t:general.colors",
     "settings": [
-      {
-        "type": "range",
-        "id": "input_corner_radius",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "unit": "px",
-        "label": "t:labels.input_corner_radius",
-        "default": 0
-      }
+      { "type": "header", "content": "t:general.general" },
+      { "type": "color", "id": "background_color", "default": "#FAF8F5", "label": "t:labels.background" },
+      { "type": "color", "id": "text_color", "default": "#1A1A1A", "label": "t:labels.foreground" },
+      { "type": "color", "id": "border_color", "default": "#E5DFD6", "label": "t:labels.border_and_divider" },
+      { "type": "header", "content": "t:general.interactive_states" },
+      { "type": "color", "id": "interactive_color", "default": "#8B7355", "label": "t:labels.interactive_color", "info": "t:descriptions.interactive_color" },
+      { "type": "color", "id": "interactive_background", "default": "#E4E8DC", "label": "t:labels.interactive_background", "info": "t:descriptions.interactive_background" },
+      { "type": "header", "content": "t:general.header" },
+      { "type": "color", "id": "header_background_color", "default": "#F5F3EE", "label": "t:labels.header_background_color" },
+      { "type": "color", "id": "header_navigation_color", "default": "#242119", "label": "t:labels.navigation_color" },
+      { "type": "color", "id": "header_navigation_hover_color", "default": "#242119", "label": "t:labels.navigation_hover_color" },
+      { "type": "color", "id": "header_navigation_hover_text_color", "default": "#F5F3EE", "label": "t:labels.navigation_hover_text_color" },
+      { "type": "color", "id": "header_dropdown_background_color", "default": "#F5F3EE", "label": "t:labels.dropdown_background_color" },
+      { "type": "color", "id": "header_dropdown_text_color", "default": "#242119", "label": "t:labels.dropdown_text_color" },
+      { "type": "header", "content": "t:general.announcement_bar" },
+      { "type": "color", "id": "announcement_background_color", "default": "#1A1A1A", "label": "t:labels.background_color" },
+      { "type": "color", "id": "announcement_text_color", "default": "#FAF8F5", "label": "t:labels.text_color" },
+      { "type": "header", "content": "t:general.footer" },
+      { "type": "color", "id": "footer_background_color", "default": "#1A1A1A", "label": "t:labels.background_color" },
+      { "type": "color", "id": "footer_text_color", "default": "#FAF8F5", "label": "t:labels.text_color" },
+      { "type": "header", "content": "t:general.overlays" },
+      { "type": "color", "id": "overlay_color", "default": "#000000", "label": "t:labels.background_color" },
+      { "type": "range", "id": "overlay_opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "label": "t:labels.overlay_opacity", "default": 45 },
+      { "type": "header", "content": "t:general.commerce" },
+      { "type": "color", "id": "price_color", "default": "#1A1A1A", "label": "t:labels.price" },
+      { "type": "color", "id": "compare_price_color", "default": "#767676", "label": "t:labels.compare_price" },
+      { "type": "color", "id": "sale_price_color", "default": "#A33F2B", "label": "t:labels.sale_price" },
+      { "type": "color", "id": "sale_badge_background", "default": "#F7BEBE", "label": "t:labels.sale_badge_background" },
+      { "type": "color", "id": "sale_badge_text", "default": "#1A1A1A", "label": "t:labels.sale_badge_text" }
     ]
   },
   {
-    "name": "t:general.color_schemes",
+    "name": "t:general.buttons",
     "settings": [
-      { "type": "header", "content": "t:options.color_scheme.base" },
-      { "type": "color", "id": "scheme_base_background", "default": "#FAF8F5", "label": "t:labels.background" },
-      { "type": "color", "id": "scheme_base_foreground", "default": "#1A1A1A", "label": "t:labels.foreground" },
-      { "type": "color", "id": "scheme_base_accent", "default": "#8B7355", "label": "t:labels.accent" },
-      { "type": "color", "id": "scheme_base_border", "default": "#E5DFD6", "label": "t:labels.border" },
-      { "type": "header", "content": "t:options.color_scheme.soft" },
-      { "type": "color", "id": "scheme_soft_background", "default": "#F0EBE3", "label": "t:labels.background" },
-      { "type": "color", "id": "scheme_soft_foreground", "default": "#2B2B2B", "label": "t:labels.foreground" },
-      { "type": "color", "id": "scheme_soft_accent", "default": "#A08D6F", "label": "t:labels.accent" },
-      { "type": "color", "id": "scheme_soft_border", "default": "#D9D0C3", "label": "t:labels.border" },
-      { "type": "header", "content": "t:options.color_scheme.dark" },
-      { "type": "color", "id": "scheme_dark_background", "default": "#1A1A1A", "label": "t:labels.background" },
-      { "type": "color", "id": "scheme_dark_foreground", "default": "#FAF8F5", "label": "t:labels.foreground" },
-      { "type": "color", "id": "scheme_dark_accent", "default": "#C4A876", "label": "t:labels.accent" },
-      { "type": "color", "id": "scheme_dark_border", "default": "#4A4540", "label": "t:labels.border" }
+      { "type": "color", "id": "button_background", "default": "#1A1A1A", "label": "t:labels.theme_button_background" },
+      { "type": "color", "id": "button_text", "default": "#FAF8F5", "label": "t:labels.theme_button_text" },
+      { "type": "color", "id": "button_hover_background", "default": "#3A3A3A", "label": "t:labels.theme_button_hover_background" },
+      { "type": "range", "id": "button_corner_radius", "min": 0, "max": 24, "step": 1, "unit": "px", "label": "t:labels.button_corner_radius", "default": 0 }
     ]
   },
   {

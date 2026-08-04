@@ -10,7 +10,7 @@
   class="header-shell full-width header-shell--logo-{{ section.settings.desktop_logo_position }} header-shell--menu-{{ section.settings.desktop_menu_position }}{% if section.settings.sticky_header %} header-shell--sticky{% endif %}"
   data-compact-header-enabled="{{ section.settings.enable_compact_navigation }}"
   data-dropdown-hover="{{ section.settings.enable_dropdown_hover }}"
-  style="--header-logo-width: {{ section.settings.logo_width }}px; --header-mobile-logo-width: {{ section.settings.mobile_logo_width }}px; --header-height: {{ section.settings.header_height }}px; --header-background-color: {{ section.settings.header_background_color }}; --header-compact-height: {{ section.settings.compact_header_height }}px; --header-compact-logo-max-height: {{ section.settings.compact_header_height | times: 80 | divided_by: 100 }}px; --header-compact-background-color: {{ section.settings.compact_header_background_color }}; --header-navigation-color: {{ section.settings.navigation_color }}; --header-navigation-hover-color: {{ section.settings.navigation_hover_color }}; --header-navigation-hover-text-color: {{ section.settings.navigation_hover_text_color }}; --header-dropdown-background-color: {{ section.settings.dropdown_background_color }}; --header-dropdown-text-color: {{ section.settings.dropdown_text_color }}; --header-navigation-size: {{ section.settings.navigation_size }}px;"
+  style="--header-logo-width: {{ section.settings.logo_width }}px; --header-mobile-logo-width: {{ section.settings.mobile_logo_width }}px; --header-height: {{ section.settings.header_height }}px; --header-background-color: {{ settings.header_background_color }}; --header-compact-height: {{ section.settings.compact_header_height }}px; --header-compact-logo-max-height: {{ section.settings.compact_header_height | times: 80 | divided_by: 100 }}px; --header-compact-background-color: {{ section.settings.compact_header_background_color }}; --header-navigation-color: {{ settings.header_navigation_color }}; --header-navigation-hover-color: {{ settings.header_navigation_hover_color }}; --header-navigation-hover-text-color: {{ settings.header_navigation_hover_text_color }}; --header-dropdown-background-color: {{ settings.header_dropdown_background_color }}; --header-dropdown-text-color: {{ settings.header_dropdown_text_color }}; --header-navigation-size: {{ section.settings.navigation_size }}px;"
 >
   <header class="header-shell__inner">
     {% if has_navigation %}
@@ -512,7 +512,7 @@
     min-width: 14rem;
     padding: var(--space-3);
     border: 1px solid var(--color-border);
-    border-radius: max(0.5rem, var(--style-border-radius-inputs));
+    border-radius: 0.5rem;
     background: var(--header-dropdown-background-color);
     box-shadow: 0 0.75rem 1.5rem color-mix(in srgb, var(--color-foreground) 12%, transparent);
     display: grid;
@@ -531,7 +531,7 @@
   }
 
   .header-shell__submenu a:is(:hover, :focus-visible) {
-    background: var(--color-accent-tint);
+    background: var(--color-interactive-background);
     color: var(--color-foreground);
     transform: translateX(0.2rem);
   }
@@ -586,7 +586,7 @@
     min-height: 1.15rem;
     padding-inline: 0.2rem;
     border-radius: 999px;
-    background: var(--color-accent);
+    background: var(--header-navigation-color);
     color: var(--color-background);
     font-size: 0.65rem;
     line-height: 1.15rem;
@@ -622,7 +622,7 @@
   }
 
   .header-shell__drawer::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
-  .header-shell__drawer[open]::backdrop { background: rgb(0 0 0 / 45%); }
+  .header-shell__drawer[open]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
   @starting-style {
     .header-shell__drawer[open] {
@@ -653,7 +653,7 @@
   }
 
   .header-shell__search-dialog::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
-  .header-shell__search-dialog[open]::backdrop { background: rgb(0 0 0 / 38%); }
+  .header-shell__search-dialog[open]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
   @starting-style {
     .header-shell__search-dialog[open] {
@@ -923,7 +923,7 @@
     }
 
     .header-shell__task:is(:hover, :focus-visible) {
-      background: var(--color-accent-tint);
+      background: var(--color-interactive-background);
       color: var(--color-foreground);
       outline: none;
       box-shadow: var(--focus-ring);
@@ -937,7 +937,7 @@
       min-height: 1rem;
       padding-inline: .16rem;
       border-radius: 999px;
-      background: var(--color-accent);
+      background: var(--header-navigation-color);
       color: var(--color-background);
       font-size: .58rem;
       line-height: 1rem;
@@ -1120,36 +1120,6 @@
       "label": "t:labels.navigation_size",
       "default": 14
     },
-    {
-      "type": "color",
-      "id": "navigation_color",
-      "label": "t:labels.navigation_color",
-      "default": "#242119"
-    },
-    {
-      "type": "color",
-      "id": "navigation_hover_color",
-      "label": "t:labels.navigation_hover_color",
-      "default": "#242119"
-    },
-    {
-      "type": "color",
-      "id": "navigation_hover_text_color",
-      "label": "t:labels.navigation_hover_text_color",
-      "default": "#F5F3EE"
-    },
-    {
-      "type": "color",
-      "id": "dropdown_background_color",
-      "label": "t:labels.dropdown_background_color",
-      "default": "#F5F3EE"
-    },
-    {
-      "type": "color",
-      "id": "dropdown_text_color",
-      "label": "t:labels.dropdown_text_color",
-      "default": "#242119"
-    },
     { "type": "header", "content": "t:general.layout" },
     {
       "type": "select",
@@ -1174,12 +1144,6 @@
       "unit": "px",
       "label": "t:labels.header_height",
       "default": 72
-    },
-    {
-      "type": "color",
-      "id": "header_background_color",
-      "label": "t:labels.header_background_color",
-      "default": "#F5F3EE"
     },
     { "type": "header", "content": "t:general.sticky_header_bar" },
     { "type": "checkbox", "id": "enable_compact_navigation", "label": "t:labels.enable_compact_navigation", "default": true },
