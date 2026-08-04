@@ -2,6 +2,7 @@
   "404": {
     "title": "404",
     "not_found": "Page not found.",
+    "message": "The page you requested may have moved, changed, or no longer be available.",
     "back_to_shopping": "Back to shopping"
   },
   "blog": {
@@ -123,12 +124,15 @@
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
     "card": "Gift card",
+    "code": "Gift card code",
     "expired": "This gift card has expired",
     "expires_on": "Expires on {{ expires_on }}",
+    "title": "Gift card",
     "use_at_checkout": "Use this gift card at checkout"
   },
   "password": {
     "title": "This shop is private",
+    "message": "Enter the store password to continue.",
     "password": "Password",
     "enter": "Enter"
   },
@@ -173,8 +177,14 @@
       "unavailable_combination": "This combination is unavailable.",
       "quantity": "Quantity",
       "quantity_pricing_available": "Volume pricing is available for this variant.",
+      "reassurance": "Product information",
       "purchase_option": "Purchase option",
       "one_time_purchase": "One-time purchase",
+      "preview_description": "Product details appear here when a product description is available.",
+      "preview_reassurance_content": "Add optional delivery, care, or returns guidance for this product.",
+      "preview_reassurance_heading": "Product reassurance",
+      "preview_sku": "NAR-001",
+      "preview_variant": "Select an option",
       "selling_plan_notice": "Subscription availability and pricing are confirmed by Shopify at checkout.",
       "sku": "SKU",
       "size_guide": "Size guide",

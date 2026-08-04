@@ -1,11 +1,14 @@
 {% # theme-check-disable ValidScopedCSSClass %}
 {% if product.vendor != blank %}
   <p class="main-product__vendor" {{ block.shopify_attributes }}>{{ product.vendor | escape }}</p>
+{% elsif request.visual_preview_mode %}
+  <p class="main-product__vendor" {{ block.shopify_attributes }}>{{ shop.name | escape }}</p>
 {% endif %}
 
 {% schema %}
 {
   "name": "t:general.product_vendor",
+  "class": "product-block product-block--vendor",
   "presets": [{ "name": "t:general.product_vendor" }]
 }
 {% endschema %}

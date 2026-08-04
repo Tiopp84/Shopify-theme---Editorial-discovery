@@ -6,9 +6,22 @@
   unless product.has_only_default_variant
     assign has_multiple_variants = true
   endunless
-  assign size_guide_page = section.settings.size_guide_page
+  assign size_guide_page = block.settings.size_guide_page
 %}
 
+{% if product == blank and request.visual_preview_mode %}
+  <div class="main-product__form-preview" {{ block.shopify_attributes }}>
+    <div class="main-product__option">
+      <label>{{ 'products.form.variant' | t }}</label>
+      <select disabled><option>{{ 'products.form.preview_variant' | t }}</option></select>
+    </div>
+    <div class="main-product__quantity">
+      <span>{{ 'products.form.quantity' | t }}</span>
+      <div class="main-product__quantity-control" aria-hidden="true"><span>−</span><span>1</span><span>+</span></div>
+    </div>
+    <button type="button">{{ 'products.form.add_to_cart' | t }}</button>
+  </div>
+{% else %}
 <product-form
   data-product-form
   data-add-to-cart="{{ 'products.form.add_to_cart' | t }}"
@@ -113,10 +126,23 @@
     </dialog>
   </size-guide>
 {% endif %}
+{% endif %}
+
+{% stylesheet %}
+  .main-product__form-preview { display: grid; gap: 1.4rem; margin-block-start: 1.45rem; }
+  .main-product__form-preview .main-product__quantity > span { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .main-product__form-preview .main-product__quantity-control { align-items: center; }
+  .main-product__form-preview .main-product__quantity-control span { align-content: center; min-block-size: var(--pdp-control-size); text-align: center; }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.product_form",
+  "class": "product-block product-block--form",
+  "settings": [
+    { "type": "header", "content": "t:general.content" },
+    { "type": "page", "id": "size_guide_page", "label": "t:labels.size_guide_page" }
+  ],
   "presets": [{ "name": "t:general.product_form" }]
 }
 {% endschema %}

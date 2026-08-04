@@ -1,8 +1,13 @@
-<h1 {{ block.shopify_attributes }}>{{ product.title | escape }}</h1>
+{% if product.title != blank %}
+  <h1 {{ block.shopify_attributes }}>{{ product.title | escape }}</h1>
+{% elsif request.visual_preview_mode %}
+  <h1 {{ block.shopify_attributes }}>{{ 'products.card.placeholder_title' | t }}</h1>
+{% endif %}
 
 {% schema %}
 {
   "name": "t:general.product_title",
+  "class": "product-block product-block--title",
   "presets": [{ "name": "t:general.product_title" }]
 }
 {% endschema %}
