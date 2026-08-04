@@ -10,11 +10,8 @@
 {
   "sections": {
     "all_products_header": {
-      "type": "collection-header",
-      "settings": {
-        "show_collection_image": false,
-        "show_collection_title": true
-      }
+      "type": "all-products-header",
+      "settings": {}
     },
     "all_products_grid": {
       "type": "collection-product-grid",
