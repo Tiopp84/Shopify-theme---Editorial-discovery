@@ -1,7 +1,8 @@
 {% if section.settings.show_announcement and section.blocks.size > 0 %}
+  <script src="{{ 'announcement-bar-anchor.js' | asset_url }}" defer></script>
   {% assign marquee_speed = section.settings.marquee_speed | default: 5 %}
   {% assign swap_speed = section.settings.swap_speed | default: 8 %}
-  <div
+  <announcement-bar-anchor
     class="announcement-bar full-width announcement-bar--{{ section.settings.animation_style | default: 'swap' }} announcement-bar--marquee-speed-{{ marquee_speed }} announcement-bar--swap-speed-{{ swap_speed }}"
     role="region"
     aria-label="{{ 'accessibility.announcement' | t }}"
@@ -40,10 +41,17 @@
         </div>
       </announcement-bar-switcher>
     {% endif %}
-  </div>
+  </announcement-bar-anchor>
 {% endif %}
 
 {% stylesheet %}
+  html[data-announcement-bar-fixed] .shopify-section:has(> .announcement-bar) {
+    position: fixed;
+    z-index: 50;
+    inset-block-start: 0;
+    inset-inline: 0;
+  }
+
   .announcement-bar { align-items: center; background: var(--announcement-background, var(--color-foreground)); color: var(--announcement-color, var(--color-background)); display: flex; font-size: var(--announcement-font-size, .75rem); letter-spacing: .04em; min-block-size: var(--announcement-min-height, 2rem); overflow: hidden; padding: var(--space-2) var(--page-margin); text-align: center; }
   .announcement-bar__message { align-items: center; color: inherit; display: inline-flex; gap: .45rem; justify-content: center; margin: 0; min-inline-size: 0; }
   .announcement-bar__link { text-decoration: none; }

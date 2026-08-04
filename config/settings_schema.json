@@ -107,5 +107,21 @@
       { "type": "color", "id": "scheme_dark_accent", "default": "#C4A876", "label": "t:labels.accent" },
       { "type": "color", "id": "scheme_dark_border", "default": "#4A4540", "label": "t:labels.border" }
     ]
+  },
+  {
+    "name": "t:general.social_media",
+    "settings": [
+      { "type": "url", "id": "social_instagram", "label": "t:labels.instagram" },
+      { "type": "url", "id": "social_threads", "label": "t:labels.threads" },
+      { "type": "url", "id": "social_facebook", "label": "t:labels.facebook" },
+      { "type": "url", "id": "social_x", "label": "t:labels.x" },
+      { "type": "url", "id": "social_pinterest", "label": "t:labels.pinterest" },
+      { "type": "url", "id": "social_youtube", "label": "t:labels.youtube" },
+      { "type": "url", "id": "social_tiktok", "label": "t:labels.tiktok" },
+      { "type": "url", "id": "social_snapchat", "label": "t:labels.snapchat" },
+      { "type": "url", "id": "social_tumblr", "label": "t:labels.tumblr" },
+      { "type": "url", "id": "social_linkedin", "label": "t:labels.linkedin" },
+      { "type": "url", "id": "social_vimeo", "label": "t:labels.vimeo" }
+    ]
   }
 ]

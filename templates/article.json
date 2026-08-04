@@ -12,9 +12,14 @@
     "main": {
       "type": "article",
       "settings": {}
+    },
+    "related-stories": {
+      "type": "related-stories",
+      "settings": {}
     }
   },
   "order": [
-    "main"
+    "main",
+    "related-stories"
   ]
 }
