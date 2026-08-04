@@ -9,7 +9,7 @@
   endif
 %}
 
-<section class="main-product main-product--gallery-{{ section.settings.gallery_layout }} main-product--media-{{ section.settings.desktop_media_position }}" data-product-section data-section-id="{{ section.id }}" data-gallery-layout="{{ section.settings.gallery_layout }}" style="--pdp-media-ratio: {{ media_ratio }}; {% render 'section-color-scheme', scheme: section.settings.color_scheme %}">
+<section class="main-product main-product--gallery-{{ section.settings.gallery_layout }} main-product--media-{{ section.settings.desktop_media_position }}" data-product-section data-section-id="{{ section.id }}" data-gallery-layout="{{ section.settings.gallery_layout }}" style="--pdp-media-ratio: {{ media_ratio }};">
   {% if product.media.size > 0 %}
     <product-gallery class="main-product__gallery main-product__gallery--{{ section.settings.gallery_layout }}" data-product-gallery data-gallery-layout="{{ section.settings.gallery_layout }}" data-initial-media-id="{{ initial_media.id }}" aria-label="{{ product.title | escape }}">
       <div class="main-product__media-stage">
@@ -201,7 +201,7 @@
   .main-product__selling-plan label { font-size: .875rem; font-weight: 700; }
   .main-product__selling-plan select { background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--pdp-control-radius); color: var(--color-foreground); min-block-size: var(--pdp-control-size); padding-inline: .8rem; width: 100%; }
   .main-product__selling-plan-note { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); font-size: .825rem; line-height: 1.45; margin: 0; }
-  .main-product__details [data-product-submit] { --button-background: var(--color-foreground); --button-border-color: var(--color-foreground); --button-min-block-size: 3.5rem; --button-padding-inline: var(--space-6); --button-radius: var(--pdp-action-radius); font-weight: 700; inline-size: 100%; letter-spacing: .04em; margin: 0; text-transform: uppercase; }
+  .main-product__details [data-product-submit] { --button-min-block-size: 3.5rem; --button-padding-inline: var(--space-6); font-weight: 700; inline-size: 100%; letter-spacing: .04em; margin: 0; text-transform: uppercase; }
   .main-product__selection-error { background: color-mix(in srgb, #a33f2b 8%, var(--color-background)); border-inline-start: .2rem solid #a33f2b; color: #a33f2b; font-size: .9rem; font-weight: 600; line-height: 1.45; margin: var(--space-3) 0 0; padding: var(--space-3); }
   .main-product__blocks { display: grid; gap: 0; margin-top: var(--space-5); }
   .main-product__blocks > .product-block { min-inline-size: 0; }
@@ -259,9 +259,7 @@
       "id": "show_thumbnails",
       "label": "t:labels.show_thumbnails",
       "default": true
-    },
-    { "type": "header", "content": "t:general.style" },
-    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" }
+    }
   ],
   "enabled_on": { "templates": ["product"] }
 }

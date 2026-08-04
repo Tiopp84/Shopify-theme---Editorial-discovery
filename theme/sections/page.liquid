@@ -3,7 +3,7 @@
   dedicated contact section, so it is not duplicated below the banner.
 {% endcomment %}
 
-<section class="page-template page-template--banner-{{ section.settings.banner_style }} page-template--position-{{ section.settings.text_position }} page-template--heading-{{ section.settings.heading_size }}{% if template.suffix != blank %} page-template--{{ template.suffix }}{% endif %}{% if section.settings.image != blank %} page-template--with-image{% endif %}" aria-labelledby="PageTitle-{{ section.id }}" style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %} --page-banner-height: {{ section.settings.banner_height }}px; --page-banner-protection: {{ section.settings.text_protection }}%; --page-banner-button-background: {{ section.settings.button_background }}; --page-banner-button-color: {{ section.settings.button_text_color }};">
+<section class="page-template page-template--banner-{{ section.settings.banner_style }} page-template--position-{{ section.settings.text_position }} page-template--heading-{{ section.settings.heading_size }}{% if template.suffix != blank %} page-template--{{ template.suffix }}{% endif %}{% if section.settings.image != blank %} page-template--with-image{% endif %}" aria-labelledby="PageTitle-{{ section.id }}" style="--page-banner-height: {{ section.settings.banner_height }}px; --page-banner-protection: {{ section.settings.text_protection }}%; --page-banner-button-background: {{ section.settings.button_background }}; --page-banner-button-color: {{ section.settings.button_text_color }};">
   <header class="page-template__banner">
     {% if section.settings.image != blank %}
       <div class="page-template__media">
@@ -42,7 +42,7 @@
   .page-template__banner-text > :first-child, .page-template__content > :first-child { margin-block-start: 0; }
   .page-template__banner-text > :last-child, .page-template__content > :last-child { margin-block-end: 0; }
   .page-template__action { align-items: center; background: var(--page-banner-button-background); color: var(--page-banner-button-color); display: inline-flex; font-size: .6875rem; font-weight: 700; justify-content: center; letter-spacing: .1em; margin-block-start: var(--space-5); min-block-size: 2.9rem; padding-inline: var(--space-5); text-decoration: none; text-transform: uppercase; }
-  .page-template__action:focus-visible { outline: .125rem solid var(--color-accent); outline-offset: .25rem; }
+  .page-template__action:focus-visible { outline: .125rem solid var(--color-interactive); outline-offset: .25rem; }
   .page-template__content { color: color-mix(in srgb, var(--color-foreground) 82%, var(--color-background)); font-size: clamp(1rem, 1.3vw, 1.125rem); line-height: 1.7; margin-block-start: clamp(1.5rem, 3vw, 2.5rem); }
   .page-template--with-image.page-template--banner-above .page-template__media { block-size: min(var(--page-banner-height), 72svh); }
   .page-template--with-image.page-template--banner-above .page-template__banner-content { padding-block: clamp(1.75rem, 4vw, 3.5rem); }
@@ -77,7 +77,6 @@
     { "type": "text", "id": "link_label", "label": "t:labels.link_label" },
     { "type": "url", "id": "link", "label": "t:labels.link" },
     { "type": "header", "content": "t:general.style" },
-    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" },
     { "type": "color", "id": "button_background", "label": "t:labels.button_background", "default": "#FFFFFF" },
     { "type": "color", "id": "button_text_color", "label": "t:labels.button_text_color", "default": "#1A1A1A" },
     { "type": "select", "id": "banner_style", "label": "t:labels.page_banner_style", "options": [{ "value": "above", "label": "t:options.page_banner_style.above" }, { "value": "overlay", "label": "t:options.page_banner_style.overlay" }, { "value": "split", "label": "t:options.page_banner_style.split" }], "default": "overlay" },

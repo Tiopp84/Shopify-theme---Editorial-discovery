@@ -1,4 +1,4 @@
-<section class="faq faq--layout-{{ section.settings.layout_style }} faq--style-{{ section.settings.item_style }}{% unless section.settings.show_heading %} faq--heading-hidden{% endunless %}{% unless section.settings.show_numbers %} faq--without-numbers{% endunless %}"{% if section.settings.show_heading %} aria-labelledby="FaqTitle-{{ section.id }}"{% else %} aria-label="{{ 'faq.title' | t }}"{% endif %} style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %}">
+<section class="faq faq--layout-{{ section.settings.layout_style }} faq--style-{{ section.settings.item_style }}{% unless section.settings.show_heading %} faq--heading-hidden{% endunless %}{% unless section.settings.show_numbers %} faq--without-numbers{% endunless %}"{% if section.settings.show_heading %} aria-labelledby="FaqTitle-{{ section.id }}"{% else %} aria-label="{{ 'faq.title' | t }}"{% endif %}>
   {% if section.settings.show_heading or section.settings.intro != blank %}
     <header class="faq__header">
       {% if section.settings.show_heading %}
@@ -39,10 +39,10 @@
   .faq__item { border-block-end: 1px solid var(--color-border); }
   .faq__item summary { align-items: center; cursor: pointer; display: grid; font-size: clamp(1.1rem, 2vw, 1.45rem); font-weight: 600; gap: var(--space-4); grid-template-columns: 2.5rem minmax(0, 1fr) auto; line-height: 1.2; list-style: none; padding-block: clamp(1.25rem, 2vw, 1.75rem); }
   .faq__item summary::-webkit-details-marker { display: none; }
-  .faq__item summary::before { color: var(--color-accent); content: counter(faq-item, decimal-leading-zero); counter-increment: faq-item; font-family: var(--font-body); font-size: .6875rem; font-weight: 700; letter-spacing: .1em; }
+  .faq__item summary::before { color: var(--color-foreground); content: counter(faq-item, decimal-leading-zero); counter-increment: faq-item; font-family: var(--font-body); font-size: .6875rem; font-weight: 700; letter-spacing: .1em; }
   .faq__item summary::after { content: '+'; font-family: var(--font-body); font-size: 1.5rem; font-weight: 400; line-height: 1; }
   .faq__item[open] summary::after { content: '−'; }
-  .faq__item summary:focus-visible { outline: .125rem solid var(--color-accent); outline-offset: -.125rem; }
+  .faq__item summary:focus-visible { outline: .125rem solid var(--color-interactive); outline-offset: -.125rem; }
   .faq__answer { color: color-mix(in srgb, var(--color-foreground) 78%, var(--color-background)); grid-column: 2 / 3; line-height: 1.7; max-inline-size: 38rem; padding-block: 0 clamp(1.5rem, 3vw, 2.5rem); }
   .faq--style-framed .faq__items { border: 0; display: grid; gap: var(--space-3); }
   .faq--style-framed .faq__item { border: 1px solid var(--color-border); padding-inline: var(--space-4); }
@@ -67,7 +67,6 @@
     }
   ],
   "settings": [
-    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" },
     { "type": "select", "id": "layout_style", "label": "t:labels.faq_layout", "options": [{ "value": "editorial", "label": "t:options.faq_layout.editorial" }, { "value": "centered", "label": "t:options.faq_layout.centered" }], "default": "editorial" },
     { "type": "checkbox", "id": "show_heading", "label": "t:labels.show_faq_heading", "default": false },
     { "type": "text", "id": "heading", "label": "t:labels.heading", "visible_if": "{{ section.settings.show_heading }}" },

@@ -11,7 +11,7 @@
 
 <footer
   class="footer full-width footer--spacing-{{ section.settings.footer_spacing }}{% unless has_footer_menu %} footer--without-menu{% endunless %}{% unless section.settings.show_newsletter_copy %} footer--newsletter-copy-hidden{% endunless %}"
-  style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %} --footer-background: var(--color-background); --footer-color: var(--color-foreground); --footer-accent: var(--color-accent); --footer-base-background: color-mix(in srgb, var(--color-background) 86%, #000);"
+  style="--footer-background: {{ settings.footer_background_color }}; --footer-color: {{ settings.footer_text_color }}; --footer-base-background: color-mix(in srgb, {{ settings.footer_background_color }} 86%, #000);"
   {% if section.settings.enable_panel_transition != false %}data-footer-panel{% endif %}
   {{ section.shopify_attributes }}
 >
@@ -122,18 +122,18 @@
   .footer .footer-menu h2, .footer .newsletter h2, .footer__aside h2 { font-family: var(--font-body); font-size: .6875rem; font-weight: 700; letter-spacing: .08em; line-height: 1.2; margin-block: 0 var(--space-4); text-transform: uppercase; }
   .footer .footer-menu ul { gap: .65rem; }
   .footer .footer-menu a, .footer__legal a { color: color-mix(in srgb, var(--footer-color, var(--color-background)) 76%, transparent); font-size: .75rem; text-decoration: none; transition: color 160ms ease; }
-  .footer .footer-menu a:is(:hover, :focus-visible), .footer__legal a:is(:hover, :focus-visible) { color: var(--footer-accent, var(--color-accent)); }
+  .footer .footer-menu a:is(:hover, :focus-visible), .footer__legal a:is(:hover, :focus-visible) { color: var(--color-interactive); }
   .footer .newsletter { max-inline-size: 18rem; }
   .footer .newsletter__text { color: color-mix(in srgb, var(--footer-color, var(--color-background)) 62%, transparent); font-size: .75rem; line-height: 1.55; }
   .footer--newsletter-copy-hidden .newsletter__text { display: none; }
   .footer .newsletter__form input { background: color-mix(in srgb, var(--footer-color, var(--color-background)) 9%, transparent); border-color: color-mix(in srgb, var(--footer-color, var(--color-background)) 20%, transparent); color: var(--footer-color, var(--color-background)); font-size: .75rem; min-block-size: 2.75rem; }
   .footer .newsletter__form input::placeholder { color: color-mix(in srgb, var(--footer-color, var(--color-background)) 48%, transparent); }
-  .footer .newsletter__form button { background: var(--footer-accent, var(--color-accent)); border-color: var(--footer-accent, var(--color-accent)); color: var(--footer-background, var(--color-foreground)); min-block-size: 2.75rem; padding-inline: 1rem; }
+  .footer .newsletter__form button { min-block-size: 2.75rem; padding-inline: 1rem; }
   .footer__aside { align-content: start; display: grid; gap: var(--space-7); }
   .footer__social ul { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; margin: 0; padding: 0; }
   .footer__social a { align-items: center; border: 1px solid color-mix(in srgb, var(--footer-color, var(--color-background)) 26%, transparent); color: inherit; display: inline-flex; font-size: .625rem; font-weight: 700; height: 1.9rem; justify-content: center; text-decoration: none; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; width: 1.9rem; }
   .footer__social .social-icon { block-size: 1rem; fill: currentcolor; inline-size: 1rem; }
-  .footer__social a:is(:hover, :focus-visible) { background: var(--footer-accent, var(--color-accent)); border-color: var(--footer-accent, var(--color-accent)); color: var(--footer-background, var(--color-foreground)); }
+  .footer__social a:is(:hover, :focus-visible) { background: var(--color-interactive); border-color: var(--color-interactive); color: var(--footer-background, var(--color-foreground)); }
   .footer__localization { border-block-start: 1px solid color-mix(in srgb, var(--footer-color, var(--color-background)) 18%, transparent); display: flex; flex-wrap: wrap; gap: var(--space-4); margin-block-start: 2.25rem; padding-block-start: 1.25rem; }
   .footer__localization-form { display: grid; font-size: .6875rem; gap: var(--space-2); }
   .footer__localization select { background: transparent; border-color: color-mix(in srgb, var(--footer-color, var(--color-background)) 28%, transparent); color: inherit; font-size: .75rem; }
@@ -155,7 +155,6 @@
   "settings": [
     { "type": "header", "content": "t:labels.footer_brand" },
     { "type": "image_picker", "id": "logo", "label": "t:labels.logo" },
-    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "dark" },
     { "type": "range", "id": "logo_width", "label": "t:labels.logo_width", "min": 60, "max": 240, "step": 10, "unit": "px", "default": 120 },
     { "type": "richtext", "id": "brand_description", "label": "t:labels.brand_description" },
     { "type": "header", "content": "t:labels.footer_content" },
