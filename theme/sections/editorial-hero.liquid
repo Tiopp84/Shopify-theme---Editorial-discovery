@@ -16,7 +16,7 @@
   class="editorial-hero full-width editorial-hero--heading-{{ section.settings.heading_size }}"
   data-aos-section
   {% if section.settings.heading != blank %}aria-labelledby="EditorialHeroHeading-{{ section.id }}"{% endif %}
-  style="--editorial-hero-desktop-min-height: {{ section.settings.desktop_height_vh }}vh; --editorial-hero-mobile-min-height: {{ section.settings.mobile_height_vh }}vh; --editorial-hero-protection: {{ section.settings.text_protection }}%; --editorial-hero-text-color: {{ section.settings.text_color }}; --editorial-hero-button-background: {{ section.settings.button_background }}; --editorial-hero-button-color: {{ section.settings.button_text_color }}; --editorial-hero-content-block-position: {{ content_block_position }}; --editorial-hero-content-inline-position: {{ content_inline_position }}; --editorial-hero-content-text-alignment: {{ content_text_alignment }}; --editorial-hero-overlay-direction: {{ overlay_direction }};"
+  style="--editorial-hero-desktop-min-height: {{ section.settings.desktop_height_vh }}vh; --editorial-hero-mobile-min-height: {{ section.settings.mobile_height_vh }}vh; --editorial-hero-protection: {{ section.settings.text_protection }}%; --editorial-hero-text-color: {{ section.settings.text_color }}; --editorial-hero-content-block-position: {{ content_block_position }}; --editorial-hero-content-inline-position: {{ content_inline_position }}; --editorial-hero-content-text-alignment: {{ content_text_alignment }}; --editorial-hero-overlay-direction: {{ overlay_direction }};"
   {{ section.shopify_attributes }}
 >
   <div class="editorial-hero__content">
@@ -64,8 +64,8 @@
   .editorial-hero__body { color: color-mix(in srgb, var(--editorial-hero-text-color) 78%, transparent); font-size: 1rem; inline-size: 100%; line-height: 1.55; }
   .editorial-hero__body > :first-child { margin-block-start: 0; }
   .editorial-hero__body > :last-child { margin-block-end: 0; }
-  .editorial-hero__action { align-items: center; background: var(--editorial-hero-button-background); color: var(--editorial-hero-button-color); display: inline-flex; font-size: .6875rem; font-weight: 600; justify-self: var(--editorial-hero-content-text-alignment); letter-spacing: .1em; min-block-size: 2.75rem; padding-inline: var(--space-6); text-decoration: none; text-transform: uppercase; }
-  .editorial-hero__action:is(:hover, :focus-visible) { background: var(--color-accent); color: var(--color-background); }
+  .editorial-hero__action { align-items: center; background: var(--button-background); border: 1px solid var(--button-border-color); border-radius: var(--button-radius); color: var(--button-color); display: inline-flex; font-size: .6875rem; font-weight: 600; justify-self: var(--editorial-hero-content-text-alignment); letter-spacing: .1em; min-block-size: 2.75rem; padding-inline: var(--space-6); text-decoration: none; text-transform: uppercase; }
+  .editorial-hero__action:is(:hover, :focus-visible) { background: var(--button-background-hover); }
   .editorial-hero__media { grid-area: hero; min-height: 0; overflow: hidden; position: relative; z-index: 0; }
   .editorial-hero__media::after { background: linear-gradient(var(--editorial-hero-overlay-direction), rgb(0 0 0 / var(--editorial-hero-protection)) 0%, rgb(0 0 0 / 36%) 48%, transparent 76%); content: ''; inset: 0; pointer-events: none; position: absolute; }
   @media (prefers-reduced-motion: no-preference) {
@@ -90,7 +90,6 @@
     .editorial-hero { grid-template-rows: minmax(var(--editorial-hero-mobile-min-height), auto); }
     .editorial-hero h1 { font-size: clamp(2.4rem, 11vw, 3.25rem); max-inline-size: 12ch; }
     .editorial-hero__body, .editorial-hero__eyebrow { display: none; }
-    .editorial-hero__action { background: var(--editorial-hero-button-background); color: var(--editorial-hero-button-color); }
   }
 {% endstylesheet %}
 
@@ -116,9 +115,7 @@
     { "type": "range", "id": "desktop_height_vh", "label": "t:labels.hero_height_desktop", "min": 50, "max": 100, "step": 5, "unit": "vh", "default": 80 },
     { "type": "range", "id": "mobile_height_vh", "label": "t:labels.hero_height_mobile", "min": 50, "max": 100, "step": 5, "unit": "vh", "default": 70 },
     { "type": "header", "content": "t:general.style" },
-    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#FFFFFF" },
-    { "type": "color", "id": "button_background", "label": "t:labels.button_background", "default": "#FFFFFF" },
-    { "type": "color", "id": "button_text_color", "label": "t:labels.button_text_color", "default": "#1A1A1A" }
+    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#FFFFFF" }
   ],
   "presets": [{ "name": "t:general.editorial_hero", "category": "Campaign & editorial" }]
 }

@@ -2,7 +2,7 @@
   assign desktop_columns = section.settings.desktop_columns | default: '4'
 %}
 
-<section class="collection-list full-width collection-list--heading-{{ section.settings.heading_size }} collection-list--heading-{{ section.settings.heading_alignment }} collection-list--columns-{{ desktop_columns }}" data-aos-section style="--collection-list-background: var(--color-background); --collection-list-ratio: {{ section.settings.image_ratio }}; {% render 'section-color-scheme', scheme: section.settings.color_scheme %}" {% if section.settings.heading != blank %}aria-labelledby="CollectionListHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="collection-list full-width collection-list--heading-{{ section.settings.heading_size }} collection-list--heading-{{ section.settings.heading_alignment }} collection-list--columns-{{ desktop_columns }}" data-aos-section style="--collection-list-background: var(--color-background); --collection-list-ratio: {{ section.settings.image_ratio }};" {% if section.settings.heading != blank %}aria-labelledby="CollectionListHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <header class="collection-list__header" data-aos="fade-down">
     {% if section.settings.heading != blank %}<h2 id="CollectionListHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
   </header>
@@ -36,7 +36,7 @@
   .collection-list__content { align-items: start; display: grid; gap: var(--space-2); }
   .collection-list__title { font-family: var(--font-campaign); font-size: clamp(1.05rem, 1.5vw, 1.35rem); font-style: var(--font-heading--style); line-height: 1.05; }
   .collection-list__action { font-size: .625rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-  .collection-list__card:is(:hover, :focus-visible) .collection-list__action { color: var(--color-accent); }
+  .collection-list__card:is(:hover, :focus-visible) .collection-list__action { color: var(--color-interactive); }
   .collection-list__preview-card { display: grid; gap: var(--space-2); min-width: 0; }
   .collection-list__preview-media { aspect-ratio: var(--collection-list-preview-ratio); background: color-mix(in srgb, var(--color-foreground) 8%, var(--collection-list-background, var(--color-background))); border: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent); display: block; overflow: hidden; }
   .collection-list__preview-media > svg { block-size: 100%; inline-size: 100%; }
@@ -63,9 +63,7 @@
     { "type": "select", "id": "heading_alignment", "label": "t:labels.heading_alignment", "options": [{ "value": "left", "label": "t:options.alignment.left" }, { "value": "center", "label": "t:options.alignment.center" }, { "value": "right", "label": "t:options.alignment.right" }], "default": "left" },
     { "type": "header", "content": "t:general.layout" },
     { "type": "select", "id": "desktop_columns", "label": "t:labels.desktop_collection_columns", "options": [{ "value": "3", "label": "t:options.columns.three" }, { "value": "4", "label": "t:options.columns.four" }], "default": "4" },
-    { "type": "select", "id": "image_ratio", "label": "t:labels.image_size", "options": [{ "value": "1 / 1", "label": "t:options.image_ratio.square" }, { "value": "4 / 5", "label": "t:options.image_ratio.portrait" }, { "value": "3 / 4", "label": "t:options.image_ratio.tall" }], "default": "4 / 5" },
-    { "type": "header", "content": "t:general.style" },
-    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" }
+    { "type": "select", "id": "image_ratio", "label": "t:labels.image_size", "options": [{ "value": "1 / 1", "label": "t:options.image_ratio.square" }, { "value": "4 / 5", "label": "t:options.image_ratio.portrait" }, { "value": "3 / 4", "label": "t:options.image_ratio.tall" }], "default": "4 / 5" }
   ],
   "blocks": [{ "type": "collection-card" }],
   "max_blocks": 8,

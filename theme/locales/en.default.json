@@ -9,6 +9,8 @@
     "article_comments": "Comments",
     "article_sidebar": "Article sidebar",
     "author_profile": "Author profile",
+    "empty_title": "New stories are on their way",
+    "empty_text": "There are no articles to read here yet.",
     "article_metadata_html": "{{ date }} by {{ author }}",
     "read_time": "{{ count }} min read",
     "other_stories": "Other stories",
@@ -68,6 +70,19 @@
     "submit": "Subscribe",
     "success": "Thanks for subscribing."
   },
+  "social": {
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "facebook": "Facebook",
+    "x": "X",
+    "pinterest": "Pinterest",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "snapchat": "Snapchat",
+    "tumblr": "Tumblr",
+    "linkedin": "LinkedIn",
+    "vimeo": "Vimeo"
+  },
   "navigation": {
     "back": "Back",
     "home": "Home",
@@ -93,6 +108,8 @@
     "product_count": "{{ count }} products",
     "empty_title": "This collection is waiting",
     "empty_text": "Products added to this collection will appear here.",
+    "empty_index_title": "Collections are being prepared",
+    "empty_index_text": "Check back soon for the latest collection stories.",
     "facets": {
       "active_filters": "Active filters",
       "apply": "Apply",

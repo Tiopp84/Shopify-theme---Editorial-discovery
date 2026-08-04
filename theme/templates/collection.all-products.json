@@ -9,17 +9,17 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "article",
+    "all_products_header": {
+      "type": "all-products-header",
       "settings": {}
     },
-    "related-stories": {
-      "type": "related-stories",
+    "all_products_grid": {
+      "type": "collection-product-grid",
       "settings": {}
     }
   },
   "order": [
-    "main",
-    "related-stories"
+    "all_products_header",
+    "all_products_grid"
   ]
 }

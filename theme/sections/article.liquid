@@ -18,7 +18,7 @@
   endif
 %}
 
-<article class="article-template article-template--layout-{{ rendered_layout }} article-template--media-{{ section.settings.media_presentation }}" style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %}">
+<article class="article-template article-template--layout-{{ rendered_layout }} article-template--media-{{ section.settings.media_presentation }}">
   <div class="article-template__layout">
     <div class="article-template__main">
       <header class="article-template__header">
@@ -131,7 +131,6 @@
 {
   "name": "t:general.article",
   "settings": [
-    { "type": "select", "id": "color_scheme", "label": "t:labels.color_scheme", "options": [{ "value": "base", "label": "t:options.color_scheme.base" }, { "value": "soft", "label": "t:options.color_scheme.soft" }, { "value": "dark", "label": "t:options.color_scheme.dark" }], "default": "base" },
     { "type": "checkbox", "id": "show_media", "label": "t:labels.show_article_media", "default": true },
     { "type": "select", "id": "media_presentation", "label": "t:labels.article_media_presentation", "options": [{ "value": "original", "label": "t:options.article_media_presentation.original" }, { "value": "portrait", "label": "t:options.article_media_presentation.portrait" }, { "value": "landscape", "label": "t:options.article_media_presentation.landscape" }], "default": "original", "visible_if": "{{ section.settings.show_media }}" },
     { "type": "checkbox", "id": "show_author", "label": "t:labels.show_author", "default": true },

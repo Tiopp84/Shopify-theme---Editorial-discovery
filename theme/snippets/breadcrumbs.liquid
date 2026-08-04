@@ -11,8 +11,12 @@
           {% endif %}
           <li aria-current="page">{{ product.title | escape }}</li>
         {% when 'collection' %}
-          <li><a href="{{ routes.collections_url }}">{{ 'collections.title' | t }}</a></li>
-          <li aria-current="page">{{ collection.title | escape }}</li>
+          {% if template.suffix == 'all-products' %}
+            <li aria-current="page">{{ 'navigation.products' | t }}</li>
+          {% else %}
+            <li><a href="{{ routes.collections_url }}">{{ 'collections.title' | t }}</a></li>
+            <li aria-current="page">{{ collection.title | escape }}</li>
+          {% endif %}
         {% when 'article' %}
           <li><a href="{{ blog.url }}">{{ blog.title | escape }}</a></li>
           <li aria-current="page">{{ article.title | escape }}</li>

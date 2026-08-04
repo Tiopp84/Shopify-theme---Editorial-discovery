@@ -5,7 +5,6 @@
   data-loading-text="{{ 'collections.facets.loading' | t | escape }}"
   data-updated-text="{{ 'collections.facets.updated' | t | escape }}"
   data-error-text="{{ 'collections.facets.error' | t | escape }}"
-  style="{% render 'section-color-scheme', scheme: section.settings.color_scheme %}"
 >
   <p class="visually-hidden" role="status" aria-live="polite" data-collection-status></p>
 
@@ -254,7 +253,7 @@
   }
 
   .collection-facets-dialog::backdrop { background: transparent; }
-  .collection-facets-dialog[open][data-overlay-visible]::backdrop { background: rgb(0 0 0 / 45%); }
+  .collection-facets-dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
   .collection-facets-dialog__header {
     margin-block-end: var(--space-4);
@@ -333,7 +332,7 @@
   }
 
   .collection-sort .facets__sort-menu--popover summary:is(:hover, :focus-visible) {
-    border-color: var(--color-accent);
+    border-color: var(--color-interactive);
     box-shadow: var(--focus-ring);
   }
 
@@ -358,7 +357,7 @@
   }
 
   .collection-sort .facets__sort-menu--popover .facets__sort-option:hover {
-    background: var(--color-accent-tint);
+    background: var(--color-interactive-background);
     transform: translateX(.2rem);
   }
 
@@ -489,17 +488,6 @@
 {
   "name": "Collection product grid",
   "settings": [
-    {
-      "type": "select",
-      "id": "color_scheme",
-      "label": "t:labels.color_scheme",
-      "options": [
-        { "value": "base", "label": "t:options.color_scheme.base" },
-        { "value": "soft", "label": "t:options.color_scheme.soft" },
-        { "value": "dark", "label": "t:options.color_scheme.dark" }
-      ],
-      "default": "base"
-    },
     {
       "type": "range",
       "id": "columns_desktop",

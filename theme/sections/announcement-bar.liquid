@@ -1,11 +1,12 @@
 {% if section.settings.show_announcement and section.blocks.size > 0 %}
+  <script src="{{ 'announcement-bar-anchor.js' | asset_url }}" defer></script>
   {% assign marquee_speed = section.settings.marquee_speed | default: 5 %}
   {% assign swap_speed = section.settings.swap_speed | default: 8 %}
-  <div
+  <announcement-bar-anchor
     class="announcement-bar full-width announcement-bar--{{ section.settings.animation_style | default: 'swap' }} announcement-bar--marquee-speed-{{ marquee_speed }} announcement-bar--swap-speed-{{ swap_speed }}"
     role="region"
     aria-label="{{ 'accessibility.announcement' | t }}"
-    style="--announcement-background: {{ section.settings.background_color | default: '#1A1A1A' }}; --announcement-color: {{ section.settings.text_color | default: '#FAF8F5' }}; --announcement-min-height: {{ section.settings.bar_height | default: 32 }}px; --announcement-font-size: {{ section.settings.text_size | default: 12 }}px;"
+    style="--announcement-background: {{ settings.announcement_background_color | default: '#1A1A1A' }}; --announcement-color: {{ settings.announcement_text_color | default: '#FAF8F5' }}; --announcement-min-height: {{ section.settings.bar_height | default: 32 }}px; --announcement-font-size: {{ section.settings.text_size | default: 12 }}px;"
     {{ section.shopify_attributes }}
   >
     {% if section.settings.animation_style == 'marquee' %}
@@ -40,10 +41,17 @@
         </div>
       </announcement-bar-switcher>
     {% endif %}
-  </div>
+  </announcement-bar-anchor>
 {% endif %}
 
 {% stylesheet %}
+  html[data-announcement-bar-fixed] .shopify-section:has(> .announcement-bar) {
+    position: fixed;
+    z-index: 50;
+    inset-block-start: 0;
+    inset-inline: 0;
+  }
+
   .announcement-bar { align-items: center; background: var(--announcement-background, var(--color-foreground)); color: var(--announcement-color, var(--color-background)); display: flex; font-size: var(--announcement-font-size, .75rem); letter-spacing: .04em; min-block-size: var(--announcement-min-height, 2rem); overflow: hidden; padding: var(--space-2) var(--page-margin); text-align: center; }
   .announcement-bar__message { align-items: center; color: inherit; display: inline-flex; gap: .45rem; justify-content: center; margin: 0; min-inline-size: 0; }
   .announcement-bar__link { text-decoration: none; }
@@ -131,8 +139,6 @@
     { "type": "range", "id": "swap_speed", "label": "t:labels.slide_speed", "min": 1, "max": 20, "step": 1, "default": 8, "visible_if": "{{ section.settings.animation_style == 'swap' }}" },
     { "type": "range", "id": "marquee_speed", "label": "t:labels.marquee_speed", "min": 1, "max": 20, "step": 1, "default": 8, "visible_if": "{{ section.settings.animation_style == 'marquee' }}" },
     { "type": "header", "content": "t:general.style" },
-    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#1A1A1A" },
-    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#FAF8F5" },
     { "type": "range", "id": "bar_height", "label": "t:labels.bar_height", "min": 28, "max": 72, "step": 2, "unit": "px", "default": 32 },
     { "type": "range", "id": "text_size", "label": "t:labels.text_size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 }
   ],

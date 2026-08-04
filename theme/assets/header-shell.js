@@ -36,6 +36,8 @@ class HeaderShell extends HTMLElement {
     document.addEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.addEventListener('close', this.onClose));
     this.navGroups = [...this.querySelectorAll('.header-shell__nav-group')];
+    this.dropdownHoverEnabled = this.dataset.dropdownHover === 'true';
+    this.compactHeaderEnabled = this.dataset.compactHeaderEnabled !== 'false';
     this.mobileMenu = this.querySelector('[data-mobile-menu]');
     this.mobileTaskbar = this.querySelector('.header-shell__mobile-taskbar');
     this.headerInner = this.querySelector('.header-shell__inner');
@@ -43,10 +45,12 @@ class HeaderShell extends HTMLElement {
     this.mobileMenu?.setAttribute('data-mobile-menu-enhanced', '');
     this.mobileMenu?.querySelectorAll('[data-mobile-menu-open]').forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
 
-    this.navGroups.forEach((group) => {
-      group.addEventListener('pointerenter', this.onNavGroupPointerEnter);
-      group.addEventListener('pointerleave', this.onNavGroupPointerLeave);
-    });
+    if (this.dropdownHoverEnabled) {
+      this.navGroups.forEach((group) => {
+        group.addEventListener('pointerenter', this.onNavGroupPointerEnter);
+        group.addEventListener('pointerleave', this.onNavGroupPointerLeave);
+      });
+    }
 
     this.reducedMotionQuery.addEventListener('change', this.onMotionPreferenceChange);
     this.desktopLayoutQuery.addEventListener('change', this.onDesktopLayoutChange);
@@ -58,10 +62,12 @@ class HeaderShell extends HTMLElement {
     document.removeEventListener('click', this.onDocumentClick);
     document.removeEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.removeEventListener('close', this.onClose));
-    this.navGroups?.forEach((group) => {
-      group.removeEventListener('pointerenter', this.onNavGroupPointerEnter);
-      group.removeEventListener('pointerleave', this.onNavGroupPointerLeave);
-    });
+    if (this.dropdownHoverEnabled) {
+      this.navGroups?.forEach((group) => {
+        group.removeEventListener('pointerenter', this.onNavGroupPointerEnter);
+        group.removeEventListener('pointerleave', this.onNavGroupPointerLeave);
+      });
+    }
     window.clearTimeout(this.hoverCloseTimer);
     window.removeEventListener('scroll', this.onScroll);
     this.reducedMotionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
@@ -153,13 +159,24 @@ class HeaderShell extends HTMLElement {
     if (!this.desktopLayoutQuery.matches) {
       this.classList.remove('header-shell--compact');
       this.resetDesktopCompactDistance();
-      this.updateMobileTaskbar({ scrollY, delta, dialogOpen });
+      if (this.compactHeaderEnabled) {
+        this.updateMobileTaskbar({ scrollY, delta, dialogOpen });
+      } else {
+        this.hideMobileTaskbar();
+      }
       this.lastScrollY = scrollY;
       return;
     }
 
     this.hideMobileTaskbar();
     this.resetMobileBarDistance();
+
+    if (!this.compactHeaderEnabled) {
+      this.classList.remove('header-shell--compact');
+      this.resetDesktopCompactDistance();
+      this.lastScrollY = scrollY;
+      return;
+    }
 
     if (this.hasHeldCompactContext()) {
       this.classList.add('header-shell--compact');
