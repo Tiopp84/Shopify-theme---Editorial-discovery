@@ -1,12 +1,19 @@
 {% # theme-check-disable ValidScopedCSSClass %}
 {% assign current_variant = product.selected_or_first_available_variant %}
-<div class="main-product__price" data-product-price aria-live="polite" {{ block.shopify_attributes }}>
-  {% render 'price', item: current_variant %}
-</div>
+{% if current_variant != blank %}
+  <div class="main-product__price" data-product-price aria-live="polite" {{ block.shopify_attributes }}>
+    {% render 'price', item: current_variant %}
+  </div>
+{% elsif request.visual_preview_mode %}
+  <div class="main-product__price" aria-label="{{ 'products.price.regular' | t }}" {{ block.shopify_attributes }}>
+    <div class="price"><span class="price__current">{{ 'products.card.placeholder_price' | t }}</span></div>
+  </div>
+{% endif %}
 
 {% schema %}
 {
   "name": "t:general.product_price",
+  "class": "product-block product-block--price",
   "presets": [{ "name": "t:general.product_price" }]
 }
 {% endschema %}

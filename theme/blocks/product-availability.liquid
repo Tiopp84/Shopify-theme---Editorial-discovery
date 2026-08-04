@@ -1,17 +1,22 @@
 {% # theme-check-disable ValidScopedCSSClass %}
 {% assign current_variant = product.selected_or_first_available_variant %}
 
-<p class="main-product__availability" data-product-availability data-state="{% if current_variant.available %}available{% else %}sold-out{% endif %}" aria-live="polite" {{ block.shopify_attributes }}>
-  {% if current_variant.available %}
-    {{ 'products.form.available' | t }}
-  {% else %}
-    {{ 'products.form.sold_out' | t }}
-  {% endif %}
-</p>
+{% if current_variant != blank %}
+  <p class="main-product__availability" data-product-availability data-state="{% if current_variant.available %}available{% else %}sold-out{% endif %}" aria-live="polite" {{ block.shopify_attributes }}>
+    {% if current_variant.available %}
+      {{ 'products.form.available' | t }}
+    {% else %}
+      {{ 'products.form.sold_out' | t }}
+    {% endif %}
+  </p>
+{% elsif request.visual_preview_mode %}
+  <p class="main-product__availability" data-state="available" {{ block.shopify_attributes }}>{{ 'products.form.available' | t }}</p>
+{% endif %}
 
 {% schema %}
 {
   "name": "t:general.product_availability",
+  "class": "product-block product-block--availability",
   "presets": [{ "name": "t:general.product_availability" }]
 }
 {% endschema %}

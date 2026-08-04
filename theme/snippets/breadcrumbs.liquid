@@ -1,5 +1,5 @@
 {% unless request.page_type == 'index' %}
-  <nav class="breadcrumbs" aria-label="{{ 'accessibility.breadcrumb' | t }}">
+  <nav class="breadcrumbs{% if request.page_type == 'collection' %} breadcrumbs--collection{% endif %}" aria-label="{{ 'accessibility.breadcrumb' | t }}">
     <ol>
       <li><a href="{{ routes.root_url }}">{{ 'navigation.home' | t }}</a></li>
       {% case request.page_type %}
@@ -33,6 +33,7 @@
 
 {% stylesheet %}
   .breadcrumbs { margin: var(--space-3) auto 0; max-width: var(--page-width); padding-inline: var(--page-gutter); }
+  .breadcrumbs--collection { margin-block-end: clamp(var(--space-5), 3vw, var(--space-8)); }
   .breadcrumbs ol { align-items: center; display: flex; flex-wrap: wrap; gap: .35rem; list-style: none; margin: 0; padding: 0; }
   .breadcrumbs li { align-items: center; color: color-mix(in srgb, var(--color-foreground) 68%, transparent); display: inline-flex; font-size: .75rem; letter-spacing: .02em; line-height: 1.4; }
   .breadcrumbs li + li::before { color: color-mix(in srgb, var(--color-foreground) 45%, transparent); content: '›'; font-size: 1.2em; margin-inline: .35rem; }

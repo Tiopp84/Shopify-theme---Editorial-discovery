@@ -5,7 +5,7 @@ Status: **PHASE 4 DISCOVERY GATE PASS — 2026-07-22**
 ## Ownership
 
 - `product-card` owns stable media, title/vendor hierarchy, price, sale/sold-out state, and the product destination.
-- Collection/search sections own query context, result count, grid composition, pagination, filters, sorting, and empty/error states.
+- `collection-product-grid`/search own query context, result count, grid composition, pagination, filters, sorting, and empty/error states. `collection-header` owns only the collection banner/title, outside the AJAX replacement boundary.
 - Quick add is a separate interaction component. It may add directly only when exactly one available variant exists; products requiring a choice must open an accessible choice state.
 - Predictive search owns async loading/error/stale-response handling and must preserve the standard search route as its no-JavaScript fallback.
 
