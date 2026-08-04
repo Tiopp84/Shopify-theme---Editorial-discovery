@@ -36,14 +36,23 @@
 
       {% if section.settings.show_social %}
         <div class="footer__aside">
-          {% if section.settings.social_menu != blank %}
+          {% assign social_platforms = 'instagram,threads,facebook,x,pinterest,youtube,tiktok,snapchat,tumblr,linkedin,vimeo' | split: ',' %}
+          {% assign social_link_count = 0 %}
+          {% capture social_links %}
+            {% for platform in social_platforms %}
+              {% assign setting_id = 'social_' | append: platform %}
+              {% assign social_url = settings[setting_id] %}
+              {% if social_url != blank %}
+                {% assign social_link_count = social_link_count | plus: 1 %}
+                {% assign social_translation_key = 'social.' | append: platform %}
+                <li><a href="{{ social_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ social_translation_key | t }}">{% render 'social-icon', name: platform %}</a></li>
+              {% endif %}
+            {% endfor %}
+          {% endcapture %}
+          {% if social_link_count > 0 %}
             <nav class="footer__social" aria-label="{{ section.settings.social_heading | escape }}">
               {% if section.settings.social_heading != blank %}<h2>{{ section.settings.social_heading | escape }}</h2>{% endif %}
-              <ul role="list">
-                {% for link in section.settings.social_menu.links %}
-                  <li><a href="{{ link.url }}"{% if link.type == 'http_link' %} target="_blank" rel="noopener noreferrer"{% endif %} aria-label="{{ link.title | escape }}"><span aria-hidden="true">{{ link.title | slice: 0, 1 | upcase }}</span></a></li>
-                {% endfor %}
-              </ul>
+              <ul role="list">{{ social_links }}</ul>
             </nav>
           {% endif %}
         </div>
@@ -123,6 +132,7 @@
   .footer__aside { align-content: start; display: grid; gap: var(--space-7); }
   .footer__social ul { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; margin: 0; padding: 0; }
   .footer__social a { align-items: center; border: 1px solid color-mix(in srgb, var(--footer-color, var(--color-background)) 26%, transparent); color: inherit; display: inline-flex; font-size: .625rem; font-weight: 700; height: 1.9rem; justify-content: center; text-decoration: none; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; width: 1.9rem; }
+  .footer__social .social-icon { block-size: 1rem; fill: currentcolor; inline-size: 1rem; }
   .footer__social a:is(:hover, :focus-visible) { background: var(--footer-accent, var(--color-accent)); border-color: var(--footer-accent, var(--color-accent)); color: var(--footer-background, var(--color-foreground)); }
   .footer__localization { border-block-start: 1px solid color-mix(in srgb, var(--footer-color, var(--color-background)) 18%, transparent); display: flex; flex-wrap: wrap; gap: var(--space-4); margin-block-start: 2.25rem; padding-block-start: 1.25rem; }
   .footer__localization-form { display: grid; font-size: .6875rem; gap: var(--space-2); }
@@ -152,7 +162,6 @@
     { "type": "checkbox", "id": "show_newsletter_copy", "label": "t:labels.show_newsletter_copy", "default": false },
     { "type": "checkbox", "id": "show_social", "label": "t:labels.show_social", "default": true },
     { "type": "text", "id": "social_heading", "label": "t:labels.social_heading", "default": "Follow us" },
-    { "type": "link_list", "id": "social_menu", "label": "t:labels.social_menu" },
     { "type": "link_list", "id": "legal_menu", "label": "t:labels.legal_menu" },
     { "type": "header", "content": "t:labels.footer_style" },
     { "type": "select", "id": "footer_spacing", "label": "t:labels.footer_spacing", "options": [{ "value": "compact", "label": "t:options.spacing.compact" }, { "value": "standard", "label": "t:options.spacing.standard" }, { "value": "spacious", "label": "t:options.spacing.spacious" }], "default": "standard" },
