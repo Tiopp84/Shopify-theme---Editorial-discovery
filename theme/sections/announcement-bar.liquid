@@ -1,76 +1,130 @@
-{% if section.settings.text != blank %}
-  {% assign marquee_repetitions = section.settings.marquee_repetitions | default: 3 %}
-  <div
-    class="announcement-bar full-width{% if section.settings.enable_marquee %} announcement-bar--marquee{% endif %}"
+{% if section.settings.show_announcement and section.blocks.size > 0 %}
+  <script src="{{ 'announcement-bar-anchor.js' | asset_url }}" defer></script>
+  {% assign marquee_speed = section.settings.marquee_speed | default: 5 %}
+  {% assign swap_speed = section.settings.swap_speed | default: 8 %}
+  <announcement-bar-anchor
+    class="announcement-bar full-width announcement-bar--{{ section.settings.animation_style | default: 'swap' }} announcement-bar--marquee-speed-{{ marquee_speed }} announcement-bar--swap-speed-{{ swap_speed }}"
     role="region"
     aria-label="{{ 'accessibility.announcement' | t }}"
-    style="--announcement-background: {{ section.settings.background_color | default: '#242119' }}; --announcement-color: {{ section.settings.text_color | default: '#F5F3EE' }}; --announcement-min-height: {{ section.settings.bar_height | default: 32 }}px; --announcement-font-size: {{ section.settings.text_size | default: 12 }}px; --announcement-marquee-duration: {{ section.settings.marquee_speed | default: 18 }}s;"
+    style="--announcement-background: {{ settings.announcement_background_color | default: '#1A1A1A' }}; --announcement-color: {{ settings.announcement_text_color | default: '#FAF8F5' }}; --announcement-min-height: {{ section.settings.bar_height | default: 32 }}px; --announcement-font-size: {{ section.settings.text_size | default: 12 }}px;"
     {{ section.shopify_attributes }}
   >
-    {% if section.settings.enable_marquee %}
-      <div class="announcement-bar__marquee-viewport">
+    {% if section.settings.animation_style == 'marquee' %}
+      <announcement-bar-marquee class="announcement-bar__marquee-viewport" data-announcement-marquee>
         <div class="announcement-bar__marquee-track">
-          {% for sequence in (1..2) %}
-            <div class="announcement-bar__marquee-group"{% if sequence == 2 %} aria-hidden="true"{% endif %}>
-              {% for repetition in (1..marquee_repetitions) %}
-                {% if section.settings.link != blank %}
-                  {% if sequence == 1 and forloop.first %}
-                    <a class="announcement-bar__message announcement-bar__link" href="{{ section.settings.link }}">
-                      <span>{{ section.settings.text | escape }}</span><span class="announcement-bar__link-arrow" aria-hidden="true">&#8594;</span>
-                    </a>
-                  {% else %}
-                    <a class="announcement-bar__message announcement-bar__link" href="{{ section.settings.link }}" tabindex="-1" aria-hidden="true">
-                      <span>{{ section.settings.text | escape }}</span><span class="announcement-bar__link-arrow" aria-hidden="true">&#8594;</span>
-                    </a>
-                  {% endif %}
-                {% elsif sequence == 1 and forloop.first %}
-                  <p class="announcement-bar__message">{{ section.settings.text | escape }}</p>
-                {% else %}
-                  <span class="announcement-bar__message" aria-hidden="true">{{ section.settings.text | escape }}</span>
-                {% endif %}
-                <span class="announcement-bar__marquee-separator" aria-hidden="true">&middot;</span>
-              {% endfor %}
-            </div>
+          <div class="announcement-bar__marquee-group" data-announcement-marquee-group>
+            {% for block in section.blocks %}
+              {% if block.settings.link != blank %}
+                <a class="announcement-bar__message announcement-bar__link" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
+                  <span>{{ block.settings.text | escape }}</span><span class="announcement-bar__link-arrow" aria-hidden="true">&#8594;</span>
+                </a>
+              {% else %}
+                <span class="announcement-bar__message" {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</span>
+              {% endif %}
+              {% unless forloop.last %}<span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>{% endunless %}
+            {% endfor %}
+          </div>
+        </div>
+      </announcement-bar-marquee>
+    {% else %}
+      <announcement-bar-switcher class="announcement-bar__switcher" data-announcement-switcher>
+        <div class="announcement-bar__switcher-track" data-announcement-switcher-track>
+          {% for block in section.blocks %}
+            {% if block.settings.link != blank %}
+              <a class="announcement-bar__message announcement-bar__link" href="{{ block.settings.link }}" data-announcement-message{% unless forloop.first %} hidden{% endunless %} {{ block.shopify_attributes }}>
+                <span>{{ block.settings.text | escape }}</span><span class="announcement-bar__link-arrow" aria-hidden="true">&#8594;</span>
+              </a>
+            {% else %}
+              <p class="announcement-bar__message" data-announcement-message{% unless forloop.first %} hidden{% endunless %} {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</p>
+            {% endif %}
           {% endfor %}
         </div>
-      </div>
-    {% elsif section.settings.link != blank %}
-      <a class="announcement-bar__message announcement-bar__link" href="{{ section.settings.link }}">
-        <span>{{ section.settings.text | escape }}</span><span class="announcement-bar__link-arrow" aria-hidden="true">&#8594;</span>
-      </a>
-    {% else %}
-      <p class="announcement-bar__message">{{ section.settings.text | escape }}</p>
+      </announcement-bar-switcher>
     {% endif %}
-  </div>
+  </announcement-bar-anchor>
 {% endif %}
 
 {% stylesheet %}
+  html[data-announcement-bar-fixed] .shopify-section:has(> .announcement-bar) {
+    position: fixed;
+    z-index: 50;
+    inset-block-start: 0;
+    inset-inline: 0;
+  }
+
   .announcement-bar { align-items: center; background: var(--announcement-background, var(--color-foreground)); color: var(--announcement-color, var(--color-background)); display: flex; font-size: var(--announcement-font-size, .75rem); letter-spacing: .04em; min-block-size: var(--announcement-min-height, 2rem); overflow: hidden; padding: var(--space-2) var(--page-margin); text-align: center; }
   .announcement-bar__message { align-items: center; color: inherit; display: inline-flex; gap: .45rem; justify-content: center; margin: 0; min-inline-size: 0; }
   .announcement-bar__link { text-decoration: none; }
   .announcement-bar__link-arrow { font-size: 1.05em; line-height: 1; transition: transform 180ms ease; }
   .announcement-bar__link:is(:hover, :focus-visible) .announcement-bar__link-arrow { transform: translateX(.22rem); }
-  .announcement-bar__marquee-viewport { inline-size: 100%; overflow: hidden; }
-  .announcement-bar__marquee-track { --announcement-marquee-gap: clamp(.8rem, 3vw, 1.5rem); animation: announcement-bar-scroll var(--announcement-marquee-duration, 18s) linear infinite; display: flex; inline-size: max-content; }
+
+  .announcement-bar__switcher { display: block; inline-size: 100%; min-block-size: 1.3em; overflow: hidden; position: relative; }
+  .announcement-bar__switcher-track { display: flex; inline-size: 100%; transform: translateX(0); will-change: transform; }
+  .announcement-bar__switcher-track.is-ready { transition: transform var(--announcement-swap-duration, 260ms) cubic-bezier(.4, 0, .2, 1); }
+  .announcement-bar__switcher-track.is-resetting { transition: none; }
+  .announcement-bar__switcher .announcement-bar__message { flex: 0 0 100%; inline-size: 100%; opacity: 1; transition: opacity var(--announcement-swap-duration, 260ms) ease-in-out; }
+  .announcement-bar__switcher-track.is-ready .announcement-bar__message:not(.is-active) { opacity: 0; }
+  .announcement-bar__switcher .announcement-bar__message[hidden] { display: none; }
+
+  .announcement-bar__marquee-viewport { display: block; inline-size: 100%; overflow: hidden; }
+  .announcement-bar__marquee-track { --announcement-marquee-gap: clamp(2rem, 6vw, 5rem); display: flex; inline-size: max-content; }
+  .announcement-bar__marquee-track.is-ready { animation: announcement-bar-scroll var(--announcement-marquee-duration, 18s) linear infinite; }
   .announcement-bar__marquee-group { align-items: center; display: flex; flex: 0 0 auto; gap: var(--announcement-marquee-gap); inline-size: max-content; padding-inline-end: var(--announcement-marquee-gap); }
-  .announcement-bar__marquee-separator { flex: 0 0 auto; font-size: 1.3em; font-weight: 700; line-height: 1; }
+  .announcement-bar__marquee-group::after { content: '•'; flex: 0 0 auto; font-size: 1.45em; font-weight: 700; line-height: 1; }
+  .announcement-bar__marquee-separator { flex: 0 0 auto; font-size: 1.45em; font-weight: 700; line-height: 1; }
   .announcement-bar--marquee .announcement-bar__message { flex: 0 0 auto; min-inline-size: auto; white-space: nowrap; }
   .announcement-bar--marquee:is(:hover, :focus-within) .announcement-bar__marquee-track { animation-play-state: paused; }
 
-  @keyframes announcement-bar-scroll {
-    from { transform: translateX(-50%); }
-    to { transform: translateX(0); }
-  }
+  .announcement-bar--marquee-speed-1 { --announcement-marquee-duration: 36s; }
+  .announcement-bar--marquee-speed-2 { --announcement-marquee-duration: 32s; }
+  .announcement-bar--marquee-speed-3 { --announcement-marquee-duration: 28s; }
+  .announcement-bar--marquee-speed-4 { --announcement-marquee-duration: 24s; }
+  .announcement-bar--marquee-speed-5 { --announcement-marquee-duration: 20s; }
+  .announcement-bar--marquee-speed-6 { --announcement-marquee-duration: 17s; }
+  .announcement-bar--marquee-speed-7 { --announcement-marquee-duration: 14s; }
+  .announcement-bar--marquee-speed-8 { --announcement-marquee-duration: 12s; }
+  .announcement-bar--marquee-speed-9 { --announcement-marquee-duration: 10s; }
+  .announcement-bar--marquee-speed-10 { --announcement-marquee-duration: 8s; }
+  .announcement-bar--marquee-speed-11 { --announcement-marquee-duration: 7s; }
+  .announcement-bar--marquee-speed-12 { --announcement-marquee-duration: 6s; }
+  .announcement-bar--marquee-speed-13 { --announcement-marquee-duration: 5.5s; }
+  .announcement-bar--marquee-speed-14 { --announcement-marquee-duration: 5s; }
+  .announcement-bar--marquee-speed-15 { --announcement-marquee-duration: 4.5s; }
+  .announcement-bar--marquee-speed-16 { --announcement-marquee-duration: 4s; }
+  .announcement-bar--marquee-speed-17 { --announcement-marquee-duration: 3.5s; }
+  .announcement-bar--marquee-speed-18 { --announcement-marquee-duration: 3s; }
+  .announcement-bar--marquee-speed-19 { --announcement-marquee-duration: 2.5s; }
+  .announcement-bar--marquee-speed-20 { --announcement-marquee-duration: 2s; }
 
-  @media (min-width: 48rem) {
-    .announcement-bar__marquee-group { gap: 0; inline-size: max-content; justify-content: space-around; min-inline-size: 100vw; padding-inline-end: 0; }
-  }
+  .announcement-bar--swap-speed-1 { --announcement-swap-duration: 900ms; }
+  .announcement-bar--swap-speed-2 { --announcement-swap-duration: 820ms; }
+  .announcement-bar--swap-speed-3 { --announcement-swap-duration: 740ms; }
+  .announcement-bar--swap-speed-4 { --announcement-swap-duration: 660ms; }
+  .announcement-bar--swap-speed-5 { --announcement-swap-duration: 580ms; }
+  .announcement-bar--swap-speed-6 { --announcement-swap-duration: 520ms; }
+  .announcement-bar--swap-speed-7 { --announcement-swap-duration: 470ms; }
+  .announcement-bar--swap-speed-8 { --announcement-swap-duration: 430ms; }
+  .announcement-bar--swap-speed-9 { --announcement-swap-duration: 400ms; }
+  .announcement-bar--swap-speed-10 { --announcement-swap-duration: 370ms; }
+  .announcement-bar--swap-speed-11 { --announcement-swap-duration: 350ms; }
+  .announcement-bar--swap-speed-12 { --announcement-swap-duration: 330ms; }
+  .announcement-bar--swap-speed-13 { --announcement-swap-duration: 315ms; }
+  .announcement-bar--swap-speed-14 { --announcement-swap-duration: 300ms; }
+  .announcement-bar--swap-speed-15 { --announcement-swap-duration: 285ms; }
+  .announcement-bar--swap-speed-16 { --announcement-swap-duration: 270ms; }
+  .announcement-bar--swap-speed-17 { --announcement-swap-duration: 255ms; }
+  .announcement-bar--swap-speed-18 { --announcement-swap-duration: 240ms; }
+  .announcement-bar--swap-speed-19 { --announcement-swap-duration: 225ms; }
+  .announcement-bar--swap-speed-20 { --announcement-swap-duration: 210ms; }
+
+  @keyframes announcement-bar-scroll { from { transform: translateX(0); } to { transform: translateX(calc(var(--announcement-marquee-distance) * -1)); } }
 
   @media (prefers-reduced-motion: reduce) {
+    .announcement-bar__switcher-track { transition: none; }
     .announcement-bar__marquee-track { animation: none; inline-size: 100%; }
     .announcement-bar__marquee-group { inline-size: 100%; justify-content: center; padding-inline-end: 0; }
     .announcement-bar__marquee-group > :not(:first-child) { display: none; }
-    .announcement-bar__marquee-group + .announcement-bar__marquee-group { display: none; }
+    .announcement-bar__marquee-group[data-announcement-marquee-copy] { display: none; }
   }
 {% endstylesheet %}
 
@@ -78,28 +132,26 @@
 {
   "name": "t:general.announcement_bar",
   "settings": [
-    { "type": "text", "id": "text", "label": "t:labels.text", "default": "Complimentary delivery over $150" },
-    { "type": "url", "id": "link", "label": "t:labels.link" },
-    { "type": "header", "content": "t:general.colors" },
-    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#242119" },
-    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#F5F3EE" },
+    { "type": "header", "content": "t:general.content" },
+    { "type": "checkbox", "id": "show_announcement", "label": "t:labels.show_announcement", "default": true },
+    { "type": "header", "content": "t:general.motion" },
+    { "type": "select", "id": "animation_style", "label": "t:labels.announcement_animation", "options": [{ "value": "swap", "label": "t:options.announcement_animation.swap" }, { "value": "marquee", "label": "t:options.announcement_animation.marquee" }], "default": "swap" },
+    { "type": "range", "id": "swap_speed", "label": "t:labels.slide_speed", "min": 1, "max": 20, "step": 1, "default": 8, "visible_if": "{{ section.settings.animation_style == 'swap' }}" },
+    { "type": "range", "id": "marquee_speed", "label": "t:labels.marquee_speed", "min": 1, "max": 20, "step": 1, "default": 8, "visible_if": "{{ section.settings.animation_style == 'marquee' }}" },
+    { "type": "header", "content": "t:general.style" },
     { "type": "range", "id": "bar_height", "label": "t:labels.bar_height", "min": 28, "max": 72, "step": 2, "unit": "px", "default": 32 },
-    { "type": "range", "id": "text_size", "label": "t:labels.text_size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
-    { "type": "header", "content": "t:labels.marquee" },
-    { "type": "checkbox", "id": "enable_marquee", "label": "t:labels.enable_marquee", "default": false },
-    { "type": "range", "id": "marquee_repetitions", "label": "t:labels.marquee_repetitions", "min": 1, "max": 8, "step": 1, "default": 3 },
-    {
-      "type": "select",
-      "id": "marquee_speed",
-      "label": "t:labels.marquee_speed",
-      "options": [
-        { "value": "26", "label": "t:options.speed.slow" },
-        { "value": "18", "label": "t:options.speed.standard" },
-        { "value": "12", "label": "t:options.speed.fast" }
-      ],
-      "default": "18"
-    }
+    { "type": "range", "id": "text_size", "label": "t:labels.text_size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 }
   ],
-  "presets": [{ "name": "t:general.announcement_bar" }]
+  "blocks": [{
+    "type": "announcement",
+    "name": "t:general.announcement",
+    "settings": [
+      { "type": "text", "id": "text", "label": "t:labels.text", "default": "Complimentary delivery over $150" },
+      { "type": "url", "id": "link", "label": "t:labels.link" }
+    ]
+  }],
+  "max_blocks": 6,
+  "enabled_on": { "groups": ["header"] },
+  "limit": 1
 }
 {% endschema %}

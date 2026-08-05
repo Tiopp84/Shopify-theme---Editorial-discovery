@@ -6,16 +6,41 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/article
 {% endcomment %}
 
-{% if article.image %}
-  {{ article.image | image_url: width: 1000 | image_tag }}
-{% endif %}
+{% liquid
+  assign has_author_profile = false
+  if section.settings.sidebar_author_image != blank or section.settings.sidebar_author_name != blank or section.settings.sidebar_author_role != blank or section.settings.sidebar_author_bio != blank
+    assign has_author_profile = true
+  endif
 
-<h1>{{ article.title }}</h1>
+  assign rendered_layout = 'reading'
+  if has_author_profile
+    assign rendered_layout = 'sidebar'
+  endif
+%}
 
-{% assign date = article.published_at | time_tag: format: 'date' %}
-<p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
+<article class="article-template article-template--layout-{{ rendered_layout }} article-template--media-{{ section.settings.media_presentation }}">
+  <div class="article-template__layout">
+    <div class="article-template__main">
+      <header class="article-template__header">
+        <h1>{{ article.title | escape }}</h1>
+        {% assign article_word_count = article.content | strip_html | strip_newlines | split: ' ' | size %}
+        {% assign article_read_minutes = article_word_count | divided_by: 220.0 | ceil | at_least: 1 %}
+        <div class="article-template__context">
+          <p class="article-reading-context">
+            {% if section.settings.show_author and article.author != blank %}<span>{{ article.author | escape }}</span>{% endif %}
+            {% if section.settings.show_date %}<span>{{ article.published_at | time_tag: format: 'date' }}</span>{% endif %}
+            {% if section.settings.show_read_time %}<span>{{ 'blog.read_time' | t: count: article_read_minutes }}</span>{% endif %}
+          </p>
+        </div>
+      </header>
 
-{{ article.content }}
+      {% if section.settings.show_media and article.image %}
+        <div class="article-template__media">
+          {{ article.image | image_url: width: 1200 | image_tag: loading: 'eager', widths: '360, 480, 600, 900', sizes: '(min-width: 64rem) 22rem, (min-width: 48rem) 40vw, 90vw' }}
+        </div>
+      {% endif %}
+
+      <div class="article-template__content">{{ article.content }}</div>
 
 {% if blog.comments_enabled? %}
   <h2>{{ 'blog.article_comments' | t }}</h2>
@@ -58,11 +83,65 @@
 
     <input type="submit" value="{{ 'blog.comment_form_submit' | t }}">
   {% endform %}
-{% endif %}
+  {% endif %}
+    </div>
+
+    {% if has_author_profile %}
+      <aside class="article-template__sidebar" aria-label="{{ 'blog.article_sidebar' | t }}">
+        <section class="article-sidebar-profile" aria-label="{{ 'blog.author_profile' | t }}">
+          {% if section.settings.sidebar_author_image != blank %}
+            {{ section.settings.sidebar_author_image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 180, 240', sizes: '7.5rem' }}
+          {% endif %}
+          {% if section.settings.sidebar_author_name != blank %}<h2>{{ section.settings.sidebar_author_name | escape }}</h2>{% endif %}
+          {% if section.settings.sidebar_author_role != blank %}<p class="article-sidebar-profile__role">{{ section.settings.sidebar_author_role | escape }}</p>{% endif %}
+          {% if section.settings.sidebar_author_bio != blank %}<div class="article-sidebar-profile__bio rte">{{ section.settings.sidebar_author_bio }}</div>{% endif %}
+        </section>
+      </aside>
+    {% endif %}
+  </div>
+</article>
+
+{% stylesheet %}
+  .article-template { background: var(--color-background); color: var(--color-foreground); margin: var(--space-8) auto; max-inline-size: min(78rem, var(--page-width)); padding-inline: var(--page-margin); }
+  .article-template__layout, .article-template__main { min-inline-size: 0; }
+  .article-template__media { margin: var(--space-5) auto var(--space-6); max-inline-size: 42rem; }
+  .article-template__media img { block-size: auto; display: block; inline-size: 100%; max-inline-size: 22rem; }
+  .article-template--media-portrait .article-template__media img { aspect-ratio: 4 / 5; object-fit: cover; }
+  .article-template--media-landscape .article-template__media img { aspect-ratio: 16 / 9; object-fit: cover; }
+  .article-template__header, .article-template__content { margin-inline: auto; max-inline-size: 42rem; }
+  .article-template__header h1 { font-size: clamp(var(--heading-size-72), calc(var(--heading-size-72) + 4.25vw), var(--heading-size-112)); margin: 0; max-inline-size: 16ch; }
+  .article-template__context { margin-block-start: var(--space-4); }
+  .article-reading-context { align-items: center; color: color-mix(in srgb, var(--color-foreground) 68%, var(--color-background)); display: flex; flex-wrap: wrap; font-family: var(--small-label-font); font-size: var(--small-label-size); gap: var(--space-2); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; }
+  .article-reading-context span + span::before { content: '·'; margin-inline-end: var(--space-2); }
+  .article-template__content { font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .25); margin-block-start: var(--space-5); }
+  .article-template__content > :first-child { margin-block-start: 0; }
+  .article-template__content > :last-child { margin-block-end: 0; }
+  .article-template__sidebar { border-block-start: 1px solid var(--color-border); display: grid; gap: var(--space-6); margin-block-start: var(--space-8); padding-block-start: var(--space-6); }
+  .article-sidebar-profile { border-block-start: 0; padding-block-start: 0; text-align: center; }
+  .article-sidebar-profile img { aspect-ratio: 1; border-radius: 50%; display: block; margin: 0 auto var(--space-3); object-fit: cover; width: 7.5rem; }
+  .article-sidebar-profile h2 { font-size: 1.0625rem; line-height: 1.2; margin: 0; }
+  .article-sidebar-profile__role { color: color-mix(in srgb, var(--color-foreground) 66%, var(--color-background)); margin: var(--space-2) 0 0; }
+  .article-sidebar-profile__bio { font-size: .9rem; line-height: calc(var(--body-text-line-spacing) + .1); margin-block-start: var(--space-4); text-align: start; }
+  .article-sidebar-profile__bio > :first-child { margin-block-start: 0; }
+  .article-sidebar-profile__bio > :last-child { margin-block-end: 0; }
+  @media (min-width: 64rem) { .article-template--layout-sidebar .article-template__layout { align-items: start; display: grid; gap: clamp(2.5rem, 6vw, 6rem); grid-template-columns: minmax(0, 42rem) minmax(15rem, 19rem); justify-content: space-between; } .article-template--layout-sidebar .article-template__header, .article-template--layout-sidebar .article-template__content, .article-template--layout-sidebar .article-template__media { margin-inline: 0; } .article-template--layout-sidebar .article-template__sidebar { border-block-start: 0; border-inline-start: 1px solid var(--color-border); margin-block-start: 0; padding-block-start: 0; padding-inline-start: clamp(1.5rem, 3vw, 3rem); } }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.article",
-  "settings": []
+  "settings": [
+    { "type": "checkbox", "id": "show_media", "label": "t:labels.show_article_media", "default": true },
+    { "type": "select", "id": "media_presentation", "label": "t:labels.article_media_presentation", "options": [{ "value": "original", "label": "t:options.article_media_presentation.original" }, { "value": "portrait", "label": "t:options.article_media_presentation.portrait" }, { "value": "landscape", "label": "t:options.article_media_presentation.landscape" }], "default": "original", "visible_if": "{{ section.settings.show_media }}" },
+    { "type": "checkbox", "id": "show_author", "label": "t:labels.show_author", "default": true },
+    { "type": "checkbox", "id": "show_date", "label": "t:labels.show_date", "default": true },
+    { "type": "checkbox", "id": "show_read_time", "label": "t:labels.show_read_time", "default": true },
+    { "type": "header", "content": "t:general.article_sidebar" },
+    { "type": "image_picker", "id": "sidebar_author_image", "label": "t:labels.sidebar_author_image" },
+    { "type": "text", "id": "sidebar_author_name", "label": "t:labels.sidebar_author_name" },
+    { "type": "text", "id": "sidebar_author_role", "label": "t:labels.sidebar_author_role" },
+    { "type": "richtext", "id": "sidebar_author_bio", "label": "t:labels.sidebar_author_bio" }
+  ],
+  "enabled_on": { "templates": ["article"] }
 }
 {% endschema %}

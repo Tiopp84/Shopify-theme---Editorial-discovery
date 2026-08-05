@@ -11,11 +11,20 @@
   "type": "header",
   "name": "t:general.header",
   "sections": {
-    "announcement_bar": {
+    "announcement-bar": {
       "type": "announcement-bar",
-      "settings": {
-        "search_behavior": "drawer"
-      }
+      "blocks": {
+        "announcement-1": {
+          "type": "announcement",
+          "settings": {
+            "text": "Complimentary delivery over $150"
+          }
+        }
+      },
+      "block_order": [
+        "announcement-1"
+      ],
+      "settings": {}
     },
     "header": {
       "type": "header",
@@ -23,7 +32,7 @@
     }
   },
   "order": [
-    "announcement_bar",
+    "announcement-bar",
     "header"
-  ],
+  ]
 }

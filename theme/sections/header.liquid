@@ -2,9 +2,18 @@
 {% if section.settings.search_behavior == 'drawer' and request.page_type != 'search' %}
   <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
 {% endif %}
-
-<header-shell class="header-shell full-width{% if section.settings.sticky_header %} header-shell--sticky{% endif %}">
+{% assign has_navigation = false %}
+{% if section.settings.enable_navigation != false and section.settings.menu != blank %}
+  {% assign has_navigation = true %}
+{% endif %}
+<header-shell
+  class="header-shell full-width header-shell--logo-{{ section.settings.desktop_logo_position }} header-shell--menu-{{ section.settings.desktop_menu_position }}{% if section.settings.sticky_header %} header-shell--sticky{% endif %}"
+  data-compact-header-enabled="{{ section.settings.enable_compact_navigation }}"
+  data-dropdown-hover="{{ section.settings.enable_dropdown_hover }}"
+  style="--header-logo-width: {{ section.settings.logo_width }}px; --header-mobile-logo-width: {{ section.settings.mobile_logo_width }}px; --header-height: {{ section.settings.header_height }}px; --header-background-color: {{ settings.header_background_color }}; --header-compact-height: {{ section.settings.compact_header_height }}px; --header-compact-logo-max-height: {{ section.settings.compact_header_height | times: 80 | divided_by: 100 }}px; --header-compact-background-color: {{ settings.header_background_color }}; --header-navigation-color: {{ settings.header_navigation_color }}; --header-navigation-hover-color: {{ settings.header_navigation_hover_color }}; --header-navigation-hover-text-color: {{ settings.header_navigation_hover_text_color }}; --header-dropdown-background-color: {{ settings.header_dropdown_background_color }}; --header-dropdown-text-color: {{ settings.header_dropdown_text_color }};"
+>
   <header class="header-shell__inner">
+    {% if has_navigation %}
     <button
       class="header-shell__icon-button header-shell__menu-button"
       type="button"
@@ -13,6 +22,7 @@
     >
       {% render 'icon', name: 'menu' %}
     </button>
+    {% endif %}
 
     <a class="header-shell__brand" href="{{ routes.root_url }}">
       {% if section.settings.logo != blank %}
@@ -27,22 +37,24 @@
       {% endif %}
     </a>
 
-    <nav class="header-shell__desktop-nav" aria-label="{{ 'accessibility.primary_navigation' | t }}">
-      {% for link in section.settings.menu.links %}
-        {% if link.links != blank %}
-          <details class="header-shell__nav-group">
-            <summary>{{ link.title | escape }}</summary>
-            <div class="header-shell__submenu">
-              {% for child_link in link.links %}
-                <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
-              {% endfor %}
-            </div>
-          </details>
-        {% else %}
-          <a href="{{ link.url }}">{{ link.title | escape }}</a>
-        {% endif %}
-      {% endfor %}
-    </nav>
+    {% if has_navigation %}
+      <nav class="header-shell__desktop-nav" aria-label="{{ 'accessibility.primary_navigation' | t }}">
+        {% for link in section.settings.menu.links %}
+          {% if link.links != blank %}
+            <details class="header-shell__nav-group">
+              <summary>{{ link.title | escape }}</summary>
+              <div class="header-shell__submenu">
+                {% for child_link in link.links %}
+                  <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                {% endfor %}
+              </div>
+            </details>
+          {% else %}
+            <a href="{{ link.url }}">{{ link.title | escape }}</a>
+          {% endif %}
+        {% endfor %}
+      </nav>
+    {% endif %}
 
     <div class="header-shell__actions">
       {% if section.settings.search_behavior == 'drawer' %}
@@ -61,11 +73,31 @@
         </a>
       {% endif %}
 
-      {% if shop.customer_accounts_enabled %}
+      {% if section.settings.show_account and shop.customer_accounts_enabled %}
         <a class="header-shell__icon-button header-shell__account" href="{{ routes.account_url }}">
           <span class="visually-hidden">{{ 'customer.account' | t }}</span>
           {% render 'icon', name: 'account' %}
         </a>
+      {% endif %}
+
+      {% if section.settings.show_localization and localization.available_countries.size > 1 or section.settings.show_localization and localization.available_languages.size > 1 %}
+        <details class="header-shell__localization">
+          <summary>{{ localization.country.iso_code | default: localization.language.iso_code }}</summary>
+          <div class="header-shell__localization-panel">
+            {% if localization.available_countries.size > 1 %}
+              {% form 'localization', class: 'header-shell__localization-form' %}
+                <label for="HeaderCountry-{{ section.id }}">{{ 'localization.country' | t }}</label>
+                <select id="HeaderCountry-{{ section.id }}" name="country_code" onchange="this.form.submit()">{% for country in localization.available_countries %}<option value="{{ country.iso_code }}"{% if country.iso_code == localization.country.iso_code %} selected{% endif %}>{{ country.name }} ({{ country.currency.iso_code }})</option>{% endfor %}</select>
+              {% endform %}
+            {% endif %}
+            {% if localization.available_languages.size > 1 %}
+              {% form 'localization', class: 'header-shell__localization-form' %}
+                <label for="HeaderLanguage-{{ section.id }}">{{ 'localization.language' | t }}</label>
+                <select id="HeaderLanguage-{{ section.id }}" name="locale_code" onchange="this.form.submit()">{% for language in localization.available_languages %}<option value="{{ language.iso_code }}"{% if language.iso_code == localization.language.iso_code %} selected{% endif %}>{{ language.endonym_name }}</option>{% endfor %}</select>
+              {% endform %}
+            {% endif %}
+          </div>
+        </details>
       {% endif %}
 
       <a class="header-shell__icon-button" href="{{ routes.cart_url }}" data-cart-open>
@@ -81,15 +113,17 @@
       {% render 'icon', name: 'home' %}
       <span>{{ 'navigation.home' | t }}</span>
     </a>
-    <button
-      class="header-shell__task"
-      type="button"
-      aria-label="{{ 'accessibility.open_menu' | t }}"
-      data-dialog-open="menu"
-    >
-      {% render 'icon', name: 'menu' %}
-      <span>{{ 'navigation.menu' | t }}</span>
-    </button>
+    {% if has_navigation %}
+      <button
+        class="header-shell__task"
+        type="button"
+        aria-label="{{ 'accessibility.open_menu' | t }}"
+        data-dialog-open="menu"
+      >
+        {% render 'icon', name: 'menu' %}
+        <span>{{ 'navigation.menu' | t }}</span>
+      </button>
+    {% endif %}
     {% if section.settings.search_behavior == 'drawer' %}
       <button
         class="header-shell__task"
@@ -115,7 +149,7 @@
       <span>{{ 'cart.title' | t }}</span>
       <span class="header-shell__task-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
     </a>
-    {% if shop.customer_accounts_enabled %}
+    {% if section.settings.show_account and shop.customer_accounts_enabled %}
       <a class="header-shell__task" href="{{ routes.account_url }}">
         {% render 'icon', name: 'account' %}
         <span>{{ 'customer.account' | t }}</span>
@@ -123,7 +157,8 @@
     {% endif %}
   </nav>
 
-  <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" scroll-lock>
+  {% if has_navigation %}
+    <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" scroll-lock>
     <div class="header-shell__drawer-header">
       <h2 id="MobileMenuTitle">{{ 'navigation.menu' | t }}</h2>
       <button
@@ -178,7 +213,8 @@
         {% endif %}
       {% endfor %}
     </nav>
-  </dialog>
+    </dialog>
+  {% endif %}
 
   {% if section.settings.search_behavior == 'drawer' %}
     <dialog
@@ -208,24 +244,32 @@
   .header-shell {
     display: block;
     border-block-end: 1px solid var(--color-border);
-    background: var(--color-background);
+    background: var(--header-background-color);
     position: relative;
     z-index: 1;
-    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease, border-color 180ms ease;
   }
 
   .header-shell--scrolled {
-    background: color-mix(in srgb, var(--color-background) 85%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: var(--header-background-color);
     box-shadow: 0 10px 30px -10px rgb(0 0 0 / 8%);
     border-block-end-color: color-mix(in srgb, var(--color-border) 40%, transparent);
+  }
+
+  html[data-announcement-bar-fixed] .shopify-section:has(> .header-shell) {
+    isolation: isolate;
+    margin-block-start: var(--announcement-bar-height, 0px);
   }
 
   .shopify-section:has(> .header-shell) {
     isolation: isolate;
     position: relative;
     z-index: 40;
+  }
+
+  html[data-announcement-bar-fixed] .shopify-section:has(> .header-shell--sticky) {
+    position: sticky;
+    inset-block-start: var(--announcement-bar-height, 0px);
   }
 
   .shopify-section:has(> .header-shell--sticky) {
@@ -235,7 +279,7 @@
 
   .header-shell__inner {
     width: min(calc(100% - var(--page-margin) * 2), var(--page-width));
-    min-height: 4.5rem;
+    min-height: var(--header-height);
     margin-inline: auto;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -245,36 +289,93 @@
   }
 
   @media (min-width: 64rem) {
+    .header-shell--logo-center.header-shell--menu-left .header-shell__inner {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    .header-shell--logo-center.header-shell--menu-left .header-shell__brand {
+      grid-column: 2;
+      justify-self: center;
+    }
+
+    .header-shell--logo-center.header-shell--menu-left .header-shell__desktop-nav {
+      grid-column: 1;
+    }
+
+    .header-shell--logo-left.header-shell--menu-center .header-shell__desktop-nav {
+      justify-content: center;
+    }
+
+    .header-shell--logo-center.header-shell--menu-center .header-shell__inner {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      padding-block: var(--space-3);
+    }
+
+    .header-shell--logo-center.header-shell--menu-center .header-shell__brand {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
+    }
+
+    .header-shell--logo-center.header-shell--menu-center .header-shell__actions {
+      grid-column: 3;
+      grid-row: 1;
+    }
+
+    .header-shell--logo-center.header-shell--menu-center .header-shell__desktop-nav {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-content: center;
+    }
     .header-shell--compact {
-      background: transparent;
+      background: transparent !important;
+      background-color: transparent !important;
       border-block-end-color: transparent;
       box-shadow: none;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
+      pointer-events: none;
     }
 
+    .shopify-section:has(> .header-shell--compact) { pointer-events: none; }
+    .shopify-section:has(> .header-shell--compact) :is(.header-shell__inner, .header-shell__drawer, .header-shell__search-dialog) { pointer-events: auto; }
+
     .header-shell--compact .header-shell__inner {
-      width: min(42rem, calc(100% - var(--page-margin) * 2));
+      width: fit-content;
       max-width: calc(100% - var(--page-margin) * 2);
-      min-height: 3.25rem;
+      min-height: var(--header-compact-height);
       margin-block: var(--space-2);
       margin-inline: auto;
       padding-inline: 0.75rem;
       border: 1px solid var(--color-border);
       border-radius: 0.75rem;
-      background: var(--color-background);
+      background: var(--header-compact-background-color);
       box-shadow: 0 0.75rem 1.5rem rgb(36 33 25 / 10%);
-      grid-template-columns: auto auto;
-      gap: 1rem;
+      grid-template-columns: auto minmax(0, 1fr);
+      justify-content: start;
+      gap: 2rem;
     }
 
     .header-shell--compact .header-shell__brand {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
       font-size: 1.4rem;
     }
 
+    .header-shell--compact .header-shell__brand img {
+      width: auto;
+      max-width: var(--header-logo-width);
+      height: var(--header-compact-logo-max-height);
+    }
+
     .header-shell--compact .header-shell__desktop-nav {
-      gap: 0.25rem;
-      font-size: 0.8rem;
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: stretch;
+      gap: var(--space-2);
+      font-size: var(--navigation-size);
     }
 
     .header-shell--compact .header-shell__desktop-nav > a,
@@ -285,6 +386,7 @@
     .header-shell--compact .header-shell__actions {
       display: none;
     }
+
   }
 
   .header-shell__brand {
@@ -298,20 +400,26 @@
   }
 
   .header-shell__brand img {
-    width: auto;
-    max-height: 3rem;
+    display: block;
+    width: var(--header-logo-width);
+    height: auto;
+    object-fit: contain;
   }
 
   .header-shell__desktop-nav {
+    font-family: var(--navigation-font);
     min-width: 0;
+    max-inline-size: 100%;
     grid-column: 2;
     grid-row: 1;
-    justify-self: start;
+    justify-self: stretch;
     display: flex;
     align-items: center;
     gap: clamp(var(--space-3), 2vw, var(--space-6));
-    font-size: 0.9rem;
+    color: var(--header-navigation-color);
+    font-size: var(--navigation-size);
     line-height: 1.2;
+    flex-wrap: wrap;
   }
 
   .header-shell__desktop-nav > a,
@@ -330,8 +438,8 @@
 
   .header-shell__desktop-nav > a:hover,
   .header-shell__desktop-nav > a:focus-visible {
-    color: var(--color-background);
-    background: var(--color-foreground);
+    color: var(--header-navigation-hover-text-color);
+    background: var(--header-navigation-hover-color);
   }
 
   .header-shell__desktop-nav > a:focus-visible {
@@ -380,8 +488,8 @@
   .header-shell__nav-group[open] > summary,
   .header-shell__nav-group > summary:hover,
   .header-shell__nav-group > summary:focus-visible {
-    color: var(--color-background);
-    background: var(--color-foreground);
+    color: var(--header-navigation-hover-text-color);
+    background: var(--header-navigation-hover-color);
   }
 
   .header-shell__nav-group > summary:focus-visible {
@@ -409,8 +517,8 @@
     min-width: 14rem;
     padding: var(--space-3);
     border: 1px solid var(--color-border);
-    border-radius: max(0.5rem, var(--style-border-radius-inputs));
-    background: var(--color-background);
+    border-radius: 0.5rem;
+    background: var(--header-dropdown-background-color);
     box-shadow: 0 0.75rem 1.5rem color-mix(in srgb, var(--color-foreground) 12%, transparent);
     display: grid;
   }
@@ -423,11 +531,12 @@
     padding: var(--space-3);
     border-radius: 0.35rem;
     text-decoration: none;
+    color: var(--header-dropdown-text-color);
     transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
   }
 
   .header-shell__submenu a:is(:hover, :focus-visible) {
-    background: var(--color-accent-tint);
+    background: var(--color-interactive-background);
     color: var(--color-foreground);
     transform: translateX(0.2rem);
   }
@@ -445,6 +554,13 @@
     align-items: center;
     gap: var(--space-2);
   }
+
+  .header-shell__localization { position: relative; }
+  .header-shell__localization summary { cursor: pointer; font-family: var(--small-label-font); font-size: var(--small-label-size); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); list-style: none; padding: var(--space-2); text-transform: uppercase; }
+  .header-shell__localization summary::-webkit-details-marker { display: none; }
+  .header-shell__localization-panel { background: var(--color-background); border: 1px solid var(--color-border); display: grid; gap: var(--space-3); inset-block-start: calc(100% + var(--space-2)); inset-inline-end: 0; min-inline-size: 15rem; padding: var(--space-3); position: absolute; z-index: 31; }
+  .header-shell__localization-form { display: grid; font-family: var(--small-label-font); font-size: var(--small-label-size); gap: var(--space-1); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); }
+  .header-shell__localization-form select { background: var(--color-background); color: var(--color-foreground); font-size: .75rem; min-block-size: 2.25rem; }
 
   .header-shell__icon-button {
     position: relative;
@@ -475,7 +591,7 @@
     min-height: 1.15rem;
     padding-inline: 0.2rem;
     border-radius: 999px;
-    background: var(--color-accent);
+    background: var(--header-navigation-color);
     color: var(--color-background);
     font-size: 0.65rem;
     line-height: 1.15rem;
@@ -511,7 +627,7 @@
   }
 
   .header-shell__drawer::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
-  .header-shell__drawer[open]::backdrop { background: rgb(0 0 0 / 45%); }
+  .header-shell__drawer[open]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
   @starting-style {
     .header-shell__drawer[open] {
@@ -542,7 +658,7 @@
   }
 
   .header-shell__search-dialog::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
-  .header-shell__search-dialog[open]::backdrop { background: rgb(0 0 0 / 38%); }
+  .header-shell__search-dialog[open]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
   @starting-style {
     .header-shell__search-dialog[open] {
@@ -729,6 +845,12 @@
       display: none;
     }
 
+    .header-shell__brand img {
+      width: var(--header-mobile-logo-width);
+    }
+
+    .header-shell__localization { display: none; }
+
     .header-shell__menu-button {
       grid-column: 1;
       grid-row: 1;
@@ -755,7 +877,7 @@
       z-index: 50;
       inset-inline: max(var(--space-2), env(safe-area-inset-left)) max(var(--space-2), env(safe-area-inset-right));
       inset-block-end: max(var(--space-2), env(safe-area-inset-bottom));
-      min-height: 4.25rem;
+      min-height: var(--header-height);
       padding: var(--space-2);
       border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
       border-radius: 1rem;
@@ -806,7 +928,7 @@
     }
 
     .header-shell__task:is(:hover, :focus-visible) {
-      background: var(--color-accent-tint);
+      background: var(--color-interactive-background);
       color: var(--color-foreground);
       outline: none;
       box-shadow: var(--focus-ring);
@@ -820,7 +942,7 @@
       min-height: 1rem;
       padding-inline: .16rem;
       border-radius: 999px;
-      background: var(--color-accent);
+      background: var(--header-navigation-color);
       color: var(--color-background);
       font-size: .58rem;
       line-height: 1rem;
@@ -862,7 +984,7 @@
 
   @media (max-width: 47.99rem) {
     .header-shell__inner {
-      min-height: 3.75rem;
+      min-height: var(--header-height);
       grid-template-columns: 1fr auto 1fr;
       gap: var(--space-2);
     }
@@ -959,6 +1081,7 @@
 {
   "name": "t:general.header",
   "settings": [
+    { "type": "header", "content": "t:general.logo" },
     {
       "type": "image_picker",
       "id": "logo",
@@ -967,7 +1090,7 @@
     {
       "type": "range",
       "id": "logo_width",
-      "min": 60,
+      "min": 40,
       "max": 200,
       "step": 10,
       "unit": "px",
@@ -975,10 +1098,63 @@
       "default": 120
     },
     {
+      "type": "range",
+      "id": "mobile_logo_width",
+      "min": 40,
+      "max": 160,
+      "step": 10,
+      "unit": "px",
+      "label": "t:labels.mobile_logo_width",
+      "default": 100
+    },
+    { "type": "header", "content": "t:general.navigation" },
+    {
       "type": "link_list",
       "id": "menu",
       "label": "t:labels.menu"
     },
+    { "type": "checkbox", "id": "enable_navigation", "label": "t:labels.enable_navigation", "default": true },
+    { "type": "checkbox", "id": "enable_dropdown_hover", "label": "t:labels.enable_dropdown_hover", "default": true },
+    { "type": "header", "content": "t:general.layout" },
+    {
+      "type": "select",
+      "id": "desktop_logo_position",
+      "label": "t:labels.desktop_logo_position",
+      "options": [{ "value": "left", "label": "t:options.alignment.left" }, { "value": "center", "label": "t:options.alignment.center" }],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "desktop_menu_position",
+      "label": "t:labels.desktop_menu_position",
+      "options": [{ "value": "left", "label": "t:options.alignment.left" }, { "value": "center", "label": "t:options.alignment.center" }],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "header_height",
+      "min": 48,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.header_height",
+      "default": 72
+    },
+    { "type": "header", "content": "t:general.sticky_header_bar" },
+    { "type": "checkbox", "id": "enable_compact_navigation", "label": "t:labels.enable_compact_navigation", "default": true },
+    {
+      "type": "range",
+      "id": "compact_header_height",
+      "min": 44,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.compact_header_height",
+      "default": 52,
+      "visible_if": "{{ section.settings.enable_compact_navigation }}"
+    },
+    { "type": "checkbox", "id": "show_account", "label": "t:labels.show_account", "default": true },
+    { "type": "checkbox", "id": "show_localization", "label": "t:labels.show_localization", "default": true },
     {
       "type": "checkbox",
       "id": "sticky_header",
@@ -1001,6 +1177,7 @@
       ],
       "default": "drawer"
     }
-  ]
+  ],
+  "enabled_on": { "groups": ["header"] }
 }
 {% endschema %}

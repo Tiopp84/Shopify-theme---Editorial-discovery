@@ -154,7 +154,9 @@ class ProductForm extends HTMLElement {
     this.syncOptionButtons();
     this.syncQuantityRule(variant);
     this.price.innerHTML = `<div class="price"><span class="price__current">${this.escape(variant.price)}</span>${variant.onSale ? `<s class="price__compare">${this.escape(variant.comparePrice)}</s>` : ''}${variant.unitPrice ? `<small class="price__unit">${this.escape(variant.unitPrice)}</small>` : ''}</div>`;
-    this.section.querySelectorAll('[data-product-media-id]').forEach((media) => { media.hidden = Boolean(variant.featuredMediaId) && media.dataset.productMediaId !== String(variant.featuredMediaId); });
+    if (this.section.dataset.galleryLayout !== 'stacked') {
+      this.section.querySelectorAll('[data-product-media-id]').forEach((media) => { media.hidden = Boolean(variant.featuredMediaId) && media.dataset.productMediaId !== String(variant.featuredMediaId); });
+    }
     this.section.dispatchEvent(new CustomEvent('product:variant-change', { bubbles: true, detail: { featuredMediaId: variant.featuredMediaId } }));
     if (updateUrl) {
       const url = new URL(window.location.href);
@@ -267,6 +269,7 @@ class ProductGallery extends HTMLElement {
     this.abortController = new AbortController();
     const signal = this.abortController.signal;
     this.media = [...this.querySelectorAll('[data-product-media-id]')];
+    this.isStacked = this.dataset.galleryLayout === 'stacked';
     this.buttons = [...this.querySelectorAll('[data-product-media-select]')];
     this.stage = this.querySelector('.main-product__media-stage');
     this.dialog = this.querySelector('[data-product-gallery-dialog]');
@@ -276,8 +279,10 @@ class ProductGallery extends HTMLElement {
     this.stagePreviousButton = this.querySelector('[data-product-gallery-stage-previous]');
     this.stageNextButton = this.querySelector('[data-product-gallery-stage-next]');
     this.count = this.querySelector('[data-product-gallery-count]');
-    this.stagePreviousButton?.removeAttribute('hidden');
-    this.stageNextButton?.removeAttribute('hidden');
+    if (!this.isStacked) {
+      this.stagePreviousButton?.removeAttribute('hidden');
+      this.stageNextButton?.removeAttribute('hidden');
+    }
     this.buttons.forEach((button) => button.addEventListener('click', () => this.select(button.dataset.productMediaSelect, { reveal: true }), { signal }));
     this.stage?.addEventListener('click', (event) => {
       if (this.suppressStageOpen) {
@@ -289,10 +294,12 @@ class ProductGallery extends HTMLElement {
       this.select(opener.dataset.productMediaOpen);
       this.open(opener);
     }, { signal });
-    this.stage?.addEventListener('pointerdown', (event) => this.onStagePointerDown(event), { signal });
-    this.stage?.addEventListener('pointermove', (event) => this.onStagePointerMove(event), { signal });
-    this.stage?.addEventListener('pointerup', (event) => this.onStagePointerUp(event), { signal });
-    this.stage?.addEventListener('pointercancel', () => this.cancelStageSwipe(), { signal });
+    if (!this.isStacked) {
+      this.stage?.addEventListener('pointerdown', (event) => this.onStagePointerDown(event), { signal });
+      this.stage?.addEventListener('pointermove', (event) => this.onStagePointerMove(event), { signal });
+      this.stage?.addEventListener('pointerup', (event) => this.onStagePointerUp(event), { signal });
+      this.stage?.addEventListener('pointercancel', () => this.cancelStageSwipe(), { signal });
+    }
     this.dialogContent?.addEventListener('pointerdown', (event) => this.onModalPointerDown(event), { signal });
     this.dialogContent?.addEventListener('pointermove', (event) => this.onModalPointerMove(event), { signal });
     this.dialogContent?.addEventListener('pointerup', (event) => this.onModalPointerUp(event), { signal });
@@ -323,8 +330,8 @@ class ProductGallery extends HTMLElement {
     const selectedMedia = this.media.find((item) => item.dataset.productMediaId === String(id));
     this.media.forEach((item) => {
       const selected = item.dataset.productMediaId === String(id);
-      item.hidden = !selected;
-      if (!selected) item.querySelectorAll('video').forEach((video) => video.pause());
+      if (!this.isStacked) item.hidden = !selected;
+      if (!selected && !this.isStacked) item.querySelectorAll('video').forEach((video) => video.pause());
     });
     if (selectedMedia?.dataset.productMediaRatio) this.stage?.style.setProperty('--pdp-media-ratio', selectedMedia.dataset.productMediaRatio);
     this.buttons.forEach((button) => button.toggleAttribute('aria-current', button.dataset.productMediaSelect === String(id)));

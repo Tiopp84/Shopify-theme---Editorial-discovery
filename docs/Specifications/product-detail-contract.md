@@ -15,7 +15,7 @@ This is the implementation contract for PDP-01 through PDP-03. It precedes UI wo
 | Media playback, modal, model viewer | Native Shopify media markup/browser APIs; later gallery controller | Individual media item/modal only |
 | Quantity input | Native product form owns POST fallback. Enhanced controller applies Shopify quantity rules and performs a fresh Online Store section/cart preflight before Ajax add; Shopify cart mutation remains final validation | Product form |
 | Selling plan | Native `selling_plan` form control; Shopify validates allocations and price | Product form |
-| Size guide | Merchant-selected Shopify Page rendered once in the product section | `size-guide` owns only dialog open/close state; the page link remains the no-JS fallback |
+| Size guide | A Product Form block selects and renders one Shopify Page | `size-guide` owns only dialog open/close state; the page link remains the no-JS fallback |
 
 The Phase 5 vertical slice has one stable `product-form` controller per main product section. It does not fetch or recalculate money. A valid selection updates the URL with `history.replaceState`, then atomically updates every variant-dependent node in the section. Back/Forward reads the URL through the same selection pipeline. The controller is re-created on Shopify section load and destroyed on section unload.
 

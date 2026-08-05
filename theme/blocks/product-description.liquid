@@ -6,10 +6,14 @@
   <div class="product-description" {{ block.shopify_attributes }}>
     {{ product.description }}
   </div>
+{% elsif request.visual_preview_mode %}
+  <div class="product-description" {{ block.shopify_attributes }}>
+    <p>{{ 'products.form.preview_description' | t }}</p>
+  </div>
 {% endif %}
 
 {% stylesheet %}
-  .product-description { line-height: 1.6; }
+  .product-description { line-height: calc(var(--body-text-line-spacing) + .1); }
   .product-description > :first-child { margin-top: 0; }
   .product-description > :last-child { margin-bottom: 0; }
 {% endstylesheet %}
@@ -17,6 +21,7 @@
 {% schema %}
 {
   "name": "t:general.product_description",
+  "class": "product-block product-block--description",
   "presets": [{ "name": "t:general.product_description" }]
 }
 {% endschema %}

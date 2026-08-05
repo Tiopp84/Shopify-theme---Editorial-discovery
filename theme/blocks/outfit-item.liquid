@@ -1,0 +1,30 @@
+{% if block.settings.product != blank %}
+  <li class="outfit-composition__item"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
+    {% render 'product-card', product: block.settings.product, title: block.settings.title, card_context: 'homepage', image_ratio: '4 / 5', show_price: section.settings.show_price, show_second_image: section.settings.show_second_image, sizes: '(min-width: 64rem) 22vw, (min-width: 48rem) 42vw, 88vw' %}
+  </li>
+{% elsif request.design_mode or request.visual_preview_mode %}
+  <li class="outfit-composition__item"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
+    <article class="product-card product-card--homepage product-card--placeholder" aria-label="{{ 'products.card.placeholder_title' | t }}">
+      <div class="product-card__media" style="--product-card-ratio: 4 / 5;">
+        <span class="product-card__placeholder" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag }}</span>
+      </div>
+      <div class="product-card__content">
+        <div class="product-card__decision">
+          <p class="product-card__title">{{ 'products.card.placeholder_title' | t }}</p>
+          {% if section.settings.show_price %}<span class="product-card__price">{{ 'products.card.placeholder_price' | t }}</span>{% endif %}
+        </div>
+      </div>
+    </article>
+  </li>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:general.outfit_item",
+  "settings": [
+    { "type": "product", "id": "product", "label": "t:labels.product" },
+    { "type": "text", "id": "title", "label": "t:labels.title", "info": "t:descriptions.outfit_item_title" }
+  ],
+  "presets": [{ "name": "t:general.outfit_item" }]
+}
+{% endschema %}

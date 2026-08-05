@@ -13,7 +13,7 @@ class AOSHome {
     this.productStages = new Set();
     this.registerSections(document);
 
-    // The hero is intentionally the sole initial animation. The inline head
+    // The first hero is intentionally the sole initial animation. The inline head
     // bootstrap prepared its AOS state before body paint; two frames guarantee
     // the browser paints that state before adding `aos-animate`.
     requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -78,9 +78,8 @@ class AOSHome {
   }
 
   queueHero() {
-    const hero = [...this.sections].find((section) => section.matches('.editorial-hero'));
+    const hero = [...this.sections].find((section) => section.matches('.editorial-hero, .shoppable-hero'));
     if (hero && this.isVisible(hero)) {
-      hero.classList.add('editorial-hero--media-settled');
       this.queueSection(hero);
     }
   }
@@ -93,22 +92,46 @@ class AOSHome {
       this.sections.forEach((section) => {
         if (!section.dataset.aosState && this.isReady && this.hasReachedTriggerLine(section)) this.queueSection(section);
       });
-      this.productStages.forEach((stage) => {
+      const readyProductStages = [...this.productStages].filter((stage) => {
         const section = stage.closest('[data-aos-section]');
-        if (!stage.dataset.aosState && section?.dataset.aosState === 'animated' && this.hasReachedTriggerLine(stage)) this.queueProductStage(stage);
+        const triggerLine = stage.closest('[data-aos-trigger="early"]') ? 0.85 : 0.6;
+        return !stage.dataset.aosState && section?.dataset.aosState === 'animated' && this.hasReachedTriggerLine(stage, triggerLine);
+      });
+
+      const sequencedRows = new Map();
+      readyProductStages.forEach((stage) => {
+        const sequence = stage.closest('[data-aos-sequence="row"]');
+        if (!sequence) {
+          this.queueProductStage(stage);
+          return;
+        }
+
+        if (!sequencedRows.has(sequence)) sequencedRows.set(sequence, new Map());
+        const rows = sequencedRows.get(sequence);
+        const row = Math.round(stage.getBoundingClientRect().top);
+        if (!rows.has(row)) rows.set(row, []);
+        rows.get(row).push(stage);
+      });
+
+      sequencedRows.forEach((rows) => {
+        rows.forEach((stages) => {
+          stages
+            .sort((first, second) => first.getBoundingClientRect().left - second.getBoundingClientRect().left)
+            .forEach((stage, index) => this.queueProductStage(stage, Math.min(index, 3) * 100));
+        });
       });
     });
   }
 
-  hasReachedTriggerLine(section) {
-    const rect = section.getBoundingClientRect();
+  hasReachedTriggerLine(element, triggerLine = 0.6) {
+    const rect = element.getBoundingClientRect();
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
     if (rect.bottom <= 0 || rect.top >= viewportHeight) return false;
     // Downward entry uses the section's top; upward entry uses its bottom.
-    // In both directions, 40% of the viewport remains clear before it runs.
+    // In both directions, the same clear viewport share remains before it runs.
     return rect.top >= 0
-      ? rect.top <= viewportHeight * 0.6
-      : rect.bottom >= viewportHeight * 0.4;
+      ? rect.top <= viewportHeight * triggerLine
+      : rect.bottom >= viewportHeight * (1 - triggerLine);
   }
 
   isVisible(section) {
@@ -118,20 +141,21 @@ class AOSHome {
   }
 
   queueSection(section) {
+    if (section.matches('.editorial-hero, .shoppable-hero')) section.classList.add('hero--media-settled');
     this.queueStage('section', section);
   }
 
-  queueProductStage(stage) {
-    this.queueStage('products', stage);
+  queueProductStage(stage, sequenceDelay = 0) {
+    this.queueStage('products', stage, sequenceDelay);
   }
 
-  queueStage(type, element) {
+  queueStage(type, element, sequenceDelay = 0) {
     if (element.dataset.aosState) return;
     element.dataset.aosState = 'queued';
-    this.animateStage(type, element, this.scrollVelocity >= 0.65 ? 350 : this.defaultDuration);
+    this.animateStage(type, element, this.scrollVelocity >= 0.65 ? 350 : this.defaultDuration, sequenceDelay);
   }
 
-  animateStage(type, element, duration) {
+  animateStage(type, element, duration, sequenceDelay = 0) {
     if (element.dataset.aosState === 'animated' || element.dataset.aosState === 'animating') return;
     element.dataset.aosState = 'animating';
 
@@ -142,7 +166,12 @@ class AOSHome {
       if (type === 'products') return true;
       return !target.closest('[data-aos-products], [data-aos-product-item], [data-aos-item]');
     });
-    const maxDelay = Math.max(0, ...targets.map((target) => Number(target.dataset.aosDelay) || 0));
+    const delays = targets.map((target) => {
+      const delay = (Number(target.dataset.aosDelay) || 0) + sequenceDelay;
+      if (delay) target.dataset.aosDelay = delay;
+      return delay;
+    });
+    const maxDelay = Math.max(0, ...delays);
     targets.forEach((target) => {
       target.dataset.aosDuration = duration;
       target.classList.add('aos-animate');

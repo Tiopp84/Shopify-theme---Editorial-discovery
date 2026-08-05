@@ -144,6 +144,14 @@
     gap: var(--space-2);
   }
 
+  .facets__sort > label,
+  .facets__price label {
+    font-family: var(--small-label-font);
+    font-size: var(--small-label-size);
+    letter-spacing: var(--small-label-letter-spacing);
+    line-height: var(--small-label-line-height);
+  }
+
   .facets__sort-menu {
     border-block: 1px solid var(--color-border);
   }
@@ -154,6 +162,10 @@
     gap: var(--space-3);
     padding-block: var(--space-4);
     cursor: pointer;
+    font-family: var(--small-label-font);
+    font-size: var(--small-label-size);
+    letter-spacing: var(--small-label-letter-spacing);
+    line-height: var(--small-label-line-height);
     list-style: none;
   }
 
@@ -201,8 +213,10 @@
     justify-content: space-between;
     gap: var(--space-3);
     cursor: pointer;
-    font-family: var(--font-commerce);
-    font-size: 1.2rem;
+    font-family: var(--small-label-font);
+    font-size: var(--small-label-size);
+    letter-spacing: var(--small-label-letter-spacing);
+    line-height: var(--small-label-line-height);
     list-style: none;
   }
 
@@ -213,7 +227,7 @@
   .facets__group summary::after {
     content: '→';
     margin-inline-start: auto;
-    font-family: var(--font-primary--family);
+    font-family: var(--small-label-font);
     font-size: 1rem;
     transition: transform 150ms ease;
   }
@@ -230,7 +244,7 @@
     border-radius: 999px;
     display: grid;
     place-items: center;
-    font-family: var(--font-primary--family);
+    font-family: var(--small-label-font);
     font-size: 0.7rem;
   }
 

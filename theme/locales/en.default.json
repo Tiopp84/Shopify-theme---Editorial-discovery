@@ -2,11 +2,18 @@
   "404": {
     "title": "404",
     "not_found": "Page not found.",
+    "message": "The page you requested may have moved, changed, or no longer be available.",
     "back_to_shopping": "Back to shopping"
   },
   "blog": {
     "article_comments": "Comments",
+    "article_sidebar": "Article sidebar",
+    "author_profile": "Author profile",
+    "empty_title": "New stories are on their way",
+    "empty_text": "There are no articles to read here yet.",
     "article_metadata_html": "{{ date }} by {{ author }}",
+    "read_time": "{{ count }} min read",
+    "other_stories": "Other stories",
     "comment_form_body": "Comment",
     "comment_form_email": "Email",
     "comment_form_name": "Name",
@@ -49,6 +56,7 @@
     "footer_navigation": "Footer navigation",
     "mobile_navigation": "Mobile navigation",
     "open_menu": "Open menu",
+    "open_product_preview": "Open product preview for {{ title }}",
     "payment_methods": "Payment methods",
     "primary_navigation": "Primary navigation",
     "skip_to_content": "Skip to content"
@@ -62,13 +70,27 @@
     "submit": "Subscribe",
     "success": "Thanks for subscribing."
   },
+  "social": {
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "facebook": "Facebook",
+    "x": "X",
+    "pinterest": "Pinterest",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "snapchat": "Snapchat",
+    "tumblr": "Tumblr",
+    "linkedin": "LinkedIn",
+    "vimeo": "Vimeo"
+  },
   "navigation": {
     "back": "Back",
     "home": "Home",
     "menu": "Explore",
     "products": "Products",
     "search": "Search",
-    "view_all": "View all {{ title }}"
+    "view_all": "View all {{ title }}",
+    "view_all_label": "View all"
   },
   "customers": {
     "login": {
@@ -80,11 +102,14 @@
   },
   "collections": {
     "title": "Collections",
+    "placeholder_title": "Collection title",
     "eyebrow": "The collection",
     "view_collection": "View collection",
     "product_count": "{{ count }} products",
     "empty_title": "This collection is waiting",
     "empty_text": "Products added to this collection will appear here.",
+    "empty_index_title": "Collections are being prepared",
+    "empty_index_text": "Check back soon for the latest collection stories.",
     "facets": {
       "active_filters": "Active filters",
       "apply": "Apply",
@@ -101,15 +126,30 @@
       ,"updated": "Products updated."
     }
   },
+  "contact": {
+    "title": "Get in touch",
+    "name": "Name",
+    "email": "Email address",
+    "phone": "Phone number (optional)",
+    "message": "How can we help?",
+    "submit": "Send message",
+    "success": "Thanks for getting in touch. We'll reply as soon as we can."
+  },
+  "faq": {
+    "title": "Frequently asked questions"
+  },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
     "card": "Gift card",
+    "code": "Gift card code",
     "expired": "This gift card has expired",
     "expires_on": "Expires on {{ expires_on }}",
+    "title": "Gift card",
     "use_at_checkout": "Use this gift card at checkout"
   },
   "password": {
     "title": "This shop is private",
+    "message": "Enter the store password to continue.",
     "password": "Password",
     "enter": "Enter"
   },
@@ -136,6 +176,8 @@
       "close_quick_add": "Close quick add",
       "quick_add": "Quick add",
       "quick_add_error": "This item could not be added. Please try again.",
+      "placeholder_price": "$20",
+      "placeholder_title": "Product title",
       "sale": "Sale",
       "sold_out": "Sold out",
       "unavailable": "Currently unavailable",
@@ -152,8 +194,14 @@
       "unavailable_combination": "This combination is unavailable.",
       "quantity": "Quantity",
       "quantity_pricing_available": "Volume pricing is available for this variant.",
+      "reassurance": "Product information",
       "purchase_option": "Purchase option",
       "one_time_purchase": "One-time purchase",
+      "preview_description": "Product details appear here when a product description is available.",
+      "preview_reassurance_content": "Add optional delivery, care, or returns guidance for this product.",
+      "preview_reassurance_heading": "Product reassurance",
+      "preview_sku": "NAR-001",
+      "preview_variant": "Select an option",
       "selling_plan_notice": "Subscription availability and pricing are confirmed by Shopify at checkout.",
       "sku": "SKU",
       "size_guide": "Size guide",

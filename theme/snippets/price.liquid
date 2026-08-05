@@ -50,16 +50,21 @@
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
+    font-family: var(--product-price-font);
+    font-size: var(--product-price-size);
     gap: var(--space-2);
     font-variant-numeric: tabular-nums;
   }
 
   .price__current {
+    color: var(--price-color);
     font-weight: 600;
   }
 
+  .price:has(.price__compare) .price__current { color: var(--sale-price-color); }
+
   .price__compare,
   .price__unit {
-    color: color-mix(in srgb, currentcolor 70%, transparent);
+    color: var(--compare-price-color);
   }
 {% endstylesheet %}

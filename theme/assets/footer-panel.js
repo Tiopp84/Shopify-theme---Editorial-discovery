@@ -1,13 +1,13 @@
 class FooterPanelController {
   constructor() {
     this.root = document.documentElement;
-    this.main = document.querySelector('main');
+    this.panel = document.querySelector('[data-site-panel]');
     this.footer = document.querySelector('[data-footer-panel]');
     this.spacer = document.querySelector('.footer-panel-spacer');
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.frame = null;
 
-    if (!this.main || !this.footer || !this.spacer || this.reducedMotion.matches) return;
+    if (!this.panel || !this.footer || !this.spacer || this.reducedMotion.matches) return;
 
     this.onScroll = () => this.scheduleUpdate();
     this.onResize = () => this.scheduleUpdate();
@@ -54,7 +54,7 @@ class FooterPanelController {
       '--footer-panel-footer-brightness',
       '--footer-panel-height',
     ].forEach((property) => this.root.style.removeProperty(property));
-    this.main?.removeAttribute('data-footer-panel-active');
+    this.panel?.removeAttribute('data-footer-panel-active');
   }
 
   scheduleUpdate() {
@@ -71,7 +71,7 @@ class FooterPanelController {
     if (!footerHeight) return;
 
     const viewport = window.innerHeight || 1;
-    const panelBottom = this.main.offsetTop + this.main.offsetHeight - window.scrollY;
+    const panelBottom = this.panel.offsetTop + this.panel.offsetHeight - window.scrollY;
     const progress = Math.min(1, Math.max(0, (viewport - panelBottom) / footerHeight));
     const edgeProgress = progress <= 0.5 ? progress * 2 : (1 - progress) * 2;
     const coveredProgress = 1 - progress;
@@ -80,7 +80,7 @@ class FooterPanelController {
     this.root.style.setProperty('--footer-panel-footer-offset', `${(coveredProgress * 20).toFixed(2)}px`);
     this.root.style.setProperty('--footer-panel-footer-blur', `${(coveredProgress * 1.5).toFixed(2)}px`);
     this.root.style.setProperty('--footer-panel-footer-brightness', (1 - coveredProgress * 0.28).toFixed(3));
-    this.main.toggleAttribute('data-footer-panel-active', edgeProgress > 0.001);
+    this.panel.toggleAttribute('data-footer-panel-active', edgeProgress > 0.001);
   }
 }
 
