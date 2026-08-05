@@ -90,22 +90,30 @@ p:empty {
 /** Theme styles below */
 body {
   font-family: var(--font-commerce);
-  font-size: calc(1rem * var(--type-scale));
-  line-height: 1.5;
+  font-size: var(--body-text-base-size);
+  line-height: var(--body-text-line-spacing);
+  letter-spacing: var(--body-text-letter-spacing);
   background-color: var(--color-background);
   color: var(--color-foreground);
+}
+
+.rte {
+  line-height: var(--body-text-line-spacing);
 }
 
 :root {
   --button-background: var(--button-theme-background);
   --button-background-hover: var(--button-theme-hover-background);
   --button-border-color: var(--button-theme-background);
-  --button-border-width: 1px;
+  --button-border-width: var(--button-theme-border-width);
   --button-color: var(--button-theme-color);
+  --button-font: var(--button-theme-font);
+  --button-font-size: var(--button-theme-font-size);
+  --button-letter-spacing: var(--button-theme-letter-spacing);
   --button-focus-ring: var(--focus-ring);
-  --button-min-block-size: 2.75rem;
+  --button-min-block-size: var(--button-theme-height);
   --button-padding-block: var(--space-8px);
-  --button-padding-inline: var(--space-24px);
+  --button-padding-inline: var(--button-theme-padding-inline);
   --button-radius: var(--button-theme-radius);
 }
 
@@ -115,11 +123,12 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-commerce);
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.015em;
+  font-family: var(--font-campaign);
+  font-style: var(--font-heading--style);
+  font-weight: var(--font-heading--weight);
+  font-size: var(--heading-base-size);
+  line-height: var(--heading-line-height);
+  letter-spacing: var(--heading-letter-spacing);
   text-wrap: balance;
 }
 
@@ -174,6 +183,10 @@ textarea {
   background: var(--button-background);
   color: var(--button-color);
   cursor: pointer;
+  font-family: var(--button-font);
+  font-size: var(--button-font-size);
+  letter-spacing: var(--button-letter-spacing);
+  line-height: 1.2;
 }
 
 :where(button, input[type='button'], input[type='submit'], .button):where(:hover, :focus-visible):where(:not(:disabled)) {
@@ -185,10 +198,10 @@ textarea {
 }
 
 :where(input:not([type='button'], [type='submit'], [type='checkbox'], [type='radio']), select, textarea) {
-  min-height: 2.75rem;
+  min-height: var(--field-theme-height);
   padding: var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: 0;
+  border: var(--field-theme-border-width) solid var(--color-border);
+  border-radius: var(--field-theme-radius);
   background: var(--color-background);
   color: var(--color-foreground);
 }

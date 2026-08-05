@@ -13,7 +13,7 @@
 {% endif %}
 
 {% stylesheet %}
-  .product-description { line-height: 1.6; }
+  .product-description { line-height: calc(var(--body-text-line-spacing) + .1); }
   .product-description > :first-child { margin-top: 0; }
   .product-description > :last-child { margin-bottom: 0; }
 {% endstylesheet %}

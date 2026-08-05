@@ -20,8 +20,8 @@
   .recovery-page { display: grid; min-block-size: min(34rem, calc(100dvh - 10rem)); padding: clamp(3rem, 8vw, 7rem) var(--page-gutter); place-items: center; }
   .recovery-page__inner { max-inline-size: 38rem; text-align: center; }
   .recovery-page__eyebrow { color: var(--color-foreground); font-size: .75rem; font-weight: 700; letter-spacing: .12em; margin: 0 0 var(--space-3); text-transform: uppercase; }
-  .recovery-page h1 { font-family: var(--font-commerce); font-size: clamp(2.4rem, 7vw, 5.5rem); font-style: normal; font-weight: 500; letter-spacing: -.055em; line-height: .95; margin: 0; }
-  .recovery-page__message { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); line-height: 1.6; margin: var(--space-4) auto 0; max-inline-size: 31rem; }
+  .recovery-page h1 { font-size: clamp(var(--heading-size-76), calc(var(--heading-size-76) + 7vw), var(--heading-size-176)); margin: 0; }
+  .recovery-page__message { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .1); margin: var(--space-4) auto 0; max-inline-size: 31rem; }
   .recovery-page__action { display: inline-flex; margin-block-start: var(--space-5); text-decoration: none; }
 {% endstylesheet %}
 

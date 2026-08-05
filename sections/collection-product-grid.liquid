@@ -221,8 +221,10 @@
 
   .collection-controls__count {
     color: color-mix(in srgb, currentcolor 70%, transparent);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
+    font-family: var(--small-label-font);
+    font-size: var(--small-label-size);
+    letter-spacing: var(--small-label-letter-spacing);
+    line-height: var(--small-label-line-height);
     text-transform: uppercase;
   }
 
@@ -239,6 +241,10 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
+    font-family: var(--small-label-font);
+    font-size: var(--small-label-size);
+    letter-spacing: var(--small-label-letter-spacing);
+    line-height: var(--small-label-line-height);
   }
 
   .collection-facets-dialog {
@@ -315,12 +321,15 @@
   }
 
   .collection-sort .facets__sort-menu--popover summary {
-    min-height: 2.5rem;
+    min-height: var(--field-theme-height);
     padding: .4rem .75rem;
-    border: 1px solid color-mix(in srgb, var(--color-foreground) 48%, var(--color-border));
-    border-radius: .625rem;
+    border: var(--field-theme-border-width) solid color-mix(in srgb, var(--color-foreground) 48%, var(--color-border));
+    border-radius: var(--field-theme-radius);
     background: var(--color-background);
-    font-size: .85rem;
+    font-family: var(--small-label-font);
+    font-size: var(--small-label-size);
+    letter-spacing: var(--small-label-letter-spacing);
+    line-height: var(--small-label-line-height);
   }
 
   .collection-sort .facets__sort-menu--popover summary > span {
@@ -451,7 +460,10 @@
       border: 0;
       background: transparent;
       color: currentcolor;
-      font-size: 0.8rem;
+      font-family: var(--small-label-font);
+      font-size: var(--small-label-size);
+      letter-spacing: var(--small-label-letter-spacing);
+      line-height: var(--small-label-line-height);
       text-decoration: underline;
       text-decoration-thickness: 1px;
       text-underline-offset: 0.2em;

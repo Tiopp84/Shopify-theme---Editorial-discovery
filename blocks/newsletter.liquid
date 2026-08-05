@@ -31,6 +31,7 @@
 
 {% stylesheet %}
   .newsletter {
+    container-type: inline-size;
     max-width: 30rem;
   }
 
@@ -62,6 +63,21 @@
   .newsletter__message {
     grid-column: 1 / -1;
     margin-block-start: var(--space-3);
+  }
+
+  @container (max-width: 13rem) {
+    .newsletter__form {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .newsletter__form input {
+      border-radius: var(--field-theme-radius);
+    }
+
+    .newsletter__form button {
+      border-radius: var(--button-theme-radius);
+      justify-self: center;
+    }
   }
 {% endstylesheet %}
 

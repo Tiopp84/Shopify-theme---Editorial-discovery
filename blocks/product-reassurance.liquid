@@ -29,8 +29,8 @@
 
 {% stylesheet %}
   .product-reassurance { border-block: 1px solid var(--color-border); display: grid; gap: var(--space-2); padding-block: var(--space-4); }
-  .product-reassurance h2 { font-family: var(--font-primary--family); font-size: .875rem; font-style: normal; font-weight: 700; letter-spacing: .04em; margin: 0; text-transform: uppercase; }
-  .product-reassurance__content { color: color-mix(in srgb, var(--color-foreground) 78%, var(--color-background)); font-size: .9rem; line-height: 1.5; }
+  .product-reassurance h2 { font-family: var(--small-label-font); font-size: var(--small-label-size); font-style: normal; font-weight: 700; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; text-transform: uppercase; }
+  .product-reassurance__content { color: color-mix(in srgb, var(--color-foreground) 78%, var(--color-background)); font-size: .9rem; line-height: var(--body-text-line-spacing); }
   .product-reassurance__content > :first-child { margin-block-start: 0; }
   .product-reassurance__content > :last-child { margin-block-end: 0; }
   .product-reassurance a { color: currentcolor; font-size: .8125rem; text-underline-offset: .2em; }
