@@ -31,6 +31,7 @@ class HeaderShell extends HTMLElement {
     this.compactContextSources = new Set();
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.desktopLayoutQuery = window.matchMedia('(min-width: 64rem)');
+    this.mobileSearchDrawerQuery = window.matchMedia('(max-width: 47.99rem)');
     this.addEventListener('click', this.onClick);
     document.addEventListener('click', this.onDocumentClick);
     document.addEventListener('keydown', this.onDocumentKeydown);
@@ -378,7 +379,7 @@ class HeaderShell extends HTMLElement {
       this.activeOpener = openButton;
       this.classList.remove('header-shell--compact');
       dialog.showModal();
-      if (openButton.dataset.dialogOpen === 'search') {
+      if (openButton.dataset.dialogOpen === 'search' && !this.mobileSearchDrawerQuery.matches) {
         requestAnimationFrame(() => dialog.querySelector('input[type="search"]')?.focus());
       }
       return;
