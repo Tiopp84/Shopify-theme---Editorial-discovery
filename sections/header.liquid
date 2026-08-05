@@ -158,7 +158,7 @@
   </nav>
 
   {% if has_navigation %}
-    <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" scroll-lock>
+    <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" data-overlay-motion="drawer-start" scroll-lock>
     <div class="header-shell__drawer-header">
       <h2 id="MobileMenuTitle">{{ 'navigation.menu' | t }}</h2>
       <button
@@ -221,9 +221,10 @@
       class="header-shell__search-dialog"
       aria-labelledby="HeaderSearchTitle"
       data-header-dialog="search"
+      data-overlay-motion="drawer-end"
       scroll-lock
     >
-      <div class="header-shell__drawer-header">
+      <div class="header-shell__drawer-header" data-search-drawer-entrance="header">
         <h2 id="HeaderSearchTitle">{{ 'search.title' | t }}</h2>
         <button
           class="header-shell__icon-button"
@@ -234,8 +235,10 @@
           {% render 'icon', name: 'close' %}
         </button>
       </div>
-      {% render 'predictive-search-form', context_id: 'HeaderSearch', in_drawer: true %}
-      <a class="header-shell__search-page-link" href="{{ routes.search_url }}">{{ 'search.view_page' | t }}</a>
+      <div data-search-drawer-entrance="form">
+        {% render 'predictive-search-form', context_id: 'HeaderSearch', in_drawer: true %}
+      </div>
+      <a class="header-shell__search-page-link" href="{{ routes.search_url }}" data-search-drawer-entrance="link">{{ 'search.view_page' | t }}</a>
     </dialog>
   {% endif %}
 </header-shell>
@@ -615,26 +618,14 @@
     margin-inline-end: auto;
     padding: var(--space-4);
     border: 0;
-    opacity: 0;
-    transform: translateX(-2.5rem);
-    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1), display 360ms allow-discrete, overlay 360ms allow-discrete;
   }
 
   .header-shell__drawer[open] {
     display: block;
-    opacity: 1;
-    transform: translateX(0);
   }
 
-  .header-shell__drawer::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
-  .header-shell__drawer[open]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
-
-  @starting-style {
-    .header-shell__drawer[open] {
-      opacity: 0;
-      transform: translateX(-2.5rem);
-    }
-  }
+  .header-shell__drawer::backdrop { background: transparent; }
+  .header-shell__drawer[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
   .header-shell__search-dialog {
     width: min(32rem, 90vw);
@@ -645,26 +636,21 @@
     padding: var(--space-6);
     border: 0;
     border-radius: 0.75rem 0 0 0.75rem;
-    opacity: 0;
-    transform: translateX(2.5rem);
-    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1), display 360ms allow-discrete, overlay 360ms allow-discrete;
   }
 
   .header-shell__search-dialog[open] {
     display: flex;
     flex-direction: column;
-    opacity: 1;
-    transform: translateX(0);
   }
 
-  .header-shell__search-dialog::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
-  .header-shell__search-dialog[open]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
+  .header-shell__search-dialog::backdrop { background: transparent; }
+  .header-shell__search-dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
-  @starting-style {
-    .header-shell__search-dialog[open] {
-      opacity: 0;
-      transform: translateX(2.5rem);
-    }
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__search-dialog [data-search-drawer-entrance] { opacity: 0; transform: translate3d(0, 1.25rem, 0); transition: opacity 280ms ease, transform 380ms cubic-bezier(.16, 1, .3, 1); transition-delay: 350ms; }
+    .header-shell__search-dialog [data-search-drawer-entrance='form'] { transition-delay: 420ms; }
+    .header-shell__search-dialog [data-search-drawer-entrance='link'] { transition-delay: 490ms; }
+    .header-shell__search-dialog[open]:is([data-overlay-visible], [data-overlay-closing]) [data-search-drawer-entrance] { opacity: 1; transform: translate3d(0, 0, 0); }
   }
 
   .header-shell__search-dialog .predictive-search {
@@ -998,7 +984,7 @@
       display: none;
     }
 
-    .header-shell__search-dialog {
+    dialog.header-shell__search-dialog[data-overlay-motion='drawer-end'] {
       inset: auto 0 0;
       width: 100%;
       height: auto;
@@ -1007,11 +993,7 @@
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
       border-radius: 0.9rem 0.9rem 0 0;
       overflow: hidden;
-      transform: translateY(3rem);
-    }
-
-    .header-shell__search-dialog[open] {
-      transform: translateY(0);
+      --overlay-enter-transform: translate3d(0, 100%, 0);
     }
 
     .header-shell__drawer {
@@ -1023,11 +1005,10 @@
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
       border-radius: 0.9rem 0.9rem 0 0;
       overflow: auto;
-      transform: translateY(3rem);
     }
 
-    .header-shell__drawer[open] {
-      transform: translateY(0);
+    dialog.header-shell__drawer[data-overlay-motion='drawer-start'] {
+      --overlay-enter-transform: translate3d(0, 100%, 0);
     }
 
     .header-shell__search-dialog .header-shell__drawer-header {
@@ -1046,17 +1027,6 @@
       padding-block-start: var(--space-4);
     }
 
-    @starting-style {
-      .header-shell__drawer[open] {
-        opacity: 0;
-        transform: translateY(3rem);
-      }
-
-      .header-shell__search-dialog[open] {
-        opacity: 0;
-        transform: translateY(3rem);
-      }
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
