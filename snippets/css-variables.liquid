@@ -24,9 +24,12 @@
     --color-interactive: {{ settings.interactive_color | default: '#8B7355' }};
     --color-interactive-background: {{ settings.interactive_background | default: '#E4E8DC' }};
     --color-border: {{ settings.border_color | default: '#E5DFD6' }};
-    --color-panel-01: #EBE7DD;
-    --color-panel-02: #E1DBCC;
-    --color-panel-03: #D6CFBC;
+    --color-panel-01: color-mix(in srgb, var(--color-background) 92%, var(--color-foreground));
+    --color-panel-02: color-mix(in srgb, var(--color-background) 88%, var(--color-foreground));
+    --color-status-success: #287a54;
+    --color-status-unavailable: #b3523d;
+    --color-status-error: #a33f2b;
+    --color-status-error-strong: #8c2a19;
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;

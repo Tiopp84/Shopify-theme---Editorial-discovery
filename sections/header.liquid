@@ -10,7 +10,7 @@
   class="header-shell full-width header-shell--logo-{{ section.settings.desktop_logo_position }} header-shell--menu-{{ section.settings.desktop_menu_position }}{% if section.settings.sticky_header %} header-shell--sticky{% endif %}"
   data-compact-header-enabled="{{ section.settings.enable_compact_navigation }}"
   data-dropdown-hover="{{ section.settings.enable_dropdown_hover }}"
-  style="--header-logo-width: {{ section.settings.logo_width }}px; --header-mobile-logo-width: {{ section.settings.mobile_logo_width }}px; --header-height: {{ section.settings.header_height }}px; --header-background-color: {{ settings.header_background_color }}; --header-compact-height: {{ section.settings.compact_header_height }}px; --header-compact-logo-max-height: {{ section.settings.compact_header_height | times: 80 | divided_by: 100 }}px; --header-compact-background-color: {{ section.settings.compact_header_background_color }}; --header-navigation-color: {{ settings.header_navigation_color }}; --header-navigation-hover-color: {{ settings.header_navigation_hover_color }}; --header-navigation-hover-text-color: {{ settings.header_navigation_hover_text_color }}; --header-dropdown-background-color: {{ settings.header_dropdown_background_color }}; --header-dropdown-text-color: {{ settings.header_dropdown_text_color }}; --header-navigation-size: {{ section.settings.navigation_size }}px;"
+  style="--header-logo-width: {{ section.settings.logo_width }}px; --header-mobile-logo-width: {{ section.settings.mobile_logo_width }}px; --header-height: {{ section.settings.header_height }}px; --header-background-color: {{ settings.header_background_color }}; --header-compact-height: {{ section.settings.compact_header_height }}px; --header-compact-logo-max-height: {{ section.settings.compact_header_height | times: 80 | divided_by: 100 }}px; --header-compact-background-color: {{ settings.header_background_color }}; --header-navigation-color: {{ settings.header_navigation_color }}; --header-navigation-hover-color: {{ settings.header_navigation_hover_color }}; --header-navigation-hover-text-color: {{ settings.header_navigation_hover_text_color }}; --header-dropdown-background-color: {{ settings.header_dropdown_background_color }}; --header-dropdown-text-color: {{ settings.header_dropdown_text_color }}; --header-navigation-size: {{ section.settings.navigation_size }}px;"
 >
   <header class="header-shell__inner">
     {% if has_navigation %}
@@ -335,7 +335,11 @@
       box-shadow: none;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
+      pointer-events: none;
     }
+
+    .shopify-section:has(> .header-shell--compact) { pointer-events: none; }
+    .shopify-section:has(> .header-shell--compact) :is(.header-shell__inner, .header-shell__drawer, .header-shell__search-dialog) { pointer-events: auto; }
 
     .header-shell--compact .header-shell__inner {
       width: fit-content;
@@ -1156,13 +1160,6 @@
       "unit": "px",
       "label": "t:labels.compact_header_height",
       "default": 52,
-      "visible_if": "{{ section.settings.enable_compact_navigation }}"
-    },
-    {
-      "type": "color",
-      "id": "compact_header_background_color",
-      "label": "t:labels.compact_header_background_color",
-      "default": "#F5F3EE",
       "visible_if": "{{ section.settings.enable_compact_navigation }}"
     },
     { "type": "checkbox", "id": "show_account", "label": "t:labels.show_account", "default": true },
