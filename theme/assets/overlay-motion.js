@@ -4,7 +4,10 @@ class OverlayMotionController {
     this.duration = 360;
     this.dialogs = new WeakSet();
     this.nativeClose = HTMLDialogElement.prototype.close;
+    this.nativeShowModal = HTMLDialogElement.prototype.showModal;
     this.patchClose();
+    this.patchShowModal();
+    document.addEventListener('close', () => window.requestAnimationFrame(() => this.releaseScrollbarCompensation()), true);
     this.observe();
     this.hydrate(document);
   }
@@ -27,9 +30,38 @@ class OverlayMotionController {
       this.removeAttribute('data-overlay-visible');
       window.setTimeout(() => {
         if (this.open) controller.nativeClose.call(this, returnValue);
-      }, controller.duration);
+      }, controller.durationFor(this));
     };
     HTMLDialogElement.prototype.close.__narrivelleOverlayMotion = true;
+  }
+
+  patchShowModal() {
+    const controller = this;
+    if (HTMLDialogElement.prototype.showModal.__narrivelleScrollbarCompensation) return;
+
+    HTMLDialogElement.prototype.showModal = function showModalWithScrollbarCompensation() {
+      if (this.matches?.('dialog[scroll-lock]') && !controller.hasActiveScrollLock()) controller.captureScrollbarCompensation();
+      return controller.nativeShowModal.call(this);
+    };
+    HTMLDialogElement.prototype.showModal.__narrivelleScrollbarCompensation = true;
+  }
+
+  hasActiveScrollLock() {
+    return Boolean(document.querySelector('dialog[scroll-lock][open], details[scroll-lock][open]'));
+  }
+
+  captureScrollbarCompensation() {
+    const width = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    document.documentElement.style.setProperty('--scroll-lock-scrollbar-width', `${width}px`);
+  }
+
+  releaseScrollbarCompensation() {
+    if (!this.hasActiveScrollLock()) document.documentElement.style.removeProperty('--scroll-lock-scrollbar-width');
+  }
+
+  durationFor(dialog) {
+    const duration = Number.parseFloat(window.getComputedStyle(dialog).getPropertyValue('--overlay-motion-duration'));
+    return Number.isFinite(duration) ? duration : this.duration;
   }
 
   observe() {
@@ -52,6 +84,11 @@ class OverlayMotionController {
   register(dialog) {
     if (this.dialogs.has(dialog)) return;
     this.dialogs.add(dialog);
+    dialog.addEventListener('cancel', (event) => {
+      if (this.reducedMotion.matches || dialog.dataset.overlayClosing === 'true') return;
+      event.preventDefault();
+      dialog.close();
+    });
     dialog.addEventListener('close', () => {
       dialog.removeAttribute('data-overlay-visible');
       delete dialog.dataset.overlayClosing;

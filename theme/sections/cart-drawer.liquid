@@ -7,12 +7,12 @@
 
 <cart-drawer class="cart-drawer" data-cart-drawer data-cart-url="{{ routes.cart_url }}" data-cart-currency="{{ cart.currency.iso_code }}" data-cart-total-cents="{{ cart.total_price }}" data-cart-discount-cents="{{ cart_discount_total }}" data-cart-note="{{ cart.note | escape }}" data-cart-empty-text="{{ 'cart.empty_text' | t | escape }}" data-cart-continue-shopping="{{ 'cart.continue_shopping' | t | escape }}" data-cart-view-cart="{{ 'cart.view_cart' | t | escape }}" data-cart-subtotal-label="{{ 'cart.subtotal' | t | escape }}" data-cart-checkout-label="{{ 'cart.checkout' | t | escape }}" data-cart-updating-label="{{ 'cart.updating' | t | escape }}" data-cart-taxes-note="{{ 'cart.taxes_and_shipping_at_checkout' | t | escape }}" data-cart-remove-label="{{ 'cart.remove' | t | escape }}" data-cart-decrease-label="{{ 'cart.decrease_quantity' | t | escape }}" data-cart-increase-label="{{ 'cart.increase_quantity' | t | escape }}" data-cart-each-label="{{ 'cart.each' | t | escape }}">
   <dialog class="cart-drawer__dialog" aria-labelledby="CartDrawerTitle-{{ section.id }}" data-cart-dialog data-overlay-motion="drawer-end" scroll-lock>
-    <div class="cart-drawer__header">
+    <div class="cart-drawer__header" data-drawer-entrance="header">
       <h2 id="CartDrawerTitle-{{ section.id }}">{{ 'cart.title' | t }}</h2>
       <button type="button" aria-label="{{ 'cart.close' | t }}" data-cart-close>×</button>
     </div>
     <p class="cart-drawer__status" role="status" aria-live="polite" data-cart-status hidden></p>
-    <div class="cart-drawer__body" data-cart-content>
+    <div class="cart-drawer__body" data-cart-content data-drawer-entrance="body">
       {% if cart.item_count == 0 %}
         <div class="cart-drawer__empty"><p>{{ 'cart.empty_text' | t }}</p><a href="{{ routes.all_products_collection_url }}">{{ 'cart.continue_shopping' | t }}</a></div>
       {% else %}
@@ -110,7 +110,12 @@
   .cart-drawer__footer > a { justify-self: center; font-size: .9em; text-underline-offset: .18em; }
   .cart-drawer__dialog::backdrop { background: transparent; }
   .cart-drawer__dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
-  @media (max-width: 749px) { .cart-drawer__dialog { --overlay-enter-transform: translate3d(0, 3rem, 0); } .cart-drawer__dialog[open] { inset: auto 0 0; inline-size: 100%; block-size: min(82dvh, 44rem); margin: 0; border-radius: 1.25rem 1.25rem 0 0; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .cart-drawer__dialog [data-drawer-entrance] { opacity: 0; transform: translate3d(0, 1.25rem, 0); transition: opacity 280ms ease, transform 380ms cubic-bezier(.16, 1, .3, 1); transition-delay: 350ms; }
+    .cart-drawer__dialog [data-drawer-entrance='body'] { transition-delay: 420ms; }
+    .cart-drawer__dialog[open]:is([data-overlay-visible], [data-overlay-closing]) [data-drawer-entrance] { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @media (max-width: 47.99rem) { dialog.cart-drawer__dialog[data-overlay-motion='drawer-end'] { --overlay-enter-transform: translate3d(0, 100%, 0); } .cart-drawer__dialog[open] { inset: auto 0 0; inline-size: 100%; block-size: min(82dvh, 44rem); margin: 0; border-radius: 1.25rem 1.25rem 0 0; } }
 {% endstylesheet %}
 
 {% schema %}
