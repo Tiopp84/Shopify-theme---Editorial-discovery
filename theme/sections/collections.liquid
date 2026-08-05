@@ -2,6 +2,20 @@
   Collection index with an editorial introduction and Shopify collection links.
 {% endcomment %}
 
+{%- capture excluded_collection_handles -%}
+  {%- for excluded_collection in section.settings.excluded_collections -%}
+    |{{ excluded_collection.handle }}|
+  {%- endfor -%}
+{%- endcapture -%}
+
+{% assign visible_collection_count = 0 %}
+{% for collection in collections %}
+  {%- capture collection_handle_token -%}|{{ collection.handle }}|{%- endcapture -%}
+  {% unless excluded_collection_handles contains collection_handle_token %}
+    {% assign visible_collection_count = visible_collection_count | plus: 1 %}
+  {% endunless %}
+{% endfor %}
+
 <section class="collection-index full-width collection-index--content-{{ section.settings.content_position }} collection-index--text-{{ section.settings.text_alignment }} collection-index--item-{{ section.settings.item_style }} collection-index--item-text-{{ section.settings.item_text_position }}" aria-labelledby="CollectionIndexHeading-{{ section.id }}" style="--collection-index-columns: {{ section.settings.items_per_row }}; --collection-index-gap: {{ section.settings.grid_spacing }}px; --collection-index-ratio: {{ section.settings.image_ratio }};">
   <header class="collection-index__intro">
     <h1 id="CollectionIndexHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h1>
@@ -10,9 +24,11 @@
     {% endif %}
   </header>
 
-  {% if collections.size > 0 %}
+  {% if visible_collection_count > 0 %}
     <div class="collection-index__grid">
       {% for collection in collections %}
+        {%- capture collection_handle_token -%}|{{ collection.handle }}|{%- endcapture -%}
+        {% unless excluded_collection_handles contains collection_handle_token %}
         {% liquid
           assign collection_image = collection.featured_image
           assign first_product = collection.products.first
@@ -39,6 +55,7 @@
             <span class="collection-card__title">{{ collection.title | escape }}</span>
           </span>
         </a>
+        {% endunless %}
       {% endfor %}
     </div>
   {% else %}
@@ -117,6 +134,13 @@
       "id": "intro",
       "label": "t:labels.text",
       "default": "<p>A curated editorial selection of seasonal narratives, tactile luxury and timeless form.</p>"
+    },
+    {
+      "type": "collection_list",
+      "id": "excluded_collections",
+      "label": "t:labels.excluded_collections",
+      "info": "t:descriptions.excluded_collections",
+      "limit": 50
     },
     {
       "type": "select",

@@ -437,7 +437,7 @@
   .quick-add__dialog { background: var(--color-background); border: 0; border-radius: .75rem; inline-size: min(52rem, calc(100vw - 2rem)); margin: auto; max-block-size: calc(100dvh - 2rem); overflow: auto; padding: 0; }
   .quick-add__dialog[open] { visibility: visible; }
   .quick-add__dialog::backdrop { background: transparent; }
-  .quick-add__dialog[open][data-overlay-visible]::backdrop { background: rgb(0 0 0 / .45); }
+  .quick-add__dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
   html.quick-add-modal-open, body.quick-add-modal-open { overflow: hidden; overscroll-behavior: none; }
   .quick-add__header { align-items: center; border-block-end: 1px solid var(--color-border); display: flex; gap: var(--space-3); justify-content: space-between; padding: var(--space-4); }
   .quick-add__header-copy { display: grid; gap: .2rem; }
@@ -448,7 +448,7 @@
   .quick-add__media-stage { overflow: hidden; position: relative; touch-action: pan-y; }
   .quick-add__media-item, .quick-add__media-item img, .quick-add__media-placeholder, .quick-add__media-placeholder svg { block-size: 100%; inline-size: 100%; }
   .quick-add__media-item img { aspect-ratio: 4 / 5; border-radius: .5rem; display: block; object-fit: cover; }
-  .quick-add__media-nav { align-items: center; background: rgb(255 255 255 / .88); border: 0; border-radius: 50%; color: var(--color-foreground); display: grid; inset-block-start: 50%; min-block-size: 2.5rem; min-inline-size: 2.5rem; padding: 0; place-items: center; position: absolute; transform: translateY(-50%); z-index: 1; }
+  .quick-add__media-nav { align-items: center; background: color-mix(in srgb, var(--color-background) 88%, transparent); border: 0; border-radius: 50%; color: var(--color-foreground); display: grid; inset-block-start: 50%; min-block-size: 2.5rem; min-inline-size: 2.5rem; padding: 0; place-items: center; position: absolute; transform: translateY(-50%); z-index: 1; }
   .quick-add__media-nav--previous { inset-inline-start: var(--space-2); }
   .quick-add__media-nav--next { inset-inline-end: var(--space-2); }
   .quick-add__media-nav:is(:hover, :focus-visible) { background: var(--color-background); outline: var(--focus-ring); outline-offset: 2px; }
@@ -465,8 +465,8 @@
   .quick-add__price s, .quick-add__price [data-quick-add-unit-price], .quick-add__sku { color: color-mix(in srgb, var(--color-foreground) 65%, transparent); }
   .quick-add__price small { flex-basis: 100%; }
   .quick-add__availability { font-size: .9rem; }
-  .quick-add__availability::before { background: #287a54; border-radius: 50%; content: ''; display: inline-block; block-size: .5rem; inline-size: .5rem; margin-inline-end: .45rem; }
-  .quick-add__availability[data-state='sold-out']::before { background: #b3523d; }
+  .quick-add__availability::before { background: var(--color-status-success); border-radius: 50%; content: ''; display: inline-block; block-size: .5rem; inline-size: .5rem; margin-inline-end: .45rem; }
+  .quick-add__availability[data-state='sold-out']::before { background: var(--color-status-unavailable); }
   .quick-add__form { display: grid; gap: var(--space-4); }
   .quick-add__view-details { color: color-mix(in srgb, var(--color-foreground) 72%, transparent); font-size: .8rem; text-underline-offset: .18em; width: max-content; }
   .quick-add__view-details--mobile { display: none; }
@@ -488,7 +488,7 @@
   .quick-add__quantity-control input { border-inline: 1px solid var(--color-border); }
   .quick-add__quantity-control input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
   .quick-add__quantity-control input[type='number']::-webkit-inner-spin-button, .quick-add__quantity-control input[type='number']::-webkit-outer-spin-button { appearance: none; margin: 0; }
-  .quick-add__error { background: color-mix(in srgb, #a33f2b 8%, var(--color-background)); border-inline-start: .2rem solid #a33f2b; color: #a33f2b; margin: 0; padding: var(--space-3); }
+  .quick-add__error { background: color-mix(in srgb, var(--color-status-error) 8%, var(--color-background)); border-inline-start: .2rem solid var(--color-status-error); color: var(--color-status-error); margin: 0; padding: var(--space-3); }
   .quick-add__quantity-note { color: color-mix(in srgb, var(--color-foreground) 68%, transparent); font-size: .875rem; margin: 0; }
 
   .product-card:focus-within .product-card__quick-add-wrap { opacity: 1; transform: translateY(0); visibility: visible; }

@@ -158,9 +158,8 @@ class CartStore extends EventTarget {
     this.lines.forEach((line, key) => {
       const serverLine = serverLines.get(key);
       if (!serverLine) return;
-      if (line.unitPrice !== Number(serverLine.final_price) || line.compareUnitPrice !== Number(serverLine.original_price || line.compareUnitPrice)) linePriceChanged = true;
+      if (line.unitPrice !== Number(serverLine.final_price)) linePriceChanged = true;
       line.unitPrice = Number(serverLine.final_price);
-      line.compareUnitPrice = Number(serverLine.original_price || line.compareUnitPrice);
     });
     this.discountCents = (cart.cart_level_discount_applications || []).reduce((sum, discount) => sum + Number(discount.total_allocated_amount || 0), 0);
     this.serverTotalCents = Number(cart.total_price) || 0;
@@ -203,7 +202,7 @@ class CartStore extends EventTarget {
         key: item.key,
         quantity: item.quantity,
         unitPrice: Number(item.final_price),
-        compareUnitPrice: Number(item.original_price || old.compareUnitPrice || 0),
+        compareUnitPrice: Number(old.compareUnitPrice || item.original_price || 0),
         variantId: item.variant_id,
       }];
     }));
