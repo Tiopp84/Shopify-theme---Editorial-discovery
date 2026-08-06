@@ -17,7 +17,8 @@
     "contact_form": "Contact form",
     "cart_show_note": "Show order note",
     "collection": "Collection",
-    "collection_titles": "Collection titles",
+    "collection_title": "Collection title",
+    "collection_tiles": "Collection tiles",
     "collections": "Collections",
     "collection_card": "Collection card",
     "collection_list": "Collection list",
@@ -66,6 +67,7 @@
     "product_reassurance": "Product reassurance",
     "product_sku": "Product SKU",
     "product_title": "Product title",
+    "product_tiles": "Product tiles",
     "product_vendor": "Product vendor",
     "related_stories": "Related stories",
     "row": "Row",
@@ -100,7 +102,6 @@
     "interactive_color": "Used for link hover, keyboard focus, and active hotspots.",
     "interactive_background": "Used for light hover and selected states in dropdowns and sort options.",
     "outfit_item_title": "Defaults to product title",
-    "social_sharing_image": "Used when a shared page does not have its own image. Product, collection, and article images continue to take priority.",
     "shoppable_hero_layout_context": "Content is shared between desktop and mobile. Image, layout, hotspots, and style settings apply only to the selected layout."
   },
   "labels": {
@@ -141,6 +142,9 @@
     "mobile_text_color": "Mobile text color",
     "mobile_text_protection": "Mobile text protection",
     "product_gallery_layout": "Product gallery layout",
+    "product_card_media_fit": "Product card image fit",
+    "product_card_title_lines": "Product card title lines",
+    "product_card_title_size": "Product card title size",
     "show_account": "Show account",
     "show_author": "Show author",
     "show_article_media": "Show article media",
@@ -155,7 +159,6 @@
     "show_quick_add": "Show Quick Add",
     "show_variants": "Show variants",
     "slide_speed": "Slide speed",
-    "social_sharing_image": "Social sharing image",
     "show_read_time": "Show reading time",
     "background_color": "Background color",
     "price": "Price",
@@ -174,6 +177,8 @@
     "field_corner_radius": "Field corner radius",
     "horizontal_padding": "Horizontal padding",
     "card_title_size": "Collection card title size",
+    "cart_icon": "Cart icon",
+    "cart_type": "Cart type",
     "columns_desktop": "Desktop columns",
     "content_alignment": "Content alignment",
     "content_position": "Content position",
@@ -197,6 +202,7 @@
     "border_width": "Border width",
     "border_and_divider": "Border & divider",
     "font": "Font",
+    "font_weight": "Font weight",
     "favicon": "Favicon",
     "foreground": "Text color (foreground)",
     "heading_font": "Heading font",
@@ -244,6 +250,7 @@
     "customer_account_menu": "Customer account menu",
     "desktop_filter_layout": "Desktop filter layout",
     "desktop_product_columns": "Large desktop products per row",
+    "tablet_product_columns": "Tablet products per row",
     "desktop_collection_columns": "Collections per row on desktop",
     "desktop_product_rows": "Rows of products on desktop",
     "description": "Description",
@@ -268,6 +275,7 @@
     "products_per_row": "Products per row",
     "quick_view_label": "Quick view button label",
     "product_limit": "Number of products",
+    "predictive_search_content": "Predictive search content",
     "recommendation_intent": "Recommendation type",
     "reassurance_content": "Reassurance content",
     "reassurance_heading": "Reassurance heading",
@@ -348,6 +356,10 @@
       "page": "Search page",
       "drawer": "Search drawer"
     },
+    "predictive_search_content": {
+      "products": "Products only",
+      "products_and_content": "Products, pages, collections, and articles"
+    },
     "recommendation_intent": {
       "complementary": "Complementary products",
       "related": "Related products"
@@ -364,12 +376,15 @@
       "wide": "Wide (2:1)"
     },
     "image_fit": { "cover": "Cover", "contain": "Contain" },
+    "lines": { "one": "One line", "two": "Two lines" },
     "announcement_animation": { "swap": "Slide and fade", "marquee": "Continuously scroll right to left" },
     "alignment": {
       "left": "Left",
       "center": "Center",
       "right": "Right"
     },
+    "cart_icon": { "bag": "Bag", "cart": "Cart", "basket": "Basket" },
+    "cart_type": { "drawer": "Drawer", "page": "Cart page" },
     "collections_grid_image_source": { "collection": "Collection image", "first_product": "First product image" },
     "collections_grid_item_style": { "text_below": "Text below image", "overlay": "Text overlay", "overlay_box": "Text overlay with box" },
     "product_gallery_layout": { "thumbnails": "Thumbnails", "stacked": "Stacked media" },

@@ -11,6 +11,10 @@
   {% liquid
     assign products_per_page = section.settings.columns_desktop | times: section.settings.rows_per_page
     assign description_alignment = section.settings.collection_description_alignment | default: 'left'
+    assign product_card_image_ratio = section.settings.image_ratio
+    assign product_card_show_vendor = settings.product_card_show_vendor
+    assign product_card_show_badge = settings.product_card_show_badge
+    assign product_card_show_second_image = settings.product_card_show_second_image
   %}
   {% paginate collection.products by products_per_page %}
     {% assign mobile_sort_only = false %}
@@ -156,14 +160,14 @@
             {% for product in collection.products %}
               {% render 'product-card',
                 product: product,
-                show_vendor: section.settings.show_vendor,
-                show_badge: section.settings.show_badge,
+                show_vendor: product_card_show_vendor,
+                show_badge: product_card_show_badge,
                 show_quick_add: section.settings.enable_quick_view,
                 quick_add_label: section.settings.quick_view_label,
-                show_second_image: section.settings.show_second_image,
+                show_second_image: product_card_show_second_image,
                 show_swatches: section.settings.show_variants,
                 show_variant_options: section.settings.show_variants,
-                image_ratio: section.settings.image_ratio,
+                image_ratio: product_card_image_ratio,
                 sizes: '(min-width: 60rem) 25vw, 50vw',
                 card_index: forloop.index,
                 card_count: forloop.length,
@@ -581,14 +585,6 @@
       ],
       "default": "4 / 5"
     },
-    {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "label": "t:labels.show_vendor",
-      "default": false
-    },
-    { "type": "checkbox", "id": "show_badge", "label": "t:labels.show_product_badges", "default": true },
-    { "type": "checkbox", "id": "show_second_image", "label": "t:labels.show_second_image", "default": true },
     { "type": "checkbox", "id": "show_variants", "label": "t:labels.show_variants", "default": false },
     { "type": "checkbox", "id": "enable_quick_view", "label": "t:labels.enable_quick_view", "default": true },
     {

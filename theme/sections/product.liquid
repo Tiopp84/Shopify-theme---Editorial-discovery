@@ -154,7 +154,7 @@
   .main-product__availability::before { background: var(--color-status-success); border-radius: 50%; content: ''; height: .5rem; width: .5rem; }
   .main-product__availability[data-state='sold-out'], .main-product__availability[data-state='unavailable'] { color: color-mix(in srgb, var(--color-foreground) 66%, transparent); }
   .main-product__availability:is([data-state='sold-out'], [data-state='unavailable'])::before { background: var(--color-status-unavailable); }
-  .main-product__details h1 { font-size: clamp(var(--heading-size-75), calc(var(--heading-size-75) + 3.6vw), var(--heading-size-128)); margin: 0; max-width: none; }
+  .main-product__details h1 { font-family: var(--product-card-font); font-size: clamp(var(--heading-size-75), calc(var(--heading-size-75) + 3.6vw), var(--heading-size-128)); margin: 0; max-width: none; }
   .main-product__price { font-size: clamp(var(--product-price-size-product-min), calc(var(--product-price-size-product-min) + 2vw), var(--product-price-size-product-max)); margin: 0; }
   .main-product__price .price__current { font-weight: 650; }
   .main-product__price .price__compare { font-size: .875em; }
