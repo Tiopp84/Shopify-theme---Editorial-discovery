@@ -68,18 +68,20 @@
   .contact-form--surface-minimal form { background: transparent; border-color: transparent; padding: 0; }
   @media (hover: hover) and (pointer: fine) { .contact-form__submit:hover { background: var(--button-theme-hover-background); border-color: var(--button-theme-hover-background); } }
   @media (min-width: 48rem) { .contact-form__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } .contact-form__field--message { grid-column: 1 / -1; } }
-  @media (min-width: 64rem) { .contact-form { display: grid; gap: clamp(3rem, 8vw, 8rem); grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); } .contact-form__header { margin: 0; padding-inline-start: min(10%, 4rem); } .contact-form--layout-centered { display: block; max-inline-size: 48rem; } .contact-form--layout-centered .contact-form__header { margin: 0 auto var(--space-7); padding: 0; text-align: center; } .contact-form--layout-centered .contact-form__intro { margin-inline: auto; } }
+  @media (min-width: 64rem) { .contact-form { display: grid; gap: clamp(3rem, 8vw, 8rem); grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); } .contact-form__header { align-self: start; margin: 0; padding-inline-start: min(10%, 4rem); position: sticky; inset-block-start: max(var(--space-5), env(safe-area-inset-top)); } .contact-form--layout-centered { display: block; max-inline-size: 48rem; } .contact-form--layout-centered .contact-form__header { margin: 0 auto var(--space-7); padding: 0; position: static; text-align: center; } .contact-form--layout-centered .contact-form__intro { margin-inline: auto; } }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.contact_form",
+  "limit": 1,
   "settings": [
     { "type": "select", "id": "layout_style", "label": "t:labels.contact_layout", "options": [{ "value": "editorial", "label": "t:options.contact_layout.editorial" }, { "value": "centered", "label": "t:options.contact_layout.centered" }], "default": "editorial" },
     { "type": "select", "id": "form_surface", "label": "t:labels.contact_form_surface", "options": [{ "value": "framed", "label": "t:options.contact_form_surface.framed" }, { "value": "minimal", "label": "t:options.contact_form_surface.minimal" }], "default": "framed" },
     { "type": "text", "id": "heading", "label": "t:labels.heading" },
     { "type": "richtext", "id": "intro", "label": "t:labels.intro" }
   ],
-  "enabled_on": { "templates": ["page"] }
+  "enabled_on": { "templates": ["index", "page"] },
+  "presets": [{ "name": "t:general.contact_form", "category": "Forms & utility" }]
 }
 {% endschema %}

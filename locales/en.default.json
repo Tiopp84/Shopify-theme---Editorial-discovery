@@ -50,6 +50,7 @@
     "view_cart": "View cart"
   },
   "accessibility": {
+    "scrolling_text": "Scrolling text",
     "announcement": "Announcement",
     "breadcrumb": "Breadcrumb",
     "close_menu": "Close menu",
@@ -64,6 +65,9 @@
   "localization": {
     "country": "Country/region",
     "language": "Language"
+  },
+  "editorial": {
+    "detail": "Editorial detail"
   },
   "newsletter": {
     "email": "Email address",
