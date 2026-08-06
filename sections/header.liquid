@@ -3,6 +3,7 @@
   <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
 {% endif %}
 {% assign has_navigation = false %}
+{% assign brand_name = settings.brand_name | default: shop.name %}
 {% if section.settings.enable_navigation != false and section.settings.menu != blank %}
   {% assign has_navigation = true %}
 {% endif %}
@@ -30,10 +31,10 @@
         {{
           section.settings.logo
           | image_url: width: logo_width_2x
-          | image_tag: widths: '120, 180, 240, 320, 400', width: section.settings.logo_width, alt: shop.name
+          | image_tag: widths: '120, 180, 240, 320, 400', width: section.settings.logo_width, alt: brand_name
         }}
       {% else %}
-        {{ shop.name | escape }}
+        {{ brand_name | escape }}
       {% endif %}
     </a>
 
@@ -282,7 +283,7 @@
   }
 
   .header-shell__inner {
-    width: min(calc(100% - var(--page-margin) * 2), var(--page-width));
+    width: min(calc(100% - var(--layout-gutter) * 2), var(--layout-content-max));
     min-height: var(--header-height);
     margin-inline: auto;
     display: grid;
@@ -347,7 +348,7 @@
 
     .header-shell--compact .header-shell__inner {
       width: fit-content;
-      max-width: calc(100% - var(--page-margin) * 2);
+      max-width: calc(100% - var(--layout-gutter) * 2);
       min-height: var(--header-compact-height);
       margin-block: var(--space-2);
       margin-inline: auto;

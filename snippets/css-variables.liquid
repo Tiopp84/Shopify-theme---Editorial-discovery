@@ -66,8 +66,8 @@
     --small-label-size: {{ settings.small_label_size | default: 12 }}px;
     --small-label-letter-spacing: {{ settings.small_label_letter_spacing | default: 80 | divided_by: 1000.0 }}em;
     --small-label-line-height: {{ settings.small_label_line_height | default: 1.2 }};
-    --page-width: {{ settings.max_page_width }};
-    --page-margin: {{ settings.min_page_margin }}px;
+    --layout-content-max: 90rem;
+    --layout-gutter: var(--space-5);
     --color-background: {{ settings.background_color | default: '#FAF8F5' }};
     --color-foreground: {{ settings.text_color | default: '#1A1A1A' }};
     --color-interactive: {{ settings.interactive_color | default: '#8B7355' }};
