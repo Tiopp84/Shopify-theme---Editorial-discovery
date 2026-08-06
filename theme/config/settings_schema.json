@@ -8,6 +8,14 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "t:general.brand",
+    "settings": [
+      { "type": "text", "id": "brand_name", "label": "t:labels.brand_name", "info": "t:descriptions.brand_name" },
+      { "type": "image_picker", "id": "favicon", "label": "t:labels.favicon", "info": "t:descriptions.favicon" },
+      { "type": "image_picker", "id": "social_sharing_image", "label": "t:labels.social_sharing_image", "info": "t:descriptions.social_sharing_image" }
+    ]
+  },
+  {
     "name": "t:general.typography",
     "settings": [
       {
@@ -62,41 +70,6 @@
       { "type": "header", "content": "t:general.collection_titles" },
       { "type": "select", "id": "collection_title_font", "label": "t:labels.font", "options": [{ "value": "body", "label": "t:options.typography.body" }, { "value": "heading", "label": "t:options.typography.heading" }], "default": "heading" },
       { "type": "range", "id": "collection_title_size", "min": 12, "max": 32, "step": 1, "unit": "px", "label": "t:labels.text_size", "default": 15 }
-    ]
-  },
-  {
-    "name": "t:general.layout",
-    "settings": [
-      {
-        "type": "select",
-        "id": "max_page_width",
-        "label": "t:labels.page_width",
-        "options": [
-          {
-            "value": "70rem",
-            "label": "t:options.page_width.narrow"
-          },
-          {
-            "value": "90rem",
-            "label": "t:options.page_width.standard"
-          },
-          {
-            "value": "110rem",
-            "label": "t:options.page_width.wide"
-          }
-        ],
-        "default": "90rem"
-      },
-      {
-        "type": "range",
-        "id": "min_page_margin",
-        "min": 10,
-        "max": 100,
-        "step": 1,
-        "unit": "px",
-        "label": "t:labels.page_margin",
-        "default": 20
-      }
     ]
   },
   {

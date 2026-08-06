@@ -137,7 +137,7 @@
 
 {% stylesheet %}
   .shoppable-hero { background: var(--color-panel-02); border-block-end: 1px solid var(--color-border); display: grid; grid-template-areas: 'hero'; grid-template-rows: minmax(var(--shoppable-hero-desktop-min-height), auto); margin-block-end: var(--space-chapter); min-inline-size: 0; overflow: clip; position: relative; }
-  .shoppable-hero__content { align-content: var(--shoppable-hero-desktop-content-block-position); align-self: stretch; box-sizing: border-box; color: var(--shoppable-hero-desktop-text-color); display: grid; grid-area: hero; justify-items: var(--shoppable-hero-desktop-content-inline-position); justify-self: stretch; min-inline-size: 0; padding: clamp(4rem, 8vw, 8rem) max(var(--page-margin), calc((100vw - var(--page-width)) / 2)); position: relative; z-index: 1; }
+  .shoppable-hero__content { align-content: var(--shoppable-hero-desktop-content-block-position); align-self: stretch; box-sizing: border-box; color: var(--shoppable-hero-desktop-text-color); display: grid; grid-area: hero; justify-items: var(--shoppable-hero-desktop-content-inline-position); justify-self: stretch; min-inline-size: 0; padding: clamp(4rem, 8vw, 8rem) max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); position: relative; z-index: 1; }
   .shoppable-hero__content-frame { display: grid; gap: var(--space-5); inline-size: min(100%, clamp(18rem, 36vw, 32rem)); text-align: var(--shoppable-hero-desktop-content-text-alignment); }
   .shoppable-hero__eyebrow { font-size: .6875rem; font-weight: 600; inline-size: 100%; letter-spacing: .1em; margin: 0; text-transform: uppercase; }
   .shoppable-hero h2 { font-family: var(--font-campaign); font-size: clamp(3rem, 5.3vw, 5.5rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); inline-size: min(100%, 11ch); justify-self: var(--shoppable-hero-desktop-content-text-alignment); letter-spacing: -.035em; line-height: .98; margin: 0; overflow-wrap: anywhere; }
@@ -187,12 +187,12 @@
   .shoppable-hero__hotspot-trigger:focus-visible { border-radius: 50%; box-shadow: var(--focus-ring); outline: 0; }
   @media (max-width: 63.99rem) {
     .shoppable-hero { margin-block-end: var(--space-chapter-mobile); }
-    .shoppable-hero__content { padding: 2rem var(--page-margin); }
+    .shoppable-hero__content { padding: 2rem var(--layout-gutter); }
     .shoppable-hero__media::after { background: linear-gradient(0deg, rgb(0 0 0 / var(--shoppable-hero-desktop-protection)) 0%, rgb(0 0 0 / 28%) 42%, transparent 75%); }
   }
   @media (min-width: 48rem) and (max-width: 63.99rem) {
     .shoppable-hero { grid-template-rows: minmax(min(var(--shoppable-hero-desktop-min-height), 44rem), auto); }
-    .shoppable-hero__content { gap: var(--space-4); padding: clamp(2.5rem, 6vw, 4.5rem) var(--page-margin); }
+    .shoppable-hero__content { gap: var(--space-4); padding: clamp(2.5rem, 6vw, 4.5rem) var(--layout-gutter); }
     .shoppable-hero h2 { font-size: clamp(3rem, 6vw, 4.25rem); }
     .shoppable-hero__body { max-inline-size: 30rem; }
   }

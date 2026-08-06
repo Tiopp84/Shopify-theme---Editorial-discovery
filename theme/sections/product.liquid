@@ -109,7 +109,7 @@
 <script src="{{ 'product-form.js' | asset_url }}" defer></script>
 
 {% stylesheet %}
-  .main-product { display: grid; gap: var(--space-6); margin: var(--space-6) auto; max-width: var(--page-width); padding-inline: var(--page-gutter); }
+  .main-product { display: grid; gap: var(--space-6); margin: var(--space-6) auto; max-width: var(--layout-content-max); padding-inline: var(--layout-gutter); }
   .main-product__gallery { display: grid; gap: var(--space-3); min-width: 0; }
   .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; position: relative; scroll-margin-block-start: 5rem; touch-action: pan-y; }
   .main-product__media-placeholder { align-items: center; aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; overflow: hidden; }

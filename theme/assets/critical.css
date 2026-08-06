@@ -316,10 +316,10 @@ html:not(.aos-enabled) [data-aos] {
  */
 .shopify-section {
   --content-width: min(
-    calc(var(--page-width) - var(--page-margin) * 2),
-    calc(100% - var(--page-margin) * 2)
+    calc(var(--layout-content-max) - var(--layout-gutter) * 2),
+    calc(100% - var(--layout-gutter) * 2)
   );
-  --content-margin: minmax(var(--page-margin), 1fr);
+  --content-margin: minmax(var(--layout-gutter), 1fr);
   --content-grid: var(--content-margin) var(--content-width) var(--content-margin);
 
   /* This is required to make <img> elements work as background images */

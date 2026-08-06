@@ -26,7 +26,7 @@
 </section>
 
 {% stylesheet %}
-  .material-craft { align-items: center; background: var(--material-craft-background, var(--color-background)); display: grid; gap: clamp(2.5rem, 7vw, 8rem); margin: 0 0 var(--space-chapter); padding-inline: max(var(--page-margin), calc((100vw - var(--page-width)) / 2)); }
+  .material-craft { align-items: center; background: var(--material-craft-background, var(--color-background)); display: grid; gap: clamp(2.5rem, 7vw, 8rem); margin: 0 0 var(--space-chapter); padding-inline: max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
   .material-craft__images { align-items: end; block-size: var(--material-craft-image-height, 600px); display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
   .material-craft__image { background: var(--color-panel-02); block-size: 100%; overflow: hidden; }
   .material-craft__image--2 { block-size: 75%; margin-block-end: clamp(1.5rem, 7vw, 7rem); }
