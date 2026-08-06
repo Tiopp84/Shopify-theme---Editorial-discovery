@@ -70,7 +70,7 @@ GSAP Core (và ScrollTrigger khi cần) có thể được phê duyệt như mot
 | Narrivelle original code | Repository này | Proprietary submission source | Từ commit sau baseline | IN PROGRESS |
 | GSAP Core + ScrollTrigger | `https://www.npmjs.com/package/gsap`, version `3.13.0`, imported 2026-07-28 | GSAP Standard “No Charge” License | Uncommitted working tree | APPROVED — self-hosted for homepage reveals and one desktop-only `pinned-visual-story` scrub timeline. CSS owns the sticky layout; ScrollTrigger never pins or changes document layout. Reduced motion and mobile omit the choreography. Core 72 KB + ScrollTrigger 44 KB minified; remove the two script tags and `home-reveal.js` to disable the effect |
 | Fonts | Shopify/system only ở baseline | Shopify/platform terms | TBD | POLICY APPROVED |
-| Icons | Original inline SVG dự kiến | Original | TBD | POLICY APPROVED |
+| Icons | Original inline SVG plus Phosphor Icons Regular subset `v2.0.8` (`d42782b2abe747d904b971ccab48b182a1455f86`) | Original + MIT | Uncommitted working tree | APPROVED — 20 Phosphor SVG files are self-hosted as CSS masks for Editorial details only; no icon font, package, CDN or remote runtime is used. License notice and asset register entry are required. |
 | Demo imagery | TBD per asset | Commercial proof required | N/A | BLOCKED UNTIL REGISTERED |
 
 ## 7. Gate trước production component

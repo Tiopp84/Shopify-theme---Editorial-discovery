@@ -1,7 +1,7 @@
 {% doc %}
   Renders a small, decorative interface icon. The parent control must provide its accessible name.
 
-  @param {string} name - Supported icon name: account, bag, basket, cart, close, filter, home, lock, menu, search, shop, or trash.
+  @param {string} name - Supported icon name: account, bag, basket, bills, cart, chat, close, credit-card, envelope, filter, heart, home, leaf, location, lock, menu, package, phone, return, ribbon, ruler, search, shield, shop, store, tag, thread, thumbs-up, trash, truck, or wallet.
   @param {string} [class] - Additional SVG class.
 
   @example
@@ -49,6 +49,59 @@
     {% when 'lock' %}
       <rect x="5" y="10" width="14" height="10" rx="1.5" />
       <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    {% when 'thread' %}
+      <path d="M7 4h10v16H7z" />
+      <path d="M10 4V2h4v2M10 20v2h4v-2M10 8h4M10 12h4M10 16h4" />
+    {% when 'ruler' %}
+      <path d="m5 19 14-14 2 2-14 14H5v-2Z" />
+      <path d="m14 8 2 2m-5 1 2 2m-5 1 2 2" />
+    {% when 'leaf' %}
+      <path d="M19.5 4.5C12 4.5 5 8.5 5 15.5c0 2.2 1.8 4 4 4 7 0 10.5-7 10.5-15Z" />
+      <path d="M4 20c3-4 6.2-6.5 11-9" />
+    {% when 'package' %}
+      <path d="m4 7 8-4 8 4v10l-8 4-8-4V7Z" />
+      <path d="m4 7 8 4 8-4M12 11v10" />
+    {% when 'bills' %}
+      <rect x="5" y="3" width="14" height="18" rx="1" />
+      <path d="M8 8h8M8 12h8M8 16h5" />
+    {% when 'credit-card' %}
+      <rect x="3" y="6" width="18" height="12" rx="1.5" />
+      <path d="M3 10h18M7 15h3" />
+    {% when 'tag' %}
+      <path d="M4 4h7l9 9-7 7-9-9V4Z" />
+      <circle cx="8" cy="8" r="1" />
+    {% when 'store' %}
+      <path d="M4 9h16v11H4zM3 5h18l-1 4H4L3 5Z" />
+      <path d="M8 20v-6h8v6" />
+    {% when 'wallet' %}
+      <path d="M4 7h15a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h13" />
+      <path d="M16 13h5M16 13a1 1 0 1 0 0 .01" />
+    {% when 'location' %}
+      <path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z" />
+      <circle cx="12" cy="10" r="2" />
+    {% when 'return' %}
+      <path d="M9 7 5 11l4 4M5 11h10a4 4 0 0 1 0 8h-2" />
+    {% when 'truck' %}
+      <path d="M3 6h11v11H3zM14 10h4l3 3v4h-7z" />
+      <circle cx="7" cy="19" r="1.5" /><circle cx="18" cy="19" r="1.5" />
+    {% when 'chat' %}
+      <path d="M4 5h16v11H9l-5 4V5Z" />
+      <path d="M8 10h8" />
+    {% when 'envelope' %}
+      <rect x="3" y="5" width="18" height="14" rx="1" />
+      <path d="m4 7 8 6 8-6" />
+    {% when 'phone' %}
+      <path d="M7 3h3l1.5 5-2.3 1.5a14 14 0 0 0 5.3 5.3l1.5-2.3 5 1.5v3c0 1.1-.9 2-2 2C10.2 19 5 13.8 5 7c0-1.1.9-2 2-2V3Z" />
+    {% when 'heart' %}
+      <path d="M20 8c0 5-8 11-8 11S4 13 4 8a4 4 0 0 1 7-2.6A4 4 0 0 1 20 8Z" />
+    {% when 'ribbon' %}
+      <circle cx="12" cy="9" r="5" />
+      <path d="m8.5 13-1 7 4.5-2 4.5 2-1-7" />
+    {% when 'shield' %}
+      <path d="M12 3 20 6v5c0 5-3.4 8.1-8 10-4.6-1.9-8-5-8-10V6l8-3Z" />
+      <path d="m8.5 12 2.2 2.2 4.8-5" />
+    {% when 'thumbs-up' %}
+      <path d="M7 10v10H4V10h3ZM7 20h9.5a2 2 0 0 0 1.9-1.4l1.5-5A2 2 0 0 0 18 11h-4l.5-3a3 3 0 0 0-3-4l-2.4 6H7" />
     {% when 'menu' %}
       <path d="M4 7h16M4 12h16M4 17h16" />
     {% when 'search' %}

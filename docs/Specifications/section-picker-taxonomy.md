@@ -33,11 +33,11 @@ The picker uses outcome-oriented names. Categories must be understandable withou
 
 | Category key | English label | Merchant job | Included section types |
 |---|---|---|---|
-| `campaign_editorial` | Campaign & editorial | Lead with a campaign, story, material, or visual point of view | Editorial Hero, Pinned Visual Story, Material Craft |
+| `campaign_editorial` | Campaign & editorial | Lead with a campaign, story, material, or visual point of view | Editorial Hero, Pinned Visual Story, Material Craft, Editorial Details, Scrolling Text |
 | `shop_the_story` | Shop the story | Connect an editorial idea to independent product decisions | Shoppable Hero, Shoppable Story, Outfit Composition |
 | `products_collections` | Products & collections | Surface products, collections, or related merchandising | Featured Edit, Collection List, Product Recommendations |
 | `content` | Content | Add reading, information, or flexible editorial content | Custom Section, Related Stories when it is ever independently addable |
-| `forms_utility` | Forms & utility | Add a customer task or small utility message | Contact Form, FAQ, Announcement Bar where that context is permitted |
+| `forms_utility` | Forms & utility | Add a customer task or small utility message | Contact Form, Email sign up, FAQ, Announcement Bar where that context is permitted |
 | `layout` | Layout | Compose simple content intentionally, without exposing commerce or shell capabilities | Group and its explicitly allowed child blocks only |
 
 ### Categories that are deliberately absent
@@ -139,9 +139,9 @@ Example for `sections/header-group.json`:
 
 | Surface | Allowed placement | Notes |
 |---|---|---|
-| Header | `groups: ["header"]` | Header and Announcement Bar only; Announcement Bar is the documented cross-context exception. |
+| Header | `groups: ["header"]` | Header and its canonical Announcement Bar only. |
 | Footer | `groups: ["footer"]` | Footer only. |
-| Home editorial | `templates: ["index"]` | Campaign & editorial, Shop the story, and home merchandising sections. |
+| Home editorial | `templates: ["index"]` | Campaign & editorial, Shop the story, home merchandising sections, and a separately addable Announcement Bar. |
 | Product | `templates: ["product"]` | Product main and product recommendations only. |
 | Collection | `templates: ["collection"]` | Collection discovery owns its context; do not add generic product sections to it. |
 | Content templates | Their owning template only | Page, contact, FAQ, blog, article, and related stories remain narrow so the picker cannot create an incoherent template. |
@@ -156,12 +156,14 @@ This table is the migration target. `Picker` means the section has an addable pr
 
 | Current file | Target merchant label | Category | Placement | Picker | Refactor note |
 |---|---|---|---|---|---|
-| `announcement-bar.liquid` | Announcement bar | Forms & utility | Header group | No | One canonical header instance (`limit: 1`); no preset means it cannot be added as another section. Enable announcement controls visibility. |
+| `announcement-bar.liquid` | Announcement bar | Forms & utility | Header group, Home body | Header: No; Home: Yes | The canonical Header-group instance remains global. The same section type has a Home-only preset for a separate in-flow announcement body section; it does not affect the Header instance. |
 | `header.liquid` | Header | — | Header group | Fixed | Shell owner. |
 | `footer.liquid` | Footer | — | Footer group | Fixed | Shell owner. |
 | `editorial-hero.liquid` | Editorial hero | Campaign & editorial | Home | Yes | First refactor; reduce local presentation controls to meaningful art-direction choices. |
 | `pinned-visual-story.liquid` | Pinned visual story | Campaign & editorial | Home | Yes | Preserve documented desktop-only choreography/fallback. |
 | `material-craft.liquid` | Material craft | Campaign & editorial | Home | Yes | Remains an optional editorial module. |
+| `editorial-details.liquid` | Editorial details | Campaign & editorial | Home | Yes | A 2–4 item material, proportion, care or delivery note. The section selects image or icon treatment for the complete set; it does not duplicate PDP confidence blocks. |
+| `scrolling-text.liquid` | Scrolling text | Campaign & editorial | Home | Yes | A restrained in-flow motion band for short editorial messages and optional links; it is unrelated to the fixed Header-owned Announcement bar. |
 | `shoppable-hero.liquid` | Shoppable hero | Shop the story | Home | Yes | Full-bleed campaign media with product-linked hotspot blocks; hotspots must lead to a product page, never imply a variant-safe add. |
 | `shoppable-story.liquid` | Shoppable story | Shop the story | Home | Yes | Retain the explicit external `story-product` Theme Block allowlist. |
 | `outfit-composition.liquid` | Outfit composition | Shop the story | Home | Yes | Allowlist the external, movable `outfit-item` Theme Block; retain independent item state and never represent a bundle. |
@@ -171,7 +173,8 @@ This table is the migration target. `Picker` means the section has an addable pr
 | `product-recommendations.liquid` | Product recommendations | Products & collections | Product | Yes | Product-context-only recommendation surface. |
 | `related-stories.liquid` | Related stories | Content | Article | No | Fixed article continuation, not a generic product/content grid. |
 | `page.liquid` | Page | — | Page | Fixed | Template reading composition. |
-| `contact-form.liquid` | Contact form | Forms & utility | Page/contact template | No | Fixed native form; only make generally addable after a separate form-placement contract. |
+| `contact-form.liquid` | Contact form | Forms & utility | Home, Page templates | Yes | Native Shopify contact form; one instance per template. The `page.contact` template retains its canonical instance, while Home and other Page templates may add it intentionally. |
+| `email-signup.liquid` | Email sign up | Forms & utility | All JSON templates | Yes | Native Shopify customer form; one addable instance per template. It shares the `newsletter` customer tag with the Footer-owned newsletter block, but is a separate campaign/signup placement. |
 | `faq.liquid` | FAQ | Forms & utility | Page/FAQ template | No | Fixed information composition. |
 | `blog.liquid` | Blog | — | Blog | Fixed | Blog archive owner. |
 | `article.liquid` | Article | — | Article | Fixed | Article reading owner. |
