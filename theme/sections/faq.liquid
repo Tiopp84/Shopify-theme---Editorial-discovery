@@ -29,7 +29,7 @@
 </section>
 
 {% stylesheet %}
-  .faq { margin: clamp(3.5rem, 7vw, 7rem) auto; max-inline-size: min(100% - (var(--page-margin) * 2), 72rem); }
+  .faq { margin: clamp(3.5rem, 7vw, 7rem) auto; max-inline-size: min(100% - (var(--layout-gutter) * 2), 72rem); }
   .faq__header { margin-block-end: var(--space-7); max-inline-size: 32rem; }
   .faq__header h2 { font-size: clamp(var(--heading-size-48), calc(var(--heading-size-48) + 2.5vw), var(--heading-size-72)); margin: 0; }
   .faq__intro { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); line-height: calc(var(--body-text-line-spacing) + .1); margin-block-start: var(--space-4); }
@@ -50,7 +50,7 @@
   .faq--without-numbers .faq__item summary { grid-template-columns: minmax(0, 1fr) auto; }
   .faq--without-numbers .faq__item summary::before { display: none; }
   .faq--without-numbers .faq__answer { grid-column: 1 / 2; }
-  @media (min-width: 64rem) { .faq { display: grid; gap: clamp(3rem, 8vw, 9rem); grid-template-columns: minmax(13rem, .65fr) minmax(0, 1.35fr); } .faq__header { margin: 0; } .faq__items { grid-column: 2; } .faq--heading-hidden .faq__items { grid-column: 1 / -1; margin-inline: auto; max-inline-size: 52rem; width: 100%; } .faq--layout-centered { display: block; max-inline-size: min(100% - (var(--page-margin) * 2), 62rem); } .faq--layout-centered .faq__header { margin: 0 auto var(--space-8); text-align: center; } .faq--layout-centered .faq__items { margin-inline: auto; max-inline-size: 52rem; } }
+  @media (min-width: 64rem) { .faq { display: grid; gap: clamp(3rem, 8vw, 9rem); grid-template-columns: minmax(13rem, .65fr) minmax(0, 1.35fr); } .faq__header { margin: 0; } .faq__items { grid-column: 2; } .faq--heading-hidden .faq__items { grid-column: 1 / -1; margin-inline: auto; max-inline-size: 52rem; width: 100%; } .faq--layout-centered { display: block; max-inline-size: min(100% - (var(--layout-gutter) * 2), 62rem); } .faq--layout-centered .faq__header { margin: 0 auto var(--space-8); text-align: center; } .faq--layout-centered .faq__items { margin-inline: auto; max-inline-size: 52rem; } }
 {% endstylesheet %}
 
 {% schema %}

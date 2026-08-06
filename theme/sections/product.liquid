@@ -109,7 +109,7 @@
 <script src="{{ 'product-form.js' | asset_url }}" defer></script>
 
 {% stylesheet %}
-  .main-product { display: grid; gap: var(--space-6); margin: var(--space-6) auto; max-width: var(--page-width); padding-inline: var(--page-gutter); }
+  .main-product { display: grid; gap: var(--space-6); margin: var(--space-6) auto; max-width: var(--layout-content-max); padding-inline: var(--layout-gutter); }
   .main-product__gallery { display: grid; gap: var(--space-3); min-width: 0; }
   .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; position: relative; scroll-margin-block-start: 5rem; touch-action: pan-y; }
   .main-product__media-placeholder { align-items: center; aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; overflow: hidden; }
@@ -154,7 +154,7 @@
   .main-product__availability::before { background: var(--color-status-success); border-radius: 50%; content: ''; height: .5rem; width: .5rem; }
   .main-product__availability[data-state='sold-out'], .main-product__availability[data-state='unavailable'] { color: color-mix(in srgb, var(--color-foreground) 66%, transparent); }
   .main-product__availability:is([data-state='sold-out'], [data-state='unavailable'])::before { background: var(--color-status-unavailable); }
-  .main-product__details h1 { font-size: clamp(var(--heading-size-75), calc(var(--heading-size-75) + 3.6vw), var(--heading-size-128)); margin: 0; max-width: none; }
+  .main-product__details h1 { font-family: var(--product-card-font); font-size: clamp(var(--heading-size-75), calc(var(--heading-size-75) + 3.6vw), var(--heading-size-128)); margin: 0; max-width: none; }
   .main-product__price { font-size: clamp(var(--product-price-size-product-min), calc(var(--product-price-size-product-min) + 2vw), var(--product-price-size-product-max)); margin: 0; }
   .main-product__price .price__current { font-weight: 650; }
   .main-product__price .price__compare { font-size: .875em; }

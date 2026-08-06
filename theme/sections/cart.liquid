@@ -1,5 +1,4 @@
 {% liquid
-  assign show_note = section.settings.show_note
   assign cart_discount_total = 0
   for discount in cart.cart_level_discount_applications
     assign cart_discount_total = cart_discount_total | plus: discount.total_allocated_amount
@@ -88,7 +87,7 @@
             {% for discount in cart.cart_level_discount_applications %}<li>{{ discount.title | escape }} (−{{ discount.total_allocated_amount | money }})</li>{% endfor %}
           </ul>
         {% endif %}
-        {% if show_note %}
+        {% if settings.cart_show_note %}
           <div class="main-cart__note">
             <label for="CartNote-{{ section.id }}">{{ 'cart.note' | t }}</label>
             <textarea id="CartNote-{{ section.id }}" name="note" placeholder="{{ 'cart.note_placeholder' | t }}" data-cart-note-input>{{ cart.note }}</textarea>
@@ -173,7 +172,7 @@
 {% schema %}
 {
   "name": "t:general.cart",
-  "settings": [{ "type": "checkbox", "id": "show_note", "label": "t:general.cart_show_note", "default": true }],
+  "settings": [],
   "enabled_on": { "templates": ["cart"] }
 }
 {% endschema %}

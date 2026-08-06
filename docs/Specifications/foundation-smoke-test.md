@@ -13,7 +13,7 @@ Development-theme evidence received from owner: 2026-07-20. Store URL and previe
 | Semantic foundation | PASS — `MainContent` target, skip link, heading/accent/type-scale tokens present |
 | Desktop clean render | PASS — `foundation-home-1440.png` |
 | Typography live refresh, undo/redo, colors, save/reload, cross-template persistence | PASS — owner review, 2026-07-20 |
-| Layout settings | PASS — margin pass; owner confirmed visible Narrow/Standard/Wide behavior after 70/90/110rem remediation |
+| Layout settings | Historical PASS — superseded on 2026-08-06 when the merchant-facing controls were removed in favor of fixed layout primitives. |
 | Skip link | PASS — owner keyboard check |
 | Theme Editor lifecycle | PASS — owner review |
 | Reduced motion | PASS — owner confirmation; media query returns `true` and manual review complete |
@@ -21,10 +21,16 @@ Development-theme evidence received from owner: 2026-07-20. Store URL and previe
 | Console | PASS FOR FOUNDATION — owner retest complete after account fallback remediation |
 | Visual layout/scale | NEEDS ITERATION — owner reports layout and scale are not yet stable |
 
-## Remediation after owner review
+## Historical remediation after owner review
 
 - Page-width choices are now 70rem (Narrow), 90rem (Standard), and 110rem (Wide), preserving saved values while making Narrow visibly testable at a 1440 px viewport.
 - The baseline header now uses `routes.account_url` instead of the Storefront account web component. This removes the missing-menu request and localhost Shop account iframe/pre-auth noise; richer account UI can return during the global-shell phase with an authenticated-origin test.
+
+## Fixed layout primitive refactor — 2026-08-06
+
+- Removed the merchant-facing `max_page_width` and `min_page_margin` settings because page geometry is a fixed Narrivelle design contract rather than a merchant customization surface.
+- `--layout-content-max: 90rem` and `--layout-gutter: var(--space-5)` are the canonical primitives. All former page-width, page-margin and undefined page-gutter references now use those tokens.
+- Static verification: Theme Check passed with 77 files and zero offenses. Storefront/Theme Editor responsive evidence is pending.
 
 ## Deferred account follow-up — Phase 3
 
@@ -51,7 +57,7 @@ This creates or updates a temporary development theme; it does not publish the l
 - Home, collection, product, cart, search, 404, blog/article, page, password, and list-collections templates render without Liquid errors.
 - “Skip to content” appears on keyboard focus and moves focus to the single `main` landmark.
 - Body and heading typography render independently; changing either font setting refreshes without an error.
-- Type scale, background, foreground, accent, border, page width, margin, and input radius settings update cleanly.
+- Type scale, background, foreground, accent, border, and input radius settings update cleanly.
 - Focus remains visible on links, buttons, inputs, selects, and Theme Editor controls.
 - With reduced motion enabled at OS/browser level, transitions and animations are effectively removed.
 - Empty or missing menu/resource settings do not create Liquid errors or broken layout.

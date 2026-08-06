@@ -9,11 +9,11 @@
     assign collection_card_sizes = '(min-width: 64rem) 40vw, (min-width: 48rem) 44vw, 46vw'
   elsif section.settings.desktop_columns == '3'
     assign collection_card_sizes = '(min-width: 64rem) 30vw, (min-width: 48rem) 44vw, 46vw'
-  elsif section.settings.image_ratio == '2 / 1'
+  elsif settings.collection_tile_image_ratio == '2 / 1'
     assign collection_card_sizes = '(min-width: 64rem) 40vw, (min-width: 48rem) 44vw, 46vw'
   endif
 
-  if section.settings.image_source == 'first_product' and first_product.featured_image != blank
+  if settings.collection_tile_image_source == 'first_product' and first_product.featured_image != blank
     assign collection_image = first_product.featured_image
   endif
 %}
@@ -35,7 +35,7 @@
   </li>
 {% elsif request.design_mode or request.visual_preview_mode %}
   <li class="collection-list__preview-card"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
-    <span class="collection-list__preview-media" style="--collection-list-preview-ratio: {{ section.settings.image_ratio }};">{{ 'collection-1' | placeholder_svg_tag }}</span>
+    <span class="collection-list__preview-media" style="--collection-list-preview-ratio: {{ settings.collection_tile_image_ratio }};">{{ 'collection-1' | placeholder_svg_tag }}</span>
     <span class="collection-list__preview-title">{{ 'collections.placeholder_title' | t }}</span>
   </li>
 {% endif %}

@@ -16,7 +16,7 @@
   {% endunless %}
 {% endfor %}
 
-<section class="collection-index full-width collection-index--content-{{ section.settings.content_position }} collection-index--text-{{ section.settings.text_alignment }} collection-index--item-{{ section.settings.item_style }} collection-index--item-text-{{ section.settings.item_text_position }}" aria-labelledby="CollectionIndexHeading-{{ section.id }}" style="--collection-index-columns: {{ section.settings.items_per_row }}; --collection-index-gap: {{ section.settings.grid_spacing }}px; --collection-index-ratio: {{ section.settings.image_ratio }};">
+<section class="collection-index full-width collection-index--content-{{ section.settings.content_position }} collection-index--text-{{ section.settings.text_alignment }} collection-index--item-{{ settings.collection_tile_style }} collection-index--item-text-{{ settings.collection_tile_text_position }}" aria-labelledby="CollectionIndexHeading-{{ section.id }}" style="--collection-index-columns: {{ section.settings.items_per_row }}; --collection-index-gap: {{ section.settings.grid_spacing }}px; --collection-index-ratio: {{ settings.collection_tile_image_ratio }};">
   <header class="collection-index__intro">
     <h1 id="CollectionIndexHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h1>
     {% if section.settings.intro != blank %}
@@ -32,7 +32,7 @@
         {% liquid
           assign collection_image = collection.featured_image
           assign first_product = collection.products.first
-          if section.settings.image_source == 'first_product' and first_product.featured_image != blank
+          if settings.collection_tile_image_source == 'first_product' and first_product.featured_image != blank
             assign collection_image = first_product.featured_image
           endif
         %}
@@ -67,7 +67,7 @@
 </section>
 
 {% stylesheet %}
-  .collection-index { inline-size: 100%; margin: 0; max-inline-size: none; padding: clamp(5rem, 8vw, 8rem) clamp(var(--page-margin), 2vw, 2rem) var(--space-64px); }
+  .collection-index { inline-size: 100%; margin: 0; max-inline-size: none; padding: clamp(5rem, 8vw, 8rem) clamp(var(--layout-gutter), 2vw, 2rem) var(--space-64px); }
   .collection-index__intro { display: grid; gap: var(--space-16px); inline-size: min(100%, 38rem); margin-block-end: clamp(2.5rem, 6vw, 5rem); }
   .collection-index__intro h1 { font-size: clamp(var(--heading-size-88), calc(var(--heading-size-88) + 5vw), var(--heading-size-144)); margin: 0; }
   .collection-index__description { color: color-mix(in srgb, var(--color-foreground) 74%, var(--color-background)); font-size: var(--body-text-base-size); inline-size: 100%; line-height: calc(var(--body-text-line-spacing) + .05); }
@@ -185,57 +185,6 @@
       "label": "t:labels.grid_gap",
       "default": 32
     },
-    {
-      "type": "select",
-      "id": "image_source",
-      "label": "t:labels.collections_grid_image_source",
-      "options": [
-        { "value": "collection", "label": "t:options.collections_grid_image_source.collection" },
-        { "value": "first_product", "label": "t:options.collections_grid_image_source.first_product" }
-      ],
-      "default": "collection"
-    },
-    {
-      "type": "select",
-      "id": "image_ratio",
-      "label": "t:labels.image_size",
-      "options": [
-        { "value": "1 / 1", "label": "t:options.image_ratio.square" },
-        { "value": "2 / 1", "label": "t:options.image_ratio.wide" },
-        { "value": "4 / 5", "label": "t:options.image_ratio.portrait" },
-        { "value": "3 / 4", "label": "t:options.image_ratio.tall" }
-      ],
-      "default": "4 / 5"
-    },
-    {
-      "type": "select",
-      "id": "item_style",
-      "label": "t:labels.collections_grid_item_style",
-      "options": [
-        { "value": "text_below", "label": "t:options.collections_grid_item_style.text_below" },
-        { "value": "overlay", "label": "t:options.collections_grid_item_style.overlay" },
-        { "value": "overlay_box", "label": "t:options.collections_grid_item_style.overlay_box" }
-      ],
-      "default": "text_below"
-    },
-    {
-      "type": "select",
-      "id": "item_text_position",
-      "label": "t:labels.text_position",
-      "visible_if": "{{ section.settings.item_style != 'text_below' }}",
-      "options": [
-        { "value": "top_left", "label": "t:options.content_position.top_left" },
-        { "value": "center_left", "label": "t:options.content_position.center_left" },
-        { "value": "bottom_left", "label": "t:options.content_position.bottom_left" },
-        { "value": "top_center", "label": "t:options.content_position.top_center" },
-        { "value": "center_center", "label": "t:options.content_position.center_center" },
-        { "value": "bottom_center", "label": "t:options.content_position.bottom_center" },
-        { "value": "top_right", "label": "t:options.content_position.top_right" },
-        { "value": "center_right", "label": "t:options.content_position.center_right" },
-        { "value": "bottom_right", "label": "t:options.content_position.bottom_right" }
-      ],
-      "default": "bottom_left"
-    }
   ],
   "enabled_on": { "templates": ["list-collections"] }
 }

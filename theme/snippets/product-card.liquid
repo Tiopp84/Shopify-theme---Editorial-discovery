@@ -13,6 +13,7 @@
   @param {boolean} [show_swatches] - Show Shopify-native swatches on collection cards.
   @param {boolean} [show_variant_options] - Show non-swatch variant options on collection cards.
   @param {string} [image_ratio] - CSS aspect ratio used by the media frame.
+  @param {string} [image_fit] - CSS object-fit used by product media.
   @param {string} [sizes] - Responsive image sizes hint.
   @param {number} [card_index] - One-based position in the current result set.
   @param {number} [card_count] - Number of products in the current result set.
@@ -25,6 +26,10 @@
 
 {% liquid
   assign image_ratio = image_ratio | default: '4 / 5'
+  assign image_fit = image_fit | default: settings.product_card_media_fit | default: 'cover'
+  assign show_vendor = show_vendor | default: settings.product_card_show_vendor, allow_false: true
+  assign show_badge = show_badge | default: settings.product_card_show_badge, allow_false: true
+  assign show_second_image = show_second_image | default: settings.product_card_show_second_image, allow_false: true
   assign card_context = card_context | default: 'standard'
   assign sizes = sizes | default: '(min-width: 60rem) 25vw, 50vw'
   assign card_id = 'ProductCard-' | append: product.id
@@ -49,8 +54,8 @@
   endfor
 %}
 
-<article class="product-card product-card--{{ card_context }}{% unless product.available %} product-card--unavailable{% endunless %}"{% if entrance_delay != blank %} data-catalog-reveal data-aos="fade-up" data-aos-delay="{{ entrance_delay }}"{% endif %} aria-labelledby="{{ card_id }}">
-  <div class="product-card__media" style="--product-card-ratio: {{ image_ratio }};">
+<article class="product-card product-card--{{ card_context }}{% unless product.available %} product-card--unavailable{% endunless %}" data-product-id="{{ product.id }}"{% if entrance_delay != blank %} data-catalog-reveal data-aos="fade-up" data-aos-delay="{{ entrance_delay }}"{% endif %} aria-labelledby="{{ card_id }}">
+  <div class="product-card__media" style="--product-card-ratio: {{ image_ratio }}; --product-card-image-fit: {{ image_fit }};">
     {% if product.featured_image %}
       {% render 'image',
         class: 'product-card__image',
@@ -287,14 +292,14 @@
 
   .product-card__image > img,
   .product-card__placeholder > svg {
-    object-fit: cover;
+    object-fit: var(--product-card-image-fit);
     transition: transform 300ms ease;
   }
 
   .product-card__secondary-image {
     block-size: 100%;
     inset: 0;
-    object-fit: cover;
+    object-fit: var(--product-card-image-fit);
     opacity: 0;
     pointer-events: none;
     position: absolute;
@@ -357,9 +362,10 @@
 
   .product-card__title {
     font-family: var(--product-card-font);
-    min-block-size: 2.5em;
-    font-size: clamp(1rem, 1.2vw, 1.2rem);
-    font-weight: 600;
+    min-block-size: calc(var(--product-card-title-lines) * 1.25em);
+    font-size: clamp(calc(var(--product-card-title-size) * .875), calc(var(--product-card-title-size) + .2vw), calc(var(--product-card-title-size) * 1.2));
+    font-weight: var(--product-card-title-weight);
+    letter-spacing: var(--product-card-title-letter-spacing);
     line-height: 1.25;
   }
 
@@ -368,8 +374,8 @@
     overflow: hidden;
     text-decoration: none;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    -webkit-line-clamp: var(--product-card-title-lines);
+    line-clamp: var(--product-card-title-lines);
   }
 
   .product-card__title a:hover,

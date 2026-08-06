@@ -15,6 +15,15 @@ See `docs/Governance/source-provenance-and-licenses.md` and `docs/Governance/ass
 
 Do not add third-party code or assets to this file without also recording approval and proof in the asset/license register.
 
+## Phosphor Icons
+
+- Source: `https://github.com/phosphor-icons/core`
+- Version: `v2.0.8` (`d42782b2abe747d904b971ccab48b182a1455f86`)
+- Files: the 20 self-hosted `theme/assets/phosphor-*.svg` Regular-weight icons used only by Editorial details.
+- License: MIT License, Copyright (c) 2023 Phosphor Icons. The full copyright and permission notice from the upstream `LICENSE` applies to these files.
+- Usage: local SVG files are used only as CSS masks; no icon font, package, JavaScript, CDN, or remote asset request is added.
+- Removal path: remove `theme/assets/phosphor-*.svg`, the Editorial details mask reference, and the associated register/notice entries.
+
 ## GSAP Core and ScrollTrigger
 
 - Source: `https://www.npmjs.com/package/gsap`

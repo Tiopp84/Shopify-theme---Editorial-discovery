@@ -1,10 +1,10 @@
 {% # theme-check-disable ValidScopedCSSClass %}
 {% if recommendations.performed? %}
   {% if recommendations.products_count > 0 %}
-    <ul role="list" data-product-recommendations-content>
+    <ul role="list" data-product-recommendations-content style="--recommendations-columns-tablet: {{ section.settings.columns_tablet }}; --recommendations-columns-desktop: {{ section.settings.columns_desktop }};">
       {% for recommended_product in recommendations.products %}
         <li>
-          {% render 'product-card', product: recommended_product, card_context: 'recommendation', image_ratio: '3 / 4', sizes: '(min-width: 75rem) 22vw, (min-width: 48rem) 30vw, 45vw' %}
+          {% render 'product-card', product: recommended_product, card_context: 'recommendation', image_ratio: section.settings.image_ratio, sizes: '(min-width: 75rem) 22vw, (min-width: 48rem) 30vw, 45vw' %}
         </li>
       {% endfor %}
     </ul>
@@ -34,12 +34,12 @@
 
 {% stylesheet %}
   .product-recommendations-section { margin-block: var(--space-8); width: 100%; }
-  .product-recommendations--full-width { border-block-start: 1px solid var(--color-border); display: grid; gap: var(--space-5); margin-inline: auto; max-width: 90rem; padding: var(--space-5) var(--page-gutter) 0; }
+  .product-recommendations--full-width { border-block-start: 1px solid var(--color-border); display: grid; gap: var(--space-5); margin-inline: auto; max-width: var(--layout-content-max); padding: var(--space-5) var(--layout-gutter) 0; }
   .product-recommendations h2 { font-size: clamp(var(--heading-size-43), calc(var(--heading-size-43) + 1.8vw), var(--heading-size-56)); margin: 0; }
   .product-recommendations__results > [role='list'] { display: grid; gap: var(--space-6); list-style: none; margin: 0; padding: 0; }
   .product-recommendations .product-card__quick-add-wrap { display: none !important; }
-  @media (min-width: 48rem) { .product-recommendations--full-width { padding-inline: clamp(var(--space-5), 5vw, var(--space-8)); } .product-recommendations__results > [role='list'] { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (min-width: 75rem) { .product-recommendations__results > [role='list'] { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (min-width: 48rem) { .product-recommendations--full-width { padding-inline: clamp(var(--space-5), 5vw, var(--space-8)); } .product-recommendations__results > [role='list'] { grid-template-columns: repeat(var(--recommendations-columns-tablet), minmax(0, 1fr)); } }
+  @media (min-width: 75rem) { .product-recommendations__results > [role='list'] { grid-template-columns: repeat(var(--recommendations-columns-desktop), minmax(0, 1fr)); } }
 {% endstylesheet %}
 
 {% schema %}
@@ -70,7 +70,11 @@
       "max": 8,
       "step": 1,
       "default": 4
-    }
+    },
+    { "type": "header", "content": "t:general.layout" },
+    { "type": "select", "id": "columns_tablet", "label": "t:labels.tablet_product_columns", "options": [{ "value": "2", "label": "t:options.columns.two" }, { "value": "3", "label": "t:options.columns.three" }], "default": "3" },
+    { "type": "select", "id": "columns_desktop", "label": "t:labels.desktop_product_columns", "options": [{ "value": "3", "label": "t:options.columns.three" }, { "value": "4", "label": "t:options.columns.four" }], "default": "4" },
+    { "type": "select", "id": "image_ratio", "label": "t:labels.image_ratio", "options": [{ "value": "1 / 1", "label": "t:options.image_ratio.square" }, { "value": "4 / 5", "label": "t:options.image_ratio.portrait" }, { "value": "3 / 4", "label": "t:options.image_ratio.tall" }], "default": "3 / 4" }
   ],
   "enabled_on": { "templates": ["product"] },
   "presets": [{ "name": "t:general.product_recommendations" }]
