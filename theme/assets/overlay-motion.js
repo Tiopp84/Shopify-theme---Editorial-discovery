@@ -47,7 +47,8 @@ class OverlayMotionController {
   }
 
   hasActiveScrollLock() {
-    return Boolean(document.querySelector('dialog[scroll-lock][open], details[scroll-lock][open]'));
+    return document.documentElement.matches('.quick-add-modal-open, .product-gallery-modal-open, .size-guide-modal-open')
+      || Boolean(document.querySelector('dialog[scroll-lock][open], details[scroll-lock][open]'));
   }
 
   captureScrollbarCompensation() {

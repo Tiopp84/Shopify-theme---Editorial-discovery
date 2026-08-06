@@ -39,6 +39,7 @@
 
     {% if has_navigation %}
       <nav class="header-shell__desktop-nav" aria-label="{{ 'accessibility.primary_navigation' | t }}">
+        <span class="header-shell__desktop-nav-pill" aria-hidden="true"></span>
         {% for link in section.settings.menu.links %}
           {% if link.links != blank %}
             <details class="header-shell__nav-group">
@@ -423,6 +424,40 @@
     font-size: var(--navigation-size);
     line-height: 1.2;
     flex-wrap: wrap;
+    isolation: isolate;
+    position: relative;
+  }
+
+  .header-shell__desktop-nav-pill {
+    background: var(--header-navigation-hover-color);
+    block-size: var(--header-nav-pill-height, 0px);
+    border-radius: 999px;
+    content: '';
+    inline-size: var(--header-nav-pill-width, 0px);
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transform: translate3d(var(--header-nav-pill-x, 0px), var(--header-nav-pill-y, 0px), 0);
+    z-index: 0;
+  }
+
+  .header-shell__desktop-nav--pill-visible .header-shell__desktop-nav-pill { opacity: 1; }
+
+  .header-shell__desktop-nav > :is(a, .header-shell__nav-group) {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__desktop-nav--pill-motion .header-shell__desktop-nav-pill {
+      transition: opacity 180ms ease, transform 380ms cubic-bezier(.34, 1.38, .64, 1), inline-size 340ms cubic-bezier(.16, 1, .3, 1), block-size 340ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .header-shell__desktop-nav--pill-entering .header-shell__desktop-nav-pill {
+      transition: opacity 150ms ease;
+    }
   }
 
   .header-shell__desktop-nav > a,
@@ -436,13 +471,13 @@
   .header-shell__desktop-nav > a {
     padding-inline: var(--space-2);
     border-radius: 999px;
-    transition: background-color 150ms ease, color 150ms ease;
+    position: relative;
+    transition: color 150ms ease;
+    z-index: 1;
   }
 
-  .header-shell__desktop-nav > a:hover,
-  .header-shell__desktop-nav > a:focus-visible {
+  .header-shell__desktop-nav > a.header-shell__nav-item--pill-active {
     color: var(--header-navigation-hover-text-color);
-    background: var(--header-navigation-hover-color);
   }
 
   .header-shell__desktop-nav > a:focus-visible {
@@ -458,7 +493,8 @@
     padding-inline: calc(var(--space-2) + 0.4rem);
     border-radius: 999px;
     list-style: none;
-    transition: background-color 150ms ease, color 150ms ease;
+    transition: color 150ms ease;
+    z-index: 1;
   }
 
   .header-shell__nav-group > summary::-webkit-details-marker {
@@ -488,11 +524,8 @@
     }
   }
 
-  .header-shell__nav-group[open] > summary,
-  .header-shell__nav-group > summary:hover,
-  .header-shell__nav-group > summary:focus-visible {
+  .header-shell__nav-group > summary.header-shell__nav-item--pill-active {
     color: var(--header-navigation-hover-text-color);
-    background: var(--header-navigation-hover-color);
   }
 
   .header-shell__nav-group > summary:focus-visible {
@@ -564,6 +597,13 @@
   .header-shell__localization-panel { background: var(--color-background); border: 1px solid var(--color-border); display: grid; gap: var(--space-3); inset-block-start: calc(100% + var(--space-2)); inset-inline-end: 0; min-inline-size: 15rem; padding: var(--space-3); position: absolute; z-index: 31; }
   .header-shell__localization-form { display: grid; font-family: var(--small-label-font); font-size: var(--small-label-size); gap: var(--space-1); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); }
   .header-shell__localization-form select { background: var(--color-background); color: var(--color-foreground); font-size: .75rem; min-block-size: 2.25rem; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__localization[open] > .header-shell__localization-panel {
+      animation: header-shell-popover-in 180ms cubic-bezier(.22, 1, .36, 1) backwards;
+      transform-origin: top right;
+    }
+  }
 
   .header-shell__icon-button {
     position: relative;
@@ -806,6 +846,11 @@
 
   @keyframes header-shell-submenu-in {
     from { opacity: 0; transform: translateY(0.5rem) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes header-shell-popover-in {
+    from { opacity: 0; transform: translateY(-0.35rem) scale(0.96); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
 

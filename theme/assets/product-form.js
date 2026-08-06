@@ -685,6 +685,7 @@ class ProductGallery extends HTMLElement {
 
   lockPageScroll() {
     this.scrollY = window.scrollY;
+    window.overlayMotionController?.captureScrollbarCompensation();
     document.documentElement.classList.add('product-gallery-modal-open');
     document.body.classList.add('product-gallery-modal-open');
     document.body.style.position = 'fixed';
@@ -740,6 +741,7 @@ class SizeGuide extends HTMLElement {
 
   lockPageScroll() {
     this.scrollY = window.scrollY;
+    window.overlayMotionController?.captureScrollbarCompensation();
     document.documentElement.classList.add('size-guide-modal-open');
     document.body.classList.add('size-guide-modal-open');
     document.body.style.position = 'fixed';
