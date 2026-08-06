@@ -8,6 +8,11 @@ class HeaderShell extends HTMLElement {
     this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
     this.onNavGroupPointerEnter = this.onNavGroupPointerEnter.bind(this);
     this.onNavGroupPointerLeave = this.onNavGroupPointerLeave.bind(this);
+    this.onDesktopNavPointerOver = this.onDesktopNavPointerOver.bind(this);
+    this.onDesktopNavPointerLeave = this.onDesktopNavPointerLeave.bind(this);
+    this.onDesktopNavFocusIn = this.onDesktopNavFocusIn.bind(this);
+    this.onDesktopNavFocusOut = this.onDesktopNavFocusOut.bind(this);
+    this.refreshNavPill = this.refreshNavPill.bind(this);
     this.onScroll = this.onScroll.bind(this);
     this.onMotionPreferenceChange = this.onMotionPreferenceChange.bind(this);
     this.onDesktopLayoutChange = this.onDesktopLayoutChange.bind(this);
@@ -37,6 +42,14 @@ class HeaderShell extends HTMLElement {
     document.addEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.addEventListener('close', this.onClose));
     this.navGroups = [...this.querySelectorAll('.header-shell__nav-group')];
+    this.desktopNav = this.querySelector('.header-shell__desktop-nav');
+    this.navPillItems = this.desktopNav
+      ? [...this.desktopNav.children].flatMap((item) => {
+        if (item.matches('a')) return [item];
+        const summary = item.matches('.header-shell__nav-group') ? item.querySelector('summary') : null;
+        return summary ? [summary] : [];
+      })
+      : [];
     this.dropdownHoverEnabled = this.dataset.dropdownHover === 'true';
     this.compactHeaderEnabled = this.dataset.compactHeaderEnabled !== 'false';
     this.mobileMenu = this.querySelector('[data-mobile-menu]');
@@ -46,13 +59,19 @@ class HeaderShell extends HTMLElement {
     this.mobileMenu?.setAttribute('data-mobile-menu-enhanced', '');
     this.mobileMenu?.querySelectorAll('[data-mobile-menu-open]').forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
 
+    this.desktopNav?.addEventListener('pointerover', this.onDesktopNavPointerOver);
+    this.desktopNav?.addEventListener('pointerleave', this.onDesktopNavPointerLeave);
+    this.desktopNav?.addEventListener('focusin', this.onDesktopNavFocusIn);
+    this.desktopNav?.addEventListener('focusout', this.onDesktopNavFocusOut);
+    this.navPillResizeObserver = new ResizeObserver(this.refreshNavPill);
+    this.desktopNav && this.navPillResizeObserver.observe(this.desktopNav);
+
     if (this.dropdownHoverEnabled) {
       this.navGroups.forEach((group) => {
         group.addEventListener('pointerenter', this.onNavGroupPointerEnter);
         group.addEventListener('pointerleave', this.onNavGroupPointerLeave);
       });
     }
-
     this.reducedMotionQuery.addEventListener('change', this.onMotionPreferenceChange);
     this.desktopLayoutQuery.addEventListener('change', this.onDesktopLayoutChange);
     this.startMotion();
@@ -63,6 +82,12 @@ class HeaderShell extends HTMLElement {
     document.removeEventListener('click', this.onDocumentClick);
     document.removeEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.removeEventListener('close', this.onClose));
+    this.desktopNav?.removeEventListener('pointerover', this.onDesktopNavPointerOver);
+    this.desktopNav?.removeEventListener('pointerleave', this.onDesktopNavPointerLeave);
+    this.desktopNav?.removeEventListener('focusin', this.onDesktopNavFocusIn);
+    this.desktopNav?.removeEventListener('focusout', this.onDesktopNavFocusOut);
+    this.navPillResizeObserver?.disconnect();
+    this.navPillResizeObserver = null;
     if (this.dropdownHoverEnabled) {
       this.navGroups?.forEach((group) => {
         group.removeEventListener('pointerenter', this.onNavGroupPointerEnter);
@@ -70,10 +95,13 @@ class HeaderShell extends HTMLElement {
       });
     }
     window.clearTimeout(this.hoverCloseTimer);
+    window.clearTimeout(this.navPillTextTimer);
+    window.clearTimeout(this.navPillEntryTimer);
     window.removeEventListener('scroll', this.onScroll);
     this.reducedMotionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
     this.desktopLayoutQuery?.removeEventListener('change', this.onDesktopLayoutChange);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
+    if (this.navPillFocusFrame) window.cancelAnimationFrame(this.navPillFocusFrame);
     this.scrollFrame = null;
     this.mobileBarLockUntil = 0;
     this.wasHoldingCompactContext = false;
@@ -81,6 +109,88 @@ class HeaderShell extends HTMLElement {
     this.hideMobileTaskbar();
     this.classList.remove('header-shell--compact', 'header-shell--scrolled');
     this.initialized = false;
+  }
+
+  onDesktopNavPointerOver(event) {
+    const item = this.navPillItems.find((candidate) => candidate === event.target || candidate.contains(event.target));
+    if (item && item !== this.activeNavPillItem) this.setNavPill(item, { deferText: true });
+  }
+
+  onDesktopNavPointerLeave() {
+    if (!this.desktopNav?.contains(document.activeElement)) this.clearNavPill();
+  }
+
+  onDesktopNavFocusIn(event) {
+    const item = this.navPillItems.find((candidate) => candidate === event.target || candidate.contains(event.target));
+    if (item) this.setNavPill(item);
+  }
+
+  onDesktopNavFocusOut() {
+    if (this.navPillFocusFrame) window.cancelAnimationFrame(this.navPillFocusFrame);
+    this.navPillFocusFrame = window.requestAnimationFrame(() => {
+      if (!this.desktopNav?.contains(document.activeElement) && !this.desktopNav.matches(':hover')) this.clearNavPill();
+    });
+  }
+
+  setNavPill(item, { deferText = false } = {}) {
+    if (!this.desktopNav || !item) return;
+    const enteringNav = !this.desktopNav.classList.contains('header-shell__desktop-nav--pill-visible');
+    window.clearTimeout(this.navPillTextTimer);
+    window.clearTimeout(this.navPillEntryTimer);
+
+    if (enteringNav) {
+      this.desktopNav.classList.remove('header-shell__desktop-nav--pill-motion', 'header-shell__desktop-nav--pill-entering', 'header-shell__desktop-nav--pill-visible');
+    }
+
+    this.positionNavPill(item);
+    this.activeNavPillItem = item;
+
+    if (!enteringNav || this.reducedMotionQuery.matches) {
+      this.desktopNav.classList.remove('header-shell__desktop-nav--pill-entering');
+      this.desktopNav.classList.add('header-shell__desktop-nav--pill-motion', 'header-shell__desktop-nav--pill-visible');
+      this.activateNavPillText(item);
+      return;
+    }
+
+    this.desktopNav.classList.add('header-shell__desktop-nav--pill-entering', 'header-shell__desktop-nav--pill-visible');
+    this.navPillEntryTimer = window.setTimeout(() => {
+      if (this.activeNavPillItem !== item) return;
+      this.desktopNav.classList.remove('header-shell__desktop-nav--pill-entering');
+      this.desktopNav.classList.add('header-shell__desktop-nav--pill-motion');
+    }, 150);
+
+    if (deferText) {
+      this.navPillTextTimer = window.setTimeout(() => this.activateNavPillText(item), 70);
+      return;
+    }
+    this.activateNavPillText(item);
+  }
+
+  positionNavPill(item) {
+    const navRect = this.desktopNav.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    this.desktopNav.style.setProperty('--header-nav-pill-x', `${itemRect.left - navRect.left}px`);
+    this.desktopNav.style.setProperty('--header-nav-pill-y', `${itemRect.top - navRect.top}px`);
+    this.desktopNav.style.setProperty('--header-nav-pill-width', `${itemRect.width}px`);
+    this.desktopNav.style.setProperty('--header-nav-pill-height', `${itemRect.height}px`);
+  }
+
+  activateNavPillText(item) {
+    this.navPillItems.forEach((candidate) => candidate.classList.toggle('header-shell__nav-item--pill-active', candidate === item));
+  }
+
+  clearNavPill() {
+    window.clearTimeout(this.navPillTextTimer);
+    window.clearTimeout(this.navPillEntryTimer);
+    this.desktopNav?.classList.remove('header-shell__desktop-nav--pill-entering');
+    this.desktopNav?.classList.add('header-shell__desktop-nav--pill-motion');
+    this.desktopNav?.classList.remove('header-shell__desktop-nav--pill-visible');
+    this.navPillItems.forEach((item) => item.classList.remove('header-shell__nav-item--pill-active'));
+    this.activeNavPillItem = null;
+  }
+
+  refreshNavPill() {
+    if (this.activeNavPillItem) this.setNavPill(this.activeNavPillItem);
   }
 
   startMotion() {
@@ -316,19 +426,27 @@ class HeaderShell extends HTMLElement {
 
   onDocumentClick(event) {
     const clickedGroup = event.target.closest?.('.header-shell__nav-group');
+    const clickedLocalization = event.target.closest?.('.header-shell__localization');
     this.querySelectorAll('.header-shell__nav-group[open]').forEach((group) => {
       if (group !== clickedGroup) group.removeAttribute('open');
+    });
+    this.querySelectorAll('.header-shell__localization[open]').forEach((localization) => {
+      if (localization !== clickedLocalization) localization.removeAttribute('open');
     });
   }
 
   onDocumentKeydown(event) {
     if (event.key !== 'Escape') return;
     const openGroups = [...this.querySelectorAll('.header-shell__nav-group[open]')];
-    if (openGroups.length === 0) return;
+    const openLocalizations = [...this.querySelectorAll('.header-shell__localization[open]')];
+    if (openGroups.length === 0 && openLocalizations.length === 0) return;
 
     const focusedGroup = document.activeElement?.closest?.('.header-shell__nav-group');
+    const focusedLocalization = document.activeElement?.closest?.('.header-shell__localization');
     openGroups.forEach((group) => group.removeAttribute('open'));
+    openLocalizations.forEach((localization) => localization.removeAttribute('open'));
     focusedGroup?.querySelector('summary')?.focus();
+    focusedLocalization?.querySelector('summary')?.focus();
   }
 
   openMobileSubmenu(trigger) {

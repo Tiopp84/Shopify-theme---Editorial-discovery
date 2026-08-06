@@ -21,16 +21,25 @@ body {
   z-index: 1;
 }
 
-html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
+html:has(dialog[scroll-lock][open], details[scroll-lock][open]),
+html.quick-add-modal-open,
+html.product-gallery-modal-open,
+html.size-guide-modal-open {
   overflow: hidden;
   overscroll-behavior: none;
 }
 
-html:has(dialog[scroll-lock][open], details[scroll-lock][open]) body {
+html:has(dialog[scroll-lock][open], details[scroll-lock][open]) body,
+html.quick-add-modal-open body,
+html.product-gallery-modal-open body,
+html.size-guide-modal-open body {
   padding-inline-end: var(--scroll-lock-scrollbar-width, 0px);
 }
 
-html:has(dialog[scroll-lock][open], details[scroll-lock][open]) .site-panel {
+html:has(dialog[scroll-lock][open], details[scroll-lock][open]) .site-panel,
+html.quick-add-modal-open .site-panel,
+html.product-gallery-modal-open .site-panel,
+html.size-guide-modal-open .site-panel {
   inline-size: calc(100% + var(--scroll-lock-scrollbar-width, 0px));
   padding-inline-end: var(--scroll-lock-scrollbar-width, 0px);
 }
@@ -245,6 +254,12 @@ textarea {
     opacity: var(--overlay-enter-opacity);
     transform: var(--overlay-enter-transform);
     transition: opacity 260ms ease, transform var(--overlay-motion-duration) cubic-bezier(.22, .61, .36, 1);
+  }
+
+  dialog[data-overlay-motion='modal'] {
+    --overlay-motion-duration: 360ms;
+    --overlay-enter-transform: scale(.90);
+    transform-origin: center;
   }
 
   dialog[data-overlay-motion='drawer-start'],
