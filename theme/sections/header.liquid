@@ -1,8 +1,10 @@
 <script src="{{ 'header-shell.js' | asset_url }}" defer></script>
-{% if section.settings.search_behavior == 'drawer' and request.page_type != 'search' %}
+{% if settings.search_behavior == 'drawer' and request.page_type != 'search' %}
   <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
 {% endif %}
 {% assign has_navigation = false %}
+{% assign brand_name = settings.brand_name | default: shop.name %}
+{% assign cart_icon = settings.cart_icon | default: 'bag' %}
 {% if section.settings.enable_navigation != false and section.settings.menu != blank %}
   {% assign has_navigation = true %}
 {% endif %}
@@ -30,15 +32,16 @@
         {{
           section.settings.logo
           | image_url: width: logo_width_2x
-          | image_tag: widths: '120, 180, 240, 320, 400', width: section.settings.logo_width, alt: shop.name
+          | image_tag: widths: '120, 180, 240, 320, 400', width: section.settings.logo_width, alt: brand_name
         }}
       {% else %}
-        {{ shop.name | escape }}
+        {{ brand_name | escape }}
       {% endif %}
     </a>
 
     {% if has_navigation %}
       <nav class="header-shell__desktop-nav" aria-label="{{ 'accessibility.primary_navigation' | t }}">
+        <span class="header-shell__desktop-nav-pill" aria-hidden="true"></span>
         {% for link in section.settings.menu.links %}
           {% if link.links != blank %}
             <details class="header-shell__nav-group">
@@ -57,7 +60,7 @@
     {% endif %}
 
     <div class="header-shell__actions">
-      {% if section.settings.search_behavior == 'drawer' %}
+      {% if settings.search_behavior == 'drawer' %}
         <button
           class="header-shell__icon-button"
           type="button"
@@ -100,9 +103,9 @@
         </details>
       {% endif %}
 
-      <a class="header-shell__icon-button" href="{{ routes.cart_url }}" data-cart-open>
+      <a class="header-shell__icon-button" href="{{ routes.cart_url }}"{% if settings.cart_type == 'drawer' %} data-cart-open{% endif %}>
         <span class="visually-hidden">{{ 'cart.title' | t }}</span>
-        {% render 'icon', name: 'cart' %}
+        {% render 'icon', name: cart_icon %}
         <span class="header-shell__cart-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
       </a>
     </div>
@@ -124,7 +127,7 @@
         <span>{{ 'navigation.menu' | t }}</span>
       </button>
     {% endif %}
-    {% if section.settings.search_behavior == 'drawer' %}
+    {% if settings.search_behavior == 'drawer' %}
       <button
         class="header-shell__task"
         type="button"
@@ -144,8 +147,8 @@
       {% render 'icon', name: 'shop' %}
       <span>{{ 'navigation.products' | t }}</span>
     </a>
-    <a class="header-shell__task header-shell__task--cart" href="{{ routes.cart_url }}" data-cart-open>
-      {% render 'icon', name: 'cart' %}
+    <a class="header-shell__task header-shell__task--cart" href="{{ routes.cart_url }}"{% if settings.cart_type == 'drawer' %} data-cart-open{% endif %}>
+      {% render 'icon', name: cart_icon %}
       <span>{{ 'cart.title' | t }}</span>
       <span class="header-shell__task-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
     </a>
@@ -158,7 +161,7 @@
   </nav>
 
   {% if has_navigation %}
-    <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" scroll-lock>
+    <dialog class="header-shell__drawer" aria-labelledby="MobileMenuTitle" data-header-dialog="menu" data-overlay-motion="drawer-start" scroll-lock>
     <div class="header-shell__drawer-header">
       <h2 id="MobileMenuTitle">{{ 'navigation.menu' | t }}</h2>
       <button
@@ -216,14 +219,15 @@
     </dialog>
   {% endif %}
 
-  {% if section.settings.search_behavior == 'drawer' %}
+  {% if settings.search_behavior == 'drawer' %}
     <dialog
       class="header-shell__search-dialog"
       aria-labelledby="HeaderSearchTitle"
       data-header-dialog="search"
+      data-overlay-motion="drawer-end"
       scroll-lock
     >
-      <div class="header-shell__drawer-header">
+      <div class="header-shell__drawer-header" data-search-drawer-entrance="header">
         <h2 id="HeaderSearchTitle">{{ 'search.title' | t }}</h2>
         <button
           class="header-shell__icon-button"
@@ -234,8 +238,10 @@
           {% render 'icon', name: 'close' %}
         </button>
       </div>
-      {% render 'predictive-search-form', context_id: 'HeaderSearch', in_drawer: true %}
-      <a class="header-shell__search-page-link" href="{{ routes.search_url }}">{{ 'search.view_page' | t }}</a>
+      <div data-search-drawer-entrance="form">
+        {% render 'predictive-search-form', context_id: 'HeaderSearch', in_drawer: true %}
+      </div>
+      <a class="header-shell__search-page-link" href="{{ routes.search_url }}" data-search-drawer-entrance="link">{{ 'search.view_page' | t }}</a>
     </dialog>
   {% endif %}
 </header-shell>
@@ -278,7 +284,7 @@
   }
 
   .header-shell__inner {
-    width: min(calc(100% - var(--page-margin) * 2), var(--page-width));
+    width: min(calc(100% - var(--layout-gutter) * 2), var(--layout-content-max));
     min-height: var(--header-height);
     margin-inline: auto;
     display: grid;
@@ -343,7 +349,7 @@
 
     .header-shell--compact .header-shell__inner {
       width: fit-content;
-      max-width: calc(100% - var(--page-margin) * 2);
+      max-width: calc(100% - var(--layout-gutter) * 2);
       min-height: var(--header-compact-height);
       margin-block: var(--space-2);
       margin-inline: auto;
@@ -420,6 +426,40 @@
     font-size: var(--navigation-size);
     line-height: 1.2;
     flex-wrap: wrap;
+    isolation: isolate;
+    position: relative;
+  }
+
+  .header-shell__desktop-nav-pill {
+    background: var(--header-navigation-hover-color);
+    block-size: var(--header-nav-pill-height, 0px);
+    border-radius: 999px;
+    content: '';
+    inline-size: var(--header-nav-pill-width, 0px);
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transform: translate3d(var(--header-nav-pill-x, 0px), var(--header-nav-pill-y, 0px), 0);
+    z-index: 0;
+  }
+
+  .header-shell__desktop-nav--pill-visible .header-shell__desktop-nav-pill { opacity: 1; }
+
+  .header-shell__desktop-nav > :is(a, .header-shell__nav-group) {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__desktop-nav--pill-motion .header-shell__desktop-nav-pill {
+      transition: opacity 180ms ease, transform 380ms cubic-bezier(.34, 1.38, .64, 1), inline-size 340ms cubic-bezier(.16, 1, .3, 1), block-size 340ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .header-shell__desktop-nav--pill-entering .header-shell__desktop-nav-pill {
+      transition: opacity 150ms ease;
+    }
   }
 
   .header-shell__desktop-nav > a,
@@ -433,13 +473,13 @@
   .header-shell__desktop-nav > a {
     padding-inline: var(--space-2);
     border-radius: 999px;
-    transition: background-color 150ms ease, color 150ms ease;
+    position: relative;
+    transition: color 150ms ease;
+    z-index: 1;
   }
 
-  .header-shell__desktop-nav > a:hover,
-  .header-shell__desktop-nav > a:focus-visible {
+  .header-shell__desktop-nav > a.header-shell__nav-item--pill-active {
     color: var(--header-navigation-hover-text-color);
-    background: var(--header-navigation-hover-color);
   }
 
   .header-shell__desktop-nav > a:focus-visible {
@@ -455,7 +495,8 @@
     padding-inline: calc(var(--space-2) + 0.4rem);
     border-radius: 999px;
     list-style: none;
-    transition: background-color 150ms ease, color 150ms ease;
+    transition: color 150ms ease;
+    z-index: 1;
   }
 
   .header-shell__nav-group > summary::-webkit-details-marker {
@@ -485,11 +526,8 @@
     }
   }
 
-  .header-shell__nav-group[open] > summary,
-  .header-shell__nav-group > summary:hover,
-  .header-shell__nav-group > summary:focus-visible {
+  .header-shell__nav-group > summary.header-shell__nav-item--pill-active {
     color: var(--header-navigation-hover-text-color);
-    background: var(--header-navigation-hover-color);
   }
 
   .header-shell__nav-group > summary:focus-visible {
@@ -562,6 +600,13 @@
   .header-shell__localization-form { display: grid; font-family: var(--small-label-font); font-size: var(--small-label-size); gap: var(--space-1); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); }
   .header-shell__localization-form select { background: var(--color-background); color: var(--color-foreground); font-size: .75rem; min-block-size: 2.25rem; }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__localization[open] > .header-shell__localization-panel {
+      animation: header-shell-popover-in 180ms cubic-bezier(.22, 1, .36, 1) backwards;
+      transform-origin: top right;
+    }
+  }
+
   .header-shell__icon-button {
     position: relative;
     min-width: 2.75rem;
@@ -615,26 +660,14 @@
     margin-inline-end: auto;
     padding: var(--space-4);
     border: 0;
-    opacity: 0;
-    transform: translateX(-2.5rem);
-    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1), display 360ms allow-discrete, overlay 360ms allow-discrete;
   }
 
   .header-shell__drawer[open] {
     display: block;
-    opacity: 1;
-    transform: translateX(0);
   }
 
-  .header-shell__drawer::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
-  .header-shell__drawer[open]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
-
-  @starting-style {
-    .header-shell__drawer[open] {
-      opacity: 0;
-      transform: translateX(-2.5rem);
-    }
-  }
+  .header-shell__drawer::backdrop { background: transparent; }
+  .header-shell__drawer[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
   .header-shell__search-dialog {
     width: min(32rem, 90vw);
@@ -645,26 +678,21 @@
     padding: var(--space-6);
     border: 0;
     border-radius: 0.75rem 0 0 0.75rem;
-    opacity: 0;
-    transform: translateX(2.5rem);
-    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1), display 360ms allow-discrete, overlay 360ms allow-discrete;
   }
 
   .header-shell__search-dialog[open] {
     display: flex;
     flex-direction: column;
-    opacity: 1;
-    transform: translateX(0);
   }
 
-  .header-shell__search-dialog::backdrop { background: transparent; transition: background-color 300ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete; }
-  .header-shell__search-dialog[open]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
+  .header-shell__search-dialog::backdrop { background: transparent; }
+  .header-shell__search-dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
 
-  @starting-style {
-    .header-shell__search-dialog[open] {
-      opacity: 0;
-      transform: translateX(2.5rem);
-    }
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__search-dialog [data-search-drawer-entrance] { opacity: 0; transform: translate3d(0, 1.25rem, 0); transition: opacity 280ms ease, transform 380ms cubic-bezier(.16, 1, .3, 1); transition-delay: 350ms; }
+    .header-shell__search-dialog [data-search-drawer-entrance='form'] { transition-delay: 420ms; }
+    .header-shell__search-dialog [data-search-drawer-entrance='link'] { transition-delay: 490ms; }
+    .header-shell__search-dialog[open]:is([data-overlay-visible], [data-overlay-closing]) [data-search-drawer-entrance] { opacity: 1; transform: translate3d(0, 0, 0); }
   }
 
   .header-shell__search-dialog .predictive-search {
@@ -820,6 +848,11 @@
 
   @keyframes header-shell-submenu-in {
     from { opacity: 0; transform: translateY(0.5rem) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes header-shell-popover-in {
+    from { opacity: 0; transform: translateY(-0.35rem) scale(0.96); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
@@ -998,7 +1031,7 @@
       display: none;
     }
 
-    .header-shell__search-dialog {
+    dialog.header-shell__search-dialog[data-overlay-motion='drawer-end'] {
       inset: auto 0 0;
       width: 100%;
       height: auto;
@@ -1007,11 +1040,7 @@
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
       border-radius: 0.9rem 0.9rem 0 0;
       overflow: hidden;
-      transform: translateY(3rem);
-    }
-
-    .header-shell__search-dialog[open] {
-      transform: translateY(0);
+      --overlay-enter-transform: translate3d(0, 100%, 0);
     }
 
     .header-shell__drawer {
@@ -1023,11 +1052,10 @@
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
       border-radius: 0.9rem 0.9rem 0 0;
       overflow: auto;
-      transform: translateY(3rem);
     }
 
-    .header-shell__drawer[open] {
-      transform: translateY(0);
+    dialog.header-shell__drawer[data-overlay-motion='drawer-start'] {
+      --overlay-enter-transform: translate3d(0, 100%, 0);
     }
 
     .header-shell__search-dialog .header-shell__drawer-header {
@@ -1046,17 +1074,6 @@
       padding-block-start: var(--space-4);
     }
 
-    @starting-style {
-      .header-shell__drawer[open] {
-        opacity: 0;
-        transform: translateY(3rem);
-      }
-
-      .header-shell__search-dialog[open] {
-        opacity: 0;
-        transform: translateY(3rem);
-      }
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1160,22 +1177,6 @@
       "id": "sticky_header",
       "label": "t:labels.sticky_header",
       "default": true
-    },
-    {
-      "type": "select",
-      "id": "search_behavior",
-      "label": "t:labels.search_behavior",
-      "options": [
-        {
-          "value": "page",
-          "label": "t:options.search_behavior.page"
-        },
-        {
-          "value": "drawer",
-          "label": "t:options.search_behavior.drawer"
-        }
-      ],
-      "default": "drawer"
     }
   ],
   "enabled_on": { "groups": ["header"] }

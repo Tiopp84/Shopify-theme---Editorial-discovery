@@ -73,7 +73,10 @@
 
   <div class="facets__groups">
     {% for filter in results.filters %}
-      <details class="facets__group"{% if open_groups %} open{% endif %}>
+      {% assign entrance_order = results.filters.size | minus: forloop.index0 %}
+      {% assign entrance_delay = entrance_order | times: 50 | plus: 20 %}
+      {% if entrance_delay > 320 %}{% assign entrance_delay = 320 %}{% endif %}
+      <details class="facets__group" data-facets-entrance="group" style="--facets-entrance-delay: {{ entrance_delay }}ms;"{% if open_groups %} open{% endif %}>
         <summary>
           <span>{{ filter.label | escape }}</span>
           {% if filter.active_values.size > 0 %}
@@ -129,7 +132,7 @@
     {% endfor %}
   </div>
 
-  <button class="facets__apply" type="submit">{{ 'collections.facets.apply' | t }}</button>
+  <button class="facets__apply" type="submit" data-facets-entrance="apply" style="--facets-entrance-delay: 0ms;">{{ 'collections.facets.apply' | t }}</button>
   {% endif %}
 </form>
 

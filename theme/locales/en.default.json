@@ -50,6 +50,7 @@
     "view_cart": "View cart"
   },
   "accessibility": {
+    "scrolling_text": "Scrolling text",
     "announcement": "Announcement",
     "breadcrumb": "Breadcrumb",
     "close_menu": "Close menu",
@@ -64,6 +65,9 @@
   "localization": {
     "country": "Country/region",
     "language": "Language"
+  },
+  "editorial": {
+    "detail": "Editorial detail"
   },
   "newsletter": {
     "email": "Email address",
@@ -227,6 +231,7 @@
     "no_results_html": "No results found for {{ terms }}",
     "result_for_html": "{{ count }} result found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}",
+    "suggested_products": "Suggested products",
     "predictive": {
       "articles": "Articles",
       "collections": "Collections",

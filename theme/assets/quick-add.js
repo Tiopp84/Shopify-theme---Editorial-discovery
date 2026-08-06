@@ -408,6 +408,7 @@ class QuickAdd extends HTMLElement {
   }
 
   lockPageScroll() {
+    window.overlayMotionController?.captureScrollbarCompensation();
     document.documentElement.classList.add('quick-add-modal-open');
     document.body.classList.add('quick-add-modal-open');
   }

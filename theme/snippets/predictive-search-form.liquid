@@ -6,9 +6,15 @@
   @param {boolean} [in_drawer] - Use drawer-contained result presentation.
 {% enddoc %}
 
+{% assign predictive_resource_types = 'product' %}
+{% if settings.predictive_search_content != 'products' %}
+  {% assign predictive_resource_types = 'product,collection,page,article' %}
+{% endif %}
+
 <predictive-search
   class="predictive-search{% if in_drawer %} predictive-search--drawer{% endif %}"
   data-predictive-url="{{ routes.predictive_search_url }}"
+  data-predictive-types="{{ predictive_resource_types }}"
   data-loading-text="{{ 'search.predictive.loading' | t | escape }}"
   data-updated-text="{{ 'search.predictive.updated' | t | escape }}"
   data-error-text="{{ 'search.predictive.error' | t | escape }}"
@@ -94,8 +100,8 @@
 
   .predictive-search--drawer .search-form {
     overflow: hidden;
-    border: 1px solid var(--color-border);
-    border-radius: 0.45rem;
+    border: var(--field-theme-border-width) solid var(--color-border);
+    border-radius: var(--field-theme-radius);
     background: var(--color-background);
   }
 

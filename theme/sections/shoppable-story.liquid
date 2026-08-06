@@ -22,7 +22,7 @@
 </section>
 
 {% stylesheet %}
-  .shoppable-story { background: var(--shoppable-story-background, var(--color-panel-01)); border-block: 1px solid var(--color-border); display: grid; gap: clamp(2.5rem, 5vw, 5rem); margin: 0 0 var(--space-chapter); padding: clamp(4rem, 8vw, 7rem) max(var(--page-margin), calc((100vw - var(--page-width)) / 2)); }
+  .shoppable-story { background: var(--shoppable-story-background, var(--color-panel-01)); border-block: 1px solid var(--color-border); display: grid; gap: clamp(2.5rem, 5vw, 5rem); margin: 0 0 var(--space-chapter); padding: clamp(4rem, 8vw, 7rem) max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
   .shoppable-story__intro { align-content: center; display: grid; gap: var(--space-4); max-width: 22rem; }
   .shoppable-story__eyebrow, .shoppable-story__caption, .shoppable-story__availability { font-size: .6875rem; font-weight: 600; letter-spacing: .1em; margin: 0; text-transform: uppercase; }
   .shoppable-story__intro h2 { font-family: var(--font-campaign); font-size: clamp(2rem, 3.3vw, 3.25rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.03em; line-height: 1; margin: 0; overflow-wrap: anywhere; }
@@ -86,7 +86,7 @@
     .shoppable-story--intro-right .shoppable-story__items { grid-column: 1; grid-row: 1; }
   }
   @media (max-width: 35rem) {
-    .shoppable-story { gap: var(--space-5); margin-block-end: var(--space-chapter-mobile); padding: 0 var(--page-margin) var(--space-6); }
+    .shoppable-story { gap: var(--space-5); margin-block-end: var(--space-chapter-mobile); padding: 0 var(--layout-gutter) var(--space-6); }
     .shoppable-story__intro { border-block-end: 1px solid var(--color-border); gap: var(--space-2); max-width: none; padding-block: var(--space-5) var(--space-3); }
     .shoppable-story__body { display: none; }
     .shoppable-story__items { gap: 0; }

@@ -3,6 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 {%- liquid
+  assign brand_name = settings.brand_name | default: shop.name
   assign og_title = page_title | default: shop.name
   assign og_url = canonical_url | default: request.origin
   assign og_type = 'website'
@@ -19,7 +20,7 @@
 
 <meta
   property="og:site_name"
-  content="{{ shop.name }}"
+  content="{{ brand_name | escape }}"
 >
 <meta
   property="og:url"
@@ -55,6 +56,10 @@
     property="og:image:height"
     content="{{ page_image.height }}"
   >
+{%- endif -%}
+
+{%- if settings.favicon != blank -%}
+  <link rel="icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
 {%- endif -%}
 
 {%- if request.page_type == 'product' -%}
