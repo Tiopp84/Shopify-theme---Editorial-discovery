@@ -291,6 +291,8 @@ class ProductGallery extends HTMLElement {
     this.isStacked = this.dataset.galleryLayout === 'stacked';
     this.buttons = [...this.querySelectorAll('[data-product-media-select]')];
     this.stage = this.querySelector('.main-product__media-stage');
+    this.thumbnailWrap = this.querySelector('[data-product-thumbnail-wrap]');
+    this.thumbnails = this.querySelector('[data-product-thumbnails]');
     this.dialog = this.querySelector('[data-product-gallery-dialog]');
     this.dialogContent = this.querySelector('[data-product-gallery-dialog-content]');
     this.previousButton = this.querySelector('[data-product-gallery-previous]');
@@ -303,6 +305,11 @@ class ProductGallery extends HTMLElement {
       this.stageNextButton?.removeAttribute('hidden');
     }
     this.buttons.forEach((button) => button.addEventListener('click', () => this.select(button.dataset.productMediaSelect, { reveal: true }), { signal }));
+    this.thumbnails?.addEventListener('scroll', () => this.scheduleThumbnailOverflowUpdate(), { signal, passive: true });
+    if (this.thumbnails && typeof ResizeObserver === 'function') {
+      this.thumbnailResizeObserver = new ResizeObserver(() => this.updateThumbnailOverflow());
+      this.thumbnailResizeObserver.observe(this.thumbnails);
+    }
     this.stage?.addEventListener('click', (event) => {
       if (this.suppressStageOpen) {
         this.suppressStageOpen = false;
@@ -340,9 +347,33 @@ class ProductGallery extends HTMLElement {
       if (event.detail.featuredMediaId) this.select(String(event.detail.featuredMediaId));
     }, { signal });
     this.select(this.dataset.initialMediaId || this.media[0]?.dataset.productMediaId);
+    this.updateThumbnailOverflow();
   }
 
-  disconnectedCallback() { this.abortController?.abort(); this.abortController = null; }
+  disconnectedCallback() {
+    this.abortController?.abort();
+    this.abortController = null;
+    this.thumbnailResizeObserver?.disconnect();
+    this.thumbnailResizeObserver = null;
+    window.cancelAnimationFrame(this.thumbnailOverflowFrame);
+    this.thumbnailOverflowFrame = null;
+  }
+
+  scheduleThumbnailOverflowUpdate() {
+    if (this.thumbnailOverflowFrame) return;
+    this.thumbnailOverflowFrame = window.requestAnimationFrame(() => {
+      this.thumbnailOverflowFrame = null;
+      this.updateThumbnailOverflow();
+    });
+  }
+
+  updateThumbnailOverflow() {
+    if (!this.thumbnails || !this.thumbnailWrap) return;
+    const hasOverflow = this.thumbnails.scrollWidth - this.thumbnails.clientWidth > 1;
+    const hasMoreAtEnd = this.thumbnails.scrollLeft + this.thumbnails.clientWidth < this.thumbnails.scrollWidth - 1;
+    this.thumbnailWrap.toggleAttribute('data-overflow-start', hasOverflow && this.thumbnails.scrollLeft > 1);
+    this.thumbnailWrap.toggleAttribute('data-overflow-end', hasOverflow && hasMoreAtEnd);
+  }
 
   select(id, { reveal = false } = {}) {
     if (!id) return;

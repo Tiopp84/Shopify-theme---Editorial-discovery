@@ -9,11 +9,15 @@
   endif
 %}
 
-<section class="main-product main-product--gallery-{{ section.settings.gallery_layout }} main-product--media-{{ section.settings.desktop_media_position }}" data-product-section data-section-id="{{ section.id }}" data-gallery-layout="{{ section.settings.gallery_layout }}" style="--pdp-media-ratio: {{ media_ratio }};">
+<section class="main-product main-product--gallery-{{ section.settings.gallery_layout }} main-product--media-{{ section.settings.desktop_media_position }} main-product--thumbnails-{{ section.settings.thumbnail_position }}" data-product-section data-section-id="{{ section.id }}" data-gallery-layout="{{ section.settings.gallery_layout }}" style="--pdp-media-ratio: {{ media_ratio }};">
   {% if product.media.size > 0 %}
     <product-gallery class="main-product__gallery main-product__gallery--{{ section.settings.gallery_layout }}" data-product-gallery data-gallery-layout="{{ section.settings.gallery_layout }}" data-initial-media-id="{{ initial_media.id }}" aria-label="{{ product.title | escape }}">
       <div class="main-product__media-stage">
         {% for media in product.media %}
+          {% assign media_loading = 'lazy' %}
+          {% if media.id == initial_media.id %}
+            {% assign media_loading = 'eager' %}
+          {% endif %}
           <div
             class="main-product__media"
             data-product-media-id="{{ media.id }}"
@@ -21,7 +25,7 @@
           >
           {% case media.media_type %}
             {% when 'image' %}
-              {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 50vw, 100vw', loading: 'eager' %}
+              {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 50vw, 100vw', loading: media_loading %}
             {% when 'video' %}
               {{ media | media_tag: image_size: '1200x', controls: true, preload: 'metadata' }}
             {% when 'external_video' %}
@@ -43,7 +47,8 @@
         {% endif %}
       </div>
       {% if product.media.size > 1 and section.settings.gallery_layout == 'thumbnails' and section.settings.show_thumbnails %}
-        <div class="main-product__thumbnails" aria-label="{{ 'products.gallery.media_selection' | t }}">
+        <div class="main-product__thumbnails-wrap" data-product-thumbnail-wrap>
+          <div class="main-product__thumbnails" data-product-thumbnails aria-label="{{ 'products.gallery.media_selection' | t }}">
           {% for media in product.media %}
             <button
               class="main-product__thumbnail"
@@ -55,6 +60,7 @@
               {{ media.preview_image | image_url: width: 160 | image_tag: alt: media.alt, widths: '80, 160', sizes: '4rem', loading: 'lazy' }}
             </button>
           {% endfor %}
+          </div>
         </div>
       {% endif %}
       <dialog class="main-product__media-dialog" data-product-gallery-dialog data-overlay-motion="modal" aria-label="{{ 'products.gallery.zoomed_media' | t }}" tabindex="-1">
@@ -131,8 +137,14 @@
   .main-product__media-nav[hidden] { display: none; }
   .main-product__media img, .main-product__media video { cursor: zoom-in; object-fit: cover; }
   .main-product__media :is(video, iframe, model-viewer) { border: 0; height: 100%; width: 100%; }
-  .main-product__thumbnails { display: flex; gap: var(--space-2); overflow-x: auto; }
-  .main-product__thumbnail { flex: 0 0 4rem; padding: 0; border: 1px solid var(--color-border); background: transparent; }
+  .main-product__thumbnails-wrap { min-width: 0; position: relative; }
+  .main-product__thumbnails-wrap::before, .main-product__thumbnails-wrap::after { align-items: center; color: var(--color-foreground); display: flex; font-size: 1.1rem; inset-block: 0; opacity: 0; pointer-events: none; position: absolute; transition: opacity 160ms ease; width: 3rem; }
+  .main-product__thumbnails-wrap::before { background: linear-gradient(270deg, transparent, var(--color-background) 56%); content: '←'; inset-inline-start: 0; justify-content: flex-start; padding-inline-start: .3rem; }
+  .main-product__thumbnails-wrap::after { background: linear-gradient(90deg, transparent, var(--color-background) 56%); content: '→'; inset-inline-end: 0; justify-content: flex-end; padding-inline-end: .3rem; }
+  .main-product__thumbnails-wrap[data-overflow-start]::before { opacity: 1; }
+  .main-product__thumbnails-wrap[data-overflow-end]::after { opacity: 1; }
+  .main-product__thumbnails { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: thin; }
+  .main-product__thumbnail { background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); border: 1px solid var(--color-border); flex: 0 0 4rem; padding: 0; }
   .main-product__thumbnail[aria-current="true"] { outline: var(--focus-ring); outline-offset: 2px; }
   .main-product__thumbnail img { display: block; aspect-ratio: 1; object-fit: cover; width: 100%; }
   .main-product__media-dialog { background: var(--color-background); border: 0; margin-inline: auto; max-height: none; max-width: none; overflow: visible; padding: 0; }
@@ -220,6 +232,16 @@
     .main-product { grid-template-columns: minmax(0, .85fr) minmax(22rem, 1.15fr); align-items: start; }
     .main-product--media-right .main-product__gallery { grid-column: 2; }
     .main-product--media-right .main-product__details { grid-column: 1; grid-row: 1; }
+    .main-product--thumbnails-side .main-product__gallery { grid-template-columns: 4rem minmax(0, 1fr); }
+    .main-product--thumbnails-side .main-product__media-stage { grid-column: 2; grid-row: 1; }
+    .main-product--thumbnails-side .main-product__thumbnails-wrap { block-size: 100%; grid-column: 1; grid-row: 1; min-block-size: 0; }
+    .main-product--media-right.main-product--thumbnails-side .main-product__gallery { grid-template-columns: minmax(0, 1fr) 4rem; }
+    .main-product--media-right.main-product--thumbnails-side .main-product__media-stage { grid-column: 1; }
+    .main-product--media-right.main-product--thumbnails-side .main-product__thumbnails-wrap { grid-column: 2; }
+    .main-product--thumbnails-side .main-product__thumbnails { block-size: 100%; flex-direction: column; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+    .main-product--thumbnails-side .main-product__thumbnails-wrap::before, .main-product--thumbnails-side .main-product__thumbnails-wrap::after { block-size: 3rem; inline-size: auto; padding: 0; }
+    .main-product--thumbnails-side .main-product__thumbnails-wrap::before { background: linear-gradient(0deg, transparent, var(--color-background) 56%); content: '↑'; inset-block: 0 auto; inset-inline: 0; justify-content: center; }
+    .main-product--thumbnails-side .main-product__thumbnails-wrap::after { background: linear-gradient(180deg, transparent, var(--color-background) 56%); content: '↓'; inset-block: auto 0; inset-inline: 0; justify-content: center; }
     .main-product--gallery-stacked .main-product__details { position: sticky; inset-block-start: calc(4.5rem + var(--space-6)); }
   }
 {% endstylesheet %}
@@ -242,6 +264,7 @@
   "settings": [
     { "type": "header", "content": "t:general.layout" },
     { "type": "select", "id": "gallery_layout", "label": "t:labels.product_gallery_layout", "options": [{ "value": "thumbnails", "label": "t:options.product_gallery_layout.thumbnails" }, { "value": "stacked", "label": "t:options.product_gallery_layout.stacked" }], "default": "thumbnails" },
+    { "type": "select", "id": "thumbnail_position", "label": "t:labels.thumbnail_position", "options": [{ "value": "bottom", "label": "t:options.thumbnail_position.bottom" }, { "value": "side", "label": "t:options.thumbnail_position.side" }], "default": "bottom", "visible_if": "{{ section.settings.gallery_layout == 'thumbnails' }}" },
     { "type": "select", "id": "desktop_media_position", "label": "t:labels.desktop_media_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
     {
       "type": "select",
