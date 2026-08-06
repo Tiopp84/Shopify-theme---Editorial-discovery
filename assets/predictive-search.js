@@ -76,8 +76,10 @@ class PredictiveSearch extends HTMLElement {
     try {
       const url = new URL(this.dataset.predictiveUrl, window.location.origin);
       url.searchParams.set('q', term);
-      url.searchParams.set('resources[type]', 'product,collection,page,article');
-      url.searchParams.set('resources[limit]', '8');
+      url.searchParams.set('resources[type]', this.dataset.predictiveTypes || 'product,collection,page,article');
+      // Keep matching pages or articles from consuming the product suggestions.
+      url.searchParams.set('resources[limit]', '4');
+      url.searchParams.set('resources[limit_scope]', 'each');
       url.searchParams.set('section_id', 'predictive-search');
       const response = await fetch(url, { signal: this.abortController.signal });
       if (!response.ok) throw new Error(`Predictive search failed: ${response.status}`);

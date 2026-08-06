@@ -261,6 +261,7 @@ class CartDrawer extends HTMLElement {
     this.renderStore({ ...this.store.snapshot(), reason: 'register' });
     document.addEventListener('click', (event) => this.onClick(event), { signal });
     document.addEventListener('change', (event) => this.onChange(event), { signal });
+    this.addEventListener('input', (event) => this.onInput(event), { signal });
     this.addEventListener('keydown', (event) => this.onKeydown(event), { signal });
     document.addEventListener('submit', (event) => this.onSubmit(event), { signal });
     this.querySelector('[data-cart-close]')?.addEventListener('click', () => this.dialog.close(), { signal });
@@ -291,6 +292,11 @@ class CartDrawer extends HTMLElement {
     if (input && this.contains(input)) this.store.setQuantity(input.dataset.cartKey, input.value);
   }
 
+  onInput(event) {
+    const note = event.target.closest('[data-cart-note-input]');
+    if (note && this.contains(note)) this.store.setNote(note.value);
+  }
+
   onKeydown(event) {
     const input = event.target.closest('[data-cart-quantity]');
     if (event.key !== 'Enter' || event.isComposing || !input || !this.contains(input)) return;
@@ -299,7 +305,14 @@ class CartDrawer extends HTMLElement {
   }
 
   onSubmit(event) {
-    if (event.target.matches('[data-product-form] form')) { event.preventDefault(); this.add(event.target); }
+    if (event.target.matches('[data-product-form] form')) {
+      if (event.defaultPrevented) return;
+      const validationApproved = event.target.hasAttribute('data-product-validation-approved');
+      event.target.removeAttribute('data-product-validation-approved');
+      event.preventDefault();
+      this.add(event.target, validationApproved);
+      return;
+    }
     const form = event.target.closest('[data-cart-form]');
     if (!form || !this.contains(form) || event.submitter?.name === 'checkout') return;
     event.preventDefault();
@@ -337,7 +350,13 @@ class CartDrawer extends HTMLElement {
       line.querySelector('[data-cart-quantity-step="1"]')?.removeAttribute('disabled');
     });
     this.querySelector('[data-cart-subtotal]')?.replaceChildren(document.createTextNode(this.store.formatMoney(detail.totalCents, true)));
-    this.querySelector('[data-cart-note]')?.setAttribute('value', detail.note);
+    const note = this.querySelector('[data-cart-note-input]');
+    if (note && document.activeElement !== note) note.value = detail.note;
+    const noteStatus = this.querySelector('[data-cart-note-status]');
+    if (noteStatus) {
+      const messages = { saving: this.dataset.cartNoteSavingMessage, saved: this.dataset.cartNoteSavedMessage, error: this.dataset.cartNoteErrorMessage };
+      noteStatus.textContent = detail.reason === 'register' ? '' : messages[detail.noteState] || '';
+    }
     this.toggleAttribute('data-cart-pending', detail.pending);
     this.setCheckoutPending(detail.pending);
     this.renderEmpty(detail.count === 0);
@@ -420,11 +439,16 @@ class CartDrawer extends HTMLElement {
   }
 
   cartFormHtml(cart) {
-    return `<form action="${this.escape(this.dataset.cartUrl)}" method="post" data-cart-form><input type="hidden" name="note" value="${this.escape(this.store.note)}" data-cart-note><div class="cart-drawer__lines">${cart.items.map((item, index) => this.lineHtml(item, index)).join('')}</div>${this.cartFooterHtml(cart)}</form>`;
+    return `<form action="${this.escape(this.dataset.cartUrl)}" method="post" data-cart-form><div class="cart-drawer__lines">${cart.items.map((item, index) => this.lineHtml(item, index)).join('')}</div>${this.cartFooterHtml(cart)}</form>`;
   }
 
   cartFooterHtml(cart) {
-    return `<footer class="cart-drawer__footer">${this.cartDiscountHtml(cart)}<p class="cart-drawer__subtotal"><span>${this.escape(this.dataset.cartSubtotalLabel)}</span><strong data-cart-subtotal>${this.store.formatMoney(cart.total_price, true)}</strong></p><p class="cart-drawer__checkout-note">${this.escape(this.dataset.cartTaxesNote)}</p><button type="submit" name="checkout">${this.escape(this.dataset.cartCheckoutLabel)}</button><a href="${this.escape(this.dataset.cartUrl)}">${this.escape(this.dataset.cartViewCart)}</a></footer>`;
+    return `<footer class="cart-drawer__footer">${this.cartDiscountHtml(cart)}${this.cartNoteHtml()}<p class="cart-drawer__subtotal"><span>${this.escape(this.dataset.cartSubtotalLabel)}</span><strong data-cart-subtotal>${this.store.formatMoney(cart.total_price, true)}</strong></p><p class="cart-drawer__checkout-note">${this.escape(this.dataset.cartTaxesNote)}</p><button type="submit" name="checkout">${this.escape(this.dataset.cartCheckoutLabel)}</button><a href="${this.escape(this.dataset.cartUrl)}">${this.escape(this.dataset.cartViewCart)}</a></footer>`;
+  }
+
+  cartNoteHtml() {
+    if (this.dataset.cartShowNote !== 'true') return '';
+    return `<div class="cart-drawer__note"><label for="DrawerCartNote">${this.escape(this.dataset.cartNoteLabel)}</label><textarea id="DrawerCartNote" name="note" placeholder="${this.escape(this.dataset.cartNotePlaceholder)}" data-cart-note-input>${this.escape(this.store.note)}</textarea><p class="cart-drawer__note-status" data-cart-note-status aria-live="polite"></p></div>`;
   }
 
   lineHtml(item, index) {
@@ -452,7 +476,7 @@ class CartDrawer extends HTMLElement {
     return discounts.length ? `<ul class="cart-drawer__discounts" role="list">${discounts.map((discount) => `<li>${this.escape(discount.title)} (−${this.store.formatMoney(discount.total_allocated_amount)})</li>`).join('')}</ul>` : '';
   }
 
-  async add(form) {
+  async add(form, validationApproved = false) {
     this.addController?.abort();
     this.addController = new AbortController();
     this.opener = document.activeElement;
@@ -465,7 +489,7 @@ class CartDrawer extends HTMLElement {
     }
     try {
       const validator = productForm || quickAdd;
-      if (validator && !(await validator.validateAdd())) return;
+      if (!validationApproved && validator && !(await validator.validateAdd())) return;
       const body = new FormData(form);
       body.set('sections', 'cart-drawer');
       body.set('sections_url', `${window.location.pathname}${window.location.search}`);

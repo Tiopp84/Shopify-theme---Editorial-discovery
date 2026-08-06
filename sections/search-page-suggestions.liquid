@@ -1,0 +1,30 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+{% if predictive_search.performed and predictive_search.resources.products.size > 0 %}
+  <div data-search-page-suggestions-content>
+    <section class="search-page__suggestions" aria-labelledby="SearchSuggestedProducts">
+      <h2 id="SearchSuggestedProducts">{{ 'search.suggested_products' | t }}</h2>
+      <div class="search-results">
+        {% for product in predictive_search.resources.products limit: 4 %}
+          {% render 'product-card',
+            product: product,
+            card_context: 'recommendation',
+            image_ratio: '1 / 1',
+            show_badge: false,
+            show_second_image: false,
+            show_swatches: false,
+            show_variant_options: false,
+            sizes: '76px'
+          %}
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+{% endif %}
+{% # theme-check-enable ValidScopedCSSClass %}
+
+{% schema %}
+{
+  "name": "Search page suggestions",
+  "settings": []
+}
+{% endschema %}

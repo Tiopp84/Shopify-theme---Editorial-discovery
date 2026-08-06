@@ -76,7 +76,9 @@
     <div class="footer-panel-spacer" aria-hidden="true"></div>
     {% # theme-check-enable ValidScopedCSSClass %}
     {% sections 'footer-group' %}
-    {% section 'cart-drawer' %}
+    {% if settings.cart_type == 'drawer' %}
+      {% section 'cart-drawer' %}
+    {% endif %}
     {% if template.name == 'index' %}
       <script src="{{ 'aos-home.js' | asset_url }}" defer></script>
       <script src="{{ 'shoppable-hero-hotspots.js' | asset_url }}" defer></script>

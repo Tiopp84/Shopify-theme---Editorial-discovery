@@ -10,6 +10,7 @@ class ProductForm extends HTMLElement {
     this.quantityDecrease = this.querySelector('[data-product-quantity-decrease]');
     this.quantityIncrease = this.querySelector('[data-product-quantity-increase]');
     this.error = this.querySelector('[data-product-selection-error]');
+    this.form = this.querySelector('form');
     this.price = this.section.querySelector('[data-product-price]');
     this.sku = this.section.querySelector('[data-product-sku]');
     this.skuValue = this.section.querySelector('[data-product-sku-value]');
@@ -30,6 +31,7 @@ class ProductForm extends HTMLElement {
     this.querySelector('[data-product-quantity-decrease]')?.addEventListener('click', () => this.changeQuantity(-1), { signal });
     this.querySelector('[data-product-quantity-increase]')?.addEventListener('click', () => this.changeQuantity(1), { signal });
     this.quantity?.addEventListener('change', () => this.clampQuantity(), { signal });
+    this.form?.addEventListener('submit', (event) => this.onSubmit(event), { signal });
     window.addEventListener('popstate', () => this.fromUrl(), { signal });
     window.addEventListener('cart:state', (event) => this.applyCartState(event.detail?.quantities), { signal });
     this.setAttribute('data-product-enhanced', '');
@@ -43,6 +45,23 @@ class ProductForm extends HTMLElement {
     if (!this.error) return;
     this.error.textContent = message;
     this.error.hidden = false;
+  }
+
+  async onSubmit(event) {
+    if (this.validatedSubmit) {
+      this.validatedSubmit = false;
+      return;
+    }
+    event.preventDefault();
+    if (this.validatingSubmit) return;
+    this.validatingSubmit = true;
+    const isValid = await this.validateAdd();
+    this.validatingSubmit = false;
+    if (!isValid || !this.form) return;
+    this.validatedSubmit = true;
+    this.form.setAttribute('data-product-validation-approved', '');
+    if (event.submitter) this.form.requestSubmit(event.submitter);
+    else this.form.requestSubmit();
   }
 
   async validateAdd() {

@@ -1,9 +1,10 @@
 <script src="{{ 'header-shell.js' | asset_url }}" defer></script>
-{% if section.settings.search_behavior == 'drawer' and request.page_type != 'search' %}
+{% if settings.search_behavior == 'drawer' and request.page_type != 'search' %}
   <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
 {% endif %}
 {% assign has_navigation = false %}
 {% assign brand_name = settings.brand_name | default: shop.name %}
+{% assign cart_icon = settings.cart_icon | default: 'bag' %}
 {% if section.settings.enable_navigation != false and section.settings.menu != blank %}
   {% assign has_navigation = true %}
 {% endif %}
@@ -59,7 +60,7 @@
     {% endif %}
 
     <div class="header-shell__actions">
-      {% if section.settings.search_behavior == 'drawer' %}
+      {% if settings.search_behavior == 'drawer' %}
         <button
           class="header-shell__icon-button"
           type="button"
@@ -102,9 +103,9 @@
         </details>
       {% endif %}
 
-      <a class="header-shell__icon-button" href="{{ routes.cart_url }}" data-cart-open>
+      <a class="header-shell__icon-button" href="{{ routes.cart_url }}"{% if settings.cart_type == 'drawer' %} data-cart-open{% endif %}>
         <span class="visually-hidden">{{ 'cart.title' | t }}</span>
-        {% render 'icon', name: 'cart' %}
+        {% render 'icon', name: cart_icon %}
         <span class="header-shell__cart-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
       </a>
     </div>
@@ -126,7 +127,7 @@
         <span>{{ 'navigation.menu' | t }}</span>
       </button>
     {% endif %}
-    {% if section.settings.search_behavior == 'drawer' %}
+    {% if settings.search_behavior == 'drawer' %}
       <button
         class="header-shell__task"
         type="button"
@@ -146,8 +147,8 @@
       {% render 'icon', name: 'shop' %}
       <span>{{ 'navigation.products' | t }}</span>
     </a>
-    <a class="header-shell__task header-shell__task--cart" href="{{ routes.cart_url }}" data-cart-open>
-      {% render 'icon', name: 'cart' %}
+    <a class="header-shell__task header-shell__task--cart" href="{{ routes.cart_url }}"{% if settings.cart_type == 'drawer' %} data-cart-open{% endif %}>
+      {% render 'icon', name: cart_icon %}
       <span>{{ 'cart.title' | t }}</span>
       <span class="header-shell__task-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
     </a>
@@ -218,7 +219,7 @@
     </dialog>
   {% endif %}
 
-  {% if section.settings.search_behavior == 'drawer' %}
+  {% if settings.search_behavior == 'drawer' %}
     <dialog
       class="header-shell__search-dialog"
       aria-labelledby="HeaderSearchTitle"
@@ -1176,22 +1177,6 @@
       "id": "sticky_header",
       "label": "t:labels.sticky_header",
       "default": true
-    },
-    {
-      "type": "select",
-      "id": "search_behavior",
-      "label": "t:labels.search_behavior",
-      "options": [
-        {
-          "value": "page",
-          "label": "t:options.search_behavior.page"
-        },
-        {
-          "value": "drawer",
-          "label": "t:options.search_behavior.drawer"
-        }
-      ],
-      "default": "drawer"
     }
   ],
   "enabled_on": { "groups": ["header"] }

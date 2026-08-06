@@ -1,4 +1,5 @@
 <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
+<script src="{{ 'search-page-suggestions.js' | asset_url }}" defer></script>
 
 <section class="search-page">
   <header class="search-page__header">
@@ -10,6 +11,14 @@
 
 {% if search.performed %}
   {% capture formatted_search_terms %}<span class="search-page__terms">'{{ search.terms | escape }}'</span>{% endcapture %}
+  <search-page-suggestions
+    data-endpoint="{{ routes.predictive_search_url }}"
+    data-query="{{ search.terms | escape }}"
+    style="--search-grid-columns: {{ section.settings.columns_desktop }}; --search-grid-columns-mobile: {{ section.settings.columns_mobile }};"
+    hidden
+  >
+    <div data-search-page-suggestions-results></div>
+  </search-page-suggestions>
   {% if search.results_count == 0 %}
     <div class="search-page__message"><p>{{ 'search.no_results_html' | t: terms: formatted_search_terms }}</p></div>
   {% else %}
@@ -21,51 +30,84 @@
       {% endif %}
     </p>
 
-    <div class="search-results">
-      {% paginate search.results by 20 %}
-        {% # Search result items may be an article, a page, or a product. %}
+    {% paginate search.results by 20 %}
+      {% liquid
+        assign product_count = 0
+        for result in search.results
+          if result.object_type == 'product'
+            assign product_count = product_count | plus: 1
+          endif
+        endfor
+      %}
+
+      {% if product_count > 0 %}
+        <section class="search-page__products" aria-labelledby="SearchProducts-{{ section.id }}">
+          <h2 id="SearchProducts-{{ section.id }}">{{ 'search.predictive.products' | t }}</h2>
+          <div class="search-results" style="--search-grid-columns: {{ section.settings.columns_desktop }}; --search-grid-columns-mobile: {{ section.settings.columns_mobile }};">
+            {% assign product_index = 0 %}
+            {% for result in search.results %}
+              {% if result.object_type == 'product' %}
+                {% assign product_index = product_index | plus: 1 %}
+                {% render 'product-card',
+                  product: result,
+                  image_ratio: section.settings.image_ratio,
+                  sizes: '(min-width: 60rem) 25vw, 50vw',
+                  card_index: product_index,
+                  card_count: product_count
+                %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% assign resource_groups = 'collection,page,article' | split: ',' %}
+      {% for group_name in resource_groups %}
+        {% assign group_count = 0 %}
         {% for result in search.results %}
-          {% if result.object_type == 'product' %}
-            {% render 'product-card',
-              product: result,
-              image_ratio: '4 / 5',
-              sizes: '(min-width: 60rem) 25vw, 50vw',
-              card_index: forloop.index,
-              card_count: forloop.length
-            %}
-          {% else %}
-            <article class="search-result">
-            {% assign featured_image = result.featured_image | default: result.image %}
-            {% if featured_image %}
-              {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
-            {% endif %}
-            <div class="search-result__content">
-              <p class="search-result__type">{{ result.object_type | escape }}</p>
-              <h2>{{ result.title | link_to: result.url }}</h2>
-            </div>
-            </article>
+          {% if result.object_type == group_name %}
+            {% assign group_count = group_count | plus: 1 %}
           {% endif %}
         {% endfor %}
+        {% if group_count > 0 %}
+          <section class="search-resource-group" aria-labelledby="Search{{ group_name | capitalize }}s-{{ section.id }}">
+            <h2 id="Search{{ group_name | capitalize }}s-{{ section.id }}">
+              {% case group_name %}
+                {% when 'collection' %}{{ 'search.predictive.collections' | t }}
+                {% when 'page' %}{{ 'search.predictive.pages' | t }}
+                {% when 'article' %}{{ 'search.predictive.articles' | t }}
+              {% endcase %}
+            </h2>
+            <ul class="search-resource-group__list" role="list">
+              {% for result in search.results %}
+                {% if result.object_type == group_name %}
+                  <li><a href="{{ result.url }}">{{ result.title | escape }}</a></li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </section>
+        {% endif %}
+      {% endfor %}
 
-        {% render 'pagination', paginate: paginate %}
-      {% endpaginate %}
-    </div>
+      {% render 'pagination', paginate: paginate %}
+    {% endpaginate %}
   {% endif %}
 {% endif %}
 </section>
 
 {% stylesheet %}
   .search-page {
-    padding-block: clamp(var(--space-8), 8vw, 7rem);
+    padding-block: clamp(var(--space-6), 5vw, var(--space-chapter));
   }
 
   .search-page__header {
-    margin-block-end: var(--space-6);
+    display: grid;
+    gap: var(--space-2);
+    margin-block-end: var(--space-5);
   }
 
   .search-page__header p,
-  .search-page__count,
-  .search-result__type {
+  .search-page__count {
     color: color-mix(in srgb, currentcolor 65%, transparent);
     font-size: 0.7rem;
     letter-spacing: 0.1em;
@@ -73,7 +115,13 @@
   }
 
   .search-page__header h1 {
-    font-size: clamp(var(--heading-size-96), calc(var(--heading-size-96) + 7vw), var(--heading-size-192));
+    font-family: var(--font-commerce);
+    font-size: clamp(var(--heading-size-64), calc(var(--heading-size-64) + 3vw), var(--heading-size-96));
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: -.035em;
+    line-height: 1;
+    margin: 0;
   }
 
   .search-page__message {
@@ -81,7 +129,7 @@
   }
 
   .search-page__count {
-    margin-block: var(--space-8) var(--space-4);
+    margin-block: var(--space-6) var(--space-4);
   }
 
   .search-page__terms {
@@ -90,33 +138,100 @@
 
   .search-results {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-8) var(--space-6);
+    grid-template-columns: repeat(var(--search-grid-columns), minmax(0, 1fr));
+    gap: var(--space-6) var(--space-5);
   }
 
-  .search-result {
-    min-width: 0;
-    display: grid;
-    align-content: start;
+  .search-page__suggestions,
+  .search-page__products {
+    margin-block-start: var(--space-8);
+  }
+
+  .search-page__suggestions {
+    border-block: 1px solid var(--color-border);
+    padding-block: var(--space-5);
+  }
+
+  .search-page__suggestions .search-results {
+    gap: var(--space-4) var(--space-6);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search-page__suggestions .product-card {
+    align-items: center;
     gap: var(--space-3);
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+    padding-block-end: 0;
   }
 
-  .search-result__image,
-  .search-result__image > img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+  .search-page__suggestions .product-card__media {
+    aspect-ratio: 1;
+    position: relative;
   }
 
-  .search-result__content h2 {
-    margin-block-start: var(--space-2);
-    font-size: clamp(var(--heading-size-35), calc(var(--heading-size-35) + 1.5vw), var(--heading-size-45));
+  .search-page__suggestions .product-card__title {
+    font-size: .95rem;
   }
 
-  .search-results .prev,
-  .search-results .page,
-  .search-results .next {
-    grid-column: 1 / -1;
+  .search-page__suggestions .product-card__price {
+    font-size: .875rem;
+  }
+
+  .search-page__suggestions > h2,
+  .search-page__products > h2,
+  .search-resource-group > h2 {
+    font-family: var(--small-label-font);
+    font-size: var(--small-label-size);
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: var(--small-label-letter-spacing);
+    line-height: var(--small-label-line-height);
+    margin: 0 0 var(--space-4);
+    text-transform: uppercase;
+  }
+
+  .search-resource-group {
+    border-block-start: 1px solid var(--color-border);
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-5);
+  }
+
+  .search-resource-group__list {
+    display: grid;
+    gap: 0 var(--space-6);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .search-resource-group__list li {
+    border-block-start: 1px solid color-mix(in srgb, var(--color-border) 78%, transparent);
+  }
+
+  .search-resource-group__list a {
+    align-items: center;
+    display: flex;
+    font-family: var(--font-commerce);
+    font-size: clamp(1rem, 1.1vw, 1.125rem);
+    font-weight: 500;
+    gap: var(--space-3);
+    justify-content: space-between;
+    min-block-size: 3.75rem;
+    text-decoration: none;
+  }
+
+  .search-resource-group__list a::after {
+    color: var(--color-interactive);
+    content: '↗';
+    flex: none;
+    font-size: 1.1em;
+  }
+
+  .search-resource-group__list a:is(:hover, :focus-visible) {
+    color: var(--color-interactive);
+    text-decoration: underline;
+    text-underline-offset: .18em;
   }
 
   @media (max-width: 47.99rem) {
@@ -125,17 +240,26 @@
     }
 
     .search-results {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-6) var(--space-4);
+      grid-template-columns: repeat(var(--search-grid-columns-mobile), minmax(0, 1fr));
+      gap: var(--space-5) var(--space-3);
     }
 
+    .search-page__suggestions .search-results { grid-template-columns: 1fr; gap: var(--space-3); }
+
+    .search-resource-group { margin-block-start: var(--space-6); padding-block-start: var(--space-4); }
+    .search-resource-group__list { grid-template-columns: 1fr; }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.search",
-  "settings": [],
+  "settings": [
+    { "type": "header", "content": "t:general.layout" },
+    { "type": "range", "id": "columns_desktop", "label": "t:labels.desktop_product_columns", "min": 2, "max": 4, "step": 1, "default": 4 },
+    { "type": "select", "id": "columns_mobile", "label": "t:labels.mobile_product_columns", "options": [{ "value": "1", "label": "t:options.columns.one" }, { "value": "2", "label": "t:options.columns.two" }], "default": "2" },
+    { "type": "select", "id": "image_ratio", "label": "t:labels.image_ratio", "options": [{ "value": "1 / 1", "label": "t:options.image_ratio.square" }, { "value": "4 / 5", "label": "t:options.image_ratio.portrait" }, { "value": "3 / 4", "label": "t:options.image_ratio.tall" }], "default": "4 / 5" }
+  ],
   "enabled_on": { "templates": ["search"] }
 }
 {% endschema %}

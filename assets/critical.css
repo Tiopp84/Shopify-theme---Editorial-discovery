@@ -207,6 +207,10 @@ textarea {
   line-height: 1.2;
 }
 
+a.button {
+  color: var(--button-color);
+}
+
 :where(button, input[type='button'], input[type='submit'], .button):where(:hover, :focus-visible):where(:not(:disabled)) {
   background: var(--button-background-hover);
 }

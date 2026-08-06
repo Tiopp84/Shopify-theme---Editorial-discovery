@@ -1,7 +1,7 @@
 {% doc %}
   Renders a small, decorative interface icon. The parent control must provide its accessible name.
 
-  @param {string} name - Supported icon name: account, cart, close, filter, home, lock, menu, search, shop, or trash.
+  @param {string} name - Supported icon name: account, bag, basket, cart, close, filter, home, lock, menu, search, shop, or trash.
   @param {string} [class] - Additional SVG class.
 
   @example
@@ -25,9 +25,16 @@
     {% when 'account' %}
       <circle cx="12" cy="8" r="4" />
       <path d="M4.5 21a7.5 7.5 0 0 1 15 0" />
-    {% when 'cart' %}
+    {% when 'bag' %}
       <path d="M5 8h14l-1 13H6L5 8Z" />
       <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+    {% when 'basket' %}
+      <path d="M4 10h16l-1.5 10H5.5L4 10Z" />
+      <path d="m8 10 4-6 4 6M7.5 14h9M8.5 17h7" />
+    {% when 'cart' %}
+      <path d="M3.5 5h2l2 10.5h9.75l2-7.5H7" />
+      <circle cx="9" cy="19" r="1.25" />
+      <circle cx="17" cy="19" r="1.25" />
     {% when 'close' %}
       <path d="m5 5 14 14M19 5 5 19" />
     {% when 'filter' %}
