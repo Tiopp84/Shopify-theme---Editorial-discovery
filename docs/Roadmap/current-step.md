@@ -28,6 +28,7 @@ Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các 
 
 ## Đã hoàn thành
 
+- [x] Week 1 submission baseline: re-checked the current official Shopify Theme Store requirements, submission process and test checklist; converted the static audit into `Specifications/theme-store-submission-gap-register.md`. The register identifies ten P0 implementation gaps (PDP accelerated checkout, Search facets, pickup availability, Shop Pay Installments, Follow on Shop, three-level navigation, Custom Liquid insertion, Featured product app-block surface, Gift Card QR and tax-inclusive cart notice), plus evidence, fixture, commercial and packaging gates. Repository validator passes 141 files/191 storefront keys/495 schema keys; Theme Check passes 86 files with zero offenses; `git diff --check` passes, 2026-08-07. Shopify Preview evidence remains required before any item is closed.
 - [x] Tạo bộ roadmap từ product strategy đến final release gate.
 - [x] Xác nhận trạng thái ban đầu: `theme/` và `tests/` chưa có implementation production.
 - [x] Thiết lập tệp `current-step.md` làm điểm tiếp tục xuyên phiên.
@@ -318,6 +319,7 @@ Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các 
 
 ## Việc tiếp theo — theo thứ tự
 
+0. Dùng [`../Specifications/theme-store-submission-gap-register.md`](../Specifications/theme-store-submission-gap-register.md) làm nguồn P0: chuẩn bị development-store fixtures và hoàn tất Phase 8 preview evidence trước khi triển khai các implementation gap; không bắt đầu hardening hay packaging khi còn GAP-01–10.
 1. Trên Shopify preview, gán `page.contact` và `page.faq` cho hai Page fixtures rồi kiểm tra Page base, Contact success/error/no-JS và FAQ empty/long blocks tại 320/375/768/1024/desktop, keyboard, zoom, reduced motion và Theme Editor lifecycle.
 2. Trên Shopify preview, kiểm tra 404, Password và Gift card với dữ liệu/state thực: 404 recovery CTA; Password có/không có store message và native error; Gift card active/disabled/expired/expiry, logo fallback và Apple Wallet khi khả dụng, tại 320/375/768/1024/desktop, keyboard, zoom và reduced motion.
 3. Hoàn thiện các secondary template còn thiếu theo inventory tại [`../Specifications/secondary-templates-contract.md`](../Specifications/secondary-templates-contract.md); giữ Blog/Article composition hiện có là điểm xuất phát và không tái sử dụng product/cart controller ở content surface.

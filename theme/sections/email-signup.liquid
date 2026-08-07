@@ -34,8 +34,8 @@
 </section>
 
 {% stylesheet %}
-  .email-signup { margin-block: clamp(3rem, 8vw, 8rem); padding-inline: var(--layout-gutter); }
-  .email-signup__inner { background: color-mix(in srgb, var(--color-foreground) 4%, var(--color-background)); margin-inline: auto; max-inline-size: 48rem; padding: clamp(2rem, 5vw, 4rem); text-align: center; }
+  .email-signup { margin-block: clamp(3rem, 8vw, 6rem); padding-inline: var(--layout-gutter); }
+  .email-signup__inner { background: var(--color-panel-01, color-mix(in srgb, var(--color-foreground) 4%, var(--color-background))); border-radius: clamp(0.75rem, 2vw, 1.25rem); margin-inline: auto; max-inline-size: 52rem; padding: clamp(2.5rem, 6vw, 4.5rem); text-align: center; }
   .email-signup h2 { font-family: var(--font-campaign); font-size: clamp(2.25rem, 5vw, 4.5rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.05em; line-height: .92; margin: 0; }
   .email-signup__text { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); line-height: calc(var(--body-text-line-spacing) + .1); margin: var(--space-4) auto 0; max-inline-size: 35rem; }
   .email-signup__text > :first-child { margin-block-start: 0; }
