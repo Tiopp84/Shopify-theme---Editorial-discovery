@@ -77,10 +77,12 @@
       {% endif %}
 
       {% if section.settings.show_account and shop.customer_accounts_enabled %}
-        <a class="header-shell__icon-button header-shell__account" href="{{ routes.account_url }}">
-          <span class="visually-hidden">{{ 'customer.account' | t }}</span>
-          {% render 'icon', name: 'account' %}
-        </a>
+        <shopify-account class="header-shell__account" menu="{{ section.settings.customer_account_menu | default: 'customer-account-main-menu' }}">
+          <span slot="signed-out-avatar" class="header-shell__icon-button">
+            <span class="visually-hidden">{{ 'customer.account' | t }}</span>
+            {% render 'icon', name: 'account' %}
+          </span>
+        </shopify-account>
       {% endif %}
 
       {% if section.settings.show_localization and localization.available_countries.size > 1 or section.settings.show_localization and localization.available_languages.size > 1 %}
@@ -153,10 +155,12 @@
       <span class="header-shell__task-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
     </a>
     {% if section.settings.show_account and shop.customer_accounts_enabled %}
-      <a class="header-shell__task" href="{{ routes.account_url }}">
-        {% render 'icon', name: 'account' %}
-        <span>{{ 'customer.account' | t }}</span>
-      </a>
+      <shopify-account class="header-shell__account" menu="{{ section.settings.customer_account_menu | default: 'customer-account-main-menu' }}">
+        <span slot="signed-out-avatar" class="header-shell__task">
+          {% render 'icon', name: 'account' %}
+          <span>{{ 'customer.account' | t }}</span>
+        </span>
+      </shopify-account>
     {% endif %}
   </nav>
 
@@ -622,6 +626,14 @@
     transition: transform 160ms ease;
   }
 
+  .header-shell__account {
+    --shopify-account-signed-in-avatar-color-background: var(--header-navigation-color);
+    --shopify-account-signed-in-avatar-color-text: var(--color-background);
+    --shopify-account-signed-in-avatar-size: 2.25rem;
+    color: var(--header-navigation-color);
+    display: block;
+  }
+
   @media (hover: hover) and (pointer: fine) {
     .header-shell__icon-button:hover,
     .header-shell__icon-button:focus-visible {
@@ -982,6 +994,9 @@
       line-height: 1rem;
       text-align: center;
     }
+
+    .header-shell__mobile-taskbar > .header-shell__account { min-width: 0; }
+    .header-shell__mobile-taskbar .header-shell__account { --shopify-account-signed-in-avatar-size: 3rem; }
   }
 
   @media (min-width: 48rem) and (max-width: 63.99rem) {
@@ -1131,6 +1146,7 @@
       "id": "menu",
       "label": "t:labels.menu"
     },
+    { "type": "link_list", "id": "customer_account_menu", "label": "t:labels.customer_account_menu", "default": "customer-account-main-menu" },
     { "type": "checkbox", "id": "enable_navigation", "label": "t:labels.enable_navigation", "default": true },
     { "type": "checkbox", "id": "enable_dropdown_hover", "label": "t:labels.enable_dropdown_hover", "default": true },
     { "type": "header", "content": "t:general.layout" },

@@ -418,3 +418,4 @@ Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các 
 ### 2026-08-07 — Compact header transition refinement
 
 - Desktop compact header dùng FLIP animation dựa trên kích thước thực tế thay cho nội suy `fit-content`; giữ chiều cao vùng sticky để không làm nội dung bên dưới giật vị trí. Lần tải đầu, đổi breakpoint và reduced motion chuyển trạng thái trực tiếp; các lần cuộn sau mới chạy transition.
+- Header dùng native `shopify-account` component ở action desktop và mobile taskbar, thay account URL link. Merchant có Customer account menu setting, mặc định `customer-account-main-menu`; Customer Accounts mới mở account sheet, còn Legacy tự đi tới sign-in native.
