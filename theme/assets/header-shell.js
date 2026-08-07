@@ -30,10 +30,11 @@ class HeaderShell extends HTMLElement {
     this.mobileBarDownDistance = 0;
     this.mobileBarUpDistance = 0;
     this.mobileBarThreshold = 72;
-    this.mobileBarRevealDistance = 16;
-    this.mobileBarHideDistance = 32;
-    this.mobileBarHoldDuration = 900;
+    this.mobileBarRevealDistance = 28;
+    this.mobileBarHideDistance = 72;
+    this.mobileBarHoldDuration = 1200;
     this.mobileBarLockUntil = 0;
+    this.mobileTaskbarTimer = null;
     this.wasHoldingCompactContext = false;
     this.compactContextSources = new Set();
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -99,6 +100,7 @@ class HeaderShell extends HTMLElement {
     window.clearTimeout(this.hoverCloseTimer);
     window.clearTimeout(this.navPillTextTimer);
     window.clearTimeout(this.navPillEntryTimer);
+    window.clearTimeout(this.mobileTaskbarTimer);
     window.removeEventListener('scroll', this.onScroll);
     this.reducedMotionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
     this.desktopLayoutQuery?.removeEventListener('change', this.onDesktopLayoutChange);
@@ -110,7 +112,8 @@ class HeaderShell extends HTMLElement {
     this.wasHoldingCompactContext = false;
     this.compactContextSources?.clear();
     this.hideMobileTaskbar();
-    this.classList.remove('header-shell--compact', 'header-shell--scrolled');
+    window.clearTimeout(this.mobileTaskbarTimer);
+    this.classList.remove('header-shell--compact', 'header-shell--scrolled', 'header-shell--mobile-taskbar-entering', 'header-shell--mobile-taskbar', 'header-shell--mobile-taskbar-leaving');
     this.initialized = false;
   }
 
@@ -395,7 +398,7 @@ class HeaderShell extends HTMLElement {
   }
 
   updateMobileTaskbar({ scrollY, delta, dialogOpen }) {
-    const taskbarVisible = this.classList.contains('header-shell--mobile-taskbar');
+    const taskbarVisible = this.mobileTaskbarIsVisible();
 
     if (dialogOpen) {
       return;
@@ -434,16 +437,50 @@ class HeaderShell extends HTMLElement {
   }
 
   showMobileTaskbar() {
-    this.classList.add('header-shell--mobile-taskbar');
-    this.headerInner?.setAttribute('inert', '');
+    if (this.mobileTaskbarIsVisible() && !this.classList.contains('header-shell--mobile-taskbar-leaving')) return;
+    window.clearTimeout(this.mobileTaskbarTimer);
+    this.classList.remove('header-shell--mobile-taskbar-leaving');
+    this.classList.add('header-shell--mobile-taskbar-entering');
+    this.headerInner?.removeAttribute('inert');
     this.mobileTaskbar?.removeAttribute('inert');
+    this.mobileTaskbarTimer = window.setTimeout(() => {
+      if (!this.classList.contains('header-shell--mobile-taskbar-entering')) return;
+      this.classList.remove('header-shell--mobile-taskbar-entering');
+      this.classList.add('header-shell--mobile-taskbar');
+      this.headerInner?.setAttribute('inert', '');
+    }, this.reducedMotionQuery.matches ? 0 : 340);
     this.mobileBarLockUntil = performance.now() + this.mobileBarHoldDuration;
   }
 
   hideMobileTaskbar() {
+    window.clearTimeout(this.mobileTaskbarTimer);
+    if (this.classList.contains('header-shell--mobile-taskbar-entering')) {
+      this.classList.remove('header-shell--mobile-taskbar-entering');
+      this.headerInner?.removeAttribute('inert');
+      this.mobileTaskbar?.setAttribute('inert', '');
+      return;
+    }
+
+    if (!this.classList.contains('header-shell--mobile-taskbar')) {
+      this.classList.remove('header-shell--mobile-taskbar-leaving');
+      this.headerInner?.removeAttribute('inert');
+      this.mobileTaskbar?.setAttribute('inert', '');
+      return;
+    }
+
     this.classList.remove('header-shell--mobile-taskbar');
+    this.classList.add('header-shell--mobile-taskbar-leaving');
     this.headerInner?.removeAttribute('inert');
-    this.mobileTaskbar?.setAttribute('inert', '');
+    this.mobileTaskbarTimer = window.setTimeout(() => {
+      this.classList.remove('header-shell--mobile-taskbar-leaving');
+      this.mobileTaskbar?.setAttribute('inert', '');
+    }, this.reducedMotionQuery.matches ? 0 : 340);
+  }
+
+  mobileTaskbarIsVisible() {
+    return this.classList.contains('header-shell--mobile-taskbar-entering')
+      || this.classList.contains('header-shell--mobile-taskbar')
+      || this.classList.contains('header-shell--mobile-taskbar-leaving');
   }
 
   mobileTaskbarIsLocked() {
