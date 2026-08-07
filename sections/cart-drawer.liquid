@@ -3,9 +3,10 @@
   for discount in cart.cart_level_discount_applications
     assign cart_discount_total = cart_discount_total | plus: discount.total_allocated_amount
   endfor
+  assign checkout_note = settings.cart_checkout_note | strip
 %}
 
-<cart-drawer class="cart-drawer" data-cart-drawer data-cart-url="{{ routes.cart_url }}" data-cart-currency="{{ cart.currency.iso_code }}" data-cart-total-cents="{{ cart.total_price }}" data-cart-discount-cents="{{ cart_discount_total }}" data-cart-note="{{ cart.note | escape }}" data-cart-empty-text="{{ 'cart.empty_text' | t | escape }}" data-cart-continue-shopping="{{ 'cart.continue_shopping' | t | escape }}" data-cart-view-cart="{{ 'cart.view_cart' | t | escape }}" data-cart-subtotal-label="{{ 'cart.subtotal' | t | escape }}" data-cart-checkout-label="{{ 'cart.checkout' | t | escape }}" data-cart-updating-label="{{ 'cart.updating' | t | escape }}" data-cart-taxes-note="{{ 'cart.taxes_and_shipping_at_checkout' | t | escape }}" data-cart-remove-label="{{ 'cart.remove' | t | escape }}" data-cart-decrease-label="{{ 'cart.decrease_quantity' | t | escape }}" data-cart-increase-label="{{ 'cart.increase_quantity' | t | escape }}" data-cart-each-label="{{ 'cart.each' | t | escape }}" data-cart-show-note="{{ settings.cart_show_note }}" data-cart-note-label="{{ 'cart.note' | t | escape }}" data-cart-note-placeholder="{{ 'cart.note_placeholder' | t | escape }}" data-cart-note-saving-message="{{ 'cart.note_saving' | t | escape }}" data-cart-note-saved-message="{{ 'cart.note_saved' | t | escape }}" data-cart-note-error-message="{{ 'cart.note_error' | t | escape }}">
+<cart-drawer class="cart-drawer" data-cart-drawer data-cart-url="{{ routes.cart_url }}" data-cart-currency="{{ cart.currency.iso_code }}" data-cart-total-cents="{{ cart.total_price }}" data-cart-discount-cents="{{ cart_discount_total }}" data-cart-note="{{ cart.note | escape }}" data-cart-empty-text="{{ 'cart.empty_text' | t | escape }}" data-cart-continue-shopping="{{ 'cart.continue_shopping' | t | escape }}" data-cart-view-cart="{{ 'cart.view_cart' | t | escape }}" data-cart-subtotal-label="{{ 'cart.subtotal' | t | escape }}" data-cart-checkout-label="{{ 'cart.checkout' | t | escape }}" data-cart-updating-label="{{ 'cart.updating' | t | escape }}" data-cart-taxes-note="{{ checkout_note | escape }}" data-cart-has-taxes-note="{% if checkout_note != blank %}true{% else %}false{% endif %}" data-cart-remove-label="{{ 'cart.remove' | t | escape }}" data-cart-decrease-label="{{ 'cart.decrease_quantity' | t | escape }}" data-cart-increase-label="{{ 'cart.increase_quantity' | t | escape }}" data-cart-each-label="{{ 'cart.each' | t | escape }}" data-cart-show-note="{{ settings.cart_show_note }}" data-cart-note-label="{{ 'cart.note' | t | escape }}" data-cart-note-placeholder="{{ 'cart.note_placeholder' | t | escape }}" data-cart-note-saving-message="{{ 'cart.note_saving' | t | escape }}" data-cart-note-saved-message="{{ 'cart.note_saved' | t | escape }}" data-cart-note-error-message="{{ 'cart.note_error' | t | escape }}">
   <dialog class="cart-drawer__dialog" aria-labelledby="CartDrawerTitle-{{ section.id }}" data-cart-dialog data-overlay-motion="drawer-end" scroll-lock>
     <div class="cart-drawer__header" data-drawer-entrance="header">
       <h2 id="CartDrawerTitle-{{ section.id }}">{{ 'cart.title' | t }}</h2>
@@ -60,7 +61,7 @@
               </div>
             {% endif %}
             <p class="cart-drawer__subtotal"><span>{{ 'cart.subtotal' | t }}</span><strong data-cart-subtotal>{{ cart.total_price | money_with_currency }}</strong></p>
-            <p class="cart-drawer__checkout-note">{{ 'cart.taxes_and_shipping_at_checkout' | t }}</p>
+            {% if checkout_note != blank %}<p class="cart-drawer__checkout-note">{{ checkout_note | escape }}</p>{% endif %}
             <button type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
             <a href="{{ routes.cart_url }}">{{ 'cart.view_cart' | t }}</a>
           </footer>
@@ -111,7 +112,7 @@
   .cart-drawer[data-cart-pending] [data-cart-line-total], .cart-drawer[data-cart-pending] [data-cart-subtotal] { opacity: .7; }
   .cart-drawer__subtotal { display: flex; align-items: baseline; font-family: var(--product-price-font); font-size: var(--product-price-size-cart-line); justify-content: space-between; gap: var(--space-4); margin: 0; }
   .cart-drawer__subtotal strong { font-size: var(--product-price-size-cart-total); }
-  .cart-drawer__checkout-note { color: color-mix(in srgb, var(--color-foreground) 68%, var(--color-background)); font-size: .85em; }
+  .cart-drawer__checkout-note { color: color-mix(in srgb, var(--color-foreground) 68%, var(--color-background)); font-size: .85em; white-space: pre-line; }
   .cart-drawer__footer [name='checkout'] { inline-size: 100%; min-block-size: var(--button-theme-height); font-family: var(--button-theme-font); font-size: var(--button-theme-font-size); font-weight: 700; letter-spacing: var(--button-theme-letter-spacing); text-transform: uppercase; }
   .cart-drawer__footer [name='checkout'][data-cart-checkout-loading] { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; }
   .cart-drawer__footer [name='checkout'][data-cart-checkout-loading]::before { content: ''; inline-size: .85rem; block-size: .85rem; border: 2px solid currentcolor; border-inline-end-color: transparent; border-radius: 50%; animation: cart-checkout-spin .7s linear infinite; }

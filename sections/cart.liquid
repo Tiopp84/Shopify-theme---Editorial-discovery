@@ -3,6 +3,7 @@
   for discount in cart.cart_level_discount_applications
     assign cart_discount_total = cart_discount_total | plus: discount.total_allocated_amount
   endfor
+  assign checkout_note = settings.cart_checkout_note | strip
 %}
 
 <cart-page class="main-cart" data-cart-page data-cart-url="{{ routes.cart_url }}" data-cart-currency="{{ cart.currency.iso_code }}" data-cart-total-cents="{{ cart.total_price }}" data-cart-discount-cents="{{ cart_discount_total }}" data-cart-note="{{ cart.note | escape }}" data-cart-updating-label="{{ 'cart.updating' | t | escape }}" data-cart-note-saving-message="{{ 'cart.note_saving' | t | escape }}" data-cart-note-saved-message="{{ 'cart.note_saved' | t | escape }}" data-cart-note-error-message="{{ 'cart.note_error' | t | escape }}" data-cart-update-message="{{ 'cart.quantity_updated' | t | escape }}">
@@ -80,7 +81,7 @@
           <span>{{ 'cart.subtotal' | t }}</span>
           <strong data-cart-page-subtotal>{{ cart.total_price | money_with_currency }}</strong>
         </div>
-        <p class="main-cart__checkout-note">{{ 'cart.taxes_and_shipping_at_checkout' | t }}</p>
+        {% if checkout_note != blank %}<p class="main-cart__checkout-note">{{ checkout_note | escape }}</p>{% endif %}
         <p class="main-cart__status" role="status" aria-live="polite" data-cart-page-status hidden></p>
         {% if cart.cart_level_discount_applications.size > 0 %}
           <ul class="main-cart__discounts" role="list">
@@ -149,7 +150,7 @@
   .main-cart__summary h2 { border-block-end: 1px solid var(--color-border); padding-block-end: var(--space-4); }
   .main-cart__summary-total { display: flex; justify-content: space-between; gap: var(--space-4); font-family: var(--product-price-font); font-size: var(--product-price-size-cart-line); }
   .main-cart__summary-total strong { font-size: var(--product-price-size-cart-total); white-space: nowrap; }
-  .main-cart__checkout-note { color: color-mix(in srgb, var(--color-foreground) 67%, var(--color-background)); font-size: .72rem; }
+  .main-cart__checkout-note { color: color-mix(in srgb, var(--color-foreground) 67%, var(--color-background)); font-size: .72rem; white-space: pre-line; }
   .main-cart__note { display: grid; gap: var(--space-3); border-block-start: 1px solid var(--color-border); padding-block-start: var(--space-4); }
   .main-cart__note textarea { min-block-size: 6.25rem; resize: vertical; font-size: .78rem; }
   .main-cart__note-status { color: color-mix(in srgb, var(--color-foreground) 62%, var(--color-background)); font-size: .72rem; }
