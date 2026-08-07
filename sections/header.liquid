@@ -251,9 +251,10 @@
     display: block;
     border-block-end: 1px solid var(--color-border);
     background: var(--header-background-color);
+    min-block-size: var(--header-height);
     position: relative;
     z-index: 1;
-    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease, border-color 180ms ease;
+    transition: background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .header-shell--scrolled {
@@ -291,7 +292,7 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: clamp(var(--space-6), 3vw, var(--space-8));
-    transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1), min-height 280ms cubic-bezier(0.22, 1, 0.36, 1), margin 280ms cubic-bezier(0.22, 1, 0.36, 1), padding 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 180ms ease, box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: min-height 280ms cubic-bezier(0.22, 1, 0.36, 1), margin 280ms cubic-bezier(0.22, 1, 0.36, 1), padding 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 180ms ease, box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @media (min-width: 64rem) {
