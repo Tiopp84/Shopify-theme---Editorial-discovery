@@ -2,10 +2,15 @@ class AboutHeroController {
   constructor(section) {
     this.section = section;
     this.slides = [...section.querySelectorAll('[data-about-hero-slide]')];
+    this.stage = section.querySelector('.about-hero__slides');
     this.previousButton = section.querySelector('[data-about-hero-previous]');
     this.nextButton = section.querySelector('[data-about-hero-next]');
     this.current = section.querySelector('[data-about-hero-current]');
     this.index = 0;
+    this.stagePointer = null;
+    this.dragTarget = null;
+    this.dragDirection = null;
+    this.isTransitioning = false;
     this.timer = null;
     this.transitionTimer = null;
     this.observer = null;
@@ -17,6 +22,10 @@ class AboutHeroController {
     this.onFocusIn = () => this.stopAutoplay();
     this.onFocusOut = () => this.startAutoplay();
     this.onMotionChange = () => this.handleMotionPreference();
+    this.onStagePointerDown = (event) => this.startStageSwipe(event);
+    this.onStagePointerMove = (event) => this.moveStageSwipe(event);
+    this.onStagePointerUp = (event) => this.endStageSwipe(event);
+    this.onStagePointerCancel = () => this.cancelStageSwipe();
   }
 
   init() {
@@ -35,6 +44,10 @@ class AboutHeroController {
     this.section.addEventListener('pointerleave', this.onPointerLeave);
     this.section.addEventListener('focusin', this.onFocusIn);
     this.section.addEventListener('focusout', this.onFocusOut);
+    this.stage?.addEventListener('pointerdown', this.onStagePointerDown);
+    this.stage?.addEventListener('pointermove', this.onStagePointerMove);
+    this.stage?.addEventListener('pointerup', this.onStagePointerUp);
+    this.stage?.addEventListener('pointercancel', this.onStagePointerCancel);
     this.reducedMotion.addEventListener('change', this.onMotionChange);
     this.handleMotionPreference();
   }
@@ -73,8 +86,107 @@ class AboutHeroController {
     this.startAutoplay();
   }
 
+  startStageSwipe(event) {
+    if (event.pointerType !== 'touch' || this.slides.length < 2 || this.isTransitioning) return;
+    this.stagePointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    this.stage?.setPointerCapture?.(event.pointerId);
+  }
+
+  moveStageSwipe(event) {
+    const pointer = this.stagePointer;
+    if (!pointer || pointer.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    const deltaY = event.clientY - pointer.y;
+    if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    event.preventDefault();
+    const direction = deltaX < 0 ? 1 : -1;
+    const target = this.prepareDragPreview(direction);
+    const distance = Math.max(this.stage?.clientWidth || 0, 1);
+    this.setDragOffset(this.slides[this.index], deltaX);
+    this.setDragOffset(target, direction * distance + deltaX);
+  }
+
+  endStageSwipe(event) {
+    const pointer = this.stagePointer;
+    this.stagePointer = null;
+    if (!pointer || pointer.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    const deltaY = event.clientY - pointer.y;
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      this.snapBackStage();
+      return;
+    }
+    this.commitStageSwipe(deltaX < 0 ? 1 : -1);
+  }
+
+  prepareDragPreview(direction) {
+    if (this.dragTarget && this.dragDirection === direction) return this.dragTarget;
+    this.clearDragPreview();
+    const target = this.slides[(this.index + direction + this.slides.length) % this.slides.length];
+    target.classList.add('is-drag-preview');
+    target.style.opacity = '1';
+    this.dragTarget = target;
+    this.dragDirection = direction;
+    return target;
+  }
+
+  setDragOffset(slide, offset) {
+    if (!slide) return;
+    slide.style.transition = 'none';
+    slide.style.transform = `translate3d(${offset}px, 0, 0)`;
+  }
+
+  snapBackStage() {
+    const source = this.slides[this.index];
+    const target = this.dragTarget;
+    [source, target].filter(Boolean).forEach((slide) => {
+      slide.style.transition = 'transform 220ms cubic-bezier(.22, 1, .36, 1), opacity 220ms ease';
+    });
+    source?.style.removeProperty('transform');
+    if (target) target.style.transform = `translate3d(${this.dragDirection * Math.max(this.stage?.clientWidth || 0, 1)}px, 0, 0)`;
+    window.setTimeout(() => this.clearDragPreview(), 240);
+  }
+
+  commitStageSwipe(direction) {
+    const source = this.slides[this.index];
+    const target = this.dragTarget || this.prepareDragPreview(direction);
+    if (!source || !target) return;
+    this.isTransitioning = true;
+    const distance = Math.max(this.stage?.clientWidth || 0, 1);
+    [source, target].forEach((slide) => { slide.style.transition = 'transform 380ms cubic-bezier(.22, 1, .36, 1), opacity 380ms ease'; });
+    source.style.transform = `translate3d(${-direction * distance}px, 0, 0)`;
+    target.style.transform = 'translate3d(0, 0, 0)';
+    window.setTimeout(() => {
+      source.classList.remove('is-active');
+      target.classList.add('is-active');
+      this.index = this.slides.indexOf(target);
+      this.slides.forEach((slide, index) => { slide.setAttribute('aria-hidden', String(index !== this.index)); slide.inert = index !== this.index; });
+      if (this.current) this.current.textContent = String(this.index + 1);
+      this.clearDragPreview();
+      this.isTransitioning = false;
+      this.startAutoplay();
+    }, 400);
+  }
+
+  clearDragPreview() {
+    this.slides.forEach((slide) => {
+      if (!slide.classList.contains('is-drag-preview') && !slide.style.transform) return;
+      slide.classList.remove('is-drag-preview');
+      slide.style.removeProperty('transition');
+      slide.style.removeProperty('transform');
+      slide.style.removeProperty('opacity');
+    });
+    this.dragTarget = null;
+    this.dragDirection = null;
+  }
+
+  cancelStageSwipe() {
+    this.stagePointer = null;
+    this.snapBackStage();
+  }
+
   activate(nextIndex, userInitiated = false) {
-    if (this.slides.length < 2) return;
+    if (this.slides.length < 2 || this.isTransitioning) return;
     const next = (nextIndex + this.slides.length) % this.slides.length;
     if (next === this.index) return;
 
@@ -136,6 +248,10 @@ class AboutHeroController {
     this.section.removeEventListener('pointerleave', this.onPointerLeave);
     this.section.removeEventListener('focusin', this.onFocusIn);
     this.section.removeEventListener('focusout', this.onFocusOut);
+    this.stage?.removeEventListener('pointerdown', this.onStagePointerDown);
+    this.stage?.removeEventListener('pointermove', this.onStagePointerMove);
+    this.stage?.removeEventListener('pointerup', this.onStagePointerUp);
+    this.stage?.removeEventListener('pointercancel', this.onStagePointerCancel);
     this.reducedMotion.removeEventListener('change', this.onMotionChange);
     this.section.classList.remove('about-hero--motion-enabled', 'is-revealed');
   }

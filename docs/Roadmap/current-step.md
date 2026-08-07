@@ -414,3 +414,7 @@ Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các 
 - Predictive search dùng quota riêng theo từng resource type (`limit_scope=each`, tối đa 4 mỗi loại), nên Page/Article không thể chiếm hết vị trí khiến Product biến mất với truy vấn ngắn. Cần kiểm tra trên storefront preview với truy vấn một ký tự và query sản phẩm đặc trưng.
 - Trang search sau khi submit bổ sung nhóm `Suggested products` từ Predictive Search (chỉ Product, tối đa 4), giữ nguyên `search.results` chuẩn bên dưới và loại các Product trùng lặp. Preview endpoint với `c` xác nhận trả bốn Product card; Theme Check pass 78 files.
 - Chuyển Search behavior từ Header section vào global Search settings; bổ sung lựa chọn nội dung predictive dropdown (Products only hoặc Products + content). Header desktop/mobile và predictive form cùng dùng token global; trang Enter vẫn giữ kết quả chuẩn không bị lọc.
+
+### 2026-08-07 — Compact header transition refinement
+
+- Desktop compact header dùng FLIP animation dựa trên kích thước thực tế thay cho nội suy `fit-content`; giữ chiều cao vùng sticky để không làm nội dung bên dưới giật vị trí. Lần tải đầu, đổi breakpoint và reduced motion chuyển trạng thái trực tiếp; các lần cuộn sau mới chạy transition.
