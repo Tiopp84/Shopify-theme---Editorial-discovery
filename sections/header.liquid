@@ -5,7 +5,8 @@
 {% assign has_navigation = false %}
 {% assign brand_name = settings.brand_name | default: shop.name %}
 {% assign cart_icon = settings.cart_icon | default: 'bag' %}
-{% if section.settings.enable_navigation != false and section.settings.menu != blank %}
+{% assign navigation_menu = section.settings.menu | default: linklists['main-menu'] %}
+{% if section.settings.enable_navigation != false and navigation_menu != blank %}
   {% assign has_navigation = true %}
 {% endif %}
 <header-shell
@@ -42,7 +43,7 @@
     {% if has_navigation %}
       <nav class="header-shell__desktop-nav" aria-label="{{ 'accessibility.primary_navigation' | t }}">
         <span class="header-shell__desktop-nav-pill" aria-hidden="true"></span>
-        {% for link in section.settings.menu.links %}
+        {% for link in navigation_menu.links %}
           {% if link.links != blank %}
             <details class="header-shell__nav-group">
               <summary>{{ link.title | escape }}</summary>
@@ -180,7 +181,7 @@
 
     <nav class="header-shell__mobile-nav" aria-label="{{ 'accessibility.mobile_navigation' | t }}" data-mobile-menu>
       <div class="header-shell__mobile-menu-root" data-mobile-menu-root>
-        {% for link in section.settings.menu.links %}
+        {% for link in navigation_menu.links %}
           {% if link.links != blank %}
             {% assign submenu_id = 'MobileSubmenu-' | append: section.id | append: '-' | append: forloop.index %}
             <details class="header-shell__mobile-nav-group">
@@ -199,7 +200,7 @@
         {% endfor %}
       </div>
 
-      {% for link in section.settings.menu.links %}
+      {% for link in navigation_menu.links %}
         {% if link.links != blank %}
           {% assign submenu_id = 'MobileSubmenu-' | append: section.id | append: '-' | append: forloop.index %}
           <section
@@ -897,6 +898,24 @@
 
     .header-shell__localization { display: none; }
 
+    /* Navigation is a bottom sheet throughout compact and tablet layouts. The
+     * dialog owns the viewport constraint; the menu list is the scroll region. */
+    dialog.header-shell__drawer {
+      inset: auto 0 0;
+      inline-size: min(100%, 46rem);
+      block-size: auto;
+      max-block-size: min(82dvh, 48rem);
+      margin: 0 auto;
+      padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+      border-radius: .9rem .9rem 0 0;
+      overflow: hidden;
+    }
+
+    dialog.header-shell__drawer[open] { display: flex; flex-direction: column; }
+    dialog.header-shell__drawer[data-overlay-motion='drawer-start'] { --overlay-enter-transform: translate3d(0, 100%, 0); }
+    .header-shell__drawer .header-shell__drawer-header { flex: 0 0 auto; }
+    .header-shell__drawer .header-shell__mobile-nav { min-block-size: 0; overflow-y: auto; overscroll-behavior: contain; }
+
     .header-shell__menu-button {
       grid-column: 1;
       grid-row: 1;
@@ -917,6 +936,8 @@
       transform: translateY(-100%);
     }
 
+    .header-shell__inner { transition-duration: 320ms, 320ms, 320ms, 320ms, 320ms, 320ms; }
+
     .header-shell__mobile-taskbar {
       position: fixed;
       display: grid;
@@ -936,15 +957,15 @@
       opacity: 0;
       pointer-events: none;
       transform: translateY(calc(100% + env(safe-area-inset-bottom) + var(--space-4)));
-      transition: opacity 180ms ease, transform 260ms cubic-bezier(.16, 1, .3, 1), visibility 0s linear 260ms;
+      transition: opacity 220ms ease, transform 320ms cubic-bezier(.22, 1, .36, 1), visibility 0s linear 320ms;
       visibility: hidden;
     }
 
-    .header-shell--mobile-taskbar .header-shell__mobile-taskbar {
+    .header-shell:is(.header-shell--mobile-taskbar-entering, .header-shell--mobile-taskbar, .header-shell--mobile-taskbar-leaving) .header-shell__mobile-taskbar {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
-      transition-delay: 40ms, 40ms, 0s;
+      transition-delay: 0s, 0s, 0s;
       visibility: visible;
     }
 
@@ -1043,10 +1064,6 @@
       justify-self: center;
     }
 
-    .header-shell__account {
-      display: none;
-    }
-
     dialog.header-shell__search-dialog[data-overlay-motion='drawer-end'] {
       inset: auto 0 0;
       width: 100%;
@@ -1056,21 +1073,6 @@
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
       border-radius: 0.9rem 0.9rem 0 0;
       overflow: hidden;
-      --overlay-enter-transform: translate3d(0, 100%, 0);
-    }
-
-    .header-shell__drawer {
-      inset: auto 0 0;
-      width: 100%;
-      height: auto;
-      max-height: 82dvh;
-      margin: 0;
-      padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
-      border-radius: 0.9rem 0.9rem 0 0;
-      overflow: auto;
-    }
-
-    dialog.header-shell__drawer[data-overlay-motion='drawer-start'] {
       --overlay-enter-transform: translate3d(0, 100%, 0);
     }
 

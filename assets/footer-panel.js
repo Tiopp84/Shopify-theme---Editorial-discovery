@@ -5,29 +5,30 @@ class FooterPanelController {
     this.footer = document.querySelector('[data-footer-panel]');
     this.spacer = document.querySelector('.footer-panel-spacer');
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.desktopLayout = window.matchMedia('(min-width: 64rem)');
     this.frame = null;
 
-    if (!this.panel || !this.footer || !this.spacer || this.reducedMotion.matches) return;
+    if (!this.panel || !this.footer || !this.spacer) return;
 
     this.onScroll = () => this.scheduleUpdate();
     this.onResize = () => this.scheduleUpdate();
     this.onMotionChange = () => this.refresh();
+    this.onLayoutChange = () => this.refresh();
     this.onSectionChange = () => this.refresh();
     this.resizeObserver = window.ResizeObserver
       ? new ResizeObserver(() => this.scheduleUpdate())
       : null;
-    this.resizeObserver?.observe(this.footer);
-    this.root.classList.add('footer-panel-ready');
     window.addEventListener('scroll', this.onScroll, { passive: true });
     window.addEventListener('resize', this.onResize, { passive: true });
     this.reducedMotion.addEventListener('change', this.onMotionChange);
+    this.desktopLayout.addEventListener('change', this.onLayoutChange);
     document.addEventListener('shopify:section:load', this.onSectionChange);
     document.addEventListener('shopify:section:unload', this.onSectionChange);
-    this.update();
+    this.refresh();
   }
 
   refresh() {
-    if (this.reducedMotion.matches) {
+    if (this.reducedMotion.matches || !this.desktopLayout.matches) {
       this.clearState();
       return;
     }
@@ -46,6 +47,8 @@ class FooterPanelController {
 
   clearState() {
     this.resizeObserver?.disconnect();
+    if (this.frame) window.cancelAnimationFrame(this.frame);
+    this.frame = null;
     this.root.classList.remove('footer-panel-ready');
     [
       '--footer-panel-edge-progress',
@@ -66,7 +69,7 @@ class FooterPanelController {
   }
 
   update() {
-    if (this.reducedMotion.matches || !this.footer?.isConnected) return;
+    if (this.reducedMotion.matches || !this.desktopLayout.matches || !this.footer?.isConnected) return;
     const footerHeight = this.footer.offsetHeight;
     if (!footerHeight) return;
 
