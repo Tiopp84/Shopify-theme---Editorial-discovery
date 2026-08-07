@@ -21,6 +21,12 @@ body {
   z-index: 1;
 }
 
+#MainContent:has(.page-template--reading),
+.site-panel:has(.page-template--reading),
+body:has(.page-template--reading) .footer-panel-spacer {
+  background: color-mix(in srgb, var(--color-foreground) 3%, var(--color-background));
+}
+
 html:has(dialog[scroll-lock][open], details[scroll-lock][open]),
 html.quick-add-modal-open,
 html.product-gallery-modal-open,

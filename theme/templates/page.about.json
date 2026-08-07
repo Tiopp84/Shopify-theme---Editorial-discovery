@@ -1,0 +1,25 @@
+{
+  "sections": {
+    "about-hero": {
+      "type": "about-hero",
+      "blocks": {
+        "slide-1": { "type": "slide", "settings": {} }
+      },
+      "block_order": ["slide-1"],
+      "settings": {}
+    },
+    "about-story": { "type": "about-story", "settings": {} },
+    "about-values": {
+      "type": "about-values",
+      "blocks": {
+        "value-1": { "type": "value", "settings": { "heading": "Considered by design", "text": "<p>Every detail earns its place, from silhouette and fabric to the way a piece is worn over time.</p>" } },
+        "value-2": { "type": "value", "settings": { "heading": "Easy to return to", "text": "<p>Relaxed proportions and useful details make each piece part of the everyday, not just the occasion.</p>" } },
+        "value-3": { "type": "value", "settings": { "heading": "Personal by nature", "text": "<p>We leave room for individual expression, so the collection can become entirely your own.</p>" } }
+      },
+      "block_order": ["value-1", "value-2", "value-3"],
+      "settings": {}
+    },
+    "about-closing": { "type": "about-closing", "settings": {} }
+  },
+  "order": ["about-hero", "about-story", "about-values", "about-closing"]
+}

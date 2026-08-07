@@ -5,6 +5,12 @@
     "article_sidebar": "Article sidebar",
     "announcement": "Announcement",
     "announcement_bar": "Announcement bar",
+    "about_closing": "About closing",
+    "about_hero": "About hero",
+    "about_story": "About story",
+    "about_slide": "Slide",
+    "about_value": "Brand value",
+    "about_values": "Brand values",
     "all_products_header": "All products header",
     "brand": "Brand",
     "block": "Block",
@@ -105,6 +111,8 @@
     "craft_editorial": "Craft & editorial"
   },
   "descriptions": {
+    "about_text_protection": "Darkens your image to ensure your text is readable.",
+    "autoplay_interval": "Sets the full cycle from this slide entering until the next slide begins.",
     "base_font": "Used for regular text, navigation, and product titles.",
     "brand_name": "Optional. Replaces the displayed store name in the header, footer, password page, and social site name. It does not change your Shopify store name or SEO page titles.",
     "feature_heading_font": "Used for large headings in image-led sections.",
@@ -117,8 +125,10 @@
     "shoppable_hero_layout_context": "Content is shared between desktop and mobile. Image, layout, hotspots, and style settings apply only to the selected layout."
   },
   "labels": {
+    "about_text_protection": "Text protection",
     "alignment": "Alignment",
     "announcement_animation": "Text animation",
+    "autoplay_interval": "Autoplay interval",
     "article_media_presentation": "Article media presentation",
     "blog_card_density": "Article card density",
     "collection_description_alignment": "Collection description alignment",
@@ -191,6 +201,7 @@
     "horizontal_padding": "Horizontal padding",
     "card_title_size": "Collection card title size",
     "cart_icon": "Cart icon",
+    "cart_checkout_note": "Checkout note",
     "cart_type": "Cart type",
     "columns_desktop": "Desktop columns",
     "content_alignment": "Content alignment",
@@ -273,6 +284,7 @@
     "desktop_product_rows": "Rows of products on desktop",
     "description": "Description",
     "enable_footer_panel_transition": "Enable page panel transition into footer",
+    "enable_autoplay": "Auto-rotate slides",
     "enable_filtering": "Enable filtering",
     "enable_navigation": "Enable navigation",
     "enable_dropdown_hover": "Open dropdowns on hover",

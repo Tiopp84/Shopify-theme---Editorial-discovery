@@ -52,6 +52,7 @@
   "accessibility": {
     "scrolling_text": "Scrolling text",
     "announcement": "Announcement",
+    "about_hero": "About hero",
     "breadcrumb": "Breadcrumb",
     "close_menu": "Close menu",
     "footer_navigation": "Footer navigation",
