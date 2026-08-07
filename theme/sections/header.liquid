@@ -1064,6 +1064,11 @@
       justify-self: center;
     }
 
+    .header-shell__actions { gap: 0; }
+    .header-shell__actions .header-shell__icon-button { min-inline-size: 2.25rem; min-block-size: 2.25rem; }
+    .header-shell__actions > .header-shell__account { inline-size: 2.25rem; --shopify-account-signed-in-avatar-size: 2.25rem; }
+    .header-shell__actions > :first-child { translate: .5rem 0; }
+
     dialog.header-shell__search-dialog[data-overlay-motion='drawer-end'] {
       inset: auto 0 0;
       width: 100%;
