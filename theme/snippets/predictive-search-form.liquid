@@ -4,6 +4,7 @@
   @param {string} context_id - Unique suffix for input and result IDs.
   @param {string} [search_terms] - Existing search terms.
   @param {boolean} [in_drawer] - Use drawer-contained result presentation.
+  @param {boolean} [suppress_focus_open] - Do not open existing-term suggestions on focus.
 {% enddoc %}
 
 {% assign predictive_resource_types = 'product' %}
@@ -18,6 +19,7 @@
   data-loading-text="{{ 'search.predictive.loading' | t | escape }}"
   data-updated-text="{{ 'search.predictive.updated' | t | escape }}"
   data-error-text="{{ 'search.predictive.error' | t | escape }}"
+  {% if suppress_focus_open %}data-suppress-focus-open="true"{% endif %}
 >
   <form class="search-form" action="{{ routes.search_url }}" method="get" role="search">
     <label class="visually-hidden" for="SearchInput-{{ context_id }}">{{ 'search.placeholder' | t }}</label>

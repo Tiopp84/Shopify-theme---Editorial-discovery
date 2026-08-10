@@ -1,0 +1,25 @@
+{% if block.settings.custom_liquid != blank or request.visual_preview_mode %}
+  <div class="product-custom-liquid" {{ block.shopify_attributes }}>
+    {% if block.settings.custom_liquid != blank %}
+      {{ block.settings.custom_liquid }}
+    {% elsif request.visual_preview_mode %}
+      <p>{{ 'custom_liquid.preview' | t }}</p>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-custom-liquid > :first-child { margin-block-start: 0; }
+  .product-custom-liquid > :last-child { margin-block-end: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.custom_liquid",
+  "class": "product-block product-block--custom-liquid",
+  "settings": [
+    { "type": "liquid", "id": "custom_liquid", "label": "t:labels.custom_liquid" }
+  ],
+  "presets": [{ "name": "t:general.custom_liquid" }]
+}
+{% endschema %}

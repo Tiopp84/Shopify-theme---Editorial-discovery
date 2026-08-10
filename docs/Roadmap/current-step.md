@@ -15,8 +15,8 @@
 
 | Trường | Giá trị |
 |---|---|
-| Cập nhật lần cuối | 2026-08-06 (Asia/Ho_Chi_Minh) |
-| Phase | Phase 8 — Secondary templates |
+| Cập nhật lần cuối | 2026-08-10 (Asia/Ho_Chi_Minh) |
+| Phase | Requirement remediation — GAP-07; Phase 8 deferred, not achieved |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
@@ -24,7 +24,7 @@
 
 ## Mục tiêu đang thực hiện
 
-Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các template phụ với dữ liệu thật/rỗng, giữ Shopify là nguồn sự thật và không mở rộng scope ngoài roadmap đã khóa.
+Remediate Shopify Theme Store P0 requirement gaps while keeping Phase 8 Secondary templates deferred (not achieved). Current slice: GAP-07 Custom Liquid; merchant-authored Liquid remains explicitly scoped and no unrelated scope expands.
 
 ## Đã hoàn thành
 
@@ -54,6 +54,16 @@ Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các 
 - [x] Review Phase 2 exit criteria: clean development-store render, local validator, Theme Check và CI đều đạt; cho phép chuyển sang Phase 3.
 
 ## Đang thực hiện
+
+- [ ] GAP-07 Custom Liquid: Added a standalone `custom-liquid` section for every JSON storefront template and a `product-custom-liquid` block in the Product section’s explicit allowlist. Both use Shopify's native `liquid` setting, omit blank storefront output and provide Theme Editor preview text. Static verification passes (validator: 144 files, 192 storefront keys, 499 schema keys; Theme Check: 88 files, zero offenses; `git diff --check`), 2026-08-10. Theme Editor add/remove/reorder and real merchant Liquid output remain to be evidenced.
+
+- [ ] GAP-06 three-level navigation: Desktop renders a native nested disclosure for a child link that has grandchildren, including a destination-preserving `View all` link; Mobile renders the same third level in both no-JavaScript fallback and the enhanced top-level panel. Existing menu dialog, Escape/outside-close and focus-restoration ownership remains with `header-shell`. Static verification passes (validator: 142 files, 191 storefront keys, 497 schema keys; Theme Check: 86 files, zero offenses; `git diff --check`), 2026-08-10. Live evidence still needs a real 1/2/3-level menu, long labels, keyboard traversal and Theme Editor persistence.
+
+- [ ] GAP-01 PDP accelerated checkout: Product form exposes a merchant-owned `Show dynamic checkout button` checkbox, default on. When enabled it renders native `form | payment_button` with no theme styling of branded button internals; when disabled no dynamic checkout surface is output. Product-form and Cart Drawer submit interception explicitly leave a payment-button submission to Shopify, while normal Add to cart retains inventory preflight and cart-mode behavior. Static verification and Shopify Preview provider/handoff evidence are pending, 2026-08-09.
+
+- [ ] GAP-02 Search facets: `search-discovery` now owns Search-specific Section Rendering for Shopify-native `search.filters`, `search.sort_options`, active filters and pagination. Its GET URL is source of truth; it preserves `q`, aborts stale requests, updates history only after valid output, atomically replaces the complete response boundary and restores drawer group/focus continuity. Filter/sort controls auto-apply on checkbox/radio/select change, sort supports click-out/Escape close, and the desktop Sidebar/Drawer setting plus mobile bottom sheet mirrors Collection without sharing Collection's controller. Controls only render when the current results include a product; no-JavaScript forms remain valid, including Drawer mode. Merchant controls `Enable filtering` and `Enable sorting`, both default on. Static verification passes (validator: 142 files, 191 storefront keys, 497 schema keys; Theme Check: 86 files, zero offenses; `git diff --check`), 2026-08-10. Live Search filters need Admin configuration plus browser evidence for combinations, clear/remove, sorting, pagination, zero/mixed results and responsive keyboard use.
+
+- [ ] Week 1 fixture and evidence preparation: `QA/phase-8-owner-review.md` now defines the exact Shopify Preview/Theme Editor fixture and evidence matrix for Page, Contact, FAQ, Blog, Article, Collections, Search, 404, Password and Gift Card. Shopify CLI is installed and the configured preview returned HTTP 200 for home, representative product, collection, search, password, Contact, FAQ, About, Size guide, Blog and Article routes; an intentional invalid route returned 404. The inspected route HTML had no Liquid/translation/server-error marker, and Contact/FAQ markup was present. Public fixtures include missing-media, long-title and sold-out products plus media-bearing catalog products. This is routing-only smoke evidence: all visual, keyboard, no-JavaScript, Theme Editor and provider-dependent rows remain NOT EVIDENCED. Preserve the existing uncommitted `editorial-details` work and do not treat static checks as live evidence, 2026-08-09.
 
 - [x] About motion refinement: Hero uses a scoped CSS/JavaScript carousel sequence with clear image/right-to-left and text fade-up entrance plus directional outgoing-slide movement. About Story, Brand Values and About Closing now use one small scoped IntersectionObserver controller rather than Home-only AOS: story media/content reveal by media side, value header/cards stagger by 90ms, and closing rises into place. All motion is transform/opacity only, renders its final readable state without JavaScript or under reduced motion, and initializes/destroys on Theme Editor section lifecycle. Theme Check pass: 86 files, zero offenses; repository validator, both About JavaScript syntax checks and `git diff --check` pass, 2026-08-07. Shopify Preview needs scroll/re-entry, 320–desktop, reduced motion, Theme Editor reload and keyboard checks.
 
@@ -319,7 +329,7 @@ Triển khai Phase 8 Secondary templates: hoàn thiện và kiểm chứng các 
 
 ## Việc tiếp theo — theo thứ tự
 
-0. Dùng [`../Specifications/theme-store-submission-gap-register.md`](../Specifications/theme-store-submission-gap-register.md) làm nguồn P0: chuẩn bị development-store fixtures và hoàn tất Phase 8 preview evidence trước khi triển khai các implementation gap; không bắt đầu hardening hay packaging khi còn GAP-01–10.
+0. Capture GAP-02 Shopify Preview evidence with configured Search filters, then continue GAP-06 three-level navigation and GAP-07 Custom Liquid according to [`../Specifications/theme-store-submission-gap-register.md`](../Specifications/theme-store-submission-gap-register.md). GAP-01 provider/handoff evidence remains pending. Phase 8 remains deferred, not achieved; do not start hardening or packaging while GAP-01–10 remain.
 1. Trên Shopify preview, gán `page.contact` và `page.faq` cho hai Page fixtures rồi kiểm tra Page base, Contact success/error/no-JS và FAQ empty/long blocks tại 320/375/768/1024/desktop, keyboard, zoom, reduced motion và Theme Editor lifecycle.
 2. Trên Shopify preview, kiểm tra 404, Password và Gift card với dữ liệu/state thực: 404 recovery CTA; Password có/không có store message và native error; Gift card active/disabled/expired/expiry, logo fallback và Apple Wallet khi khả dụng, tại 320/375/768/1024/desktop, keyboard, zoom và reduced motion.
 3. Hoàn thiện các secondary template còn thiếu theo inventory tại [`../Specifications/secondary-templates-contract.md`](../Specifications/secondary-templates-contract.md); giữ Blog/Article composition hiện có là điểm xuất phát và không tái sử dụng product/cart controller ở content surface.

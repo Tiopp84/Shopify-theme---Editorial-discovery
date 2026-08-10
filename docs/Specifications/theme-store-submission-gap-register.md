@@ -65,6 +65,23 @@ This register converts the current code audit into release-gated work. It is not
 4. Start Phase 9 hardening only when no P0 implementation gap remains.
 5. Start commercial packaging only after the hardening gate is demonstrably passing.
 
+## Progress log
+
+### 2026-08-09 — GAP-01 static implementation
+
+- Added the native `form | payment_button` filter within the PDP product form.
+- Added the Product form block setting `Show dynamic checkout button`, default on; disabling it omits the native payment-button surface.
+- Preserved Shopify ownership by leaving payment-button submissions outside the Product Form inventory-preflight and Cart Drawer AJAX interception; normal Add to cart behavior is unchanged.
+- JavaScript syntax, repository validator, Theme Check and `git diff --check` pass. Development preview HTML for `products/weekend-wool-topcoat` contains both `data-shopify="payment-button"` and `shopify-accelerated-checkout`.
+- GAP-01 remains open until an eligible accelerated provider, keyboard behavior and real native handoff are evidenced in Shopify Preview.
+
+### 2026-08-10 — GAP-02 implementation contract
+
+- Search facets use Shopify's native `search.filters`, `search.sort_options` and GET URL parameters. The Search URL remains source of truth; every form and link remains a direct GET/no-JavaScript fallback.
+- `search-discovery` is its own Section Rendering controller rather than a reuse of Collection's controller. It owns filter/sort/pagination events, abort/sequence protection, loading/error announcements, history, drawer group/focus continuity and atomic replacement of the complete Search response boundary.
+- The facet form preserves `q`; Shopify supplies all filter/remove URLs. This keeps filter combinations, sorting, pagination and browser history in the URL without theme-side URL composition.
+- Search settings default filters and sorting on and expose the same desktop Sidebar/Drawer choice as Collection. Controls are rendered only when the current result set contains products; the native no-JavaScript fallback remains available even when Drawer is selected. Shopify may return no filters before filters are configured in Admin, when none are relevant, or for searches over its documented result limit.
+
 ## Rules
 
 - Do not mark an item done from a source scan or Theme Check alone.

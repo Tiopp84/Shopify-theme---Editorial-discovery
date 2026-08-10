@@ -1,8 +1,19 @@
-<section class="editorial-details editorial-details--{{ section.settings.media_style }}"{% if section.settings.heading != blank %} aria-labelledby="EditorialDetailsHeading-{{ section.id }}"{% endif %} style="--editorial-details-icon-color: {{ section.settings.icon_color | default: '#5C6A4B' }}; --editorial-details-icon-size: {{ section.settings.icon_size | default: 72 }}px; --editorial-details-image-ratio: {{ section.settings.image_ratio | default: '3 / 2' }};" {{ section.shopify_attributes }}>
+<section
+  class="editorial-details editorial-details--{{ section.settings.media_style }}"
+  {% if section.settings.heading != blank %}
+    aria-labelledby="EditorialDetailsHeading-{{ section.id }}"
+  {% endif %}
+  style="--editorial-details-icon-color: {{ section.settings.icon_color | default: '#5C6A4B' }}; --editorial-details-icon-size: {{ section.settings.icon_size | default: 72 }}px; --editorial-details-image-ratio: {{ section.settings.image_ratio | default: '3 / 2' }};"
+  {{ section.shopify_attributes }}
+>
   {% if section.settings.heading != blank or section.settings.intro != blank %}
     <header class="editorial-details__header">
-      {% if section.settings.heading != blank %}<h2 id="EditorialDetailsHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
-      {% if section.settings.intro != blank %}<div class="editorial-details__intro rte">{{ section.settings.intro }}</div>{% endif %}
+      {% if section.settings.heading != blank %}
+        <h2 id="EditorialDetailsHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+      {% if section.settings.intro != blank %}
+        <div class="editorial-details__intro rte">{{ section.settings.intro }}</div>
+      {% endif %}
     </header>
   {% endif %}
   {% if section.blocks.size > 0 %}
@@ -14,21 +25,43 @@
               {% if block.settings.image != blank or request.visual_preview_mode %}
                 <div class="editorial-details__media">
                   {% if block.settings.image != blank %}
-                    {% render 'image', image: block.settings.image, alt: block.settings.image.alt, width: 900, widths: '240, 360, 540, 720, 900', sizes: '(min-width: 64rem) 28vw, (min-width: 48rem) 42vw, 88vw' %}
+                    {% render 'image',
+                      image: block.settings.image,
+                      alt: block.settings.image.alt,
+                      width: 900,
+                      widths: '240, 360, 540, 720, 900',
+                      sizes: '(min-width: 64rem) 28vw, (min-width: 48rem) 42vw, 88vw'
+                    %}
                   {% else %}
-                    <span class="editorial-details__placeholder" aria-hidden="true">{{ 'lifestyle-1' | placeholder_svg_tag }}</span>
+                    <span class="editorial-details__placeholder" aria-hidden="true">
+                      {{- 'lifestyle-1' | placeholder_svg_tag -}}
+                    </span>
                   {% endif %}
                 </div>
               {% endif %}
             {% else %}
               {% assign icon_name = block.settings.icon | default: 'thread' %}
               {% assign icon_asset = 'phosphor-' | append: icon_name | append: '.svg' %}
-              <span class="editorial-details__icon" aria-hidden="true" style="--editorial-details-icon-mask: url('{{ icon_asset | asset_url }}');"></span>
+              <span
+                class="editorial-details__icon"
+                aria-hidden="true"
+                style="--editorial-details-icon-mask: url('{{ icon_asset | asset_url }}');"
+              ></span>
             {% endif %}
             <div class="editorial-details__content">
-              {% if block.settings.heading != blank %}<h3>{{ block.settings.heading | escape }}</h3>{% elsif request.visual_preview_mode %}<h3>{{ 'editorial.detail' | t }}</h3>{% endif %}
-              {% if block.settings.text != blank %}<div class="editorial-details__text rte">{{ block.settings.text }}</div>{% endif %}
-              {% if block.settings.link_label != blank and block.settings.link != blank %}<a class="editorial-details__link" href="{{ block.settings.link }}">{{ block.settings.link_label | escape }}</a>{% endif %}
+              {% if block.settings.heading != blank %}
+                <h3>{{ block.settings.heading | escape }}</h3>
+              {% elsif request.visual_preview_mode %}
+                <h3>{{ 'editorial.detail' | t }}</h3>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <div class="editorial-details__text rte">{{ block.settings.text }}</div>
+              {% endif %}
+              {% if block.settings.link_label != blank and block.settings.link != blank -%}
+                <a class="editorial-details__link" href="{{ block.settings.link }}">
+                  {{- block.settings.link_label | escape -}}
+                </a>
+              {%- endif %}
             </div>
           </article>
         {% endif %}
@@ -38,34 +71,304 @@
 </section>
 
 {% stylesheet %}
-  .editorial-details { background: var(--color-background); margin-block-end: var(--space-chapter); padding: clamp(4rem, 8vw, 7rem) max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
-  .editorial-details__header { display: grid; gap: var(--space-3); margin: 0 auto var(--space-7); max-inline-size: 42rem; text-align: center; }
-  .editorial-details h2 { font-family: var(--font-campaign); font-size: clamp(2.25rem, 4.3vw, 4.5rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .95; margin: 0; }
-  .editorial-details__intro { color: color-mix(in srgb, var(--color-foreground) 76%, var(--color-background)); line-height: calc(var(--body-text-line-spacing) + .1); margin-inline: auto; max-inline-size: 34rem; }
-  .editorial-details__intro > :first-child, .editorial-details__text > :first-child { margin-block-start: 0; }
-  .editorial-details__intro > :last-child, .editorial-details__text > :last-child { margin-block-end: 0; }
-  .editorial-details__grid { display: grid; gap: clamp(2.5rem, 5vw, 5rem); grid-template-columns: repeat(1, minmax(0, 1fr)); }
-  .editorial-details__item { align-content: start; display: grid; gap: var(--space-4); justify-items: center; min-inline-size: 0; text-align: center; }
-  .editorial-details__media { aspect-ratio: var(--editorial-details-image-ratio); background: var(--color-panel-02); inline-size: 100%; margin-inline: auto; overflow: hidden; }
-  .editorial-details__media .image, .editorial-details__media .image > img, .editorial-details__placeholder, .editorial-details__placeholder svg { block-size: 100%; display: block; inline-size: 100%; object-fit: cover; }
-  .editorial-details__placeholder { color: color-mix(in srgb, var(--color-foreground) 25%, var(--color-panel-02)); }
-  .editorial-details__icon { background: var(--editorial-details-icon-color, var(--color-interactive)); block-size: var(--editorial-details-icon-size); display: block; inline-size: var(--editorial-details-icon-size); -webkit-mask: var(--editorial-details-icon-mask) center / contain no-repeat; mask: var(--editorial-details-icon-mask) center / contain no-repeat; }
-  .editorial-details__content { display: grid; gap: var(--space-3); justify-items: center; max-inline-size: 24rem; }
-  .editorial-details h3 { font-family: var(--font-commerce); font-size: clamp(1.4rem, 2vw, 2rem); font-style: normal; font-weight: 600; letter-spacing: -.02em; line-height: 1.12; margin: 0; }
-  .editorial-details__text { color: color-mix(in srgb, var(--color-foreground) 76%, var(--color-background)); line-height: calc(var(--body-text-line-spacing) + .08); }
-  .editorial-details__link { align-items: center; color: var(--color-interactive); display: inline-flex; font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 700; gap: var(--space-2); letter-spacing: var(--small-label-letter-spacing); text-decoration-thickness: 1px; text-underline-offset: .18em; text-transform: uppercase; width: fit-content; }
-  .editorial-details__link::after { content: '→'; font-size: 1.1em; }
-  @media (min-width: 48rem) { .editorial-details__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (max-width: 47.99rem) { .editorial-details { margin-block-end: var(--space-chapter-mobile); } }
+  .editorial-details {
+    background: var(--color-background);
+    margin-block-end: var(--space-chapter);
+    padding: clamp(4rem, 8vw, 7rem) max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2));
+  }
+  .editorial-details__header {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0 auto clamp(2.25rem, 5vw, 4rem);
+    max-inline-size: 42rem;
+    text-align: center;
+  }
+  .editorial-details h2 {
+    font-family: var(--font-campaign);
+    font-size: clamp(2.25rem, 4.3vw, 4.5rem);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    margin: 0;
+  }
+  .editorial-details__intro {
+    color: color-mix(in srgb, var(--color-foreground) 76%, var(--color-background));
+    line-height: calc(var(--body-text-line-spacing) + 0.1);
+    margin-inline: auto;
+    max-inline-size: 34rem;
+  }
+  .editorial-details__intro > :first-child,
+  .editorial-details__text > :first-child {
+    margin-block-start: 0;
+  }
+  .editorial-details__intro > :last-child,
+  .editorial-details__text > :last-child {
+    margin-block-end: 0;
+  }
+  .editorial-details__grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 5rem);
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  .editorial-details__item {
+    align-content: start;
+    display: grid;
+    gap: var(--space-4);
+    justify-items: center;
+    min-inline-size: 0;
+    text-align: center;
+  }
+  .editorial-details__media {
+    aspect-ratio: var(--editorial-details-image-ratio);
+    background: var(--color-panel-02);
+    inline-size: 100%;
+    margin-inline: auto;
+    overflow: hidden;
+  }
+  .editorial-details__media .image,
+  .editorial-details__media .image > img,
+  .editorial-details__placeholder,
+  .editorial-details__placeholder svg {
+    block-size: 100%;
+    display: block;
+    inline-size: 100%;
+    object-fit: cover;
+  }
+  .editorial-details__placeholder {
+    color: color-mix(in srgb, var(--color-foreground) 25%, var(--color-panel-02));
+  }
+  .editorial-details__icon {
+    background: var(--editorial-details-icon-color, var(--color-interactive));
+    block-size: var(--editorial-details-icon-size);
+    display: block;
+    inline-size: var(--editorial-details-icon-size);
+    -webkit-mask: var(--editorial-details-icon-mask) center / contain no-repeat;
+    mask: var(--editorial-details-icon-mask) center / contain no-repeat;
+  }
+  .editorial-details__content {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: center;
+    max-inline-size: 24rem;
+  }
+  .editorial-details h3 {
+    font-family: var(--font-commerce);
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    margin: 0;
+  }
+  .editorial-details__text {
+    color: color-mix(in srgb, var(--color-foreground) 76%, var(--color-background));
+    line-height: calc(var(--body-text-line-spacing) + 0.08);
+  }
+  .editorial-details__link {
+    align-items: center;
+    color: var(--color-interactive);
+    display: inline-flex;
+    font-family: var(--small-label-font);
+    font-size: var(--small-label-size);
+    font-weight: 700;
+    gap: var(--space-2);
+    letter-spacing: var(--small-label-letter-spacing);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    text-transform: uppercase;
+    width: fit-content;
+  }
+  .editorial-details__link::after {
+    content: '→';
+    font-size: 1.1em;
+  }
+  @media (min-width: 48rem) {
+    .editorial-details__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 47.99rem) {
+    .editorial-details {
+      margin-block-end: var(--space-chapter-mobile);
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.editorial_details",
-  "blocks": [{ "type": "detail", "name": "t:general.editorial_detail", "settings": [{ "type": "image_picker", "id": "image", "label": "t:labels.image", "visible_if": "{{ section.settings.media_style == 'image' }}" }, { "type": "select", "id": "icon", "label": "t:labels.icon", "options": [{ "value": "bills", "label": "t:options.editorial_detail_icon.bills", "group": "t:groups.shopping_payments" }, { "value": "cart", "label": "t:options.editorial_detail_icon.cart", "group": "t:groups.shopping_payments" }, { "value": "credit-card", "label": "t:options.editorial_detail_icon.credit_card", "group": "t:groups.shopping_payments" }, { "value": "tag", "label": "t:options.editorial_detail_icon.tag", "group": "t:groups.shopping_payments" }, { "value": "store", "label": "t:options.editorial_detail_icon.store", "group": "t:groups.shopping_payments" }, { "value": "wallet", "label": "t:options.editorial_detail_icon.wallet", "group": "t:groups.shopping_payments" }, { "value": "location", "label": "t:options.editorial_detail_icon.location", "group": "t:groups.shipping_delivery" }, { "value": "package", "label": "t:options.editorial_detail_icon.package", "group": "t:groups.shipping_delivery" }, { "value": "return", "label": "t:options.editorial_detail_icon.return", "group": "t:groups.shipping_delivery" }, { "value": "truck", "label": "t:options.editorial_detail_icon.truck", "group": "t:groups.shipping_delivery" }, { "value": "chat", "label": "t:options.editorial_detail_icon.chat", "group": "t:groups.communication" }, { "value": "envelope", "label": "t:options.editorial_detail_icon.envelope", "group": "t:groups.communication" }, { "value": "phone", "label": "t:options.editorial_detail_icon.phone", "group": "t:groups.communication" }, { "value": "heart", "label": "t:options.editorial_detail_icon.heart", "group": "t:groups.trust_quality" }, { "value": "ribbon", "label": "t:options.editorial_detail_icon.ribbon", "group": "t:groups.trust_quality" }, { "value": "shield", "label": "t:options.editorial_detail_icon.shield", "group": "t:groups.trust_quality" }, { "value": "thumbs-up", "label": "t:options.editorial_detail_icon.thumbs_up", "group": "t:groups.trust_quality" }, { "value": "thread", "label": "t:options.editorial_detail_icon.thread", "group": "t:groups.craft_editorial" }, { "value": "ruler", "label": "t:options.editorial_detail_icon.ruler", "group": "t:groups.craft_editorial" }, { "value": "leaf", "label": "t:options.editorial_detail_icon.leaf", "group": "t:groups.craft_editorial" }], "default": "package", "visible_if": "{{ section.settings.media_style == 'icon' }}" }, { "type": "text", "id": "heading", "label": "t:labels.heading" }, { "type": "richtext", "id": "text", "label": "t:labels.text" }, { "type": "text", "id": "link_label", "label": "t:labels.link_label" }, { "type": "url", "id": "link", "label": "t:labels.link" }] }],
+  "blocks": [
+    {
+      "type": "detail",
+      "name": "t:general.editorial_detail",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:labels.image",
+          "visible_if": "{{ section.settings.media_style == 'image' }}"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:labels.icon",
+          "options": [
+            {
+              "value": "bills",
+              "label": "t:options.editorial_detail_icon.bills",
+              "group": "t:groups.shopping_payments"
+            },
+            { "value": "cart", "label": "t:options.editorial_detail_icon.cart", "group": "t:groups.shopping_payments" },
+            {
+              "value": "credit-card",
+              "label": "t:options.editorial_detail_icon.credit_card",
+              "group": "t:groups.shopping_payments"
+            },
+            { "value": "tag", "label": "t:options.editorial_detail_icon.tag", "group": "t:groups.shopping_payments" },
+            {
+              "value": "store",
+              "label": "t:options.editorial_detail_icon.store",
+              "group": "t:groups.shopping_payments"
+            },
+            {
+              "value": "wallet",
+              "label": "t:options.editorial_detail_icon.wallet",
+              "group": "t:groups.shopping_payments"
+            },
+            {
+              "value": "location",
+              "label": "t:options.editorial_detail_icon.location",
+              "group": "t:groups.shipping_delivery"
+            },
+            {
+              "value": "package",
+              "label": "t:options.editorial_detail_icon.package",
+              "group": "t:groups.shipping_delivery"
+            },
+            {
+              "value": "return",
+              "label": "t:options.editorial_detail_icon.return",
+              "group": "t:groups.shipping_delivery"
+            },
+            {
+              "value": "truck",
+              "label": "t:options.editorial_detail_icon.truck",
+              "group": "t:groups.shipping_delivery"
+            },
+            { "value": "chat", "label": "t:options.editorial_detail_icon.chat", "group": "t:groups.communication" },
+            {
+              "value": "envelope",
+              "label": "t:options.editorial_detail_icon.envelope",
+              "group": "t:groups.communication"
+            },
+            { "value": "phone", "label": "t:options.editorial_detail_icon.phone", "group": "t:groups.communication" },
+            { "value": "heart", "label": "t:options.editorial_detail_icon.heart", "group": "t:groups.trust_quality" },
+            { "value": "ribbon", "label": "t:options.editorial_detail_icon.ribbon", "group": "t:groups.trust_quality" },
+            { "value": "shield", "label": "t:options.editorial_detail_icon.shield", "group": "t:groups.trust_quality" },
+            {
+              "value": "thumbs-up",
+              "label": "t:options.editorial_detail_icon.thumbs_up",
+              "group": "t:groups.trust_quality"
+            },
+            {
+              "value": "thread",
+              "label": "t:options.editorial_detail_icon.thread",
+              "group": "t:groups.craft_editorial"
+            },
+            { "value": "ruler", "label": "t:options.editorial_detail_icon.ruler", "group": "t:groups.craft_editorial" },
+            { "value": "leaf", "label": "t:options.editorial_detail_icon.leaf", "group": "t:groups.craft_editorial" }
+          ],
+          "default": "package",
+          "visible_if": "{{ section.settings.media_style == 'icon' }}"
+        },
+        { "type": "text", "id": "heading", "label": "t:labels.heading" },
+        { "type": "richtext", "id": "text", "label": "t:labels.text" },
+        { "type": "text", "id": "link_label", "label": "t:labels.link_label" },
+        { "type": "url", "id": "link", "label": "t:labels.link" }
+      ]
+    }
+  ],
   "max_blocks": 3,
-  "settings": [{ "type": "header", "content": "t:general.content" }, { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Details, considered" }, { "type": "richtext", "id": "intro", "label": "t:labels.intro" }, { "type": "header", "content": "t:general.layout" }, { "type": "select", "id": "media_style", "label": "t:labels.detail_media_style", "options": [{ "value": "image", "label": "t:options.detail_media_style.image" }, { "value": "icon", "label": "t:options.detail_media_style.icon" }], "default": "image" }, { "type": "header", "content": "t:general.style", "visible_if": "{{ section.settings.media_style == 'image' }}" }, { "type": "select", "id": "image_ratio", "label": "t:labels.image_ratio", "options": [{ "value": "1 / 1", "label": "t:options.image_ratio.square" }, { "value": "4 / 5", "label": "t:options.image_ratio.portrait" }, { "value": "3 / 4", "label": "t:options.image_ratio.tall" }, { "value": "3 / 2", "label": "t:options.image_ratio.landscape" }, { "value": "2 / 1", "label": "t:options.image_ratio.wide" }], "default": "3 / 2", "visible_if": "{{ section.settings.media_style == 'image' }}" }, { "type": "header", "content": "t:general.style", "visible_if": "{{ section.settings.media_style == 'icon' }}" }, { "type": "color", "id": "icon_color", "label": "t:labels.icon_color", "default": "#5C6A4B", "visible_if": "{{ section.settings.media_style == 'icon' }}" }, { "type": "range", "id": "icon_size", "label": "t:labels.icon_size", "min": 48, "max": 128, "step": 4, "unit": "px", "default": 72, "visible_if": "{{ section.settings.media_style == 'icon' }}" }],
-  "enabled_on": { "templates": ["index"] },
-  "presets": [{ "name": "t:general.editorial_details", "category": "Campaign & editorial", "blocks": [{ "type": "detail", "settings": { "heading": "Material", "text": "<p>Add a concise note about the material, make, or finish.</p>" } }, { "type": "detail", "settings": { "heading": "Proportion", "text": "<p>Add a concise note about fit, shape, or how to wear the collection.</p>" } }, { "type": "detail", "settings": { "heading": "Care", "text": "<p>Add a concise note that helps customers care for their pieces.</p>" } }] }]
+  "settings": [
+    { "type": "header", "content": "t:general.content" },
+    { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Details, considered" },
+    { "type": "richtext", "id": "intro", "label": "t:labels.intro" },
+    { "type": "header", "content": "t:general.layout" },
+    {
+      "type": "select",
+      "id": "media_style",
+      "label": "t:labels.detail_media_style",
+      "options": [
+        { "value": "image", "label": "t:options.detail_media_style.image" },
+        { "value": "icon", "label": "t:options.detail_media_style.icon" }
+      ],
+      "default": "image"
+    },
+    { "type": "header", "content": "t:general.style", "visible_if": "{{ section.settings.media_style == 'image' }}" },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "t:labels.image_ratio",
+      "options": [
+        { "value": "1 / 1", "label": "t:options.image_ratio.square" },
+        { "value": "4 / 5", "label": "t:options.image_ratio.portrait" },
+        { "value": "3 / 4", "label": "t:options.image_ratio.tall" },
+        { "value": "3 / 2", "label": "t:options.image_ratio.landscape" },
+        { "value": "2 / 1", "label": "t:options.image_ratio.wide" }
+      ],
+      "default": "3 / 2",
+      "visible_if": "{{ section.settings.media_style == 'image' }}"
+    },
+    { "type": "header", "content": "t:general.style", "visible_if": "{{ section.settings.media_style == 'icon' }}" },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "t:labels.icon_color",
+      "default": "#5C6A4B",
+      "visible_if": "{{ section.settings.media_style == 'icon' }}"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "t:labels.icon_size",
+      "min": 48,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 72,
+      "visible_if": "{{ section.settings.media_style == 'icon' }}"
+    }
+  ],
+  "enabled_on": { "templates": ["index", "page"] },
+  "presets": [
+    {
+      "name": "t:general.editorial_details",
+      "category": "Forms & utility",
+      "blocks": [
+        {
+          "type": "detail",
+          "settings": {
+            "heading": "Material",
+            "text": "<p>Add a concise note about the material, make, or finish.</p>"
+          }
+        },
+        {
+          "type": "detail",
+          "settings": {
+            "heading": "Proportion",
+            "text": "<p>Add a concise note about fit, shape, or how to wear the collection.</p>"
+          }
+        },
+        {
+          "type": "detail",
+          "settings": {
+            "heading": "Care",
+            "text": "<p>Add a concise note that helps customers care for their pieces.</p>"
+          }
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}

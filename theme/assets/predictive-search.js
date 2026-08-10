@@ -49,6 +49,7 @@ class PredictiveSearch extends HTMLElement {
   }
 
   onFocus() {
+    if (this.dataset.suppressFocusOpen === 'true') return;
     const term = this.input.value.trim();
     if (!term) return;
     const normalizedTerm = term.toLocaleLowerCase();
