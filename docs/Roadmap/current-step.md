@@ -16,7 +16,7 @@
 | Trường | Giá trị |
 |---|---|
 | Cập nhật lần cuối | 2026-08-10 (Asia/Ho_Chi_Minh) |
-| Phase | Requirement remediation — GAP-07; Phase 8 deferred, not achieved |
+| Phase | Requirement remediation — GAP-03 next; GAP-01/02/06/07/08 implementation slices remain pending live evidence; Phase 8 deferred, not achieved |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
@@ -24,7 +24,7 @@
 
 ## Mục tiêu đang thực hiện
 
-Remediate Shopify Theme Store P0 requirement gaps while keeping Phase 8 Secondary templates deferred (not achieved). Current slice: GAP-07 Custom Liquid; merchant-authored Liquid remains explicitly scoped and no unrelated scope expands.
+Remediate Shopify Theme Store P0 requirement gaps while keeping Phase 8 Secondary templates deferred (not achieved). Next implementation slice: GAP-03 Pickup availability on PDP; use Shopify-native ownership and do not reimplement inventory or store-fulfilment rules.
 
 ## Đã hoàn thành
 
@@ -53,7 +53,21 @@ Remediate Shopify Theme Store P0 requirement gaps while keeping Phase 8 Secondar
 - [x] Hoàn thiện responsive image và original icon primitives; bổ sung accessible navigation/account/cart labels cho header baseline.
 - [x] Review Phase 2 exit criteria: clean development-store render, local validator, Theme Check và CI đều đạt; cho phép chuyển sang Phase 3.
 
+## Hoàn thành trong phiên
+
+- [x] GAP-10 Tax-inclusive cart notice: Cart renders a locale-backed `Taxes included` notice directly below subtotal only when Shopify returns `cart.taxes_included`; it makes no tax calculation, price mutation or checkout change. On 2026-08-10, the owner confirmed that enabling tax-inclusive pricing showed the notice and disabling it hid the notice. Static checks pass (validator: 148 files, 205 storefront keys, 515 schema keys; Theme Check: 92 files, zero offenses; `git diff --check`).
+
 ## Đang thực hiện
+
+- [ ] GAP-09 Gift Card QR code — temporarily deferred by owner: Added Shopify's `vendor/qrcode.js` asset to the standalone Gift Card template and generates a 128 × 128 px QR from the active card's `gift_card.qr_identifier`. Disabled/expired cards intentionally omit a redeemable QR and now have distinct locale-backed statuses, while retaining expiry, logo/card fallback, code and Apple Wallet surface. Shopify Preview evidence on 2026-08-10 confirms active QR, card-art fallback, a displayed expiry date and selectable/copyable code; a manually deactivated card omits QR. Actual expired-card, Apple Wallet, 320/375/tablet, keyboard/zoom and reduced-motion evidence remain pending.
+
+- [ ] GAP-05 Follow on Shop: Added a merchant-owned Footer setting, enabled by default, which renders Shopify's native `{{ shop | login_button: action: 'follow' }}`. The theme only lays out its wrapper and does not restyle Shopify's branded button, authentication or follow state. Static verification and Shopify Preview evidence for eligible/unavailable states, keyboard behavior, Compact/Tablet/Desktop and Footer setting lifecycle are pending, 2026-08-10.
+
+- [ ] GAP-04 Shop Pay Installments on PDP: Added `product-payment-terms`, an addable/reorderable Product block. It contains a native Shopify product form whose hidden `id` follows the committed PDP variant, then applies `form | payment_terms`; Shopify owns all eligibility, installment amounts, branded banner and Learn more disclosures. The block collapses without a gap if Shopify returns no payment-terms component. Static verification passes (validator: 148 files, 201 storefront keys, 514 schema keys; JavaScript syntax; Theme Check: 92 files, zero offenses; `git diff --check`), 2026-08-10. Shopify Preview still needs an eligible provider's initial/variant-update/learn-more evidence, provider-absent/ineligible state, keyboard, Compact/Tablet/Desktop and Product block lifecycle before GAP-04 closes.
+
+- [ ] GAP-03 Pickup availability on PDP: Added `product-pickup-availability`, an addable/reorderable Product block. Its empty host requests Shopify's native `/variants/<id>/?section_id=pickup-availability` renderer through a Product-template section schema; it preserves `preview_theme_id` so a development Preview receives this theme's renderer. Shopify owns the resulting pickup locations, transfer-aware availability/time and addresses. The controller aborts and sequence-guards variant requests, atomically replaces only the host, clears initial/subsequently selected sold-out variants without a gap, and renders the exact Shopify-returned state for a purchasable Continue-selling variant (which may be pickup-available at zero on-hand quantity); it never infers pickup state from quantity and cleans up with the Product section. Its native dialog consumes the shared modal open/close/backdrop animation, scroll-lock and reduced-motion controller while retaining Close/Escape/backdrop/focus-return. A native Liquid no-JavaScript summary exists for the initially selected direct-variant URL when pickup data is present. Static verification passes (validator: 147 files, 201 storefront keys, 513 schema keys; JavaScript syntax; Theme Check: 91 files, zero offenses; `git diff --check`), 2026-08-10. Shopify Preview must still prove pickup-enabled, pickup-unavailable, no-pickup/sold-out, rapid variants, keyboard dialog, no-JS, Compact/Tablet/Desktop and Product block lifecycle before GAP-03 closes.
+
+- [ ] GAP-08 Featured product with app blocks: Added a merchant-selectable `featured-product` section for index, collection, page, blog and article templates. It uses native Product blocks, `@app`, product media, variant-aware product form, Custom Liquid insertion, product/vendor/title/price/SKU/availability fallbacks, mobile swipe/dots, desktop media Left/Right, desktop media-width slider (35–60%) and thumbnail placement. Featured media is sticky on desktop with an announcement-safe offset; Featured images deliberately have no zoom surface, while native video retains its own controls and a play cursor. Section divider is vertical spacing only. Static verification passes (validator: 145 files, 192 storefront keys, 512 schema keys; Theme Check: 89 files, zero offenses), 2026-08-10. Theme Editor add/remove/reorder/app-block lifecycle and real product image/video/3D, mobile swipe/dot, desktop left/right/width/thumbnail and long-content evidence remain required before GAP-08 closes.
 
 - [ ] GAP-07 Custom Liquid: Added a standalone `custom-liquid` section for every JSON storefront template and a `product-custom-liquid` block in the Product section’s explicit allowlist. Both use Shopify's native `liquid` setting, omit blank storefront output and provide Theme Editor preview text. Static verification passes (validator: 144 files, 192 storefront keys, 499 schema keys; Theme Check: 88 files, zero offenses; `git diff --check`), 2026-08-10. Theme Editor add/remove/reorder and real merchant Liquid output remain to be evidenced.
 
@@ -329,7 +343,7 @@ Remediate Shopify Theme Store P0 requirement gaps while keeping Phase 8 Secondar
 
 ## Việc tiếp theo — theo thứ tự
 
-0. Capture GAP-02 Shopify Preview evidence with configured Search filters, then continue GAP-06 three-level navigation and GAP-07 Custom Liquid according to [`../Specifications/theme-store-submission-gap-register.md`](../Specifications/theme-store-submission-gap-register.md). GAP-01 provider/handoff evidence remains pending. Phase 8 remains deferred, not achieved; do not start hardening or packaging while GAP-01–10 remain.
+0. Implement GAP-03 Pickup availability on PDP according to the handoff prompt below. Preserve all existing dirty work and native Shopify ownership. After its static implementation, capture GAP-02/03/06/07/08 Shopify Preview and Theme Editor evidence; GAP-01 provider/handoff evidence remains pending. Phase 8 remains deferred, not achieved; do not start hardening or packaging while GAP-01–10 remain.
 1. Trên Shopify preview, gán `page.contact` và `page.faq` cho hai Page fixtures rồi kiểm tra Page base, Contact success/error/no-JS và FAQ empty/long blocks tại 320/375/768/1024/desktop, keyboard, zoom, reduced motion và Theme Editor lifecycle.
 2. Trên Shopify preview, kiểm tra 404, Password và Gift card với dữ liệu/state thực: 404 recovery CTA; Password có/không có store message và native error; Gift card active/disabled/expired/expiry, logo fallback và Apple Wallet khi khả dụng, tại 320/375/768/1024/desktop, keyboard, zoom và reduced motion.
 3. Hoàn thiện các secondary template còn thiếu theo inventory tại [`../Specifications/secondary-templates-contract.md`](../Specifications/secondary-templates-contract.md); giữ Blog/Article composition hiện có là điểm xuất phát và không tái sử dụng product/cart controller ở content surface.
@@ -338,6 +352,26 @@ Remediate Shopify Theme Store P0 requirement gaps while keeping Phase 8 Secondar
 6. Khi một accelerated checkout provider hợp lệ được bật, chạy và ghi smoke test native handoff; khi có tracked deny-oversell fixture, chạy lại inventory-preflight row của Cart runbook.
 7. Khi merchant thêm selling plan, Shopify-hosted/external video hoặc 3D model, chạy lại rows NOT EVIDENCED của PDP runbook.
 8. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
+
+## Prompt mở chat mới — GAP-03 Pickup availability trên PDP
+
+```text
+Tiếp tục dự án Shopify theme tại /home/sund84/Documents/Shopify/Shopify-theme---Editorial-discovery. Đọc toàn bộ docs/Roadmap/current-step.md, docs/Specifications/theme-store-submission-gap-register.md, docs/Specifications/interaction-architecture-standard.md và phần PDP liên quan trong docs/Specifications/product-detail-contract.md trước khi sửa. Kiểm tra git status; worktree đang có nhiều thay đổi chưa commit, đặc biệt không được ghi đè công việc ngoài scope.
+
+Thực hiện GAP-03: native Pickup availability trên PDP. Mục tiêu là thêm một surface merchant-configurable trong Product section cho Shopify pickup availability, cập nhật đúng khi variant thay đổi, và không tự tính tồn kho/cửa hàng/ETA. Hãy đối chiếu tài liệu Shopify hiện hành và implementation pattern chính thức trước khi thiết kế.
+
+Yêu cầu:
+- Shopify vẫn là chủ sở hữu dữ liệu pickup; dùng native Liquid/Section Rendering pattern phù hợp, không mock hay suy diễn availability.
+- Surface phải là Product block có thể add/remove/reorder trong Theme Editor, có empty/no-pickup/unavailable fallback rõ ràng, không tạo khoảng trống khi không có dữ liệu.
+- Variant change phải cập nhật surface theo variant hiện hành; xử lý request cũ/stale, lifecycle Theme Editor và no-JavaScript fallback theo interaction architecture standard.
+- Không làm hỏng product form, accelerated checkout, gallery, media width/thumbnails, Featured product, cart hoặc URL variant state hiện có.
+- Áp dụng responsive contract Compact <48rem, Tablet 48–63.99rem, Desktop ≥64rem; dùng token/theme primitives thay vì hard-code visual mới.
+- Thêm locale/schema key hợp lệ; chỉ thêm setting nào merchant thực sự cần.
+- Viết/cập nhật tài liệu GAP register và current-step với ownership, acceptance, fixture cần có và bằng chứng còn thiếu.
+- Kiểm tra tối thiểu: node scripts/validate-theme.mjs và shopify theme check --path theme --fail-level error --no-color. Nếu có JavaScript mới/chỉnh sửa, chạy syntax check phù hợp. Không đánh dấu GAP-03 hoàn thành nếu chưa có Shopify Preview fixture pickup-enabled và pickup-unavailable.
+
+Kết quả mong đợi: implementation sạch, giải thích ngắn ownership/state/render boundary, danh sách test Preview/Theme Editor cần owner thực hiện, và chỉ rõ file đã thay đổi.
+```
 
 ## Nhật ký phiên làm việc
 

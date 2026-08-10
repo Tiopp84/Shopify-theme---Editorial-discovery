@@ -155,9 +155,14 @@
   .main-product__price { font-size: clamp(var(--product-price-size-product-min), calc(var(--product-price-size-product-min) + 2vw), var(--product-price-size-product-max)); margin: 0; }
   .main-product__price .price__current { font-weight: 650; }
   .main-product__price .price__compare { font-size: .875em; }
+  .product-block--payment-terms { margin-block-end: var(--space-4); }
+  .product-block--payment-terms:not(:has(.shopify-payment-terms)) { display: none; }
+  .main-product__payment-terms form { margin: 0; }
+  .main-product__payment-terms-preview { color: color-mix(in srgb, var(--color-foreground) 72%, transparent); font-size: var(--small-label-size); margin: 0; }
   .main-product__details product-form { display: block; margin: 0; }
   .main-product__details product-form form { align-content: start; display: grid; gap: var(--space-6); }
   .main-product__payment-button { min-block-size: 0; }
+  .main-product__pickup-availability-fallback { border-block: 1px solid var(--color-border); margin: 0; padding-block: var(--space-4); }
   .main-product__option, .main-product__quantity { display: grid; gap: .6rem; margin: 0; }
   product-form:not([data-product-enhanced]) .main-product__option:not(.main-product__variant-fallback) { display: none; }
   .main-product__option > label, .main-product__quantity > label { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 700; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); text-transform: uppercase; }
@@ -240,8 +245,10 @@
     { "type": "product-vendor" },
     { "type": "product-title" },
     { "type": "product-price" },
+    { "type": "product-payment-terms" },
     { "type": "product-sku" },
     { "type": "product-availability" },
+    { "type": "product-pickup-availability" },
     { "type": "product-form" },
     { "type": "product-description" },
     { "type": "product-collapsible" },

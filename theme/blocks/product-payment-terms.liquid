@@ -1,0 +1,26 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+{% liquid
+  assign block_product = product | default: section.settings.product
+  assign current_variant = block_product.selected_or_first_available_variant
+  assign payment_terms_form_id = 'PaymentTerms-' | append: section.id | append: '-' | append: block.id
+%}
+
+{% if current_variant != blank %}
+  <div class="main-product__payment-terms" data-product-payment-terms {{ block.shopify_attributes }}>
+    {% form 'product', block_product, id: payment_terms_form_id %}
+      <input type="hidden" name="id" value="{{ current_variant.id }}" data-product-payment-terms-variant-id>
+      {{ form | payment_terms }}
+    {% endform %}
+  </div>
+{% elsif request.visual_preview_mode %}
+  <p class="main-product__payment-terms-preview" {{ block.shopify_attributes }}>Shop Pay Installments appears here when eligible.</p>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:general.product_payment_terms",
+  "class": "product-block product-block--payment-terms",
+  "presets": [{ "name": "t:general.product_payment_terms" }]
+}
+{% endschema %}
+{% # theme-check-enable ValidScopedCSSClass %}

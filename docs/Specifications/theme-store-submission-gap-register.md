@@ -1,6 +1,6 @@
 # Theme Store submission gap register
 
-Status: **ACTIVE — 2026-08-07**
+Status: **ACTIVE — 2026-08-10**
 
 This register converts the current code audit into release-gated work. It is not a substitute for Shopify's requirements or test checklist. Shopify documentation remains authoritative and must be rechecked before beta and submission.
 
@@ -17,12 +17,12 @@ This register converts the current code audit into release-gated work. It is not
 |---|---|---|---|
 | GAP-01 | Dynamic accelerated checkout on PDP | `cart.liquid` has `content_for_additional_checkout_buttons`; `blocks/product-form.liquid` has no native payment button. | Product and Cart render native accelerated checkout when the store/provider permits it; branded button styling is untouched; unavailable-provider state remains valid; test standard and accelerated handoff. |
 | GAP-02 | Faceted filtering on Search | `sections/search.liquid` has standard and predictive search but no `search.filters` UI or Search filtering controller. | Search supports Shopify facets for availability, price, product type, vendor and variant options, with GET/no-JS fallback, URL/history, pagination, rapid interaction and empty/error coverage. |
-| GAP-03 | Pickup availability on PDP | No pickup availability implementation found. | Native Shopify pickup availability updates with the selected variant and has the correct unavailable/no-pickup fallback. |
-| GAP-04 | Shop Pay Installments on PDP | No `payment_terms` implementation found. | Render Shopify-native payment terms for the selected variant when eligible; verify provider-absent and variant-change states. |
+| GAP-03 | Pickup availability on PDP | `product-pickup-availability` is a merchant Product block. It requests Shopify's native variant section renderer and has static verification only. | Native Shopify pickup availability updates with the selected variant and has the correct unavailable/no-pickup fallback; Preview must cover pickup-enabled, pickup-unavailable and no-pickup/sold-out variants. |
+| GAP-04 | Shop Pay Installments on PDP | `product-payment-terms` is an addable Product block using native `form | payment_terms`; static verification only. | Render Shopify-native payment terms for the selected variant when eligible; verify provider-absent and variant-change states. |
 | GAP-05 | Follow on Shop | No `login_button` Follow on Shop implementation found. | Render the Shopify-native Follow on Shop button without modifying its branded colors; test eligible and unavailable states. |
 | GAP-06 | Three-level navigation | Header renders top-level links and children only. | Desktop and mobile support one-, two-, and three-level menus; long labels, keyboard traversal, Escape, focus restoration and no-JS navigation pass. |
 | GAP-07 | Custom Liquid insertion surfaces | No `liquid` setting or Custom Liquid section/block found. | Add a Custom Liquid section available on every section-enabled template and Custom Liquid blocks at app insertion surfaces; rendering is scoped, locale-backed and documented. |
-| GAP-08 | Featured product with app blocks | No featured-product section exists. | A merchant-selectable Featured product section supports product media, product form behavior, all required data fallbacks, rich media, `@app`, and Custom Liquid insertion. |
+| GAP-08 | Featured product with app blocks | `sections/featured-product.liquid` now provides native Product blocks, `@app`, Custom Liquid, responsive media, variant-aware form and merchant layout controls; static verification passes. | A merchant-selectable Featured product section supports product media, product form behavior, all required data fallbacks, rich media, `@app`, and Custom Liquid insertion; real Product/Theme Editor evidence is still required. |
 | GAP-09 | Gift Card QR code | Gift card template renders balance/code/pass URL but no QR identifier/image. | Active card renders Shopify-native QR code at least 120 x 120 px; active, disabled, expired, expiry, logo fallback, Apple Wallet and print/copy behavior are verified. |
 | GAP-10 | Tax-inclusive cart notice | Cart has a configurable checkout note but does not use `cart.taxes_included`. | Cart page visibly distinguishes tax-inclusive pricing when `cart.taxes_included` is true, without replacing native tax/checkout behavior. |
 
@@ -81,6 +81,43 @@ This register converts the current code audit into release-gated work. It is not
 - `search-discovery` is its own Section Rendering controller rather than a reuse of Collection's controller. It owns filter/sort/pagination events, abort/sequence protection, loading/error announcements, history, drawer group/focus continuity and atomic replacement of the complete Search response boundary.
 - The facet form preserves `q`; Shopify supplies all filter/remove URLs. This keeps filter combinations, sorting, pagination and browser history in the URL without theme-side URL composition.
 - Search settings default filters and sorting on and expose the same desktop Sidebar/Drawer choice as Collection. Controls are rendered only when the current result set contains products; the native no-JavaScript fallback remains available even when Drawer is selected. Shopify may return no filters before filters are configured in Admin, when none are relevant, or for searches over its documented result limit.
+
+### 2026-08-10 — GAP-08 static implementation
+
+- Added a Featured product section for index, collection, page, blog and article templates. It uses the Product section's native blocks and variant state, including `@app`, Custom Liquid, vendor/title/price/SKU/availability/product-form/description, collapsible and reassurance blocks.
+- Product media supports desktop Left/Right placement, a 35–60% media-column slider that includes thumbnails, side/bottom thumbnails, mobile swipe plus selected-state dots, original media proportions and desktop sticky positioning with an announcement-safe top offset. Images intentionally do not expose a Featured zoom modal; video uses native controls and a play cursor only.
+- Static validation passes at 145 files, 192 storefront keys and 512 schema keys; Theme Check inspects 89 files with zero offenses. GAP-08 remains open until Product fixture media/variants, all merchant settings, app-block lifecycle, long content and compact/tablet/desktop behavior are evidenced in Shopify Preview/Theme Editor.
+
+### 2026-08-10 — GAP-03 static implementation
+
+- Added `product-pickup-availability` as an addable, removable and reorderable Product block. Its `pickup-availability` section renderer has a Product-template schema so Shopify can resolve the native `section_id` request; the host remains empty until Shopify returns pickup data, so no-pickup and sold-out variants leave no visual gap.
+- Shopify owns pickup locations, availability, transfer-aware pickup time and addresses. The host requests `/variants/<id>/?section_id=pickup-availability`; the renderer uses `product_variant.store_availabilities` and never infers inventory, locations or ETA. A native Liquid no-JavaScript summary is available for the initially selected direct-variant URL when pickup locations exist.
+- `product:variant-change` now carries the committed variant object. The pickup controller aborts its old request, uses a sequence guard before atomic replacement, preserves `preview_theme_id` so Section Rendering uses the active development preview, and clears both initial and subsequently selected sold-out variants. A purchasable `Continue selling when out of stock` variant renders the exact Shopify-returned pickup state (including pickup-available when Shopify permits it); the theme never infers pickup state from quantity. It preserves the PDP URL/state owner and is cleaned up on section unload. Its native dialog uses the shared `data-overlay-motion="modal"` controller for existing open/close/backdrop motion, scroll lock, reduced-motion fallback, Close/Escape/backdrop-close and opener focus restoration.
+- Compact pickup dialog layout uses a two-column header so Close remains top-aligned, a bounded dialog width, and compact heading tokens; tablet/desktop retain the editorial dialog scale.
+- Static checks pass: validator 147 files, 201 storefront keys and 513 schema keys; JavaScript syntax, Theme Check (91 files, zero offenses) and `git diff --check`. GAP-03 remains open pending Shopify Preview: a pickup-enabled variant, purchasable pickup-unavailable variant, no-pickup/sold-out variant, rapid variant changes, dialog keyboard/focus, 320/375/tablet/desktop, no-JavaScript direct variant URL, and Product block add/remove/reorder/save/reload lifecycle.
+
+### 2026-08-10 — GAP-04 static implementation
+
+- Added `product-payment-terms` as an addable, removable and reorderable Product block. It uses its own native Shopify product form with a hidden `id` and `form | payment_terms`, so Shopify owns eligibility, installment amount, disclosures and branded Learn more UI. No payment-terms markup, colours or disclosures are recreated by the theme.
+- The stable `product-form` controller updates that hidden `id` when a variant is committed, including `change` notification for Shopify's native banner update. The block safely collapses if Shopify outputs no payment-terms component, preserving the provider-absent state without a visual gap.
+- Static checks pass: validator 148 files, 201 storefront keys and 514 schema keys; JavaScript syntax, Theme Check (92 files, zero offenses) and `git diff --check`. GAP-04 remains open until Shopify Preview with an eligible US Shop Pay Installments provider proves initial render, variant amount update, Learn more/disclosures, ineligible/absent provider, keyboard, Compact/Tablet/Desktop and Theme Editor lifecycle.
+
+### 2026-08-10 — GAP-05 static implementation
+
+- Added the Footer setting `Show Follow on Shop button`, enabled by default. It renders Shopify's native `{{ shop | login_button: action: 'follow' }}` filter and remains available even when social links are disabled. The theme does not alter the button's branded colours, authentication flow or follow state.
+- GAP-05 remains open until Shopify Preview proves eligible and unavailable states, keyboard behavior, Compact/Tablet/Desktop layout, and Footer setting toggle/save/reload lifecycle.
+
+### 2026-08-10 — GAP-09 static implementation
+
+- The standalone Gift Card template now loads Shopify's `vendor/qrcode.js` asset and, only for an active non-expired card with `gift_card.qr_identifier`, generates a 128 × 128 px QR code from that identifier. It does not expose the redeemable QR for disabled or expired cards.
+- The existing server-rendered balance, disabled/expired status, expiry, logo/card fallback, formatted code and Apple Wallet pass remain unchanged; disabled and expired now use distinct locale-backed status copy. QR has a localized visible label and accessible name; the visible code remains the non-JavaScript redemption fallback.
+- GAP-09 remains open until a real issued-card URL proves active/disabled/expired/expiry, logo fallback, Apple Wallet, print/copy behavior, keyboard/zoom/reduced-motion and 320/375/tablet/desktop states.
+- Merchant Shopify Preview evidence, 2026-08-10: an active card rendered its 128 px QR alongside an expiry date and a selectable/copyable code; a manually deactivated card rendered no QR. Apple Wallet, an actually expired card, compact/tablet layout, keyboard/zoom and reduced-motion remain unverified.
+
+### 2026-08-10 — GAP-10 static implementation
+
+- The Cart summary now renders the locale-backed `Taxes included` notice only when Shopify returns `cart.taxes_included`. It is adjacent to the cart total and makes no tax calculation, price mutation or checkout change.
+- Merchant Shopify Preview evidence, 2026-08-10: enabling tax-inclusive pricing rendered the notice; disabling it hid the notice. GAP-10 is complete for its required native Cart state. Quantity-update and responsive regression coverage remain part of the broader cart QA matrix.
 
 ## Rules
 

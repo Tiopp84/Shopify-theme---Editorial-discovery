@@ -15,6 +15,7 @@ class ProductForm extends HTMLElement {
     this.sku = this.section.querySelector('[data-product-sku]');
     this.skuValue = this.section.querySelector('[data-product-sku-value]');
     this.availability = this.section.querySelector('[data-product-availability]');
+    this.paymentTermsVariantInputs = [...this.section.querySelectorAll('[data-product-payment-terms-variant-id]')];
     this.variants = JSON.parse(this.section.querySelector('[data-product-variants]').textContent);
     this.cartQuantities = new Map();
     if (!this.variantInput || !this.submit || !this.price) return;
@@ -164,6 +165,7 @@ class ProductForm extends HTMLElement {
     this.inventoryController?.abort();
     this.currentVariant = variant;
     this.variantInput.value = variant.id;
+    this.syncPaymentTerms(variant.id);
     this.error.hidden = true;
     this.error.textContent = '';
     this.submit.disabled = !variant.available || Boolean(this.inventoryController);
@@ -177,7 +179,7 @@ class ProductForm extends HTMLElement {
     if (this.section.dataset.galleryLayout !== 'stacked') {
       this.section.querySelectorAll('[data-product-media-id]').forEach((media) => { media.hidden = Boolean(variant.featuredMediaId) && media.dataset.productMediaId !== String(variant.featuredMediaId); });
     }
-    this.section.dispatchEvent(new CustomEvent('product:variant-change', { bubbles: true, detail: { featuredMediaId: variant.featuredMediaId } }));
+    this.section.dispatchEvent(new CustomEvent('product:variant-change', { bubbles: true, detail: { variant, featuredMediaId: variant.featuredMediaId } }));
     if (updateUrl) {
       const url = new URL(window.location.href);
       url.searchParams.set('variant', variant.id);
@@ -186,6 +188,14 @@ class ProductForm extends HTMLElement {
   }
 
   escape(value) { const node = document.createElement('span'); node.textContent = value || ''; return node.innerHTML; }
+
+  syncPaymentTerms(variantId) {
+    this.paymentTermsVariantInputs.forEach((input) => {
+      input.value = variantId;
+      input.setAttribute('value', variantId);
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
 
   syncOptionButtons() {
     this.optionButtons.forEach((button) => {
@@ -282,6 +292,82 @@ class ProductForm extends HTMLElement {
 }
 
 if (!customElements.get('product-form')) customElements.define('product-form', ProductForm);
+
+class PickupAvailability extends HTMLElement {
+  connectedCallback() {
+    if (this.abortController) return;
+    this.section = this.closest('[data-product-section]');
+    this.abortController = new AbortController();
+    const { signal } = this.abortController;
+    this.section?.addEventListener('product:variant-change', (event) => this.update(event.detail?.variant), { signal });
+    if (this.dataset.variantAvailable !== 'true') return this.clear();
+    this.load(this.dataset.variantId);
+  }
+
+  disconnectedCallback() {
+    this.abortController?.abort();
+    this.abortController = null;
+  }
+
+  update(variant) {
+    if (!variant?.available) return this.clear();
+    this.dataset.variantAvailable = 'true';
+    this.load(variant.id);
+  }
+
+  clear() {
+    this.requestController?.abort();
+    this.sequence = (this.sequence || 0) + 1;
+    this.dataset.variantAvailable = 'false';
+    this.replaceChildren();
+    this.hidden = true;
+    this.setAttribute('aria-busy', 'false');
+  }
+
+  async load(variantId) {
+    if (!variantId) return this.clear();
+    this.requestController?.abort();
+    const requestController = new AbortController();
+    this.requestController = requestController;
+    const sequence = (this.sequence || 0) + 1;
+    this.sequence = sequence;
+    this.dataset.variantId = String(variantId);
+    this.setAttribute('aria-busy', 'true');
+    try {
+      const root = this.dataset.rootUrl.endsWith('/') ? this.dataset.rootUrl : `${this.dataset.rootUrl}/`;
+      const url = new URL(`${root}variants/${variantId}/`, window.location.origin);
+      url.searchParams.set('section_id', 'pickup-availability');
+      const previewThemeId = new URL(window.location.href).searchParams.get('preview_theme_id');
+      if (previewThemeId) url.searchParams.set('preview_theme_id', previewThemeId);
+      const response = await fetch(url, { headers: { Accept: 'text/html' }, signal: requestController.signal });
+      if (!response.ok) throw new Error(`Pickup availability failed: ${response.status}`);
+      const documentFragment = new DOMParser().parseFromString(await response.text(), 'text/html');
+      const content = documentFragment.querySelector('[data-pickup-availability-content]');
+      if (requestController.signal.aborted || sequence !== this.sequence || this.dataset.variantId !== String(variantId)) return;
+      if (!content) return this.clear();
+      this.replaceChildren(content);
+      this.hidden = false;
+      this.bindDialog();
+    } catch (error) {
+      if (!requestController.signal.aborted && sequence === this.sequence) this.clear();
+    } finally {
+      if (sequence === this.sequence) this.setAttribute('aria-busy', 'false');
+      if (this.requestController === requestController) this.requestController = null;
+    }
+  }
+
+  bindDialog() {
+    const dialog = this.querySelector('[data-pickup-availability-dialog]');
+    const opener = this.querySelector('[data-pickup-availability-open]');
+    const close = this.querySelector('[data-pickup-availability-close]');
+    opener?.addEventListener('click', () => dialog?.showModal(), { signal: this.abortController.signal });
+    close?.addEventListener('click', () => dialog?.close(), { signal: this.abortController.signal });
+    dialog?.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); }, { signal: this.abortController.signal });
+    dialog?.addEventListener('close', () => opener?.focus(), { signal: this.abortController.signal });
+  }
+}
+
+if (!customElements.get('pickup-availability')) customElements.define('pickup-availability', PickupAvailability);
 
 class ProductGallery extends HTMLElement {
   connectedCallback() {

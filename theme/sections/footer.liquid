@@ -35,26 +35,33 @@
         {% content_for 'blocks' %}
       </div>
 
-      {% if section.settings.show_social %}
+      {% if section.settings.show_social or section.settings.show_follow_on_shop %}
         <div class="footer__aside">
-          {% assign social_platforms = 'instagram,threads,facebook,x,pinterest,youtube,tiktok,snapchat,tumblr,linkedin,vimeo' | split: ',' %}
-          {% assign social_link_count = 0 %}
-          {% capture social_links %}
-            {% for platform in social_platforms %}
-              {% assign setting_id = 'social_' | append: platform %}
-              {% assign social_url = settings[setting_id] %}
-              {% if social_url != blank %}
-                {% assign social_link_count = social_link_count | plus: 1 %}
-                {% assign social_translation_key = 'social.' | append: platform %}
-                <li><a href="{{ social_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ social_translation_key | t }}">{% render 'social-icon', name: platform %}</a></li>
-              {% endif %}
-            {% endfor %}
-          {% endcapture %}
-          {% if social_link_count > 0 %}
-            <nav class="footer__social" aria-label="{{ section.settings.social_heading | escape }}">
-              {% if section.settings.social_heading != blank %}<h2>{{ section.settings.social_heading | escape }}</h2>{% endif %}
-              <ul role="list">{{ social_links }}</ul>
-            </nav>
+          {% if section.settings.show_social %}
+            {% assign social_platforms = 'instagram,threads,facebook,x,pinterest,youtube,tiktok,snapchat,tumblr,linkedin,vimeo' | split: ',' %}
+            {% assign social_link_count = 0 %}
+            {% capture social_links %}
+              {% for platform in social_platforms %}
+                {% assign setting_id = 'social_' | append: platform %}
+                {% assign social_url = settings[setting_id] %}
+                {% if social_url != blank %}
+                  {% assign social_link_count = social_link_count | plus: 1 %}
+                  {% assign social_translation_key = 'social.' | append: platform %}
+                  <li><a href="{{ social_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ social_translation_key | t }}">{% render 'social-icon', name: platform %}</a></li>
+                {% endif %}
+              {% endfor %}
+            {% endcapture %}
+            {% if social_link_count > 0 %}
+              <nav class="footer__social" aria-label="{{ section.settings.social_heading | escape }}">
+                {% if section.settings.social_heading != blank %}<h2>{{ section.settings.social_heading | escape }}</h2>{% endif %}
+                <ul role="list">{{ social_links }}</ul>
+              </nav>
+            {% endif %}
+          {% endif %}
+          {% if section.settings.show_follow_on_shop %}
+            <div class="footer__follow-on-shop">
+              {{ shop | login_button: action: 'follow' }}
+            </div>
           {% endif %}
         </div>
       {% endif %}
@@ -163,6 +170,7 @@
     { "type": "header", "content": "t:labels.footer_content" },
     { "type": "checkbox", "id": "show_newsletter_copy", "label": "t:labels.show_newsletter_copy", "default": false },
     { "type": "checkbox", "id": "show_social", "label": "t:labels.show_social", "default": true },
+    { "type": "checkbox", "id": "show_follow_on_shop", "label": "t:labels.show_follow_on_shop", "default": true },
     { "type": "text", "id": "social_heading", "label": "t:labels.social_heading", "default": "Follow us" },
     { "type": "link_list", "id": "legal_menu", "label": "t:labels.legal_menu" },
     { "type": "header", "content": "t:labels.footer_style" },
