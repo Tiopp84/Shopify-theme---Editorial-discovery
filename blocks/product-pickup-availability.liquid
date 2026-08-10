@@ -1,0 +1,44 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+{% liquid
+  assign block_product = product | default: section.settings.product
+  assign current_variant = block_product.selected_or_first_available_variant
+  assign pickup_locations = current_variant.store_availabilities | where: 'pick_up_enabled', true
+%}
+
+{% if current_variant != blank %}
+  <pickup-availability
+    class="main-product__pickup-availability"
+    data-pickup-availability
+    data-variant-id="{{ current_variant.id }}"
+    data-variant-available="{{ current_variant.available }}"
+    data-root-url="{{ routes.root_url }}"
+    hidden
+    aria-busy="true"
+    {{ block.shopify_attributes }}
+  ></pickup-availability>
+  <noscript>
+    {% if current_variant.available and pickup_locations.size > 0 %}
+      {% assign closest_location = pickup_locations.first %}
+      <p class="main-product__pickup-availability-fallback">
+        {% if closest_location.available %}
+          {{ 'products.pickup.available_at_html' | t: location_name: closest_location.location.name }}{% if closest_location.pick_up_time != blank %} — {{ closest_location.pick_up_time }}{% endif %}
+        {% else %}
+          {{ 'products.pickup.unavailable_at_html' | t: location_name: closest_location.location.name }}
+        {% endif %}
+      </p>
+    {% endif %}
+  </noscript>
+{% elsif request.visual_preview_mode %}
+  <p class="main-product__pickup-availability main-product__pickup-availability--preview" {{ block.shopify_attributes }}>
+    {{ 'products.pickup.preview' | t }}
+  </p>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:general.product_pickup_availability",
+  "class": "product-block product-block--pickup-availability",
+  "presets": [{ "name": "t:general.product_pickup_availability" }]
+}
+{% endschema %}
+{% # theme-check-enable ValidScopedCSSClass %}

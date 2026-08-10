@@ -8,6 +8,7 @@
 
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+    <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer></script>
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
@@ -23,6 +24,10 @@
       .gift-card-page__instruction { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); line-height: var(--body-text-line-spacing); margin: var(--space-2) auto 0; max-inline-size: 28rem; }
       .gift-card-page__code-label { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 700; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: var(--space-5) 0 var(--space-2); text-transform: uppercase; }
       .gift-card-page__code { border: 1px dashed var(--color-border); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(1.05rem, 3vw, 1.35rem); letter-spacing: .1em; margin: 0; overflow-wrap: anywhere; padding: var(--space-3); }
+      .gift-card-page__qr { display: grid; gap: var(--space-2); justify-items: center; margin: var(--space-5) auto 0; }
+      .gift-card-page__qr-label { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 700; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; text-transform: uppercase; }
+      .gift-card-page__qr-code { background: #fff; border: 1px solid var(--color-border); block-size: 8rem; box-sizing: content-box; display: grid; inline-size: 8rem; place-items: center; padding: .5rem; }
+      .gift-card-page__qr-code :is(canvas, img) { block-size: 8rem; display: block; inline-size: 8rem; }
       .gift-card-page__expiry { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); font-size: .875rem; line-height: var(--body-text-line-spacing); margin: var(--space-3) 0 0; }
       .gift-card-page__wallet { display: inline-block; margin-block-start: var(--space-5); }
       .gift-card-page__wallet img { block-size: auto; display: block; inline-size: 12.5rem; }
@@ -37,8 +42,10 @@
         <p class="gift-card-page__eyebrow">{{ 'gift_card.title' | t }}</p>
         <h1 id="GiftCardTitle">{{ gift_card.balance | money }}</h1>
 
-        {% if gift_card.enabled == false or gift_card.expired %}
+        {% if gift_card.expired %}
           <p class="gift-card-page__status" role="status">{{ 'gift_card.expired' | t }}</p>
+        {% elsif gift_card.enabled == false %}
+          <p class="gift-card-page__status" role="status">{{ 'gift_card.disabled' | t }}</p>
         {% endif %}
 
         {% if gift_card.expires_on %}
@@ -62,6 +69,30 @@
         <p class="gift-card-page__instruction">{{ 'gift_card.use_at_checkout' | t }}</p>
         <p class="gift-card-page__code-label">{{ 'gift_card.code' | t }}</p>
         <p class="gift-card-page__code">{{ gift_card.code | format_code }}</p>
+
+        {% if gift_card.enabled and gift_card.expired == false and gift_card.qr_identifier != blank %}
+          <div class="gift-card-page__qr">
+            <p class="gift-card-page__qr-label">{{ 'gift_card.qr_code' | t }}</p>
+            <div
+              id="GiftCardQrCode"
+              class="gift-card-page__qr-code"
+              role="img"
+              aria-label="{{ 'gift_card.qr_code_label' | t }}"
+            ></div>
+          </div>
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+              var qrCodeTarget = document.getElementById('GiftCardQrCode');
+              if (!qrCodeTarget || !window.QRCode) return;
+
+              new QRCode(qrCodeTarget, {
+                text: {{ gift_card.qr_identifier | json }},
+                width: 128,
+                height: 128
+              });
+            });
+          </script>
+        {% endif %}
 
         {% if gift_card.pass_url %}
           <a class="gift-card-page__wallet" href="{{ gift_card.pass_url }}">
