@@ -48,6 +48,7 @@ class ProductForm extends HTMLElement {
   }
 
   async onSubmit(event) {
+    if (event.submitter?.closest?.('[data-product-payment-button]')) return;
     if (this.validatedSubmit) {
       this.validatedSubmit = false;
       return;
@@ -297,13 +298,7 @@ class ProductGallery extends HTMLElement {
     this.dialogContent = this.querySelector('[data-product-gallery-dialog-content]');
     this.previousButton = this.querySelector('[data-product-gallery-previous]');
     this.nextButton = this.querySelector('[data-product-gallery-next]');
-    this.stagePreviousButton = this.querySelector('[data-product-gallery-stage-previous]');
-    this.stageNextButton = this.querySelector('[data-product-gallery-stage-next]');
     this.count = this.querySelector('[data-product-gallery-count]');
-    if (!this.isStacked) {
-      this.stagePreviousButton?.removeAttribute('hidden');
-      this.stageNextButton?.removeAttribute('hidden');
-    }
     this.buttons.forEach((button) => button.addEventListener('click', () => this.select(button.dataset.productMediaSelect, { reveal: true }), { signal }));
     this.thumbnails?.addEventListener('scroll', () => this.scheduleThumbnailOverflowUpdate(), { signal, passive: true });
     if (this.thumbnails && typeof ResizeObserver === 'function') {
@@ -332,8 +327,6 @@ class ProductGallery extends HTMLElement {
     this.dialogContent?.addEventListener('pointercancel', () => this.cancelModalSwipe(), { signal });
     this.previousButton?.addEventListener('click', () => this.step(-1), { signal });
     this.nextButton?.addEventListener('click', () => this.step(1), { signal });
-    this.stagePreviousButton?.addEventListener('click', () => this.stepSelected(-1), { signal });
-    this.stageNextButton?.addEventListener('click', () => this.stepSelected(1), { signal });
     this.dialog?.addEventListener('click', (event) => { if (event.target === this.dialog) this.dialog.close(); }, { signal });
     this.dialog?.addEventListener('close', () => {
       this.unlockPageScroll();
@@ -342,6 +335,9 @@ class ProductGallery extends HTMLElement {
     this.dialog?.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') { event.preventDefault(); this.step(-1); }
       if (event.key === 'ArrowRight') { event.preventDefault(); this.step(1); }
+    }, { signal });
+    window.addEventListener('resize', () => {
+      if (this.dialog?.open && this.mediaAspect) this.sizeDialog(this.mediaAspect);
     }, { signal });
     this.closest('[data-product-section]')?.addEventListener('product:variant-change', (event) => {
       if (event.detail.featuredMediaId) this.select(String(event.detail.featuredMediaId));
@@ -384,7 +380,16 @@ class ProductGallery extends HTMLElement {
       if (!selected && !this.isStacked) item.querySelectorAll('video').forEach((video) => video.pause());
     });
     if (selectedMedia?.dataset.productMediaRatio) this.stage?.style.setProperty('--pdp-media-ratio', selectedMedia.dataset.productMediaRatio);
-    this.buttons.forEach((button) => button.toggleAttribute('aria-current', button.dataset.productMediaSelect === String(id)));
+    const video = selectedMedia?.querySelector('video');
+    const syncVideoRatio = () => {
+      if (video?.videoWidth && video.videoHeight) this.stage?.style.setProperty('--pdp-media-ratio', String(video.videoWidth / video.videoHeight));
+    };
+    if (video?.readyState >= 1) syncVideoRatio();
+    else video?.addEventListener('loadedmetadata', syncVideoRatio, { once: true });
+    this.buttons.forEach((button) => {
+      if (button.dataset.productMediaSelect === String(id)) button.setAttribute('aria-current', 'true');
+      else button.removeAttribute('aria-current');
+    });
     this.selectedId = String(id);
     if (reveal) this.revealSelectedMedia();
   }
@@ -393,7 +398,19 @@ class ProductGallery extends HTMLElement {
     requestAnimationFrame(() => {
       if (!this.stage) return;
       const bounds = this.stage.getBoundingClientRect();
-      if (bounds.top < 0 || bounds.bottom > window.innerHeight) this.stage.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' });
+      const header = document.querySelector('.header-shell--sticky');
+      const headerBottom = Math.max(0, header?.getBoundingClientRect().bottom || 0);
+      const breadcrumb = document.querySelector('.breadcrumbs--product');
+      const breadcrumbGap = breadcrumb ? Math.max(0, bounds.top - breadcrumb.getBoundingClientRect().top) : 24;
+      // Keep the whole breadcrumb below the sticky header, with a short gap,
+      // then place the selected media immediately after its natural spacing.
+      const revealOffset = headerBottom + breadcrumbGap + 16;
+      if (bounds.top < revealOffset || bounds.bottom > window.innerHeight) {
+        window.scrollTo({
+          top: Math.max(0, window.scrollY + bounds.top - revealOffset),
+          behavior: 'auto',
+        });
+      }
     });
   }
 
@@ -687,8 +704,23 @@ class ProductGallery extends HTMLElement {
   }
 
   setDialogAspect(clone) {
+    const playableMedia = clone.querySelector('video, iframe');
+    if (playableMedia) {
+      this.dialog?.setAttribute('data-product-gallery-media-type', 'video');
+      const fallbackAspect = Number.parseFloat(clone.dataset.productMediaRatio) || 16 / 9;
+      // Size before metadata arrives. This prevents the browser's native video
+      // dimensions from briefly expanding the dialog to an oversized frame.
+      this.sizeDialog(fallbackAspect);
+      const setVideoAspect = () => {
+        if (playableMedia.videoWidth && playableMedia.videoHeight) this.sizeDialog(playableMedia.videoWidth / playableMedia.videoHeight);
+      };
+      if (playableMedia.readyState >= HTMLMediaElement.HAVE_METADATA) setVideoAspect();
+      else if (playableMedia instanceof HTMLVideoElement) playableMedia.addEventListener('loadedmetadata', setVideoAspect, { once: true });
+      return;
+    }
     const image = clone.querySelector('img');
     if (image) {
+      this.dialog?.removeAttribute('data-product-gallery-media-type');
       const setImageAspect = () => {
         if (image.naturalWidth && image.naturalHeight) this.sizeDialog(image.naturalWidth / image.naturalHeight);
       };
@@ -696,27 +728,22 @@ class ProductGallery extends HTMLElement {
       else image.addEventListener('load', setImageAspect, { once: true });
       return;
     }
-    const video = clone.querySelector('video');
-    if (video) {
-      const setVideoAspect = () => {
-        if (video.videoWidth && video.videoHeight) this.sizeDialog(video.videoWidth / video.videoHeight);
-      };
-      video.addEventListener('loadedmetadata', setVideoAspect, { once: true });
-      return;
-    }
+    this.dialog?.removeAttribute('data-product-gallery-media-type');
     this.sizeDialog(16 / 9);
   }
 
   sizeDialog(aspect) {
     this.mediaAspect = aspect;
-    const navigationHeight = 64;
+    const isVideo = this.dialog?.dataset.productGalleryMediaType === 'video';
     const maxWidth = window.innerWidth * 0.92;
-    const maxHeight = window.innerHeight - navigationHeight - 16;
+    // Video is constrained by height, not a guessed width: 50dvh remains
+    // responsive for every aspect ratio and lets width follow naturally.
+    const maxHeight = window.innerHeight * (isVideo ? 0.5 : 1) - (isVideo ? 0 : 80);
     const width = Math.min(maxWidth, maxHeight * aspect);
     const height = width / aspect;
     this.dialog.style.inlineSize = `${Math.floor(width)}px`;
     this.dialog.style.blockSize = `${Math.floor(height)}px`;
-    this.dialog.style.marginBlockStart = `${Math.max(8, Math.floor((window.innerHeight - navigationHeight - height) / 2))}px`;
+    this.dialog.style.marginBlockStart = `${Math.max(8, Math.floor((window.innerHeight - height) / 2))}px`;
   }
 
   enableHoverZoom(image) {

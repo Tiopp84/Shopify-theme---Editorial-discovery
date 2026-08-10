@@ -1,8 +1,10 @@
 {% doc %}
   Renders collection filter and sorting controls as a standard GET form.
 
-  @param {collection} results - Collection whose filters and sort options are rendered.
+  @param {object} results - Collection or search whose filters and sort options are rendered.
   @param {string} form_id - Unique ID for labels and controls.
+  @param {string} [form_action] - Explicit endpoint when the results object has no URL, such as search.
+  @param {string} [search_terms] - Query preserved while filtering or sorting a search result.
   @param {boolean} [show_sort] - Render the sort selector.
   @param {boolean} [sort_as_radios] - Render sort options as radios inside a native details disclosure.
   @param {boolean} [sort_as_menu] - Render the sort disclosure as a desktop popover menu.
@@ -13,7 +15,10 @@
   {% render 'facets', results: collection, form_id: 'CollectionFilters', show_sort: true %}
 {% enddoc %}
 
-<form class="facets" id="{{ form_id }}" action="{{ results.url }}" method="get">
+<form class="facets" id="{{ form_id }}" action="{{ form_action | default: results.url }}" method="get">
+  {% if search_terms != blank %}
+    <input type="hidden" name="q" value="{{ search_terms | escape }}">
+  {% endif %}
   {% if show_sort %}
     {% assign sort_by = results.sort_by | default: results.default_sort_by %}
     {% if sort_as_radios or sort_as_menu %}
@@ -292,5 +297,9 @@
 
   .facets__apply {
     width: 100%;
+  }
+
+  .facets--auto-apply .facets__apply {
+    display: none;
   }
 {% endstylesheet %}

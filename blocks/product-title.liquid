@@ -1,5 +1,6 @@
-{% if product.title != blank %}
-  <h1 {{ block.shopify_attributes }}>{{ product.title | escape }}</h1>
+{% assign block_product = product | default: section.settings.product %}
+{% if block_product.title != blank %}
+  <h1 {{ block.shopify_attributes }}>{{ block_product.title | escape }}</h1>
 {% elsif request.visual_preview_mode %}
   <h1 {{ block.shopify_attributes }}>{{ 'products.card.placeholder_title' | t }}</h1>
 {% endif %}

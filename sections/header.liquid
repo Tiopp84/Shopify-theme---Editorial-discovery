@@ -49,7 +49,19 @@
               <summary>{{ link.title | escape }}</summary>
               <div class="header-shell__submenu">
                 {% for child_link in link.links %}
-                  <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                  {% if child_link.links != blank %}
+                    <details class="header-shell__submenu-group">
+                      <summary>{{ child_link.title | escape }}</summary>
+                      <div class="header-shell__submenu-level-three">
+                        <a class="header-shell__submenu-view-all" href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                        {% for grandchild_link in child_link.links %}
+                          <a href="{{ grandchild_link.url }}">{{ grandchild_link.title | escape }}</a>
+                        {% endfor %}
+                      </div>
+                    </details>
+                  {% else %}
+                    <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                  {% endif %}
                 {% endfor %}
               </div>
             </details>
@@ -190,7 +202,21 @@
               </summary>
               <div class="header-shell__mobile-nav-fallback">
                 {% for child_link in link.links %}
-                  <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                  {% if child_link.links != blank %}
+                    <div class="header-shell__mobile-nav-branch">
+                      <details class="header-shell__mobile-nav-group">
+                        <summary><span class="visually-hidden">{{ child_link.title | escape }}</span></summary>
+                        <div class="header-shell__mobile-nav-level-three">
+                          {% for grandchild_link in child_link.links %}
+                            <a href="{{ grandchild_link.url }}">{{ grandchild_link.title | escape }}</a>
+                          {% endfor %}
+                        </div>
+                      </details>
+                      <a class="header-shell__mobile-nav-parent-link" href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                    </div>
+                  {% else %}
+                    <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                  {% endif %}
                 {% endfor %}
               </div>
             </details>
@@ -215,7 +241,21 @@
             </button>
             <h3 id="{{ submenu_id }}Title">{{ link.title | escape }}</h3>
             {% for child_link in link.links %}
-              <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+              {% if child_link.links != blank %}
+                <div class="header-shell__mobile-nav-branch">
+                  <details class="header-shell__mobile-nav-group">
+                    <summary><span class="visually-hidden">{{ child_link.title | escape }}</span></summary>
+                    <div class="header-shell__mobile-nav-level-three">
+                      {% for grandchild_link in child_link.links %}
+                        <a href="{{ grandchild_link.url }}">{{ grandchild_link.title | escape }}</a>
+                      {% endfor %}
+                    </div>
+                  </details>
+                  <a class="header-shell__mobile-nav-parent-link" href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                </div>
+              {% else %}
+                <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+              {% endif %}
             {% endfor %}
           </section>
         {% endif %}
@@ -395,6 +435,10 @@
       padding-block: 0.5rem;
     }
 
+    .header-shell--compact .header-shell__submenu {
+      inset-block-start: calc(100% + var(--space-1));
+    }
+
     .header-shell--compact .header-shell__actions {
       display: none;
     }
@@ -560,6 +604,7 @@
     inset-inline-start: 0;
     min-width: 14rem;
     padding: var(--space-3);
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
     border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     background: var(--header-dropdown-background-color);
@@ -588,6 +633,53 @@
   .header-shell__submenu a:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
+  }
+
+  .header-shell__submenu-group {
+    border-radius: .35rem;
+    position: relative;
+  }
+
+  .header-shell__submenu-group > summary {
+    align-items: center;
+    border-radius: .35rem;
+    color: var(--header-dropdown-text-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    padding: var(--space-3);
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .header-shell__submenu-group > summary::-webkit-details-marker { display: none; }
+  .header-shell__submenu-group > summary::after { content: '›'; font-size: 1.15em; transition: transform 180ms ease; }
+  .header-shell__submenu-group[open] > summary::after { transform: translateX(.18rem); }
+  .header-shell__submenu-group > summary:is(:hover, :focus-visible) { background: var(--color-interactive-background); box-shadow: var(--focus-ring); color: var(--color-foreground); outline: none; transform: translateX(.2rem); }
+
+  .header-shell__submenu-level-three {
+    background: var(--header-dropdown-background-color);
+    border: 1px solid var(--color-border);
+    border-radius: .5rem;
+    box-shadow: 0 .75rem 1.5rem color-mix(in srgb, var(--color-foreground) 12%, transparent);
+    display: grid;
+    inset-block-start: calc(var(--space-3) * -1);
+    inset-inline-start: calc(100% + var(--space-2));
+    min-inline-size: 14rem;
+    padding: var(--space-3);
+    position: absolute;
+    z-index: 32;
+  }
+
+  .header-shell__submenu-level-three .header-shell__submenu-view-all {
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__submenu-group[open] > .header-shell__submenu-level-three {
+      animation: header-shell-submenu-in 180ms cubic-bezier(.22, 1, .36, 1) backwards;
+      transform-origin: top left;
+    }
   }
 
   .header-shell__actions {
@@ -795,6 +887,81 @@
     padding-inline-start: var(--space-4);
   }
 
+  .header-shell__mobile-nav-fallback > .header-shell__mobile-nav-group > summary,
+  .header-shell__mobile-submenu > .header-shell__mobile-nav-group > summary {
+    font-family: var(--font-primary--family);
+    font-size: 1rem;
+    min-block-size: 3.5rem;
+    padding: var(--space-4) 0;
+  }
+
+  .header-shell__mobile-nav-branch {
+    border-block-end: 1px solid var(--color-border);
+    display: grid;
+    position: relative;
+  }
+
+  .header-shell__mobile-nav-branch > details {
+    display: block;
+    position: static;
+  }
+
+  .header-shell__mobile-nav-branch > details > summary {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    display: grid;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    justify-content: center;
+    min-block-size: 3.5rem;
+    min-inline-size: 3.5rem;
+    padding: 0;
+    position: absolute !important;
+    left: auto;
+    right: 0;
+    z-index: 2;
+  }
+
+  .header-shell__mobile-nav-branch > details > summary::after {
+    margin: 0;
+  }
+
+  .header-shell__mobile-nav-parent-link {
+    color: var(--header-dropdown-text-color);
+    display: block;
+    font-family: var(--font-primary--family);
+    font-size: 1rem;
+    min-block-size: 3.5rem;
+    padding: var(--space-4) 3.5rem var(--space-4) 0 !important;
+    order: -1;
+    text-decoration: none;
+  }
+
+  .header-shell__mobile-nav-branch > details[open] > .header-shell__mobile-nav-level-three {
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .header-shell__mobile-nav-level-three {
+    display: grid;
+  }
+
+  .header-shell__mobile-nav-level-three a {
+    padding-inline-start: calc(var(--space-4) * 2) !important;
+  }
+
+  .header-shell__mobile-nav-group[open] > summary::after {
+    transform: rotate(45deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__mobile-nav-group[open] > .header-shell__mobile-nav-level-three {
+      animation: header-shell-submenu-in 180ms cubic-bezier(.22, 1, .36, 1) backwards;
+      transform-origin: top;
+    }
+  }
+
   .header-shell__mobile-nav[data-mobile-menu-enhanced] .header-shell__mobile-nav-fallback {
     display: none;
   }
@@ -840,6 +1007,15 @@
 
   .header-shell__mobile-submenu > a {
     grid-column: 1 / -1;
+  }
+
+  .header-shell__mobile-submenu > .header-shell__mobile-nav-group {
+    grid-column: 1 / -1;
+  }
+
+  .header-shell__mobile-submenu > .header-shell__mobile-nav-branch {
+    grid-column: 1 / -1;
+    inline-size: 100%;
   }
 
   .header-shell__mobile-submenu > a:first-of-type {

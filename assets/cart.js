@@ -307,6 +307,7 @@ class CartDrawer extends HTMLElement {
   onSubmit(event) {
     if (event.target.matches('[data-product-form] form')) {
       if (event.defaultPrevented) return;
+      if (event.submitter?.closest?.('[data-product-payment-button]')) return;
       const validationApproved = event.target.hasAttribute('data-product-validation-approved');
       event.target.removeAttribute('data-product-validation-approved');
       event.preventDefault();

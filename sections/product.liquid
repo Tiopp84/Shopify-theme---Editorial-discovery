@@ -1,15 +1,10 @@
 {% liquid
   assign current_variant = product.selected_or_first_available_variant
   assign initial_media = current_variant.featured_media | default: product.featured_media | default: product.media.first
-  assign media_ratio = '4 / 5'
-  if section.settings.media_ratio == 'square'
-    assign media_ratio = '1 / 1'
-  elsif section.settings.media_ratio == 'landscape'
-    assign media_ratio = '3 / 2'
-  endif
+  assign media_ratio = initial_media.preview_image.aspect_ratio | default: 0.8
 %}
 
-<section class="main-product main-product--gallery-{{ section.settings.gallery_layout }} main-product--media-{{ section.settings.desktop_media_position }} main-product--thumbnails-{{ section.settings.thumbnail_position }}" data-product-section data-section-id="{{ section.id }}" data-gallery-layout="{{ section.settings.gallery_layout }}" style="--pdp-media-ratio: {{ media_ratio }};">
+<section class="main-product main-product--gallery-{{ section.settings.gallery_layout }} main-product--media-{{ section.settings.desktop_media_position }}{% if section.settings.show_thumbnails %} main-product--thumbnails-{{ section.settings.thumbnail_position }}{% endif %}" data-product-section data-section-id="{{ section.id }}" data-gallery-layout="{{ section.settings.gallery_layout }}" style="--pdp-media-ratio: {{ media_ratio }}; --pdp-media-column-width: {{ section.settings.desktop_media_width | default: 43 }}%;">
   {% if product.media.size > 0 %}
     <product-gallery class="main-product__gallery main-product__gallery--{{ section.settings.gallery_layout }}" data-product-gallery data-gallery-layout="{{ section.settings.gallery_layout }}" data-initial-media-id="{{ initial_media.id }}" aria-label="{{ product.title | escape }}">
       <div class="main-product__media-stage">
@@ -19,9 +14,10 @@
             {% assign media_loading = 'eager' %}
           {% endif %}
           <div
-            class="main-product__media"
+            class="main-product__media{% if media.media_type == 'video' or media.media_type == 'external_video' %} main-product__media--video{% endif %}"
             data-product-media-id="{{ media.id }}"
-            data-product-media-ratio="{{ media_ratio }}"
+            data-product-media-ratio="{{ media.preview_image.aspect_ratio | default: media_ratio }}"
+            style="--product-media-ratio: {{ media.preview_image.aspect_ratio | default: media_ratio }};"
           >
           {% case media.media_type %}
             {% when 'image' %}
@@ -33,18 +29,16 @@
             {% when 'model' %}
               {{ media | model_viewer_tag: image_size: '1200x', reveal: 'interaction', toggleable: true }}
           {% endcase %}
-          <button
-            class="main-product__media-open"
-            type="button"
-            data-product-media-open="{{ media.id }}"
-            aria-label="{{ 'products.gallery.zoom_media' | t: index: forloop.index }}"
-          ></button>
+          {% unless media.media_type == 'video' or media.media_type == 'external_video' %}
+            <button
+              class="main-product__media-open"
+              type="button"
+              data-product-media-open="{{ media.id }}"
+              aria-label="{{ 'products.gallery.zoom_media' | t: index: forloop.index }}"
+            ></button>
+          {% endunless %}
           </div>
         {% endfor %}
-        {% if product.media.size > 1 and section.settings.gallery_layout != 'stacked' %}
-          <button class="main-product__media-nav main-product__media-nav--previous" type="button" data-product-gallery-stage-previous aria-label="{{ 'products.gallery.previous' | t }}" hidden>←</button>
-          <button class="main-product__media-nav main-product__media-nav--next" type="button" data-product-gallery-stage-next aria-label="{{ 'products.gallery.next' | t }}" hidden>→</button>
-        {% endif %}
       </div>
       {% if product.media.size > 1 and section.settings.gallery_layout == 'thumbnails' and section.settings.show_thumbnails %}
         <div class="main-product__thumbnails-wrap" data-product-thumbnail-wrap>
@@ -117,25 +111,15 @@
 {% stylesheet %}
   .main-product { display: grid; gap: var(--space-6); margin: var(--space-6) auto; max-width: var(--layout-content-max); padding-inline: var(--layout-gutter); }
   .main-product__gallery { display: grid; gap: var(--space-3); min-width: 0; }
-  .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; position: relative; scroll-margin-block-start: 5rem; touch-action: pan-y; }
+  .main-product__media-stage { aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 4%, transparent); overflow: hidden; position: relative; scroll-margin-block-start: 10rem; touch-action: pan-y; }
   .main-product__media-placeholder { align-items: center; aspect-ratio: var(--pdp-media-ratio); background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; overflow: hidden; }
   .main-product__media-placeholder svg { block-size: auto; inline-size: 42%; max-block-size: 42%; }
   .main-product__media { block-size: 100%; inline-size: 100%; position: relative; }
   .main-product__media > :not(.main-product__media-open) { block-size: 100%; display: block; inline-size: 100%; max-width: 100%; }
   .main-product__media-open, .main-product__media-open:is(:hover, :focus-visible) { --button-background: transparent; --button-background-hover: transparent; background: transparent; border: 0; box-shadow: none; cursor: zoom-in; inset: 0; position: absolute; z-index: 1; }
   .main-product__media-open:focus-visible { outline: var(--focus-ring); outline-offset: -0.25rem; }
-  .main-product__media-nav { --button-background: transparent; --button-background-hover: color-mix(in srgb, var(--color-foreground) 12%, transparent); --button-border-color: transparent; --button-color: var(--color-background); --button-min-block-size: 100%; --button-padding-inline: 0; --button-radius: 0; block-size: 100%; display: none; inset-block: 0; opacity: 0; position: absolute; transition: opacity 160ms ease, background-color 160ms ease; z-index: 2; }
-  .main-product__media-nav--previous { inset-inline-start: 0; }
-  .main-product__media-nav--next { inset-inline-end: 0; }
-  @media (min-width: 64rem) {
-    .main-product__media-nav { align-items: center; display: flex; inline-size: 20%; justify-content: center; }
-    .main-product__media-stage:focus-within .main-product__media-nav { opacity: 1; }
-  }
-  @media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
-    .main-product__media-stage:is(:hover, :focus-within) .main-product__media-nav { opacity: 1; }
-  }
-  .main-product__media-nav[hidden] { display: none; }
-  .main-product__media img, .main-product__media video { cursor: zoom-in; object-fit: cover; }
+  .main-product__media img, .main-product__media video { cursor: zoom-in; object-fit: contain; }
+  .main-product__media--video :is(video, iframe) { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='12' fill='%23ffffff' stroke='%23181818' stroke-width='1.5'/%3E%3Cpath d='M11 9.5 19 14l-8 4.5z' fill='%23181818'/%3E%3C/svg%3E") 14 14, pointer; }
   .main-product__media :is(video, iframe, model-viewer) { border: 0; height: 100%; width: 100%; }
   .main-product__thumbnails-wrap { min-width: 0; position: relative; }
   .main-product__thumbnails-wrap::before, .main-product__thumbnails-wrap::after { align-items: center; color: var(--color-foreground); display: flex; font-size: 1.1rem; inset-block: 0; opacity: 0; pointer-events: none; position: absolute; transition: opacity 160ms ease; width: 3rem; }
@@ -148,9 +132,10 @@
   .main-product__thumbnail[aria-current="true"] { outline: var(--focus-ring); outline-offset: 2px; }
   .main-product__thumbnail img { display: block; aspect-ratio: 1; object-fit: cover; width: 100%; }
   .main-product__media-dialog { background: var(--color-background); border: 0; margin-inline: auto; max-height: none; max-width: none; overflow: visible; padding: 0; }
+  .main-product__media-dialog[data-product-gallery-media-type='video'] { max-block-size: 50dvh; max-inline-size: calc(100dvw - (var(--space-4) * 2)); }
   .main-product__media-dialog::backdrop { background: transparent; }
   .main-product__media-dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
-  .main-product__media-dialog-toolbar { display: flex; gap: 0; inset-block-end: max(var(--space-2), env(safe-area-inset-bottom)); inset-inline-start: 50%; pointer-events: auto; position: fixed; transform: translateX(-50%); z-index: 4; }
+  .main-product__media-dialog-toolbar { display: flex; gap: 0; inset-block-start: calc(100% + var(--space-3)); inset-inline-start: 50%; pointer-events: auto; position: absolute; transform: translateX(-50%); z-index: 4; }
   .main-product__media-dialog-toolbar button, .main-product__media-dialog-count { align-content: center; backdrop-filter: blur(0.75rem); background: color-mix(in srgb, var(--color-foreground) 52%, transparent); border: 1px solid color-mix(in srgb, var(--color-background) 30%, transparent); color: var(--color-background); min-block-size: 2.75rem; min-inline-size: 3.5rem; text-align: center; }
   .main-product__media-dialog-count { inline-size: 6.5rem; }
   .main-product__media-dialog-content { block-size: 100%; display: grid; inline-size: 100%; overflow: hidden; place-items: center; touch-action: pan-y; }
@@ -172,6 +157,7 @@
   .main-product__price .price__compare { font-size: .875em; }
   .main-product__details product-form { display: block; margin: 0; }
   .main-product__details product-form form { align-content: start; display: grid; gap: var(--space-6); }
+  .main-product__payment-button { min-block-size: 0; }
   .main-product__option, .main-product__quantity { display: grid; gap: .6rem; margin: 0; }
   product-form:not([data-product-enhanced]) .main-product__option:not(.main-product__variant-fallback) { display: none; }
   .main-product__option > label, .main-product__quantity > label { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 700; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); text-transform: uppercase; }
@@ -227,9 +213,10 @@
   .main-product__blocks > .product-block--description { border-block-start: 1px solid var(--color-border); margin-block-end: var(--space-5); padding-block-start: var(--space-5); }
   .main-product__blocks > .product-block--collapsible + .product-block--collapsible .product-collapsible { border-block-start: 0; }
   .main-product__gallery--stacked .main-product__media-stage { aspect-ratio: auto; display: grid; gap: var(--space-3); }
-  .main-product__gallery--stacked .main-product__media { aspect-ratio: var(--pdp-media-ratio); }
+  .main-product__gallery--stacked .main-product__media { aspect-ratio: var(--product-media-ratio); }
   @media (min-width: 64rem) {
-    .main-product { grid-template-columns: minmax(0, .85fr) minmax(22rem, 1.15fr); align-items: start; }
+    .main-product { grid-template-columns: minmax(0, var(--pdp-media-column-width)) minmax(22rem, 1fr); align-items: start; }
+    .main-product--media-right { grid-template-columns: minmax(22rem, 1fr) minmax(0, var(--pdp-media-column-width)); }
     .main-product--media-right .main-product__gallery { grid-column: 2; }
     .main-product--media-right .main-product__details { grid-column: 1; grid-row: 1; }
     .main-product--thumbnails-side .main-product__gallery { grid-template-columns: 4rem minmax(0, 1fr); }
@@ -259,6 +246,7 @@
     { "type": "product-description" },
     { "type": "product-collapsible" },
     { "type": "product-reassurance" },
+    { "type": "product-custom-liquid" },
     { "type": "@app" }
   ],
   "settings": [
@@ -266,17 +254,7 @@
     { "type": "select", "id": "gallery_layout", "label": "t:labels.product_gallery_layout", "options": [{ "value": "thumbnails", "label": "t:options.product_gallery_layout.thumbnails" }, { "value": "stacked", "label": "t:options.product_gallery_layout.stacked" }], "default": "thumbnails" },
     { "type": "select", "id": "thumbnail_position", "label": "t:labels.thumbnail_position", "options": [{ "value": "bottom", "label": "t:options.thumbnail_position.bottom" }, { "value": "side", "label": "t:options.thumbnail_position.side" }], "default": "bottom", "visible_if": "{{ section.settings.gallery_layout == 'thumbnails' }}" },
     { "type": "select", "id": "desktop_media_position", "label": "t:labels.desktop_media_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
-    {
-      "type": "select",
-      "id": "media_ratio",
-      "label": "t:labels.image_ratio",
-      "options": [
-        { "value": "portrait", "label": "t:options.image_ratio.portrait" },
-        { "value": "square", "label": "t:options.image_ratio.square" },
-        { "value": "landscape", "label": "t:options.image_ratio.landscape" }
-      ],
-      "default": "portrait"
-    },
+    { "type": "range", "id": "desktop_media_width", "label": "t:labels.desktop_media_width", "min": 35, "max": 60, "step": 1, "unit": "%", "default": 43 },
     {
       "type": "checkbox",
       "id": "show_thumbnails",
