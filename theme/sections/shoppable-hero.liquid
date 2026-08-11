@@ -11,6 +11,7 @@
   assign desktop_image_position = desktop_image.presentation.focal_point | default: '50% 50%'
   assign mobile_image_position = section.settings.mobile_image.presentation.focal_point | default: desktop_image_position
   assign mobile_hotspot_icon_style = section.settings.mobile_hotspot_icon_style | default: 'plus'
+  assign desktop_image_alt = desktop_image.alt | default: section.settings.heading | default: shop.name
   assign overlay_direction = 'to right'
   assign mobile_overlay_direction = 'to right'
 
@@ -57,11 +58,11 @@
   <div class="shoppable-hero__media">
     {% if desktop_image != blank %}
       {% if section.settings.image == blank %}
-        {{ desktop_image | image_url: width: 1600 | image_tag: class: 'shoppable-hero__image', widths: '480, 720, 960, 1200, 1600', sizes: '100vw' }}
+        {{ desktop_image | image_url: width: 1600 | image_tag: class: 'shoppable-hero__image', alt: desktop_image_alt, widths: '480, 720, 960, 1200, 1600', sizes: '100vw' }}
       {% else %}
         <picture>
           {% if section.settings.mobile_image != blank %}<source media="(max-width: 47.99rem)" srcset="{{ section.settings.mobile_image | image_url: width: 960 }}">{% endif %}
-          {{ section.settings.image | image_url: width: 2400 | image_tag: class: 'shoppable-hero__image', widths: '480, 720, 960, 1200, 1600, 2000, 2400', sizes: '100vw' }}
+          {{ section.settings.image | image_url: width: 2400 | image_tag: class: 'shoppable-hero__image', alt: desktop_image_alt, widths: '480, 720, 960, 1200, 1600, 2000, 2400', sizes: '100vw' }}
         </picture>
       {% endif %}
     {% else %}

@@ -82,7 +82,8 @@
     "settings": [
       { "type": "select", "id": "cart_type", "label": "t:labels.cart_type", "options": [{ "value": "drawer", "label": "t:options.cart_type.drawer" }, { "value": "page", "label": "t:options.cart_type.page" }], "default": "drawer" },
       { "type": "select", "id": "cart_icon", "label": "t:labels.cart_icon", "options": [{ "value": "bag", "label": "t:options.cart_icon.bag" }, { "value": "cart", "label": "t:options.cart_icon.cart" }, { "value": "basket", "label": "t:options.cart_icon.basket" }], "default": "bag" },
-      { "type": "checkbox", "id": "cart_show_note", "label": "t:general.cart_show_note", "default": true }
+      { "type": "checkbox", "id": "cart_show_note", "label": "t:general.cart_show_note", "default": true },
+      { "type": "textarea", "id": "cart_checkout_note", "label": "t:labels.cart_checkout_note", "default": "Taxes and shipping are calculated at checkout." }
     ]
   },
   {
@@ -157,7 +158,7 @@
       { "type": "range", "id": "overlay_opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "label": "t:labels.overlay_opacity", "default": 45 },
       { "type": "header", "content": "t:general.commerce" },
       { "type": "color", "id": "price_color", "default": "#1A1A1A", "label": "t:labels.price" },
-      { "type": "color", "id": "compare_price_color", "default": "#767676", "label": "t:labels.compare_price" },
+      { "type": "color", "id": "compare_price_color", "default": "#595959", "label": "t:labels.compare_price" },
       { "type": "color", "id": "sale_price_color", "default": "#A33F2B", "label": "t:labels.sale_price" },
       { "type": "color", "id": "sale_badge_background", "default": "#F7BEBE", "label": "t:labels.sale_badge_background" },
       { "type": "color", "id": "sale_badge_text", "default": "#1A1A1A", "label": "t:labels.sale_badge_text" }

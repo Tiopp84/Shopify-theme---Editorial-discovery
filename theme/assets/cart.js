@@ -307,6 +307,7 @@ class CartDrawer extends HTMLElement {
   onSubmit(event) {
     if (event.target.matches('[data-product-form] form')) {
       if (event.defaultPrevented) return;
+      if (event.submitter?.closest?.('[data-product-payment-button]')) return;
       const validationApproved = event.target.hasAttribute('data-product-validation-approved');
       event.target.removeAttribute('data-product-validation-approved');
       event.preventDefault();
@@ -443,7 +444,8 @@ class CartDrawer extends HTMLElement {
   }
 
   cartFooterHtml(cart) {
-    return `<footer class="cart-drawer__footer">${this.cartDiscountHtml(cart)}${this.cartNoteHtml()}<p class="cart-drawer__subtotal"><span>${this.escape(this.dataset.cartSubtotalLabel)}</span><strong data-cart-subtotal>${this.store.formatMoney(cart.total_price, true)}</strong></p><p class="cart-drawer__checkout-note">${this.escape(this.dataset.cartTaxesNote)}</p><button type="submit" name="checkout">${this.escape(this.dataset.cartCheckoutLabel)}</button><a href="${this.escape(this.dataset.cartUrl)}">${this.escape(this.dataset.cartViewCart)}</a></footer>`;
+    const checkoutNote = this.dataset.cartHasTaxesNote === 'true' ? `<p class="cart-drawer__checkout-note">${this.escape(this.dataset.cartTaxesNote)}</p>` : '';
+    return `<footer class="cart-drawer__footer">${this.cartDiscountHtml(cart)}${this.cartNoteHtml()}<p class="cart-drawer__subtotal"><span>${this.escape(this.dataset.cartSubtotalLabel)}</span><strong data-cart-subtotal>${this.store.formatMoney(cart.total_price, true)}</strong></p>${checkoutNote}<button type="submit" name="checkout">${this.escape(this.dataset.cartCheckoutLabel)}</button><a href="${this.escape(this.dataset.cartUrl)}">${this.escape(this.dataset.cartViewCart)}</a></footer>`;
   }
 
   cartNoteHtml() {

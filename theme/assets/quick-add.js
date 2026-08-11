@@ -31,7 +31,10 @@ class QuickAdd extends HTMLElement {
     this.dialog.addEventListener('click', (event) => { if (event.target === this.dialog) this.dialog.close(); }, { signal });
     this.dialog.addEventListener('close', () => {
       this.unlockPageScroll();
-      this.opener?.focus({ preventScroll: true });
+      if (this.opener) {
+        this.opener.focus({ preventScroll: true });
+        if (!this.opener.matches(':focus-visible')) this.opener.blur();
+      }
     }, { signal });
     this.options.forEach((option) => option.addEventListener('change', () => this.fromControls(), { signal }));
     this.optionButtons.forEach((button) => button.addEventListener('click', () => {

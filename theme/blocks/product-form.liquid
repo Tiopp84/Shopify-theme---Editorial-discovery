@@ -1,5 +1,8 @@
 {% # theme-check-disable ValidScopedCSSClass %}
 {% liquid
+  if product == blank and section.settings.product != blank
+    assign product = section.settings.product
+  endif
   assign current_variant = product.selected_or_first_available_variant
   assign product_form_id = 'ProductForm-' | append: section.id
   assign has_multiple_variants = false
@@ -110,6 +113,11 @@
     {% endif %}
     <p class="main-product__selection-error" data-product-selection-error role="alert" hidden></p>
     <button type="submit" data-product-submit {% unless current_variant.available %}disabled{% endunless %}>{% if current_variant.available %}{{ 'products.form.add_to_cart' | t }}{% else %}{{ 'products.form.sold_out' | t }}{% endif %}</button>
+    {% if block.settings.show_dynamic_checkout_button %}
+      <div class="main-product__payment-button" data-product-payment-button>
+        {{ form | payment_button }}
+      </div>
+    {% endif %}
   {% endform %}
 </product-form>
 
@@ -141,6 +149,7 @@
   "class": "product-block product-block--form",
   "settings": [
     { "type": "header", "content": "t:general.content" },
+    { "type": "checkbox", "id": "show_dynamic_checkout_button", "label": "t:labels.show_dynamic_checkout_button", "default": true },
     { "type": "page", "id": "size_guide_page", "label": "t:labels.size_guide_page" }
   ],
   "presets": [{ "name": "t:general.product_form" }]

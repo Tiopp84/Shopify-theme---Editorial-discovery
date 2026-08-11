@@ -1,6 +1,7 @@
 class CollectionDiscovery extends HTMLElement {
   connectedCallback() {
     this.requestSequence = 0;
+    this.enhanceForms();
     this.addEventListener('click', this.handleClick);
     this.addEventListener('change', this.handleChange);
     this.addEventListener('submit', this.handleSubmit);
@@ -57,7 +58,7 @@ class CollectionDiscovery extends HTMLElement {
 
   handleChange = (event) => {
     const control = event.target;
-    if (!control.matches('[data-sort-by], input[type="checkbox"], input[type="radio"]')) return;
+    if (!control.matches('[data-sort-by], input[type="checkbox"], input[type="radio"], input[type="number"]')) return;
 
     const form = control.form;
     if (!form?.matches('.facets')) return;
@@ -273,6 +274,12 @@ class CollectionDiscovery extends HTMLElement {
       });
       results.replaceWith(replacement);
     }
+
+    this.enhanceForms();
+  }
+
+  enhanceForms() {
+    this.querySelectorAll('.facets').forEach((form) => form.classList.add('facets--auto-apply'));
   }
 
   patchContent(selector, nextCollection) {

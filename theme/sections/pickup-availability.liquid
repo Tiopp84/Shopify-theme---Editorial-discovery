@@ -1,0 +1,91 @@
+{% # theme-check-disable UndefinedObject %}
+{% liquid
+  assign pickup_locations = product_variant.store_availabilities | where: 'pick_up_enabled', true
+%}
+
+{% if pickup_locations.size > 0 %}
+  {% assign closest_location = pickup_locations.first %}
+  <div class="pickup-availability" data-pickup-availability-content>
+    <div class="pickup-availability__summary">
+      <span class="pickup-availability__status{% unless closest_location.available %} pickup-availability__status--unavailable{% endunless %}" aria-hidden="true"></span>
+      <div>
+        {% if closest_location.available %}
+          <p class="pickup-availability__title">{{ 'products.pickup.available_at_html' | t: location_name: closest_location.location.name }}</p>
+          <p class="pickup-availability__time">{{ closest_location.pick_up_time }}</p>
+        {% else %}
+          <p class="pickup-availability__title">{{ 'products.pickup.unavailable_at_html' | t: location_name: closest_location.location.name }}</p>
+        {% endif %}
+        <button class="pickup-availability__details" type="button" data-pickup-availability-open aria-haspopup="dialog">
+          {% if pickup_locations.size == 1 %}{{ 'products.pickup.view_store' | t }}{% else %}{{ 'products.pickup.other_stores' | t }}{% endif %}
+        </button>
+      </div>
+    </div>
+    <dialog class="pickup-availability__dialog" data-pickup-availability-dialog data-overlay-motion="modal" scroll-lock aria-labelledby="PickupAvailabilityTitle-{{ section.id }}">
+      <div class="pickup-availability__dialog-inner">
+        <div class="pickup-availability__dialog-header">
+          <div>
+            <h2 id="PickupAvailabilityTitle-{{ section.id }}">{{ product_variant.product.title | escape }}</h2>
+            {% unless product_variant.product.has_only_default_variant %}<p>{{ product_variant.title | escape }}</p>{% endunless %}
+          </div>
+          <button type="button" data-pickup-availability-close aria-label="{{ 'products.pickup.close' | t }}">×</button>
+        </div>
+        <ul class="pickup-availability__locations" role="list">
+          {% for availability in pickup_locations %}
+            {% assign address = availability.location.address %}
+            <li class="pickup-availability__location">
+              <h3>{{ availability.location.name | escape }}</h3>
+              <p class="pickup-availability__location-status{% unless availability.available %} pickup-availability__location-status--unavailable{% endunless %}">
+                {% if availability.available %}
+                  {{ 'products.pickup.available' | t }}, {{ availability.pick_up_time | downcase }}
+                {% else %}
+                  {{ 'products.pickup.unavailable' | t }}
+                {% endif %}
+              </p>
+              <address>{{ address | format_address }}</address>
+              {% if address.phone.size > 0 %}<p><a href="tel:{{ address.phone | remove: ' ' | escape }}">{{ address.phone }}</a></p>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </dialog>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .pickup-availability { border-block: 1px solid var(--color-border); padding-block: var(--space-4); }
+  .pickup-availability__summary { align-items: flex-start; display: flex; gap: var(--space-3); }
+  .pickup-availability__status { background: var(--color-status-success); border-radius: 50%; flex: 0 0 auto; block-size: .55rem; inline-size: .55rem; margin-block-start: .5rem; }
+  .pickup-availability__status--unavailable { background: var(--color-status-unavailable); }
+  .pickup-availability__title, .pickup-availability__time, .pickup-availability__location-status, .pickup-availability__location p { margin: 0; }
+  .pickup-availability__title { font-weight: 650; }
+  .pickup-availability__time, .pickup-availability__details, .pickup-availability__location-status, .pickup-availability__location address, .pickup-availability__location p { color: color-mix(in srgb, var(--color-foreground) 72%, transparent); font-size: var(--small-label-size); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); }
+  .pickup-availability__details { background: transparent; border: 0; color: var(--color-foreground); font: inherit; margin-block-start: var(--space-2); min-block-size: auto; padding: 0; text-align: start; text-decoration: underline; text-underline-offset: .18em; }
+  .pickup-availability__dialog { background: var(--color-background); border: 0; box-shadow: 0 1rem 3.5rem color-mix(in srgb, var(--overlay-color) 26%, transparent); inline-size: min(38rem, calc(100vw - (var(--space-4) * 2))); margin: auto; max-block-size: calc(100dvh - (var(--space-4) * 2)); overflow: hidden; padding: 0; }
+  .pickup-availability__dialog::backdrop { background: transparent; }
+  .pickup-availability__dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
+  .pickup-availability__dialog-inner { display: grid; grid-template-rows: auto minmax(0, 1fr); max-block-size: inherit; min-block-size: 0; }
+  .pickup-availability__dialog-header { align-items: start; border-block-end: 1px solid var(--color-border); column-gap: var(--space-3); display: grid; grid-template-columns: minmax(0, 1fr) auto; padding: var(--space-4); }
+  .pickup-availability__dialog-header > div { min-inline-size: 0; }
+  .pickup-availability__dialog-header h2, .pickup-availability__dialog-header p, .pickup-availability__location h3 { margin: 0; }
+  .pickup-availability__dialog-header p { color: color-mix(in srgb, var(--color-foreground) 72%, transparent); font-size: var(--small-label-size); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin-block-start: var(--space-1); }
+  .pickup-availability__dialog-header button { --button-background: transparent; --button-background-hover: transparent; --button-border-color: transparent; --button-color: var(--color-foreground); --button-min-block-size: 2.25rem; --button-padding-inline: 0; --button-radius: 0; align-self: start; background: transparent; border: 0; font-size: 2rem; inline-size: 2.25rem; line-height: 1; min-inline-size: 2.25rem; padding: 0; }
+  .pickup-availability__locations { display: grid; gap: var(--space-4); list-style: none; margin: 0; overflow: auto; overscroll-behavior: contain; padding: var(--space-4); }
+  .pickup-availability__location { border-block-end: 1px solid var(--color-border); display: grid; gap: var(--space-2); padding-block-end: var(--space-4); }
+  .pickup-availability__location:last-child { border: 0; padding-block-end: 0; }
+  .pickup-availability__location-status--unavailable { color: color-mix(in srgb, var(--color-foreground) 60%, transparent); }
+  @media (max-width: 47.99rem) {
+    .pickup-availability__dialog { inline-size: min(38rem, calc(100vw - (var(--space-3) * 2))); }
+    .pickup-availability__dialog-header, .pickup-availability__locations { padding: var(--space-3); }
+    .pickup-availability__dialog-header h2 { font-size: clamp(var(--heading-size-40), 8vw, var(--heading-size-64)); line-height: 1; }
+    .pickup-availability__location h3 { font-size: clamp(var(--heading-size-40), 7vw, var(--heading-size-56)); line-height: 1; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.product_pickup_availability",
+  "settings": [],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}
+{% # theme-check-enable UndefinedObject %}

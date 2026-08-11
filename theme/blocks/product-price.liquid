@@ -1,5 +1,6 @@
 {% # theme-check-disable ValidScopedCSSClass %}
-{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign block_product = product | default: section.settings.product %}
+{% assign current_variant = block_product.selected_or_first_available_variant %}
 {% if current_variant != blank %}
   <div class="main-product__price" data-product-price aria-live="polite" {{ block.shopify_attributes }}>
     {% render 'price', item: current_variant %}

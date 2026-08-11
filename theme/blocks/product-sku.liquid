@@ -1,5 +1,6 @@
 {% # theme-check-disable ValidScopedCSSClass %}
-{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign block_product = product | default: section.settings.product %}
+{% assign current_variant = block_product.selected_or_first_available_variant %}
 {% if current_variant.sku != blank %}
   <p class="main-product__sku" data-product-sku {{ block.shopify_attributes }}>
     <span>{{ 'products.form.sku' | t }}</span> <span data-product-sku-value>{{ current_variant.sku | escape }}</span>

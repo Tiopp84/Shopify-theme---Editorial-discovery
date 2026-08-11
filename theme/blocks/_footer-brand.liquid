@@ -1,0 +1,26 @@
+{% liquid
+  assign brand_name = settings.brand_name | default: shop.name
+  assign logo_width_2x = block.settings.logo_width | times: 2
+%}
+
+<div class="footer-brand" {{ block.shopify_attributes }}>
+  {% if block.settings.show_block %}
+    <a class="footer-brand__mark" href="{{ routes.root_url }}">
+      {% if block.settings.logo != blank %}{{ block.settings.logo | image_url: width: logo_width_2x | image_tag: widths: '120, 180, 240, 320', width: block.settings.logo_width, alt: brand_name }}{% else %}<span>{{ brand_name | escape }}</span>{% endif %}
+    </a>
+    {% if block.settings.description != blank %}<div class="footer-brand__description">{{ block.settings.description }}</div>{% endif %}
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .footer-brand { align-content: start; display: grid; gap: var(--space-5); }
+  .footer-brand__mark { color: inherit; font-size: 1rem; font-weight: 700; letter-spacing: -.03em; line-height: 1; text-decoration: none; }
+  .footer-brand__mark img { block-size: auto; display: block; max-inline-size: 100%; }
+  .footer-brand__description { color: color-mix(in srgb, var(--footer-color, var(--color-background)) 62%, transparent); font-size: .8125rem; line-height: calc(var(--body-text-line-spacing) + .15); max-inline-size: 17rem; }
+  .footer-brand__description > :first-child { margin-block-start: 0; }
+  .footer-brand__description > :last-child { margin-block-end: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "t:general.footer_brand", "settings": [{ "type": "checkbox", "id": "show_block", "label": "t:labels.show_block", "default": true }, { "type": "image_picker", "id": "logo", "label": "t:labels.logo" }, { "type": "range", "id": "logo_width", "label": "t:labels.logo_width", "min": 60, "max": 240, "step": 10, "unit": "px", "default": 120 }, { "type": "richtext", "id": "description", "label": "t:labels.description" }] }
+{% endschema %}

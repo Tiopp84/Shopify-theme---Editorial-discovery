@@ -13,6 +13,36 @@
       "type": "editorial-hero",
       "settings": {}
     },
+    "scrolling_text": {
+      "type": "scrolling-text",
+      "settings": {},
+      "blocks": {
+        "msg_1": {
+          "type": "message",
+          "settings": {
+            "text": "SPRING / SUMMER 2026 EDITORIAL DISCOVERY"
+          }
+        },
+        "msg_2": {
+          "type": "message",
+          "settings": {
+            "text": "CRAFTED WITH INTENTION & TIMELESS PURPOSE"
+          }
+        }
+      },
+      "block_order": ["msg_1", "msg_2"]
+    },
+    "collection_list": {
+      "type": "collection-list",
+      "settings": {
+        "heading": "Curated Collections",
+        "desktop_columns": "4"
+      }
+    },
+    "story": {
+      "type": "shoppable-story",
+      "settings": {}
+    },
     "featured_edit": {
       "type": "featured-edit",
       "settings": {}
@@ -31,21 +61,27 @@
       "type": "material-craft",
       "settings": {}
     },
-    "story": {
-      "type": "shoppable-story",
-      "settings": {}
-    },
     "composition": {
       "type": "outfit-composition",
       "settings": {}
+    },
+    "email_signup": {
+      "type": "email-signup",
+      "settings": {
+        "heading": "Join the Editorial Circle",
+        "text": "<p>Be the first to receive new campaign releases, material stories, and private discovery access.</p>"
+      }
     }
   },
   "order": [
     "main",
+    "scrolling_text",
+    "collection_list",
+    "story",
     "featured_edit",
     "visual_story",
     "material_craft",
-    "story",
-    "composition"
+    "composition",
+    "email_signup"
   ]
 }

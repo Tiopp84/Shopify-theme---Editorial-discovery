@@ -15,6 +15,7 @@ class ProductForm extends HTMLElement {
     this.sku = this.section.querySelector('[data-product-sku]');
     this.skuValue = this.section.querySelector('[data-product-sku-value]');
     this.availability = this.section.querySelector('[data-product-availability]');
+    this.paymentTermsVariantInputs = [...this.section.querySelectorAll('[data-product-payment-terms-variant-id]')];
     this.variants = JSON.parse(this.section.querySelector('[data-product-variants]').textContent);
     this.cartQuantities = new Map();
     if (!this.variantInput || !this.submit || !this.price) return;
@@ -48,6 +49,7 @@ class ProductForm extends HTMLElement {
   }
 
   async onSubmit(event) {
+    if (event.submitter?.closest?.('[data-product-payment-button]')) return;
     if (this.validatedSubmit) {
       this.validatedSubmit = false;
       return;
@@ -163,6 +165,7 @@ class ProductForm extends HTMLElement {
     this.inventoryController?.abort();
     this.currentVariant = variant;
     this.variantInput.value = variant.id;
+    this.syncPaymentTerms(variant.id);
     this.error.hidden = true;
     this.error.textContent = '';
     this.submit.disabled = !variant.available || Boolean(this.inventoryController);
@@ -176,7 +179,7 @@ class ProductForm extends HTMLElement {
     if (this.section.dataset.galleryLayout !== 'stacked') {
       this.section.querySelectorAll('[data-product-media-id]').forEach((media) => { media.hidden = Boolean(variant.featuredMediaId) && media.dataset.productMediaId !== String(variant.featuredMediaId); });
     }
-    this.section.dispatchEvent(new CustomEvent('product:variant-change', { bubbles: true, detail: { featuredMediaId: variant.featuredMediaId } }));
+    this.section.dispatchEvent(new CustomEvent('product:variant-change', { bubbles: true, detail: { variant, featuredMediaId: variant.featuredMediaId } }));
     if (updateUrl) {
       const url = new URL(window.location.href);
       url.searchParams.set('variant', variant.id);
@@ -185,6 +188,14 @@ class ProductForm extends HTMLElement {
   }
 
   escape(value) { const node = document.createElement('span'); node.textContent = value || ''; return node.innerHTML; }
+
+  syncPaymentTerms(variantId) {
+    this.paymentTermsVariantInputs.forEach((input) => {
+      input.value = variantId;
+      input.setAttribute('value', variantId);
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
 
   syncOptionButtons() {
     this.optionButtons.forEach((button) => {
@@ -282,6 +293,82 @@ class ProductForm extends HTMLElement {
 
 if (!customElements.get('product-form')) customElements.define('product-form', ProductForm);
 
+class PickupAvailability extends HTMLElement {
+  connectedCallback() {
+    if (this.abortController) return;
+    this.section = this.closest('[data-product-section]');
+    this.abortController = new AbortController();
+    const { signal } = this.abortController;
+    this.section?.addEventListener('product:variant-change', (event) => this.update(event.detail?.variant), { signal });
+    if (this.dataset.variantAvailable !== 'true') return this.clear();
+    this.load(this.dataset.variantId);
+  }
+
+  disconnectedCallback() {
+    this.abortController?.abort();
+    this.abortController = null;
+  }
+
+  update(variant) {
+    if (!variant?.available) return this.clear();
+    this.dataset.variantAvailable = 'true';
+    this.load(variant.id);
+  }
+
+  clear() {
+    this.requestController?.abort();
+    this.sequence = (this.sequence || 0) + 1;
+    this.dataset.variantAvailable = 'false';
+    this.replaceChildren();
+    this.hidden = true;
+    this.setAttribute('aria-busy', 'false');
+  }
+
+  async load(variantId) {
+    if (!variantId) return this.clear();
+    this.requestController?.abort();
+    const requestController = new AbortController();
+    this.requestController = requestController;
+    const sequence = (this.sequence || 0) + 1;
+    this.sequence = sequence;
+    this.dataset.variantId = String(variantId);
+    this.setAttribute('aria-busy', 'true');
+    try {
+      const root = this.dataset.rootUrl.endsWith('/') ? this.dataset.rootUrl : `${this.dataset.rootUrl}/`;
+      const url = new URL(`${root}variants/${variantId}/`, window.location.origin);
+      url.searchParams.set('section_id', 'pickup-availability');
+      const previewThemeId = new URL(window.location.href).searchParams.get('preview_theme_id');
+      if (previewThemeId) url.searchParams.set('preview_theme_id', previewThemeId);
+      const response = await fetch(url, { headers: { Accept: 'text/html' }, signal: requestController.signal });
+      if (!response.ok) throw new Error(`Pickup availability failed: ${response.status}`);
+      const documentFragment = new DOMParser().parseFromString(await response.text(), 'text/html');
+      const content = documentFragment.querySelector('[data-pickup-availability-content]');
+      if (requestController.signal.aborted || sequence !== this.sequence || this.dataset.variantId !== String(variantId)) return;
+      if (!content) return this.clear();
+      this.replaceChildren(content);
+      this.hidden = false;
+      this.bindDialog();
+    } catch (error) {
+      if (!requestController.signal.aborted && sequence === this.sequence) this.clear();
+    } finally {
+      if (sequence === this.sequence) this.setAttribute('aria-busy', 'false');
+      if (this.requestController === requestController) this.requestController = null;
+    }
+  }
+
+  bindDialog() {
+    const dialog = this.querySelector('[data-pickup-availability-dialog]');
+    const opener = this.querySelector('[data-pickup-availability-open]');
+    const close = this.querySelector('[data-pickup-availability-close]');
+    opener?.addEventListener('click', () => dialog?.showModal(), { signal: this.abortController.signal });
+    close?.addEventListener('click', () => dialog?.close(), { signal: this.abortController.signal });
+    dialog?.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); }, { signal: this.abortController.signal });
+    dialog?.addEventListener('close', () => opener?.focus(), { signal: this.abortController.signal });
+  }
+}
+
+if (!customElements.get('pickup-availability')) customElements.define('pickup-availability', PickupAvailability);
+
 class ProductGallery extends HTMLElement {
   connectedCallback() {
     if (this.abortController) return;
@@ -291,18 +378,19 @@ class ProductGallery extends HTMLElement {
     this.isStacked = this.dataset.galleryLayout === 'stacked';
     this.buttons = [...this.querySelectorAll('[data-product-media-select]')];
     this.stage = this.querySelector('.main-product__media-stage');
+    this.thumbnailWrap = this.querySelector('[data-product-thumbnail-wrap]');
+    this.thumbnails = this.querySelector('[data-product-thumbnails]');
     this.dialog = this.querySelector('[data-product-gallery-dialog]');
     this.dialogContent = this.querySelector('[data-product-gallery-dialog-content]');
     this.previousButton = this.querySelector('[data-product-gallery-previous]');
     this.nextButton = this.querySelector('[data-product-gallery-next]');
-    this.stagePreviousButton = this.querySelector('[data-product-gallery-stage-previous]');
-    this.stageNextButton = this.querySelector('[data-product-gallery-stage-next]');
     this.count = this.querySelector('[data-product-gallery-count]');
-    if (!this.isStacked) {
-      this.stagePreviousButton?.removeAttribute('hidden');
-      this.stageNextButton?.removeAttribute('hidden');
-    }
     this.buttons.forEach((button) => button.addEventListener('click', () => this.select(button.dataset.productMediaSelect, { reveal: true }), { signal }));
+    this.thumbnails?.addEventListener('scroll', () => this.scheduleThumbnailOverflowUpdate(), { signal, passive: true });
+    if (this.thumbnails && typeof ResizeObserver === 'function') {
+      this.thumbnailResizeObserver = new ResizeObserver(() => this.updateThumbnailOverflow());
+      this.thumbnailResizeObserver.observe(this.thumbnails);
+    }
     this.stage?.addEventListener('click', (event) => {
       if (this.suppressStageOpen) {
         this.suppressStageOpen = false;
@@ -325,24 +413,54 @@ class ProductGallery extends HTMLElement {
     this.dialogContent?.addEventListener('pointercancel', () => this.cancelModalSwipe(), { signal });
     this.previousButton?.addEventListener('click', () => this.step(-1), { signal });
     this.nextButton?.addEventListener('click', () => this.step(1), { signal });
-    this.stagePreviousButton?.addEventListener('click', () => this.stepSelected(-1), { signal });
-    this.stageNextButton?.addEventListener('click', () => this.stepSelected(1), { signal });
     this.dialog?.addEventListener('click', (event) => { if (event.target === this.dialog) this.dialog.close(); }, { signal });
     this.dialog?.addEventListener('close', () => {
+      this.pauseModalPlayback();
       this.unlockPageScroll();
       this.opener?.focus();
     }, { signal });
     this.dialog?.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowLeft') { event.preventDefault(); this.step(-1); }
-      if (event.key === 'ArrowRight') { event.preventDefault(); this.step(1); }
+      // Native video controls can consume ArrowLeft/ArrowRight before the
+      // bubbling phase. Capturing keeps gallery navigation available after a
+      // video has received focus, then moves focus to the persistent toolbar
+      // control because the video node is about to be replaced.
+      if (event.key === 'ArrowLeft') { event.preventDefault(); this.step(-1, this.previousButton); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); this.step(1, this.nextButton); }
+    }, { signal, capture: true });
+    window.addEventListener('resize', () => {
+      if (this.dialog?.open && this.mediaAspect) this.sizeDialog(this.mediaAspect);
     }, { signal });
     this.closest('[data-product-section]')?.addEventListener('product:variant-change', (event) => {
       if (event.detail.featuredMediaId) this.select(String(event.detail.featuredMediaId));
     }, { signal });
     this.select(this.dataset.initialMediaId || this.media[0]?.dataset.productMediaId);
+    this.updateThumbnailOverflow();
   }
 
-  disconnectedCallback() { this.abortController?.abort(); this.abortController = null; }
+  disconnectedCallback() {
+    this.abortController?.abort();
+    this.abortController = null;
+    this.thumbnailResizeObserver?.disconnect();
+    this.thumbnailResizeObserver = null;
+    window.cancelAnimationFrame(this.thumbnailOverflowFrame);
+    this.thumbnailOverflowFrame = null;
+  }
+
+  scheduleThumbnailOverflowUpdate() {
+    if (this.thumbnailOverflowFrame) return;
+    this.thumbnailOverflowFrame = window.requestAnimationFrame(() => {
+      this.thumbnailOverflowFrame = null;
+      this.updateThumbnailOverflow();
+    });
+  }
+
+  updateThumbnailOverflow() {
+    if (!this.thumbnails || !this.thumbnailWrap) return;
+    const hasOverflow = this.thumbnails.scrollWidth - this.thumbnails.clientWidth > 1;
+    const hasMoreAtEnd = this.thumbnails.scrollLeft + this.thumbnails.clientWidth < this.thumbnails.scrollWidth - 1;
+    this.thumbnailWrap.toggleAttribute('data-overflow-start', hasOverflow && this.thumbnails.scrollLeft > 1);
+    this.thumbnailWrap.toggleAttribute('data-overflow-end', hasOverflow && hasMoreAtEnd);
+  }
 
   select(id, { reveal = false } = {}) {
     if (!id) return;
@@ -353,7 +471,16 @@ class ProductGallery extends HTMLElement {
       if (!selected && !this.isStacked) item.querySelectorAll('video').forEach((video) => video.pause());
     });
     if (selectedMedia?.dataset.productMediaRatio) this.stage?.style.setProperty('--pdp-media-ratio', selectedMedia.dataset.productMediaRatio);
-    this.buttons.forEach((button) => button.toggleAttribute('aria-current', button.dataset.productMediaSelect === String(id)));
+    const video = selectedMedia?.querySelector('video');
+    const syncVideoRatio = () => {
+      if (video?.videoWidth && video.videoHeight) this.stage?.style.setProperty('--pdp-media-ratio', String(video.videoWidth / video.videoHeight));
+    };
+    if (video?.readyState >= 1) syncVideoRatio();
+    else video?.addEventListener('loadedmetadata', syncVideoRatio, { once: true });
+    this.buttons.forEach((button) => {
+      if (button.dataset.productMediaSelect === String(id)) button.setAttribute('aria-current', 'true');
+      else button.removeAttribute('aria-current');
+    });
     this.selectedId = String(id);
     if (reveal) this.revealSelectedMedia();
   }
@@ -362,7 +489,19 @@ class ProductGallery extends HTMLElement {
     requestAnimationFrame(() => {
       if (!this.stage) return;
       const bounds = this.stage.getBoundingClientRect();
-      if (bounds.top < 0 || bounds.bottom > window.innerHeight) this.stage.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' });
+      const header = document.querySelector('.header-shell--sticky');
+      const headerBottom = Math.max(0, header?.getBoundingClientRect().bottom || 0);
+      const breadcrumb = document.querySelector('.breadcrumbs--product');
+      const breadcrumbGap = breadcrumb ? Math.max(0, bounds.top - breadcrumb.getBoundingClientRect().top) : 24;
+      // Keep the whole breadcrumb below the sticky header, with a short gap,
+      // then place the selected media immediately after its natural spacing.
+      const revealOffset = headerBottom + breadcrumbGap + 16;
+      if (bounds.top < revealOffset || bounds.bottom > window.innerHeight) {
+        window.scrollTo({
+          top: Math.max(0, window.scrollY + bounds.top - revealOffset),
+          behavior: 'auto',
+        });
+      }
     });
   }
 
@@ -623,6 +762,7 @@ class ProductGallery extends HTMLElement {
       this.animateOffset(source, this.currentOffset(source) || offset, direction * -distance),
       this.animateOffset(incoming, this.currentOffset(incoming) || direction * distance, 0),
     ]);
+    this.pauseModalPlayback(source);
     this.modalSelectedId = next.dataset.productMediaId;
     this.dialogContent.replaceChildren(incoming);
     this.clearModalPreview({ keepTarget: true });
@@ -655,9 +795,28 @@ class ProductGallery extends HTMLElement {
     if (this.count) this.count.textContent = `${this.media.findIndex((item) => item.dataset.productMediaId === this.modalSelectedId) + 1} / ${this.media.length}`;
   }
 
+  pauseModalPlayback(root = this.dialogContent) {
+    root?.querySelectorAll('video').forEach((video) => video.pause());
+  }
+
   setDialogAspect(clone) {
+    const playableMedia = clone.querySelector('video, iframe');
+    if (playableMedia) {
+      this.dialog?.setAttribute('data-product-gallery-media-type', 'video');
+      const fallbackAspect = Number.parseFloat(clone.dataset.productMediaRatio) || 16 / 9;
+      // Size before metadata arrives. This prevents the browser's native video
+      // dimensions from briefly expanding the dialog to an oversized frame.
+      this.sizeDialog(fallbackAspect);
+      const setVideoAspect = () => {
+        if (playableMedia.videoWidth && playableMedia.videoHeight) this.sizeDialog(playableMedia.videoWidth / playableMedia.videoHeight);
+      };
+      if (playableMedia.readyState >= HTMLMediaElement.HAVE_METADATA) setVideoAspect();
+      else if (playableMedia instanceof HTMLVideoElement) playableMedia.addEventListener('loadedmetadata', setVideoAspect, { once: true });
+      return;
+    }
     const image = clone.querySelector('img');
     if (image) {
+      this.dialog?.removeAttribute('data-product-gallery-media-type');
       const setImageAspect = () => {
         if (image.naturalWidth && image.naturalHeight) this.sizeDialog(image.naturalWidth / image.naturalHeight);
       };
@@ -665,27 +824,22 @@ class ProductGallery extends HTMLElement {
       else image.addEventListener('load', setImageAspect, { once: true });
       return;
     }
-    const video = clone.querySelector('video');
-    if (video) {
-      const setVideoAspect = () => {
-        if (video.videoWidth && video.videoHeight) this.sizeDialog(video.videoWidth / video.videoHeight);
-      };
-      video.addEventListener('loadedmetadata', setVideoAspect, { once: true });
-      return;
-    }
+    this.dialog?.removeAttribute('data-product-gallery-media-type');
     this.sizeDialog(16 / 9);
   }
 
   sizeDialog(aspect) {
     this.mediaAspect = aspect;
-    const navigationHeight = 64;
+    const isVideo = this.dialog?.dataset.productGalleryMediaType === 'video';
     const maxWidth = window.innerWidth * 0.92;
-    const maxHeight = window.innerHeight - navigationHeight - 16;
+    // Video is constrained by height, not a guessed width: 50dvh remains
+    // responsive for every aspect ratio and lets width follow naturally.
+    const maxHeight = window.innerHeight * (isVideo ? 0.5 : 1) - (isVideo ? 0 : 80);
     const width = Math.min(maxWidth, maxHeight * aspect);
     const height = width / aspect;
     this.dialog.style.inlineSize = `${Math.floor(width)}px`;
     this.dialog.style.blockSize = `${Math.floor(height)}px`;
-    this.dialog.style.marginBlockStart = `${Math.max(8, Math.floor((window.innerHeight - navigationHeight - height) / 2))}px`;
+    this.dialog.style.marginBlockStart = `${Math.max(8, Math.floor((window.innerHeight - height) / 2))}px`;
   }
 
   enableHoverZoom(image) {
@@ -722,10 +876,12 @@ class ProductGallery extends HTMLElement {
     this.scrollY = 0;
   }
 
-  step(direction) {
+  step(direction, focusTarget = null) {
     const index = this.media.findIndex((item) => item.dataset.productMediaId === this.modalSelectedId);
+    this.pauseModalPlayback();
     this.modalSelectedId = this.media[(index + direction + this.media.length) % this.media.length]?.dataset.productMediaId;
     this.renderModalMedia();
+    focusTarget?.focus({ preventScroll: true });
   }
 }
 

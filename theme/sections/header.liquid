@@ -5,7 +5,8 @@
 {% assign has_navigation = false %}
 {% assign brand_name = settings.brand_name | default: shop.name %}
 {% assign cart_icon = settings.cart_icon | default: 'bag' %}
-{% if section.settings.enable_navigation != false and section.settings.menu != blank %}
+{% assign navigation_menu = section.settings.menu | default: linklists['main-menu'] %}
+{% if section.settings.enable_navigation != false and navigation_menu != blank %}
   {% assign has_navigation = true %}
 {% endif %}
 <header-shell
@@ -42,18 +43,30 @@
     {% if has_navigation %}
       <nav class="header-shell__desktop-nav" aria-label="{{ 'accessibility.primary_navigation' | t }}">
         <span class="header-shell__desktop-nav-pill" aria-hidden="true"></span>
-        {% for link in section.settings.menu.links %}
+        {% for link in navigation_menu.links %}
           {% if link.links != blank %}
             <details class="header-shell__nav-group">
               <summary>{{ link.title | escape }}</summary>
               <div class="header-shell__submenu">
                 {% for child_link in link.links %}
-                  <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                  {% if child_link.links != blank %}
+                    <details class="header-shell__submenu-group">
+                      <summary>{{ child_link.title | escape }}</summary>
+                      <div class="header-shell__submenu-level-three">
+                        <a class="header-shell__submenu-view-all" href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                        {% for grandchild_link in child_link.links %}
+                          <a href="{{ grandchild_link.url }}">{{ grandchild_link.title | escape }}</a>
+                        {% endfor %}
+                      </div>
+                    </details>
+                  {% else %}
+                    <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                  {% endif %}
                 {% endfor %}
               </div>
             </details>
           {% else %}
-            <a href="{{ link.url }}">{{ link.title | escape }}</a>
+            <a href="{{ link.url }}"{% if link.type == 'page_link' and link.object.title != blank and link.title != link.object.title %} aria-label="{{ link.title | escape }}: {{ link.object.title | escape }}"{% endif %}>{{ link.title | escape }}</a>
           {% endif %}
         {% endfor %}
       </nav>
@@ -77,10 +90,12 @@
       {% endif %}
 
       {% if section.settings.show_account and shop.customer_accounts_enabled %}
-        <a class="header-shell__icon-button header-shell__account" href="{{ routes.account_url }}">
-          <span class="visually-hidden">{{ 'customer.account' | t }}</span>
-          {% render 'icon', name: 'account' %}
-        </a>
+        <shopify-account class="header-shell__account" menu="{{ section.settings.customer_account_menu | default: 'customer-account-main-menu' }}">
+          <span slot="signed-out-avatar" class="header-shell__icon-button">
+            <span class="visually-hidden">{{ 'customer.account' | t }}</span>
+            {% render 'icon', name: 'account' %}
+          </span>
+        </shopify-account>
       {% endif %}
 
       {% if section.settings.show_localization and localization.available_countries.size > 1 or section.settings.show_localization and localization.available_languages.size > 1 %}
@@ -153,10 +168,12 @@
       <span class="header-shell__task-count" aria-hidden="true" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
     </a>
     {% if section.settings.show_account and shop.customer_accounts_enabled %}
-      <a class="header-shell__task" href="{{ routes.account_url }}">
-        {% render 'icon', name: 'account' %}
-        <span>{{ 'customer.account' | t }}</span>
-      </a>
+      <shopify-account class="header-shell__account" menu="{{ section.settings.customer_account_menu | default: 'customer-account-main-menu' }}">
+        <span slot="signed-out-avatar" class="header-shell__task">
+          {% render 'icon', name: 'account' %}
+          <span>{{ 'customer.account' | t }}</span>
+        </span>
+      </shopify-account>
     {% endif %}
   </nav>
 
@@ -176,7 +193,7 @@
 
     <nav class="header-shell__mobile-nav" aria-label="{{ 'accessibility.mobile_navigation' | t }}" data-mobile-menu>
       <div class="header-shell__mobile-menu-root" data-mobile-menu-root>
-        {% for link in section.settings.menu.links %}
+        {% for link in navigation_menu.links %}
           {% if link.links != blank %}
             {% assign submenu_id = 'MobileSubmenu-' | append: section.id | append: '-' | append: forloop.index %}
             <details class="header-shell__mobile-nav-group">
@@ -185,17 +202,31 @@
               </summary>
               <div class="header-shell__mobile-nav-fallback">
                 {% for child_link in link.links %}
-                  <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                  {% if child_link.links != blank %}
+                    <div class="header-shell__mobile-nav-branch">
+                      <details class="header-shell__mobile-nav-group">
+                        <summary><span class="visually-hidden">{{ child_link.title | escape }}</span></summary>
+                        <div class="header-shell__mobile-nav-level-three">
+                          {% for grandchild_link in child_link.links %}
+                            <a href="{{ grandchild_link.url }}">{{ grandchild_link.title | escape }}</a>
+                          {% endfor %}
+                        </div>
+                      </details>
+                      <a class="header-shell__mobile-nav-parent-link" href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                    </div>
+                  {% else %}
+                    <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                  {% endif %}
                 {% endfor %}
               </div>
             </details>
           {% else %}
-            <a href="{{ link.url }}">{{ link.title | escape }}</a>
+            <a href="{{ link.url }}"{% if link.type == 'page_link' and link.object.title != blank and link.title != link.object.title %} aria-label="{{ link.title | escape }}: {{ link.object.title | escape }}"{% endif %}>{{ link.title | escape }}</a>
           {% endif %}
         {% endfor %}
       </div>
 
-      {% for link in section.settings.menu.links %}
+      {% for link in navigation_menu.links %}
         {% if link.links != blank %}
           {% assign submenu_id = 'MobileSubmenu-' | append: section.id | append: '-' | append: forloop.index %}
           <section
@@ -210,7 +241,21 @@
             </button>
             <h3 id="{{ submenu_id }}Title">{{ link.title | escape }}</h3>
             {% for child_link in link.links %}
-              <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+              {% if child_link.links != blank %}
+                <div class="header-shell__mobile-nav-branch">
+                  <details class="header-shell__mobile-nav-group">
+                    <summary><span class="visually-hidden">{{ child_link.title | escape }}</span></summary>
+                    <div class="header-shell__mobile-nav-level-three">
+                      {% for grandchild_link in child_link.links %}
+                        <a href="{{ grandchild_link.url }}">{{ grandchild_link.title | escape }}</a>
+                      {% endfor %}
+                    </div>
+                  </details>
+                  <a class="header-shell__mobile-nav-parent-link" href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+                </div>
+              {% else %}
+                <a href="{{ child_link.url }}">{{ child_link.title | escape }}</a>
+              {% endif %}
             {% endfor %}
           </section>
         {% endif %}
@@ -251,9 +296,10 @@
     display: block;
     border-block-end: 1px solid var(--color-border);
     background: var(--header-background-color);
+    min-block-size: var(--header-height);
     position: relative;
     z-index: 1;
-    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease, border-color 180ms ease;
+    transition: background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .header-shell--scrolled {
@@ -291,7 +337,7 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: clamp(var(--space-6), 3vw, var(--space-8));
-    transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1), min-height 280ms cubic-bezier(0.22, 1, 0.36, 1), margin 280ms cubic-bezier(0.22, 1, 0.36, 1), padding 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 180ms ease, box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: min-height 280ms cubic-bezier(0.22, 1, 0.36, 1), margin 280ms cubic-bezier(0.22, 1, 0.36, 1), padding 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 180ms ease, box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @media (min-width: 64rem) {
@@ -387,6 +433,10 @@
     .header-shell--compact .header-shell__desktop-nav > a,
     .header-shell--compact .header-shell__nav-group > summary {
       padding-block: 0.5rem;
+    }
+
+    .header-shell--compact .header-shell__submenu {
+      inset-block-start: calc(100% + var(--space-1));
     }
 
     .header-shell--compact .header-shell__actions {
@@ -554,6 +604,7 @@
     inset-inline-start: 0;
     min-width: 14rem;
     padding: var(--space-3);
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
     border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     background: var(--header-dropdown-background-color);
@@ -582,6 +633,53 @@
   .header-shell__submenu a:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
+  }
+
+  .header-shell__submenu-group {
+    border-radius: .35rem;
+    position: relative;
+  }
+
+  .header-shell__submenu-group > summary {
+    align-items: center;
+    border-radius: .35rem;
+    color: var(--header-dropdown-text-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    padding: var(--space-3);
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .header-shell__submenu-group > summary::-webkit-details-marker { display: none; }
+  .header-shell__submenu-group > summary::after { content: '›'; font-size: 1.15em; transition: transform 180ms ease; }
+  .header-shell__submenu-group[open] > summary::after { transform: translateX(.18rem); }
+  .header-shell__submenu-group > summary:is(:hover, :focus-visible) { background: var(--color-interactive-background); box-shadow: var(--focus-ring); color: var(--color-foreground); outline: none; transform: translateX(.2rem); }
+
+  .header-shell__submenu-level-three {
+    background: var(--header-dropdown-background-color);
+    border: 1px solid var(--color-border);
+    border-radius: .5rem;
+    box-shadow: 0 .75rem 1.5rem color-mix(in srgb, var(--color-foreground) 12%, transparent);
+    display: grid;
+    inset-block-start: calc(var(--space-3) * -1);
+    inset-inline-start: calc(100% + var(--space-2));
+    min-inline-size: 14rem;
+    padding: var(--space-3);
+    position: absolute;
+    z-index: 32;
+  }
+
+  .header-shell__submenu-level-three .header-shell__submenu-view-all {
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__submenu-group[open] > .header-shell__submenu-level-three {
+      animation: header-shell-submenu-in 180ms cubic-bezier(.22, 1, .36, 1) backwards;
+      transform-origin: top left;
+    }
   }
 
   .header-shell__actions {
@@ -619,6 +717,14 @@
     place-items: center;
     text-decoration: none;
     transition: transform 160ms ease;
+  }
+
+  .header-shell__account {
+    --shopify-account-signed-in-avatar-color-background: var(--header-navigation-color);
+    --shopify-account-signed-in-avatar-color-text: var(--color-background);
+    --shopify-account-signed-in-avatar-size: 2.25rem;
+    color: var(--header-navigation-color);
+    display: block;
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -781,6 +887,81 @@
     padding-inline-start: var(--space-4);
   }
 
+  .header-shell__mobile-nav-fallback > .header-shell__mobile-nav-group > summary,
+  .header-shell__mobile-submenu > .header-shell__mobile-nav-group > summary {
+    font-family: var(--font-primary--family);
+    font-size: 1rem;
+    min-block-size: 3.5rem;
+    padding: var(--space-4) 0;
+  }
+
+  .header-shell__mobile-nav-branch {
+    border-block-end: 1px solid var(--color-border);
+    display: grid;
+    position: relative;
+  }
+
+  .header-shell__mobile-nav-branch > details {
+    display: block;
+    position: static;
+  }
+
+  .header-shell__mobile-nav-branch > details > summary {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    display: grid;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    justify-content: center;
+    min-block-size: 3.5rem;
+    min-inline-size: 3.5rem;
+    padding: 0;
+    position: absolute !important;
+    left: auto;
+    right: 0;
+    z-index: 2;
+  }
+
+  .header-shell__mobile-nav-branch > details > summary::after {
+    margin: 0;
+  }
+
+  .header-shell__mobile-nav-parent-link {
+    color: var(--header-dropdown-text-color);
+    display: block;
+    font-family: var(--font-primary--family);
+    font-size: 1rem;
+    min-block-size: 3.5rem;
+    padding: var(--space-4) 3.5rem var(--space-4) 0 !important;
+    order: -1;
+    text-decoration: none;
+  }
+
+  .header-shell__mobile-nav-branch > details[open] > .header-shell__mobile-nav-level-three {
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .header-shell__mobile-nav-level-three {
+    display: grid;
+  }
+
+  .header-shell__mobile-nav-level-three a {
+    padding-inline-start: calc(var(--space-4) * 2) !important;
+  }
+
+  .header-shell__mobile-nav-group[open] > summary::after {
+    transform: rotate(45deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .header-shell__mobile-nav-group[open] > .header-shell__mobile-nav-level-three {
+      animation: header-shell-submenu-in 180ms cubic-bezier(.22, 1, .36, 1) backwards;
+      transform-origin: top;
+    }
+  }
+
   .header-shell__mobile-nav[data-mobile-menu-enhanced] .header-shell__mobile-nav-fallback {
     display: none;
   }
@@ -826,6 +1007,15 @@
 
   .header-shell__mobile-submenu > a {
     grid-column: 1 / -1;
+  }
+
+  .header-shell__mobile-submenu > .header-shell__mobile-nav-group {
+    grid-column: 1 / -1;
+  }
+
+  .header-shell__mobile-submenu > .header-shell__mobile-nav-branch {
+    grid-column: 1 / -1;
+    inline-size: 100%;
   }
 
   .header-shell__mobile-submenu > a:first-of-type {
@@ -884,6 +1074,24 @@
 
     .header-shell__localization { display: none; }
 
+    /* Navigation is a bottom sheet throughout compact and tablet layouts. The
+     * dialog owns the viewport constraint; the menu list is the scroll region. */
+    dialog.header-shell__drawer {
+      inset: auto 0 0;
+      inline-size: min(100%, 46rem);
+      block-size: auto;
+      max-block-size: min(82dvh, 48rem);
+      margin: 0 auto;
+      padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+      border-radius: .9rem .9rem 0 0;
+      overflow: hidden;
+    }
+
+    dialog.header-shell__drawer[open] { display: flex; flex-direction: column; }
+    dialog.header-shell__drawer[data-overlay-motion='drawer-start'] { --overlay-enter-transform: translate3d(0, 100%, 0); }
+    .header-shell__drawer .header-shell__drawer-header { flex: 0 0 auto; }
+    .header-shell__drawer .header-shell__mobile-nav { min-block-size: 0; overflow-y: auto; overscroll-behavior: contain; }
+
     .header-shell__menu-button {
       grid-column: 1;
       grid-row: 1;
@@ -904,6 +1112,8 @@
       transform: translateY(-100%);
     }
 
+    .header-shell__inner { transition-duration: 320ms, 320ms, 320ms, 320ms, 320ms, 320ms; }
+
     .header-shell__mobile-taskbar {
       position: fixed;
       display: grid;
@@ -923,15 +1133,15 @@
       opacity: 0;
       pointer-events: none;
       transform: translateY(calc(100% + env(safe-area-inset-bottom) + var(--space-4)));
-      transition: opacity 180ms ease, transform 260ms cubic-bezier(.16, 1, .3, 1), visibility 0s linear 260ms;
+      transition: opacity 220ms ease, transform 320ms cubic-bezier(.22, 1, .36, 1), visibility 0s linear 320ms;
       visibility: hidden;
     }
 
-    .header-shell--mobile-taskbar .header-shell__mobile-taskbar {
+    .header-shell:is(.header-shell--mobile-taskbar-entering, .header-shell--mobile-taskbar, .header-shell--mobile-taskbar-leaving) .header-shell__mobile-taskbar {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
-      transition-delay: 40ms, 40ms, 0s;
+      transition-delay: 0s, 0s, 0s;
       visibility: visible;
     }
 
@@ -981,6 +1191,9 @@
       line-height: 1rem;
       text-align: center;
     }
+
+    .header-shell__mobile-taskbar > .header-shell__account { min-width: 0; }
+    .header-shell__mobile-taskbar .header-shell__account { --shopify-account-signed-in-avatar-size: 3rem; }
   }
 
   @media (min-width: 48rem) and (max-width: 63.99rem) {
@@ -1027,9 +1240,10 @@
       justify-self: center;
     }
 
-    .header-shell__account {
-      display: none;
-    }
+    .header-shell__actions { gap: 0; }
+    .header-shell__actions .header-shell__icon-button { min-inline-size: 2.25rem; min-block-size: 2.25rem; }
+    .header-shell__actions > .header-shell__account { inline-size: 2.25rem; --shopify-account-signed-in-avatar-size: 2.25rem; }
+    .header-shell__actions > :first-child { translate: .5rem 0; }
 
     dialog.header-shell__search-dialog[data-overlay-motion='drawer-end'] {
       inset: auto 0 0;
@@ -1040,21 +1254,6 @@
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
       border-radius: 0.9rem 0.9rem 0 0;
       overflow: hidden;
-      --overlay-enter-transform: translate3d(0, 100%, 0);
-    }
-
-    .header-shell__drawer {
-      inset: auto 0 0;
-      width: 100%;
-      height: auto;
-      max-height: 82dvh;
-      margin: 0;
-      padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
-      border-radius: 0.9rem 0.9rem 0 0;
-      overflow: auto;
-    }
-
-    dialog.header-shell__drawer[data-overlay-motion='drawer-start'] {
       --overlay-enter-transform: translate3d(0, 100%, 0);
     }
 
@@ -1130,6 +1329,7 @@
       "id": "menu",
       "label": "t:labels.menu"
     },
+    { "type": "link_list", "id": "customer_account_menu", "label": "t:labels.customer_account_menu", "default": "customer-account-main-menu" },
     { "type": "checkbox", "id": "enable_navigation", "label": "t:labels.enable_navigation", "default": true },
     { "type": "checkbox", "id": "enable_dropdown_hover", "label": "t:labels.enable_dropdown_hover", "default": true },
     { "type": "header", "content": "t:general.layout" },

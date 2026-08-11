@@ -9,6 +9,7 @@
 {%- endcapture -%}
 
 {% assign visible_collection_count = 0 %}
+{% assign rendered_collection_count = 0 %}
 {% for collection in collections %}
   {%- capture collection_handle_token -%}|{{ collection.handle }}|{%- endcapture -%}
   {% unless excluded_collection_handles contains collection_handle_token %}
@@ -30,11 +31,28 @@
         {%- capture collection_handle_token -%}|{{ collection.handle }}|{%- endcapture -%}
         {% unless excluded_collection_handles contains collection_handle_token %}
         {% liquid
+          assign rendered_collection_count = rendered_collection_count | plus: 1
           assign collection_image = collection.featured_image
           assign first_product = collection.products.first
+          assign collection_card_sizes = '(min-width: 64rem) 25vw, (min-width: 36rem) 44vw, 100vw'
+          assign collection_image_loading = 'lazy'
+          assign collection_image_fetchpriority = blank
+
+          if section.settings.items_per_row == '2'
+            assign collection_card_sizes = '(min-width: 64rem) 50vw, (min-width: 36rem) 44vw, 100vw'
+          elsif section.settings.items_per_row == '3'
+            assign collection_card_sizes = '(min-width: 64rem) 33vw, (min-width: 36rem) 44vw, 100vw'
+          endif
+
+          if rendered_collection_count == 1
+            assign collection_image_loading = 'eager'
+            assign collection_image_fetchpriority = 'high'
+          endif
+
           if settings.collection_tile_image_source == 'first_product' and first_product.featured_image != blank
             assign collection_image = first_product.featured_image
           endif
+          assign collection_image_alt = collection_image.alt | default: collection.title
         %}
         <a class="collection-card" href="{{ collection.url }}" data-catalog-reveal data-aos="fade-up">
           <span class="collection-card__media">
@@ -42,9 +60,12 @@
               {% render 'image',
                 class: 'collection-card__image',
                 image: collection_image,
-                width: 1200,
-                widths: '480, 640, 800, 960, 1200',
-                sizes: '(min-width: 36rem) 44vw, 100vw'
+                alt: collection_image_alt,
+                width: 960,
+                widths: '240, 360, 480, 640, 800, 960',
+                sizes: collection_card_sizes,
+                loading: collection_image_loading,
+                fetchpriority: collection_image_fetchpriority
               %}
             {% else %}
               <span class="collection-card__placeholder" aria-hidden="true">{{ 'collection-1' | placeholder_svg_tag }}</span>

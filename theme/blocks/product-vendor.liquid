@@ -1,6 +1,7 @@
 {% # theme-check-disable ValidScopedCSSClass %}
-{% if product.vendor != blank %}
-  <p class="main-product__vendor" {{ block.shopify_attributes }}>{{ product.vendor | escape }}</p>
+{% assign block_product = product | default: section.settings.product %}
+{% if block_product.vendor != blank %}
+  <p class="main-product__vendor" {{ block.shopify_attributes }}>{{ block_product.vendor | escape }}</p>
 {% elsif request.visual_preview_mode %}
   <p class="main-product__vendor" {{ block.shopify_attributes }}>{{ shop.name | escape }}</p>
 {% endif %}
