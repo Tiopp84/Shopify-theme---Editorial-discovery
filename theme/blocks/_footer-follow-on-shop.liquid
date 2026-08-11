@@ -1,0 +1,29 @@
+{% liquid
+  assign social_platforms = 'instagram,threads,facebook,x,pinterest,youtube,tiktok,snapchat,tumblr,linkedin,vimeo' | split: ','
+  assign social_link_count = 0
+  for platform in social_platforms
+    assign setting_id = 'social_' | append: platform
+    if settings[setting_id] != blank
+      assign social_link_count = social_link_count | plus: 1
+    endif
+  endfor
+%}
+<div class="footer-follow-on-shop" {{ block.shopify_attributes }}>
+  {% if block.settings.show_block %}
+    {% if block.settings.show_social and social_link_count > 0 %}<nav class="footer-follow-on-shop__social" aria-label="{{ block.settings.social_heading | escape }}">{% if block.settings.social_heading != blank %}<h2>{{ block.settings.social_heading | escape }}</h2>{% endif %}<ul role="list">{% for platform in social_platforms %}{% assign setting_id = 'social_' | append: platform %}{% assign social_url = settings[setting_id] %}{% if social_url != blank %}{% assign social_translation_key = 'social.' | append: platform %}<li><a href="{{ social_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ social_translation_key | t }}">{% render 'social-icon', name: platform %}</a></li>{% endif %}{% endfor %}</ul></nav>{% endif %}
+    {% if block.settings.show_follow_on_shop %}<div class="footer-follow-on-shop__button">{{ shop | login_button: action: 'follow' }}</div>{% endif %}
+  {% endif %}
+</div>
+{% stylesheet %}
+  .footer-follow-on-shop { justify-self: end; }
+  .footer-follow-on-shop__social h2 { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 700; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0 0 var(--space-4); text-transform: uppercase; }
+  .footer-follow-on-shop__social ul { align-items: center; display: flex; flex-wrap: wrap; gap: .9rem; justify-content: flex-end; list-style: none; margin: 0; padding: 0; }
+  .footer-follow-on-shop__social a { color: inherit; display: inline-flex; padding: .1rem; text-decoration: none; }
+  .footer-follow-on-shop__social .social-icon { block-size: 1.35rem; fill: currentcolor; inline-size: 1.35rem; }
+  .footer-follow-on-shop__social a:is(:hover, :focus-visible) { color: var(--color-interactive); }
+  .footer-follow-on-shop__button { margin-block-start: var(--space-3); text-align: end; }
+  @media (max-width: 47.99rem) { .footer-follow-on-shop { justify-self: stretch; } .footer-follow-on-shop__social ul { justify-content: flex-start; } .footer-follow-on-shop__button { text-align: start; } }
+{% endstylesheet %}
+{% schema %}
+{ "name": "t:general.footer_follow_on_shop", "settings": [{ "type": "checkbox", "id": "show_block", "label": "t:labels.show_block", "default": true }, { "type": "checkbox", "id": "show_social", "label": "t:labels.show_social", "default": true }, { "type": "text", "id": "social_heading", "label": "t:labels.social_heading", "default": "Follow us" }, { "type": "checkbox", "id": "show_follow_on_shop", "label": "t:labels.show_follow_on_shop", "default": true }] }
+{% endschema %}

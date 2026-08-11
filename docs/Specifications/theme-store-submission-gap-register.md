@@ -1,6 +1,6 @@
 # Theme Store submission gap register
 
-Status: **ACTIVE — 2026-08-10**
+Status: **IMPLEMENTATION COMPLETE / LIVE EVIDENCE DEFERRED — 2026-08-11**
 
 This register converts the current code audit into release-gated work. It is not a substitute for Shopify's requirements or test checklist. Shopify documentation remains authoritative and must be rechecked before beta and submission.
 
@@ -10,6 +10,23 @@ This register converts the current code audit into release-gated work. It is not
 - Baseline validation: `node scripts/validate-theme.mjs` passed (141 files, 191 storefront keys, 495 schema keys); `shopify theme check --path theme --fail-level error --no-color` passed (86 files, zero offenses); `git diff --check` passed.
 - Static validation does not prove Theme Editor behavior, store configuration, visual quality, browser compatibility, performance, or any flow that requires real Shopify data.
 - Sources: [Theme Store requirements](https://shopify.dev/docs/storefronts/themes/store/requirements), [theme test checklist](https://shopify.dev/docs/storefronts/themes/store/test-theme/checklist), and [submission process](https://shopify.dev/docs/storefronts/themes/store/review-process/submit-theme), reviewed 2026-08-07.
+
+## 2026-08-11 — implementation QA decision
+
+- The owner confirms the implemented GAP surfaces are functionally acceptable for the current development-store fixtures.
+- Full local static QA passed against the working tree: repository validator (151 files, 206 storefront keys, 523 schema keys), Theme Check (95 files, zero offenses), JavaScript syntax checks for every `theme/assets/*.js` asset, and `git diff --check`.
+- A development store cannot supply the legitimate provider/account/data states required for accelerated checkout, Shop Pay Installments, Follow on Shop eligibility, complete pickup data, Apple Wallet, the Gift Card expiry matrix, benchmark fixtures, fresh-install testing, or the browser/webview matrix. These rows are therefore **LIVE EVIDENCE DEFERRED**, not passed and not a submission gate closure.
+- Treat GAP-01 through GAP-10 as implementation-complete unless a regression is found. Re-run the relevant live rows before a Theme Store submission, on a properly configured client-transfer/demo store.
+
+## 2026-08-11 — EVD static readiness run
+
+| Evidence gate | Static result | Remaining live/release evidence |
+|---|---|---|
+| EVD-01 Secondary templates | Required JSON/Liquid templates are present: 404, Article, Blog, Cart, Collection, Home, List collections, Page, Contact Page, Password, Product, Search and Gift Card. Existing route smoke remains source-level only. | Real/empty content, responsive, keyboard, zoom, reduced motion and Theme Editor lifecycle on Preview. |
+| EVD-02 Product/cart fixture matrix | Theme-side product, cart, pickup, payment terms and Gift Card surfaces pass static QA. | Qualified Shopify data for provider-owned and inventory/fulfilment states. |
+| EVD-03 Accessibility/performance | Validator, Theme Check and all asset JavaScript syntax checks pass. | Shopify benchmark Lighthouse data, contrast/manual keyboard/screen-reader evidence on real routes. |
+| EVD-04 Browser/webview matrix | No static substitute exists. | Current Safari, Chrome, Firefox, Edge, mobile browsers and social webviews. |
+| EVD-05 Clean install/Theme Editor | `shopify theme package` produced a valid 149-file archive (1,038,712 bytes); archive scan found no `markets.json`, `.git`, `.env`, `node_modules` or `shopify.theme.toml`. | Fresh-store install and lifecycle. Package currently uses inherited `Skeleton-0.1.0` metadata and has no `/listings/`; it is deliberately not a submission package. |
 
 ## P0 — implementation gaps
 
