@@ -16,7 +16,7 @@
 | Trường | Giá trị |
 |---|---|
 | Cập nhật lần cuối | 2026-08-11 (Asia/Ho_Chi_Minh) |
-| Phase | Requirement remediation implementation complete; live evidence, hardening and commercial packaging deferred until a qualified demo/client-transfer store exists |
+| Phase | Requirement remediation implementation complete; Lighthouse QA closed; provider, browser/webview, fresh-install and commercial hardening evidence remain deferred until a qualified demo/client-transfer store exists |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
@@ -24,7 +24,7 @@
 
 ## Mục tiêu đang thực hiện
 
-Preserve the completed Shopify-native implementation surfaces and prepare for live evidence/hardening when a qualified demo/client-transfer store exists. Do not claim submission readiness from local/static checks alone.
+Preserve the completed Shopify-native implementation surfaces and prepare the remaining provider/browser/install/hardening evidence when a qualified demo/client-transfer store exists. Do not claim submission readiness from Lighthouse or local/static checks alone.
 
 ## Đã hoàn thành
 
@@ -55,8 +55,9 @@ Preserve the completed Shopify-native implementation surfaces and prepare for li
 
 ## Hoàn thành trong phiên
 
-- [x] Submission-gap static QA consolidation: owner confirms the currently implemented GAP surfaces are acceptable for the available development-store fixtures. On 2026-08-11, repository validator passed (151 files, 206 storefront keys, 523 schema keys), Theme Check passed (95 files, zero offenses), `git diff --check` passed, and every JavaScript asset passed syntax validation. Provider/account/data-dependent QA is explicitly deferred—not marked PASS—until a qualified client-transfer/demo store exists: accelerated checkout, Shop Pay Installments, Follow on Shop eligibility, complete pickup/expiry/Apple Wallet states, Lighthouse benchmark data, browser/webview matrix and clean installation. GAP-01–10 are implementation-complete unless a regression is found; release readiness remains NOT READY.
+- [x] Submission-gap static QA consolidation: owner confirms the currently implemented GAP surfaces are acceptable for the available development-store fixtures. On 2026-08-11, repository validator passed (151 files, 206 storefront keys, 523 schema keys), Theme Check passed (95 files, zero offenses), `git diff --check` passed, and every JavaScript asset passed syntax validation. Provider/account/data-dependent QA is explicitly deferred—not marked PASS—until a qualified client-transfer/demo store exists: accelerated checkout, Shop Pay Installments, Follow on Shop eligibility, complete pickup/expiry/Apple Wallet states, browser/webview matrix and clean installation. GAP-01–10 are implementation-complete unless a regression is found; release readiness remains NOT READY.
 - [x] EVD static-readiness run: required template files were verified, and `shopify theme package` produced a valid 149-file / 1,038,712-byte archive without development credentials, `markets.json`, `.git` or `node_modules`. The archive remains deliberately non-submittable: inherited `Skeleton-0.1.0` metadata and no `/listings/` preset directory. Real-route, provider, browser/device, benchmark and fresh-store evidence remains deferred until a qualified store exists.
+- [x] Lighthouse QA closed on hosted Development Theme `#190375493996`, 2026-08-11: Mobile Lighthouse 13.3 / Slow 4G representative routes passed the owner acceptance baseline — Home 75 Performance / 92 Accessibility / 85 SEO; PDP 72 / 100 / 92; Cart 82 / 100 / 100; Collection product grid 74 / 100 / 100; Collection list 70 / 100 / 100. CLS was 0 in every recorded route; Desktop smoke was accepted by owner. Best Practices remained ~77 only for Shopify/Shop app cookies, hosting security headers and runtime Issues outside theme ownership. Route-specific LCP/image/contrast/descriptive-link fixes were pushed to Development Theme; this closes Lighthouse QA only, not browser/webview, screen-reader, reduced-motion, provider or clean-install evidence.
 - [x] GAP-10 Tax-inclusive cart notice: Cart renders a locale-backed `Taxes included` notice directly below subtotal only when Shopify returns `cart.taxes_included`; it makes no tax calculation, price mutation or checkout change. On 2026-08-10, the owner confirmed that enabling tax-inclusive pricing showed the notice and disabling it hid the notice. Static checks pass (validator: 148 files, 205 storefront keys, 515 schema keys; Theme Check: 92 files, zero offenses; `git diff --check`).
 
 ## Đang thực hiện
