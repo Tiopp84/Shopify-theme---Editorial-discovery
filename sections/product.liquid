@@ -10,8 +10,10 @@
       <div class="main-product__media-stage">
         {% for media in product.media %}
           {% assign media_loading = 'lazy' %}
+          {% assign media_fetchpriority = blank %}
           {% if media.id == initial_media.id %}
             {% assign media_loading = 'eager' %}
+            {% assign media_fetchpriority = 'high' %}
           {% endif %}
           <div
             class="main-product__media{% if media.media_type == 'video' or media.media_type == 'external_video' %} main-product__media--video{% endif %}"
@@ -21,7 +23,7 @@
           >
           {% case media.media_type %}
             {% when 'image' %}
-              {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 50vw, 100vw', loading: media_loading %}
+              {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 50vw, 100vw', loading: media_loading, fetchpriority: media_fetchpriority %}
             {% when 'video' %}
               {{ media | media_tag: image_size: '1200x', controls: true, preload: 'metadata' }}
             {% when 'external_video' %}
@@ -162,6 +164,7 @@
   .main-product__details product-form { display: block; margin: 0; }
   .main-product__details product-form form { align-content: start; display: grid; gap: var(--space-6); }
   .main-product__payment-button { min-block-size: 0; }
+  .main-product__payment-button .shopify-payment-button__button--unbranded { background: var(--color-foreground) !important; color: var(--color-background) !important; }
   .main-product__pickup-availability-fallback { border-block: 1px solid var(--color-border); margin: 0; padding-block: var(--space-4); }
   .main-product__option, .main-product__quantity { display: grid; gap: .6rem; margin: 0; }
   product-form:not([data-product-enhanced]) .main-product__option:not(.main-product__variant-fallback) { display: none; }

@@ -14,11 +14,12 @@
         <div class="featured-product__media-stage main-product__media-stage">
           {% for media in product.media %}
             {% assign media_loading = 'lazy' %}
-            {% if media.id == initial_media.id %}{% assign media_loading = 'eager' %}{% endif %}
+            {% assign media_fetchpriority = blank %}
+            {% if media.id == initial_media.id %}{% assign media_loading = 'eager' %}{% assign media_fetchpriority = 'high' %}{% endif %}
             <div class="featured-product__media main-product__media{% if media.media_type == 'video' or media.media_type == 'external_video' %} featured-product__media--video{% endif %}" data-product-media-id="{{ media.id }}" data-product-media-ratio="{{ media.preview_image.aspect_ratio | default: media_ratio }}"{% unless media.id == initial_media.id %} hidden{% endunless %}>
               {% case media.media_type %}
                 {% when 'image' %}
-                  {% render 'image', image: media.preview_image, class: 'featured-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 46vw, 100vw', loading: media_loading %}
+                  {% render 'image', image: media.preview_image, class: 'featured-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 46vw, 100vw', loading: media_loading, fetchpriority: media_fetchpriority %}
                 {% when 'video' %}
                   {{ media | media_tag: image_size: '1200x', controls: true, loop: section.settings.enable_video_looping, preload: 'metadata' }}
                 {% when 'external_video' %}
