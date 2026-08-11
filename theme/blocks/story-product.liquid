@@ -1,5 +1,7 @@
 {% liquid
   assign story_product = block.settings.product
+  assign custom_image_alt = block.settings.image.alt | default: story_product.title
+  assign product_image_alt = story_product.featured_image.alt | default: story_product.title
   assign color_option = blank
   assign size_option = blank
   assign has_exact_swatches = false
@@ -28,14 +30,14 @@
 %}
 
 {% if story_product != blank %}
-  <li class="shoppable-story__item"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
+  <div class="shoppable-story__item" role="listitem"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
     <article class="shoppable-story__product" aria-labelledby="StoryProductTitle-{{ block.id }}">
       <a class="shoppable-story__media" href="{{ story_product.url }}" aria-label="{{ story_product.title | escape }}">
         {% if block.settings.image != blank %}
           {% render 'image',
             class: 'shoppable-story__image',
             image: block.settings.image,
-            alt: block.settings.image.alt,
+            alt: custom_image_alt,
             width: 1200,
             widths: '360, 480, 640, 800, 960, 1200',
             sizes: '(min-width: 64rem) 42vw, 90vw'
@@ -44,7 +46,7 @@
           {% render 'image',
             class: 'shoppable-story__image',
             image: story_product.featured_image,
-            alt: story_product.featured_image.alt,
+            alt: product_image_alt,
             width: 1200,
             widths: '360, 480, 640, 800, 960, 1200',
             sizes: '(min-width: 64rem) 42vw, 90vw'
@@ -74,7 +76,7 @@
                       assign swatch_value = 'rgb(' | append: value.swatch.color.rgb | append: ')'
                     endif
                   %}
-                  <li><span class="shoppable-story__swatch" style="--shoppable-story-swatch: {{ swatch_value }};" title="{{ value.name | escape }}" aria-label="{{ value.name | escape }}"></span></li>
+                  <li><span class="shoppable-story__swatch" style="--shoppable-story-swatch: {{ swatch_value }};" title="{{ value.name | escape }}"><span class="visually-hidden">{{ color_option.name | escape }}: {{ value.name | escape }}</span></span></li>
                 {% endfor %}
               </ul>
             {% else %}
@@ -93,9 +95,9 @@
         {% endunless %}
       </div>
     </article>
-  </li>
+  </div>
 {% elsif request.design_mode or request.visual_preview_mode %}
-  <li class="shoppable-story__item shoppable-story__preview-card"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
+  <div class="shoppable-story__item shoppable-story__preview-card" role="listitem"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
     <article class="shoppable-story__product">
       <span class="shoppable-story__media">{{ 'product-1' | placeholder_svg_tag }}</span>
       <div class="shoppable-story__product-content">
@@ -106,7 +108,7 @@
         </div>
       </div>
     </article>
-  </li>
+  </div>
 {% endif %}
 
 {% schema %}
