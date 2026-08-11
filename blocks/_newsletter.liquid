@@ -1,0 +1,30 @@
+<div class="newsletter" {{ block.shopify_attributes }}>
+  {% if block.settings.show_block %}
+    {% if block.settings.heading != blank %}<h2>{{ block.settings.heading | escape }}</h2>{% endif %}
+    {% if block.settings.show_text and block.settings.text != blank %}<div class="newsletter__text">{{ block.settings.text }}</div>{% endif %}
+    {% form 'customer', class: 'newsletter__form' %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <div class="newsletter__field"><label class="visually-hidden" for="NewsletterEmail-{{ block.id }}">{{ 'newsletter.email' | t }}</label><input id="NewsletterEmail-{{ block.id }}" type="email" name="contact[email]" value="{{ form.email | escape }}" placeholder="{{ 'newsletter.email' | t }}" autocapitalize="off" autocomplete="email" required><button type="submit" aria-label="{{ 'newsletter.submit' | t }}">{% render 'icon', name: 'envelope' %}</button></div>
+      {% if form.posted_successfully? %}<p class="newsletter__message" role="status">{{ 'newsletter.success' | t }}</p>{% elsif form.errors %}<div class="newsletter__message" role="alert">{{ form.errors | default_errors }}</div>{% endif %}
+    {% endform %}
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .newsletter { container-type: inline-size; max-width: 36rem; }
+  .newsletter h2 { letter-spacing: .14em; margin-block-end: var(--space-4); }
+  .newsletter__text { color: color-mix(in srgb, var(--footer-color, var(--color-background)) 84%, transparent); font-size: .9375rem; line-height: 1.45; margin-block-end: var(--space-3); }
+  .newsletter__form { display: grid; }
+  .newsletter__field { align-items: center; border-block-end: 2px solid color-mix(in srgb, var(--footer-color, var(--color-background)) 88%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) auto; max-inline-size: 20rem; }
+  .newsletter__field input { background: transparent; border: 0; border-radius: 0; color: var(--footer-color, var(--color-background)); min-block-size: 2.5rem; min-inline-size: 0; padding-inline: 0; }
+  .newsletter__field input:focus-visible { outline: var(--focus-ring); outline-offset: .25rem; }
+  .newsletter__field input::placeholder { color: color-mix(in srgb, var(--footer-color, var(--color-background)) 72%, transparent); }
+  .newsletter__field button { background: transparent !important; border: 0 !important; color: inherit; inline-size: 2.5rem; min-block-size: 2.5rem; min-inline-size: 2.5rem; padding: 0; }
+  .newsletter__field button .icon { block-size: 1.65rem; inline-size: 1.65rem; margin-inline: auto; }
+  .newsletter__field button:focus-visible { outline: var(--focus-ring); outline-offset: -.25rem; }
+  .newsletter__message { grid-column: 1 / -1; margin-block-start: var(--space-3); }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "t:general.newsletter", "settings": [{ "type": "checkbox", "id": "show_block", "label": "t:labels.show_block", "default": true }, { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Notes for a considered wardrobe" }, { "type": "richtext", "id": "text", "label": "t:labels.text", "default": "<p>New studies, material stories, and useful dispatches.</p>" }, { "type": "checkbox", "id": "show_text", "label": "t:labels.show_newsletter_copy", "default": true }] }
+{% endschema %}

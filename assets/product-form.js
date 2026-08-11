@@ -415,13 +415,18 @@ class ProductGallery extends HTMLElement {
     this.nextButton?.addEventListener('click', () => this.step(1), { signal });
     this.dialog?.addEventListener('click', (event) => { if (event.target === this.dialog) this.dialog.close(); }, { signal });
     this.dialog?.addEventListener('close', () => {
+      this.pauseModalPlayback();
       this.unlockPageScroll();
       this.opener?.focus();
     }, { signal });
     this.dialog?.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowLeft') { event.preventDefault(); this.step(-1); }
-      if (event.key === 'ArrowRight') { event.preventDefault(); this.step(1); }
-    }, { signal });
+      // Native video controls can consume ArrowLeft/ArrowRight before the
+      // bubbling phase. Capturing keeps gallery navigation available after a
+      // video has received focus, then moves focus to the persistent toolbar
+      // control because the video node is about to be replaced.
+      if (event.key === 'ArrowLeft') { event.preventDefault(); this.step(-1, this.previousButton); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); this.step(1, this.nextButton); }
+    }, { signal, capture: true });
     window.addEventListener('resize', () => {
       if (this.dialog?.open && this.mediaAspect) this.sizeDialog(this.mediaAspect);
     }, { signal });
@@ -757,6 +762,7 @@ class ProductGallery extends HTMLElement {
       this.animateOffset(source, this.currentOffset(source) || offset, direction * -distance),
       this.animateOffset(incoming, this.currentOffset(incoming) || direction * distance, 0),
     ]);
+    this.pauseModalPlayback(source);
     this.modalSelectedId = next.dataset.productMediaId;
     this.dialogContent.replaceChildren(incoming);
     this.clearModalPreview({ keepTarget: true });
@@ -787,6 +793,10 @@ class ProductGallery extends HTMLElement {
     this.enableHoverZoom(clone.querySelector('img'));
     this.setDialogAspect(clone);
     if (this.count) this.count.textContent = `${this.media.findIndex((item) => item.dataset.productMediaId === this.modalSelectedId) + 1} / ${this.media.length}`;
+  }
+
+  pauseModalPlayback(root = this.dialogContent) {
+    root?.querySelectorAll('video').forEach((video) => video.pause());
   }
 
   setDialogAspect(clone) {
@@ -866,10 +876,12 @@ class ProductGallery extends HTMLElement {
     this.scrollY = 0;
   }
 
-  step(direction) {
+  step(direction, focusTarget = null) {
     const index = this.media.findIndex((item) => item.dataset.productMediaId === this.modalSelectedId);
+    this.pauseModalPlayback();
     this.modalSelectedId = this.media[(index + direction + this.media.length) % this.media.length]?.dataset.productMediaId;
     this.renderModalMedia();
+    focusTarget?.focus({ preventScroll: true });
   }
 }
 
