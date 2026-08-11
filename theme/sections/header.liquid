@@ -66,7 +66,7 @@
               </div>
             </details>
           {% else %}
-            <a href="{{ link.url }}">{{ link.title | escape }}</a>
+            <a href="{{ link.url }}"{% if link.type == 'page_link' and link.object.title != blank and link.title != link.object.title %} aria-label="{{ link.title | escape }}: {{ link.object.title | escape }}"{% endif %}>{{ link.title | escape }}</a>
           {% endif %}
         {% endfor %}
       </nav>
@@ -221,7 +221,7 @@
               </div>
             </details>
           {% else %}
-            <a href="{{ link.url }}">{{ link.title | escape }}</a>
+            <a href="{{ link.url }}"{% if link.type == 'page_link' and link.object.title != blank and link.title != link.object.title %} aria-label="{{ link.title | escape }}: {{ link.object.title | escape }}"{% endif %}>{{ link.title | escape }}</a>
           {% endif %}
         {% endfor %}
       </div>

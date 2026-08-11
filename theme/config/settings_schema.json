@@ -158,7 +158,7 @@
       { "type": "range", "id": "overlay_opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "label": "t:labels.overlay_opacity", "default": 45 },
       { "type": "header", "content": "t:general.commerce" },
       { "type": "color", "id": "price_color", "default": "#1A1A1A", "label": "t:labels.price" },
-      { "type": "color", "id": "compare_price_color", "default": "#767676", "label": "t:labels.compare_price" },
+      { "type": "color", "id": "compare_price_color", "default": "#595959", "label": "t:labels.compare_price" },
       { "type": "color", "id": "sale_price_color", "default": "#A33F2B", "label": "t:labels.sale_price" },
       { "type": "color", "id": "sale_badge_background", "default": "#F7BEBE", "label": "t:labels.sale_badge_background" },
       { "type": "color", "id": "sale_badge_text", "default": "#1A1A1A", "label": "t:labels.sale_badge_text" }
