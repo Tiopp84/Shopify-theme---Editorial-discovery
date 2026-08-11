@@ -17,6 +17,7 @@
   @param {string} [widths] - Responsive candidate widths
   @param {string} [sizes] - Responsive sizes hint
   @param {string} [loading] - Image loading behavior
+  @param {string} [fetchpriority] - Browser fetch priority for a critical image
 
   @example
   {% render 'image', image: product.featured_image %}
@@ -57,7 +58,7 @@
   >
     {{ image
       | image_url: width: width, height: height, crop: crop
-      | image_tag: alt: alt, widths: widths, sizes: sizes, loading: loading
+      | image_tag: alt: alt, widths: widths, sizes: sizes, loading: loading, fetchpriority: fetchpriority
     }}
   </{{ wrapper }}>
 {% endif %}

@@ -8,6 +8,8 @@ class HeaderShell extends HTMLElement {
     this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
     this.onNavGroupPointerEnter = this.onNavGroupPointerEnter.bind(this);
     this.onNavGroupPointerLeave = this.onNavGroupPointerLeave.bind(this);
+    this.onSubmenuGroupPointerEnter = this.onSubmenuGroupPointerEnter.bind(this);
+    this.onSubmenuGroupPointerLeave = this.onSubmenuGroupPointerLeave.bind(this);
     this.onDesktopNavPointerOver = this.onDesktopNavPointerOver.bind(this);
     this.onDesktopNavPointerLeave = this.onDesktopNavPointerLeave.bind(this);
     this.onDesktopNavFocusIn = this.onDesktopNavFocusIn.bind(this);
@@ -17,6 +19,7 @@ class HeaderShell extends HTMLElement {
     this.onMotionPreferenceChange = this.onMotionPreferenceChange.bind(this);
     this.onDesktopLayoutChange = this.onDesktopLayoutChange.bind(this);
     this.hoverCloseTimer = null;
+    this.submenuHoverCloseTimer = null;
     this.scrollFrame = null;
     this.lastScrollY = window.scrollY;
     this.desktopCompactDownDistance = 0;
@@ -25,13 +28,16 @@ class HeaderShell extends HTMLElement {
     this.desktopCompactExitDistance = 96;
     this.desktopScrollDeadZone = 2;
     this.desktopScrollInitialized = false;
+    this.compactStateInitialized = false;
+    this.compactAnimation = null;
     this.mobileBarDownDistance = 0;
     this.mobileBarUpDistance = 0;
     this.mobileBarThreshold = 72;
-    this.mobileBarRevealDistance = 16;
-    this.mobileBarHideDistance = 32;
-    this.mobileBarHoldDuration = 900;
+    this.mobileBarRevealDistance = 28;
+    this.mobileBarHideDistance = 72;
+    this.mobileBarHoldDuration = 1200;
     this.mobileBarLockUntil = 0;
+    this.mobileTaskbarTimer = null;
     this.wasHoldingCompactContext = false;
     this.compactContextSources = new Set();
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -42,6 +48,7 @@ class HeaderShell extends HTMLElement {
     document.addEventListener('keydown', this.onDocumentKeydown);
     this.querySelectorAll('[data-header-dialog]').forEach((dialog) => dialog.addEventListener('close', this.onClose));
     this.navGroups = [...this.querySelectorAll('.header-shell__nav-group')];
+    this.submenuGroups = [...this.querySelectorAll('.header-shell__submenu-group')];
     this.desktopNav = this.querySelector('.header-shell__desktop-nav');
     this.navPillItems = this.desktopNav
       ? [...this.desktopNav.children].flatMap((item) => {
@@ -71,6 +78,10 @@ class HeaderShell extends HTMLElement {
         group.addEventListener('pointerenter', this.onNavGroupPointerEnter);
         group.addEventListener('pointerleave', this.onNavGroupPointerLeave);
       });
+      this.submenuGroups.forEach((group) => {
+        group.addEventListener('pointerenter', this.onSubmenuGroupPointerEnter);
+        group.addEventListener('pointerleave', this.onSubmenuGroupPointerLeave);
+      });
     }
     this.reducedMotionQuery.addEventListener('change', this.onMotionPreferenceChange);
     this.desktopLayoutQuery.addEventListener('change', this.onDesktopLayoutChange);
@@ -93,21 +104,29 @@ class HeaderShell extends HTMLElement {
         group.removeEventListener('pointerenter', this.onNavGroupPointerEnter);
         group.removeEventListener('pointerleave', this.onNavGroupPointerLeave);
       });
+      this.submenuGroups?.forEach((group) => {
+        group.removeEventListener('pointerenter', this.onSubmenuGroupPointerEnter);
+        group.removeEventListener('pointerleave', this.onSubmenuGroupPointerLeave);
+      });
     }
     window.clearTimeout(this.hoverCloseTimer);
+    window.clearTimeout(this.submenuHoverCloseTimer);
     window.clearTimeout(this.navPillTextTimer);
     window.clearTimeout(this.navPillEntryTimer);
+    window.clearTimeout(this.mobileTaskbarTimer);
     window.removeEventListener('scroll', this.onScroll);
     this.reducedMotionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
     this.desktopLayoutQuery?.removeEventListener('change', this.onDesktopLayoutChange);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
+    this.compactAnimation?.cancel();
     if (this.navPillFocusFrame) window.cancelAnimationFrame(this.navPillFocusFrame);
     this.scrollFrame = null;
     this.mobileBarLockUntil = 0;
     this.wasHoldingCompactContext = false;
     this.compactContextSources?.clear();
     this.hideMobileTaskbar();
-    this.classList.remove('header-shell--compact', 'header-shell--scrolled');
+    window.clearTimeout(this.mobileTaskbarTimer);
+    this.classList.remove('header-shell--compact', 'header-shell--scrolled', 'header-shell--mobile-taskbar-entering', 'header-shell--mobile-taskbar', 'header-shell--mobile-taskbar-leaving');
     this.initialized = false;
   }
 
@@ -203,24 +222,26 @@ class HeaderShell extends HTMLElement {
     window.removeEventListener('scroll', this.onScroll);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
     this.scrollFrame = null;
-    this.classList.remove('header-shell--compact');
+    this.setCompactHeader(false, { animate: false });
     this.hideMobileTaskbar();
     this.lastScrollY = window.scrollY;
     this.mobileBarLockUntil = 0;
     this.wasHoldingCompactContext = false;
     this.compactContextSources.clear();
     this.desktopScrollInitialized = false;
+    this.compactStateInitialized = false;
     this.resetDesktopCompactDistance();
     this.resetMobileBarDistance();
     this.startMotion();
   }
 
   onDesktopLayoutChange() {
-    this.classList.remove('header-shell--compact');
+    this.setCompactHeader(false, { animate: false });
     this.hideMobileTaskbar();
     this.wasHoldingCompactContext = false;
     this.compactContextSources.clear();
     this.desktopScrollInitialized = false;
+    this.compactStateInitialized = false;
     this.resetDesktopCompactDistance();
     this.resetMobileBarDistance();
     this.updateScrollState();
@@ -232,6 +253,45 @@ class HeaderShell extends HTMLElement {
     this.scrollFrame = window.requestAnimationFrame(() => {
       this.updateScrollState();
       this.scrollFrame = null;
+    });
+  }
+
+  setCompactHeader(isCompact, { animate = true } = {}) {
+    const isCurrentState = this.classList.contains('header-shell--compact');
+    if (isCurrentState === isCompact) {
+      this.compactStateInitialized = true;
+      return;
+    }
+
+    const shouldAnimate = animate && this.compactStateInitialized && !this.reducedMotionQuery.matches;
+    const inner = this.headerInner;
+    const firstBounds = shouldAnimate ? inner?.getBoundingClientRect() : null;
+
+    this.classList.toggle('header-shell--compact', isCompact);
+    this.compactStateInitialized = true;
+
+    if (!shouldAnimate || !inner || !firstBounds) return;
+
+    const lastBounds = inner.getBoundingClientRect();
+    if (!lastBounds.width || !lastBounds.height) return;
+
+    this.compactAnimation?.cancel();
+    const translateX = firstBounds.left - lastBounds.left;
+    const translateY = firstBounds.top - lastBounds.top;
+    const scaleX = firstBounds.width / lastBounds.width;
+    const scaleY = firstBounds.height / lastBounds.height;
+
+    const compactAnimation = inner.animate([
+      { transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scaleX}, ${scaleY})` },
+      { transform: 'translate3d(0, 0, 0) scale(1, 1)' }
+    ], {
+      duration: 420,
+      easing: 'cubic-bezier(.22, 1, .36, 1)',
+      fill: 'both'
+    });
+    this.compactAnimation = compactAnimation;
+    compactAnimation.finished.catch(() => {}).finally(() => {
+      if (this.compactAnimation === compactAnimation) this.compactAnimation = null;
     });
   }
 
@@ -268,7 +328,7 @@ class HeaderShell extends HTMLElement {
     this.classList.toggle('header-shell--scrolled', scrollY > 40);
 
     if (!this.desktopLayoutQuery.matches) {
-      this.classList.remove('header-shell--compact');
+      this.setCompactHeader(false);
       this.resetDesktopCompactDistance();
       if (this.compactHeaderEnabled) {
         this.updateMobileTaskbar({ scrollY, delta, dialogOpen });
@@ -283,14 +343,14 @@ class HeaderShell extends HTMLElement {
     this.resetMobileBarDistance();
 
     if (!this.compactHeaderEnabled) {
-      this.classList.remove('header-shell--compact');
+      this.setCompactHeader(false);
       this.resetDesktopCompactDistance();
       this.lastScrollY = scrollY;
       return;
     }
 
     if (this.hasHeldCompactContext()) {
-      this.classList.add('header-shell--compact');
+      this.setCompactHeader(true);
       this.wasHoldingCompactContext = true;
       this.desktopScrollInitialized = true;
       this.resetDesktopCompactDistance();
@@ -301,7 +361,7 @@ class HeaderShell extends HTMLElement {
     if (this.wasHoldingCompactContext) {
       this.wasHoldingCompactContext = false;
       if (delta < 0) {
-        this.classList.remove('header-shell--compact');
+        this.setCompactHeader(false);
         this.resetDesktopCompactDistance();
         this.lastScrollY = scrollY;
         return;
@@ -309,7 +369,7 @@ class HeaderShell extends HTMLElement {
     }
 
     if (scrollY <= 40 || dialogOpen || keyboardFocusInside) {
-      this.classList.remove('header-shell--compact');
+      this.setCompactHeader(false);
       this.desktopScrollInitialized = true;
       this.resetDesktopCompactDistance();
       this.lastScrollY = scrollY;
@@ -317,7 +377,7 @@ class HeaderShell extends HTMLElement {
     }
 
     if (!this.desktopScrollInitialized) {
-      this.classList.toggle('header-shell--compact', scrollY > 120);
+      this.setCompactHeader(scrollY > 120, { animate: false });
       this.desktopScrollInitialized = true;
       this.resetDesktopCompactDistance();
       this.lastScrollY = scrollY;
@@ -329,14 +389,14 @@ class HeaderShell extends HTMLElement {
         this.desktopCompactDownDistance += delta;
         this.desktopCompactUpDistance = 0;
         if (!this.classList.contains('header-shell--compact') && this.desktopCompactDownDistance >= this.desktopCompactEnterDistance) {
-          this.classList.add('header-shell--compact');
+          this.setCompactHeader(true);
           this.resetDesktopCompactDistance();
         }
       } else {
         this.desktopCompactUpDistance += Math.abs(delta);
         this.desktopCompactDownDistance = 0;
         if (this.classList.contains('header-shell--compact') && this.desktopCompactUpDistance >= this.desktopCompactExitDistance) {
-          this.classList.remove('header-shell--compact');
+          this.setCompactHeader(false);
           this.resetDesktopCompactDistance();
         }
       }
@@ -351,7 +411,7 @@ class HeaderShell extends HTMLElement {
   }
 
   updateMobileTaskbar({ scrollY, delta, dialogOpen }) {
-    const taskbarVisible = this.classList.contains('header-shell--mobile-taskbar');
+    const taskbarVisible = this.mobileTaskbarIsVisible();
 
     if (dialogOpen) {
       return;
@@ -390,16 +450,50 @@ class HeaderShell extends HTMLElement {
   }
 
   showMobileTaskbar() {
-    this.classList.add('header-shell--mobile-taskbar');
-    this.headerInner?.setAttribute('inert', '');
+    if (this.mobileTaskbarIsVisible() && !this.classList.contains('header-shell--mobile-taskbar-leaving')) return;
+    window.clearTimeout(this.mobileTaskbarTimer);
+    this.classList.remove('header-shell--mobile-taskbar-leaving');
+    this.classList.add('header-shell--mobile-taskbar-entering');
+    this.headerInner?.removeAttribute('inert');
     this.mobileTaskbar?.removeAttribute('inert');
+    this.mobileTaskbarTimer = window.setTimeout(() => {
+      if (!this.classList.contains('header-shell--mobile-taskbar-entering')) return;
+      this.classList.remove('header-shell--mobile-taskbar-entering');
+      this.classList.add('header-shell--mobile-taskbar');
+      this.headerInner?.setAttribute('inert', '');
+    }, this.reducedMotionQuery.matches ? 0 : 340);
     this.mobileBarLockUntil = performance.now() + this.mobileBarHoldDuration;
   }
 
   hideMobileTaskbar() {
+    window.clearTimeout(this.mobileTaskbarTimer);
+    if (this.classList.contains('header-shell--mobile-taskbar-entering')) {
+      this.classList.remove('header-shell--mobile-taskbar-entering');
+      this.headerInner?.removeAttribute('inert');
+      this.mobileTaskbar?.setAttribute('inert', '');
+      return;
+    }
+
+    if (!this.classList.contains('header-shell--mobile-taskbar')) {
+      this.classList.remove('header-shell--mobile-taskbar-leaving');
+      this.headerInner?.removeAttribute('inert');
+      this.mobileTaskbar?.setAttribute('inert', '');
+      return;
+    }
+
     this.classList.remove('header-shell--mobile-taskbar');
+    this.classList.add('header-shell--mobile-taskbar-leaving');
     this.headerInner?.removeAttribute('inert');
-    this.mobileTaskbar?.setAttribute('inert', '');
+    this.mobileTaskbarTimer = window.setTimeout(() => {
+      this.classList.remove('header-shell--mobile-taskbar-leaving');
+      this.mobileTaskbar?.setAttribute('inert', '');
+    }, this.reducedMotionQuery.matches ? 0 : 340);
+  }
+
+  mobileTaskbarIsVisible() {
+    return this.classList.contains('header-shell--mobile-taskbar-entering')
+      || this.classList.contains('header-shell--mobile-taskbar')
+      || this.classList.contains('header-shell--mobile-taskbar-leaving');
   }
 
   mobileTaskbarIsLocked() {
@@ -422,6 +516,24 @@ class HeaderShell extends HTMLElement {
     this.hoverCloseTimer = window.setTimeout(() => {
       if (!activeGroup.matches(':hover')) activeGroup.removeAttribute('open');
     }, 180);
+  }
+
+  onSubmenuGroupPointerEnter(event) {
+    if (event.pointerType && event.pointerType !== 'mouse') return;
+    window.clearTimeout(this.submenuHoverCloseTimer);
+    const activeGroup = event.currentTarget;
+    activeGroup.parentElement?.querySelectorAll(':scope > .header-shell__submenu-group').forEach((group) => {
+      if (group !== activeGroup) group.removeAttribute('open');
+    });
+    activeGroup.setAttribute('open', '');
+  }
+
+  onSubmenuGroupPointerLeave(event) {
+    if (event.pointerType && event.pointerType !== 'mouse') return;
+    const activeGroup = event.currentTarget;
+    this.submenuHoverCloseTimer = window.setTimeout(() => {
+      if (!activeGroup.matches(':hover')) activeGroup.removeAttribute('open');
+    }, 220);
   }
 
   onDocumentClick(event) {
@@ -495,7 +607,7 @@ class HeaderShell extends HTMLElement {
       const dialog = this.querySelector(`[data-header-dialog="${CSS.escape(openButton.dataset.dialogOpen)}"]`);
       if (!dialog) return;
       this.activeOpener = openButton;
-      this.classList.remove('header-shell--compact');
+      this.setCompactHeader(false);
       dialog.showModal();
       if (openButton.dataset.dialogOpen === 'search' && !this.mobileSearchDrawerQuery.matches) {
         requestAnimationFrame(() => dialog.querySelector('input[type="search"]')?.focus());

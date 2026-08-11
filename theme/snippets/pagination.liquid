@@ -9,9 +9,15 @@
 {% enddoc %}
 
 {% if paginate.pages > 1 %}
+  {% liquid
+    assign pagination_anchor = ''
+    if anchor != blank
+      assign pagination_anchor = '#' | append: anchor
+    endif
+  %}
   <nav class="pagination" aria-label="{{ 'pagination.label' | t }}">
     {% if paginate.previous %}
-      <a class="pagination__link" href="{{ paginate.previous.url }}{{ anchor }}">
+      <a class="pagination__link pagination__link--previous" href="{{ paginate.previous.url }}{{ pagination_anchor }}">
         {{ 'pagination.previous' | t }}
       </a>
     {% endif %}
@@ -20,7 +26,7 @@
       {% for part in paginate.parts %}
         <li>
           {% if part.is_link %}
-            <a class="pagination__link" href="{{ part.url }}{{ anchor }}">{{ part.title }}</a>
+            <a class="pagination__link" href="{{ part.url }}{{ pagination_anchor }}">{{ part.title }}</a>
           {% else %}
             <span
               class="pagination__link"
@@ -36,7 +42,7 @@
     </ol>
 
     {% if paginate.next %}
-      <a class="pagination__link" href="{{ paginate.next.url }}{{ anchor }}">
+      <a class="pagination__link pagination__link--next" href="{{ paginate.next.url }}{{ pagination_anchor }}">
         {{ 'pagination.next' | t }}
       </a>
     {% endif %}
@@ -59,13 +65,28 @@
   }
 
   .pagination__link {
+    background: var(--color-background);
     display: grid;
-    min-width: 2.75rem;
-    min-height: 2.75rem;
+    min-width: 2.625rem;
+    min-height: 2.625rem;
     padding-inline: var(--space-3);
     place-items: center;
     border: 1px solid var(--color-border);
     text-decoration: none;
+  }
+
+  .pagination__link:is(:hover, :focus-visible):not([aria-current='page']) {
+    background: color-mix(in srgb, var(--color-foreground) 6%, var(--color-background));
+  }
+
+  .pagination__link:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: .2rem;
+  }
+
+  .pagination__link--previous,
+  .pagination__link--next {
+    padding-inline: var(--space-4);
   }
 
   .pagination__link[aria-current='page'] {

@@ -2,9 +2,10 @@
   Renders the current product description as a merchant-managed PDP block.
 {% enddoc %}
 
-{% if product.description != blank %}
+{% assign block_product = product | default: section.settings.product %}
+{% if block_product.description != blank %}
   <div class="product-description" {{ block.shopify_attributes }}>
-    {{ product.description }}
+    {{ block_product.description }}
   </div>
 {% elsif request.visual_preview_mode %}
   <div class="product-description" {{ block.shopify_attributes }}>

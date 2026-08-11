@@ -7,7 +7,7 @@ class FooterPanelController {
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.frame = null;
 
-    if (!this.panel || !this.footer || !this.spacer || this.reducedMotion.matches) return;
+    if (!this.panel || !this.footer || !this.spacer) return;
 
     this.onScroll = () => this.scheduleUpdate();
     this.onResize = () => this.scheduleUpdate();
@@ -16,14 +16,12 @@ class FooterPanelController {
     this.resizeObserver = window.ResizeObserver
       ? new ResizeObserver(() => this.scheduleUpdate())
       : null;
-    this.resizeObserver?.observe(this.footer);
-    this.root.classList.add('footer-panel-ready');
     window.addEventListener('scroll', this.onScroll, { passive: true });
     window.addEventListener('resize', this.onResize, { passive: true });
     this.reducedMotion.addEventListener('change', this.onMotionChange);
     document.addEventListener('shopify:section:load', this.onSectionChange);
     document.addEventListener('shopify:section:unload', this.onSectionChange);
-    this.update();
+    this.refresh();
   }
 
   refresh() {
@@ -46,6 +44,8 @@ class FooterPanelController {
 
   clearState() {
     this.resizeObserver?.disconnect();
+    if (this.frame) window.cancelAnimationFrame(this.frame);
+    this.frame = null;
     this.root.classList.remove('footer-panel-ready');
     [
       '--footer-panel-edge-progress',
