@@ -2,6 +2,7 @@
   assign listed_collection = block.settings.collection
   assign collection_title = block.settings.title | default: listed_collection.title
   assign collection_image = listed_collection.featured_image
+  assign collection_image_alt = collection_image.alt | default: collection_title
   assign first_product = listed_collection.products.first
   assign collection_card_sizes = '(min-width: 64rem) 23vw, (min-width: 48rem) 44vw, 46vw'
 
@@ -15,6 +16,7 @@
 
   if settings.collection_tile_image_source == 'first_product' and first_product.featured_image != blank
     assign collection_image = first_product.featured_image
+    assign collection_image_alt = collection_image.alt | default: collection_title
   endif
 %}
 
@@ -23,7 +25,7 @@
     <a class="collection-list__card" href="{{ listed_collection.url }}">
       <span class="collection-list__media" style="--collection-list-focal-point: {{ block.settings.focal_point }};">
         {% if collection_image %}
-          {% render 'image', class: 'collection-list__image', image: collection_image, alt: collection_image.alt, width: 1200, widths: '360, 540, 720, 960, 1200', sizes: collection_card_sizes %}
+          {% render 'image', class: 'collection-list__image', image: collection_image, alt: collection_image_alt, width: 1200, widths: '360, 540, 720, 960, 1200', sizes: collection_card_sizes %}
         {% else %}
           <span class="collection-list__placeholder" aria-hidden="true">{{ 'collection-1' | placeholder_svg_tag }}</span>
         {% endif %}
