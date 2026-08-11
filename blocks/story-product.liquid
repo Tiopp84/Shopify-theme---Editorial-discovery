@@ -38,18 +38,18 @@
             class: 'shoppable-story__image',
             image: block.settings.image,
             alt: custom_image_alt,
-            width: 1200,
-            widths: '360, 480, 640, 800, 960, 1200',
-            sizes: '(min-width: 64rem) 42vw, 90vw'
+            width: 480,
+            widths: '80, 120, 160, 240, 360, 480',
+            sizes: '(min-width: 64rem) 12rem, (min-width: 48rem) 42vw, 4rem'
           %}
         {% elsif story_product.featured_image != blank %}
           {% render 'image',
             class: 'shoppable-story__image',
             image: story_product.featured_image,
             alt: product_image_alt,
-            width: 1200,
-            widths: '360, 480, 640, 800, 960, 1200',
-            sizes: '(min-width: 64rem) 42vw, 90vw'
+            width: 480,
+            widths: '80, 120, 160, 240, 360, 480',
+            sizes: '(min-width: 64rem) 12rem, (min-width: 48rem) 42vw, 4rem'
           %}
         {% else %}
           <span class="shoppable-story__placeholder" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag }}</span>
