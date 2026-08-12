@@ -2,7 +2,7 @@
 
 Ngày khảo sát: 2026-07-17 (Asia/Bangkok)
 
-Trạng thái: **NARRIVELLE APPROVED PROVISIONALLY — LEGAL CLEARANCE PENDING**
+Trạng thái: **NARRIVELLE SELECTED AS THE THEME NAME — LEGAL CLEARANCE PENDING**
 
 > Đây là product naming screen dựa trên Shopify Theme Store, search engine và nguồn trademark công khai. Nó không phải tư vấn pháp lý hoặc full trademark clearance theo từng quốc gia/class.
 
@@ -30,7 +30,7 @@ Trạng thái: **NARRIVELLE APPROVED PROVISIONALLY — LEGAL CLEARANCE PENDING**
 | Softbound | Preset candidate | **REJECT** | Có trademark filing cho readymade garments; đồng thời quá mô tả |
 | Atelier | Preset candidate | **REJECT — SHOPIFY CONFLICT** | Là tên exact của theme miễn phí do Shopify phát hành |
 | Monograph | Preset candidate | **REJECT** | Có WordPress/Shopify ecosystem usage và SaaS/brand use rộng |
-| Narrivelle | Theme candidate | **PROVISIONAL LEAD** | Không tìm thấy theme Shopify hoặc exact trademark record trong basic exact-match screen; chỉ thấy một social handle nhỏ. Cần professional clearance |
+| Narrivelle | Theme name | **SELECTED BY OWNER** | Không tìm thấy theme Shopify hoặc exact trademark record trong basic exact-match screen; chỉ thấy một social handle nhỏ. Cần professional clearance trước public listing |
 | Afterdark | Preset candidate | **HOLD** | Không thấy exact Shopify theme/preset trong screen, nhưng từ phổ biến và có software/product uses; cần kiểm tra sâu hơn |
 | Nightprint | Preset candidate | **HOLD** | Không thấy Shopify conflict; có một creative/research usage. Cần kiểm tra trademark/domain sâu hơn |
 
@@ -42,7 +42,7 @@ Giữ `Project Loomline` trong lịch sử development vì đây là codename, k
 
 ### Tên thương mại ưu tiên
 
-**Narrivelle** — provisional lead.
+**Narrivelle** — selected theme name.
 
 Lý do:
 
@@ -86,6 +86,6 @@ Không dùng `Atelier`. Chưa khóa preset names trước khi theme name đượ
 
 ## 6. Quyết định cần chủ dự án xác nhận
 
-- [x] Dùng `Narrivelle` làm tên thương mại **provisional** để đi tiếp qua design, nhưng chưa public trước professional clearance.
+- [x] Chốt `Narrivelle` là tên theme cho project và metadata Theme Editor. Không public listing trước professional clearance.
 - [x] Giữ `Project Loomline` chỉ làm codename nội bộ.
 - [x] Hủy working preset `Atelier`; đặt tên preset sau khi visual directions được prototype.

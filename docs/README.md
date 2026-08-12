@@ -27,6 +27,8 @@ docs/
 - Phase 7 differentiation contract: [`Specifications/differentiation-contract.md`](Specifications/differentiation-contract.md)
 - Motion architecture: [`Specifications/motion-architecture.md`](Specifications/motion-architecture.md)
 - Theme motion implementation: [`Specifications/theme-motion-implementation.md`](Specifications/theme-motion-implementation.md)
+- Final technical handoff: [`QA/final-technical-handoff.md`](QA/final-technical-handoff.md)
+- Merchant documentation draft: [`Merchant/README.md`](Merchant/README.md)
 - Source/license policy: [`Governance/source-provenance-and-licenses.md`](Governance/source-provenance-and-licenses.md)
 
 ## Quy tắc phân loại

@@ -24,7 +24,7 @@ Có thể dùng theme hiện tại để lập feature specification, test merch
 | Trường | Quyết định |
 |---|---|
 | Tên nội bộ | Project Loomline |
-| Tên theme dự kiến | Narrivelle — provisional; professional trademark clearance pending |
+| Tên theme | Narrivelle — selected by owner; professional trademark clearance pending for public listing |
 | Merchant mục tiêu | Fashion/apparel/lifestyle |
 | Quy mô catalog | Medium–large, khoảng 100–2.000 sản phẩm |
 | Vấn đề chính | Store giàu hình ảnh thường hy sinh discovery; store catalog lớn thường thiếu storytelling và product confidence |
