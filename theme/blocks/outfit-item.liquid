@@ -1,8 +1,9 @@
 {% if block.settings.product != blank %}
   <li class="outfit-composition__item"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
     {% render 'product-card', product: block.settings.product, title: block.settings.title, card_context: 'homepage', image_ratio: '4 / 5', show_price: section.settings.show_price, show_second_image: section.settings.show_second_image, sizes: '(min-width: 64rem) 22vw, (min-width: 48rem) 42vw, 88vw' %}
+    <span class="outfit-composition__item-divider" aria-hidden="true"></span>
   </li>
-{% elsif request.design_mode or request.visual_preview_mode %}
+{% else %}
   <li class="outfit-composition__item"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
     <article class="product-card product-card--homepage product-card--placeholder" aria-label="{{ 'products.card.placeholder_title' | t }}">
       <div class="product-card__media" style="--product-card-ratio: 4 / 5;">
@@ -15,6 +16,7 @@
         </div>
       </div>
     </article>
+    <span class="outfit-composition__item-divider" aria-hidden="true"></span>
   </li>
 {% endif %}
 

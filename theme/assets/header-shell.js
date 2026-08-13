@@ -267,6 +267,15 @@ class HeaderShell extends HTMLElement {
     const inner = this.headerInner;
     const firstBounds = shouldAnimate ? inner?.getBoundingClientRect() : null;
 
+    // A pill and an open native details menu are both positioned from the
+    // desktop layout. Close those transient states before the compact layout
+    // changes its intrinsic width, so their old geometry cannot be scaled or
+    // carried into the new header mode.
+    window.clearTimeout(this.hoverCloseTimer);
+    window.clearTimeout(this.submenuHoverCloseTimer);
+    this.querySelectorAll('.header-shell__nav-group[open], .header-shell__submenu-group[open], .header-shell__localization[open]').forEach((group) => group.removeAttribute('open'));
+    this.clearNavPill();
+
     this.classList.toggle('header-shell--compact', isCompact);
     this.compactStateInitialized = true;
 
@@ -278,14 +287,12 @@ class HeaderShell extends HTMLElement {
     this.compactAnimation?.cancel();
     const translateX = firstBounds.left - lastBounds.left;
     const translateY = firstBounds.top - lastBounds.top;
-    const scaleX = firstBounds.width / lastBounds.width;
-    const scaleY = firstBounds.height / lastBounds.height;
 
     const compactAnimation = inner.animate([
-      { transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scaleX}, ${scaleY})` },
-      { transform: 'translate3d(0, 0, 0) scale(1, 1)' }
+      { transform: `translate3d(${translateX}px, ${translateY}px, 0)` },
+      { transform: 'translate3d(0, 0, 0)' }
     ], {
-      duration: 420,
+      duration: 280,
       easing: 'cubic-bezier(.22, 1, .36, 1)',
       fill: 'both'
     });
