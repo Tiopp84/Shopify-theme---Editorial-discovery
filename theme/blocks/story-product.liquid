@@ -96,7 +96,7 @@
       </div>
     </article>
   </div>
-{% elsif request.design_mode or request.visual_preview_mode %}
+{% else %}
   <div class="shoppable-story__item shoppable-story__preview-card" role="listitem"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
     <article class="shoppable-story__product">
       <span class="shoppable-story__media">{{ 'product-1' | placeholder_svg_tag }}</span>
