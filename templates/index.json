@@ -63,7 +63,19 @@
     },
     "composition": {
       "type": "outfit-composition",
-      "settings": {}
+      "settings": {
+        "eyebrow": "The composition",
+        "heading": "A look, considered piece by piece",
+        "body": "<p>Every item has its own product decision. This composition does not imply a bundle or shared offer.</p>",
+        "image_width": 44,
+        "desktop_columns": "3"
+      },
+      "blocks": {
+        "outfit_item_one": { "type": "outfit-item", "settings": {} },
+        "outfit_item_two": { "type": "outfit-item", "settings": {} },
+        "outfit_item_three": { "type": "outfit-item", "settings": {} }
+      },
+      "block_order": ["outfit_item_one", "outfit_item_two", "outfit_item_three"]
     },
     "email_signup": {
       "type": "email-signup",
