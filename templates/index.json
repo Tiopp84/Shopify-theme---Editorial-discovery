@@ -41,7 +41,13 @@
     },
     "story": {
       "type": "shoppable-story",
-      "settings": {}
+      "settings": {},
+      "blocks": {
+        "story_product_one": { "type": "story-product", "settings": {} },
+        "story_product_two": { "type": "story-product", "settings": {} },
+        "story_product_three": { "type": "story-product", "settings": {} }
+      },
+      "block_order": ["story_product_one", "story_product_two", "story_product_three"]
     },
     "featured_edit": {
       "type": "featured-edit",

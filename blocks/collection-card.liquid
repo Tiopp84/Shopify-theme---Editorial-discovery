@@ -35,7 +35,7 @@
       </span>
     </a>
   </li>
-{% elsif request.design_mode or request.visual_preview_mode %}
+{% else %}
   <li class="collection-list__preview-card"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
     <span class="collection-list__preview-media" style="--collection-list-preview-ratio: {{ settings.collection_tile_image_ratio }};">{{ 'collection-1' | placeholder_svg_tag }}</span>
     <span class="collection-list__preview-title">{{ 'collections.placeholder_title' | t }}</span>
