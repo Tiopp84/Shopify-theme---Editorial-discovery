@@ -71,6 +71,9 @@
     .featured-edit--columns-3 .featured-edit__grid > li { flex-basis: calc((100% - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap)) / 3); }
     .featured-edit--columns-4 .featured-edit__grid > li { flex-basis: calc((100% - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap)) / 4); }
   }
+  @media (max-width: 63.99rem) {
+    .featured-edit .product-card__media { position: relative; }
+  }
   @media (max-width: 47.99rem) {
     .featured-edit { margin-block-end: var(--space-chapter-mobile); padding-block: var(--space-chapter-mobile); }
     .featured-edit__header { align-items: start; flex-direction: column; gap: var(--space-5); margin-block-end: var(--space-8); }
