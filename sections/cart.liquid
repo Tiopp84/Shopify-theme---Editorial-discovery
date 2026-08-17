@@ -30,14 +30,18 @@
 
             <article class="main-cart__line" data-cart-page-line="{{ item.key }}" data-cart-variant-id="{{ item.variant.id }}" data-cart-unit-price="{{ item.final_price }}" data-cart-compare-unit-price="{{ cart_reference_unit_price }}" data-cart-quantity="{{ item.quantity }}">
               <a class="main-cart__image" href="{{ item.url }}" aria-label="{{ item.product.title | escape }}">
-                {% render 'image', image: item.image, alt: item.product.title, width: 480, sizes: '(min-width: 750px) 14rem, 34vw' %}
+                {% if item.image != blank %}
+                  {% render 'image', image: item.image, alt: item.product.title, width: 480, sizes: '(min-width: 750px) 14rem, 34vw' %}
+                {% else %}
+                  <span class="main-cart__image-placeholder" aria-hidden="true">{% render 'cart-image-placeholder', icon_class: 'main-cart__image-placeholder-icon' %}</span>
+                {% endif %}
               </a>
               <div class="main-cart__line-details">
                 <div class="main-cart__product-info">
                   <a class="main-cart__product-title" href="{{ item.url }}">{{ item.product.title | escape }}</a>
                   {% unless item.product.has_only_default_variant %}<p class="main-cart__variant">{{ item.variant.title | escape }}</p>{% endunless %}
                   {% if item.selling_plan_allocation %}<p class="main-cart__variant">{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>{% endif %}
-                  {% for property in item.properties %}{% unless property.last == blank %}<p class="main-cart__property">{{ property.first | escape }}: {{ property.last | escape }}</p>{% endunless %}{% endfor %}
+                  {% for property in item.properties %}{% unless property.last == blank or property.first contains '__' %}<p class="main-cart__property">{{ property.first | escape }}: {{ property.last | escape }}</p>{% endunless %}{% endfor %}
                   {% if item.line_level_discount_allocations.size > 0 %}
                     <ul class="main-cart__discounts" role="list">
                       {% for discount in item.line_level_discount_allocations %}<li>{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</li>{% endfor %}
@@ -126,6 +130,8 @@
   .main-cart__line[hidden] { display: none; }
   .main-cart__image { display: block; background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); }
   .main-cart__image img { aspect-ratio: 4 / 5; inline-size: 100%; object-fit: cover; }
+  .main-cart__image-placeholder { align-items: center; aspect-ratio: 4 / 5; color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; }
+  .main-cart__image-placeholder-icon { block-size: auto; inline-size: 64%; }
   .main-cart__line-details { display: grid; align-content: start; gap: var(--space-4); min-inline-size: 0; }
   .main-cart__line-error { background: color-mix(in srgb, var(--color-status-error) 8%, var(--color-background)); border-inline-start: .18rem solid var(--color-status-error); color: var(--color-status-error); font-size: .875rem; line-height: 1.4; margin: 0; padding: var(--space-2); }
   .main-cart__product-info { display: grid; align-content: start; gap: var(--space-1); }

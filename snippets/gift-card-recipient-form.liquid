@@ -1,0 +1,58 @@
+{% liquid
+  assign recipient_id = 'GiftCardRecipient-' | append: section.id | append: '-' | append: block.id
+%}
+
+<fieldset class="gift-card-recipient" data-gift-card-recipient>
+  <legend>{{ 'gift_card.recipient.legend' | t }}</legend>
+  <div class="gift-card-recipient__choice">
+    <input
+      id="{{ recipient_id }}-Toggle"
+      type="checkbox"
+      name="properties[__shopify_send_gift_card_to_recipient]"
+      value="true"
+      data-gift-card-recipient-toggle
+    >
+    <label for="{{ recipient_id }}-Toggle">{{ 'gift_card.recipient.toggle' | t }}</label>
+  </div>
+
+  <div class="gift-card-recipient__fields" data-gift-card-recipient-fields hidden>
+    {% if form.errors %}
+      <div class="gift-card-recipient__errors" role="alert">{{ form.errors | default_errors }}</div>
+    {% endif %}
+    <div class="gift-card-recipient__field">
+      <label for="{{ recipient_id }}-Email">{{ 'gift_card.recipient.email' | t }}</label>
+      <input id="{{ recipient_id }}-Email" type="email" name="properties[Recipient email]" value="{{ form.email | escape }}" autocomplete="email" data-gift-card-recipient-email disabled>
+    </div>
+    <div class="gift-card-recipient__field">
+      <label for="{{ recipient_id }}-Name">{{ 'gift_card.recipient.name' | t }}</label>
+      <input id="{{ recipient_id }}-Name" type="text" name="properties[Recipient name]" value="{{ form.name | escape }}" autocomplete="name" maxlength="255" disabled>
+    </div>
+    <div class="gift-card-recipient__field gift-card-recipient__field--message">
+      <label for="{{ recipient_id }}-Message">{{ 'gift_card.recipient.message' | t }}</label>
+      <textarea id="{{ recipient_id }}-Message" name="properties[Message]" rows="4" maxlength="200" disabled>{{ form.message | escape }}</textarea>
+    </div>
+    <div class="gift-card-recipient__field">
+      <label for="{{ recipient_id }}-SendOn">{{ 'gift_card.recipient.send_on' | t }}</label>
+      <input id="{{ recipient_id }}-SendOn" type="date" name="properties[Send on]" data-gift-card-recipient-date disabled>
+      <p>{{ 'gift_card.recipient.send_on_hint' | t }}</p>
+    </div>
+  </div>
+</fieldset>
+
+{% stylesheet %}
+  .gift-card-recipient { border: 1px solid var(--color-border); display: grid; gap: var(--space-4); margin: 0; padding: var(--space-4); }
+  .gift-card-recipient legend { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 700; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); padding-inline: var(--space-1); text-transform: uppercase; }
+  .gift-card-recipient__choice { align-items: center; display: flex; gap: var(--space-2); }
+  .gift-card-recipient__choice input { accent-color: var(--color-interactive); block-size: 1.1rem; inline-size: 1.1rem; margin: 0; }
+  .gift-card-recipient__choice label { font-weight: 600; }
+  .gift-card-recipient__fields { display: grid; gap: var(--space-4); }
+  .gift-card-recipient__fields[hidden] { display: none; }
+  .gift-card-recipient__field { display: grid; gap: var(--space-2); }
+  .gift-card-recipient__field label { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 700; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); text-transform: uppercase; }
+  .gift-card-recipient__field :is(input, textarea) { background: var(--color-background); border: var(--field-theme-border-width) solid var(--color-border); border-radius: var(--field-theme-radius); color: inherit; font: inherit; inline-size: 100%; min-block-size: var(--field-theme-height); padding: var(--space-3); }
+  .gift-card-recipient__field textarea { min-block-size: 7rem; resize: vertical; }
+  .gift-card-recipient__field p { color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background)); font-size: .825rem; line-height: 1.45; margin: 0; }
+  .gift-card-recipient__errors { background: color-mix(in srgb, var(--color-status-error) 10%, var(--color-background)); border-inline-start: .2rem solid var(--color-status-error); color: var(--color-status-error); padding: var(--space-3); }
+  .gift-card-recipient__errors ul { margin: 0; padding-inline-start: 1.2rem; }
+  @media (min-width: 48rem) { .gift-card-recipient__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gift-card-recipient__field--message { grid-column: 1 / -1; } }
+{% endstylesheet %}

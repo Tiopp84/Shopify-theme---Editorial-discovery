@@ -155,9 +155,19 @@
     "disabled": "This gift card is no longer active",
     "expired": "This gift card has expired",
     "expires_on": "Expires on {{ expires_on }}",
+    "send_on": "Scheduled delivery on {{ send_on }}",
     "qr_code": "Scan in Shopify POS",
     "qr_code_label": "QR code for redeeming this gift card in Shopify POS",
     "title": "Gift card",
+    "recipient": {
+      "legend": "Gift card recipient",
+      "toggle": "Send this gift card to a recipient",
+      "email": "Recipient email",
+      "name": "Recipient name (optional)",
+      "message": "Message (optional)",
+      "send_on": "Send on (optional)",
+      "send_on_hint": "Choose a date up to 90 days from today. Leave blank to send immediately."
+    },
     "use_at_checkout": "Use this gift card at checkout"
   },
   "password": {

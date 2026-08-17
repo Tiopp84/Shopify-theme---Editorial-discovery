@@ -1,8 +1,9 @@
 {% if section.blocks.size > 0 %}
   {% # theme-check-disable ValidScopedCSSClass %}
   {% assign scroll_speed = section.settings.speed | default: 8 %}
+  {% assign scroll_direction = section.settings.direction | default: 'left' %}
   <section
-    class="scrolling-text full-width scrolling-text--speed-{{ scroll_speed }}"
+    class="scrolling-text full-width scrolling-text--speed-{{ scroll_speed }} scrolling-text--direction-{{ scroll_direction }}"
     aria-label="{{ 'accessibility.scrolling_text' | t }}"
     style="--scrolling-text-background: {{ section.settings.background_color }}; --scrolling-text-color: {{ section.settings.text_color }}; --scrolling-text-height: {{ section.settings.height }}px; --scrolling-text-gap: {{ section.settings.message_spacing }}px; --scrolling-text-font-size: {{ section.settings.text_size }}px;"
     {{ section.shopify_attributes }}
@@ -32,6 +33,7 @@
   .scrolling-text__viewport { display: block; inline-size: 100%; overflow: hidden; width: 100%; }
   .scrolling-text__track { display: flex; inline-size: max-content; will-change: transform; }
   .scrolling-text__track.is-ready { animation: scrolling-text-scroll var(--scrolling-text-duration, 12s) linear infinite; }
+  .scrolling-text--direction-right .scrolling-text__track.is-ready { animation-name: scrolling-text-scroll-right; }
   .scrolling-text__group { align-items: center; display: flex; flex: 0 0 auto; gap: var(--scrolling-text-gap); inline-size: max-content; padding-inline-end: var(--scrolling-text-gap); }
   .scrolling-text__group::after { content: '✦'; flex: 0 0 auto; font-size: .72em; line-height: 1; }
   .scrolling-text__item { color: inherit; font-family: var(--font-campaign); font-size: var(--scrolling-text-font-size, clamp(1.5rem, 3vw, 3rem)); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.035em; line-height: 1; text-decoration: none; white-space: nowrap; }
@@ -62,6 +64,7 @@
   .scrolling-text:is(:hover, :focus-within) .scrolling-text__track { animation-play-state: paused; }
 
   @keyframes scrolling-text-scroll { from { transform: translateX(0); } to { transform: translateX(calc(var(--announcement-marquee-distance) * -1)); } }
+  @keyframes scrolling-text-scroll-right { from { transform: translateX(calc(var(--announcement-marquee-distance) * -1)); } to { transform: translateX(0); } }
 
   @media (prefers-reduced-motion: reduce) {
     .scrolling-text__track { animation: none; inline-size: 100%; }
@@ -75,11 +78,11 @@
 {% schema %}
 {
   "name": "t:general.scrolling_text",
-  "limit": 1,
   "settings": [
     { "type": "header", "content": "t:general.layout" },
     { "type": "range", "id": "message_spacing", "label": "t:labels.message_spacing", "min": 8, "max": 80, "step": 4, "unit": "px", "default": 20 },
     { "type": "header", "content": "t:general.motion" },
+    { "type": "select", "id": "direction", "label": "t:labels.scroll_direction", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
     { "type": "range", "id": "speed", "label": "t:labels.marquee_speed", "min": 1, "max": 20, "step": 1, "default": 8 },
     { "type": "header", "content": "t:general.style" },
     { "type": "range", "id": "height", "label": "t:labels.bar_height", "min": 28, "max": 120, "step": 2, "unit": "px", "default": 56 },
