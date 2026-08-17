@@ -1,0 +1,57 @@
+{
+  "sections": {
+    "main": {
+      "type": "editorial-hero",
+      "settings": {
+        "eyebrow": "Still",
+        "heading": "A quieter point of view",
+        "body": "<p>An understated storefront for a concise collection and an unhurried product discovery flow.</p>",
+        "heading_size": "large",
+        "desktop_height_vh": 72,
+        "mobile_height_vh": 68,
+        "text_position": "bottom_left",
+        "text_alignment": "left"
+      }
+    },
+    "collection_list": {
+      "type": "collection-list",
+      "settings": {
+        "heading": "The everyday edit",
+        "intro": "<p>A short collection presented with clarity.</p>",
+        "desktop_columns": "3",
+        "grid_spacing": 24
+      }
+    },
+    "featured_edit": {
+      "type": "featured-edit",
+      "settings": {
+        "heading": "Selected pieces",
+        "heading_alignment": "left",
+        "desktop_columns": "3",
+        "desktop_rows": 1,
+        "image_ratio": "4 / 5",
+        "show_second_image": false
+      }
+    },
+    "material_craft": {
+      "type": "material-craft",
+      "settings": {
+        "eyebrow": "A closer look",
+        "heading": "Only what matters",
+        "text": "<p>Make the material, fit and finish easy to read before the customer reaches the product page.</p>",
+        "text_alignment": "left",
+        "image_width": 50,
+        "image_height": 520,
+        "media_position": "right"
+      }
+    },
+    "email_signup": {
+      "type": "email-signup",
+      "settings": {
+        "heading": "Stay informed",
+        "text": "<p>Occasional notes on new arrivals and restocks.</p>"
+      }
+    }
+  },
+  "order": ["main", "collection_list", "featured_edit", "material_craft", "email_signup"]
+}

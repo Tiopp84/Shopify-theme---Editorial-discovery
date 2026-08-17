@@ -1,0 +1,125 @@
+{
+  "sections": {
+    "main": {
+      "type": "editorial-hero",
+      "settings": {
+        "eyebrow": "Narrivelle",
+        "heading": "The collection, considered",
+        "body": "<p>A visual retail experience for collections built around proportion, material and movement.</p>",
+        "heading_size": "large",
+        "desktop_height_vh": 85,
+        "mobile_height_vh": 75,
+        "text_position": "bottom_left",
+        "text_alignment": "left"
+      }
+    },
+    "scrolling_text": {
+      "type": "scrolling-text",
+      "settings": {
+        "direction": "left"
+      },
+      "blocks": {
+        "message_material": {
+          "type": "message",
+          "settings": { "text": "MATERIAL / MOVEMENT / FORM" }
+        },
+        "message_editorial": {
+          "type": "message",
+          "settings": { "text": "A CONSIDERED EDITORIAL COMMERCE EXPERIENCE" }
+        }
+      },
+      "block_order": ["message_material", "message_editorial"]
+    },
+    "collection_list": {
+      "type": "collection-list",
+      "settings": {
+        "heading": "Curated collections",
+        "intro": "<p>Entry points for a collection with a point of view.</p>",
+        "desktop_columns": "4"
+      }
+    },
+    "story": {
+      "type": "shoppable-story",
+      "settings": {
+        "eyebrow": "The story",
+        "heading": "Pieces composed for a day in motion",
+        "body": "<p>Each piece is available independently. Follow the product link to choose the right option.</p>",
+        "image_ratio": "4 / 5"
+      },
+      "blocks": {
+        "story_product_one": { "type": "story-product", "settings": {} },
+        "story_product_two": { "type": "story-product", "settings": {} },
+        "story_product_three": { "type": "story-product", "settings": {} }
+      },
+      "block_order": ["story_product_one", "story_product_two", "story_product_three"]
+    },
+    "featured_edit": {
+      "type": "featured-edit",
+      "settings": {
+        "heading": "The selected edit",
+        "desktop_columns": "4",
+        "desktop_rows": 1,
+        "image_ratio": "4 / 5"
+      }
+    },
+    "visual_story": {
+      "type": "pinned-visual-story",
+      "settings": {
+        "eyebrow": "Details, considered",
+        "heading": "Built around the way a day moves",
+        "image_width": 58,
+        "image_height": 600
+      },
+      "blocks": {
+        "chapter_one": { "type": "chapter", "settings": {} },
+        "chapter_two": { "type": "chapter", "settings": {} },
+        "chapter_three": { "type": "chapter", "settings": {} }
+      },
+      "block_order": ["chapter_one", "chapter_two", "chapter_three"]
+    },
+    "material_craft": {
+      "type": "material-craft",
+      "settings": {
+        "eyebrow": "Material note",
+        "heading": "The details make the difference",
+        "text": "<p>Fabric, finish and proportion are considered together, so everyday pieces feel distinct without asking for attention.</p>",
+        "image_width": 58,
+        "image_height": 600
+      }
+    },
+    "composition": {
+      "type": "outfit-composition",
+      "settings": {
+        "eyebrow": "The composition",
+        "heading": "A look, considered piece by piece",
+        "body": "<p>Every item has its own product decision. This composition does not imply a bundle or shared offer.</p>",
+        "image_width": 44,
+        "desktop_columns": "3"
+      },
+      "blocks": {
+        "outfit_item_one": { "type": "outfit-item", "settings": {} },
+        "outfit_item_two": { "type": "outfit-item", "settings": {} },
+        "outfit_item_three": { "type": "outfit-item", "settings": {} }
+      },
+      "block_order": ["outfit_item_one", "outfit_item_two", "outfit_item_three"]
+    },
+    "email_signup": {
+      "type": "email-signup",
+      "settings": {
+        "heading": "Join the editorial circle",
+        "text": "<p>New studies, material stories and useful dispatches.</p>"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "scrolling_text",
+    "collection_list",
+    "story",
+    "featured_edit",
+    "visual_story",
+    "material_craft",
+    "composition",
+    "email_signup"
+  ]
+}

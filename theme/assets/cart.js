@@ -1,3 +1,17 @@
+function cartErrorMessage(error, fallback) {
+  const description = error?.description;
+  if (typeof description === 'string' && description) return description;
+  if (Array.isArray(description)) return description.join(' ');
+  if (description && typeof description === 'object') {
+    const messages = Object.entries(description).flatMap(([field, value]) => {
+      const text = Array.isArray(value) ? value.join(' ') : String(value || '');
+      return text ? `${field}: ${text}` : [];
+    });
+    if (messages.length) return messages.join(' ');
+  }
+  return fallback;
+}
+
 class CartStore extends EventTarget {
   constructor(source) {
     super();
@@ -107,7 +121,7 @@ class CartStore extends EventTarget {
       });
       if (!response.ok) {
         const error = await response.json().catch(() => null);
-        throw new Error(error?.description || 'Cart update failed');
+        throw new Error(cartErrorMessage(error, 'Cart update failed'));
       }
       const cart = await response.json();
       if (lineMutation) {
@@ -456,13 +470,16 @@ class CartDrawer extends HTMLElement {
   lineHtml(item, index) {
     const id = `DrawerQuantity-${index}`;
     const compare = Number(item.compare_at_price || item.original_price || 0);
-    return `<article class="cart-drawer__line" data-cart-line="${this.escape(item.key)}" data-cart-variant-id="${item.variant_id}" data-cart-quantity="${item.quantity}" data-cart-unit-price="${item.final_price}" data-cart-compare-unit-price="${compare}"><a href="${this.escape(item.url)}">${item.image ? `<img src="${this.escape(item.image)}" alt="${this.escape(item.product_title)}">` : ''}</a><div class="cart-drawer__line-details">${this.lineDetailsHtml(item)}<div class="cart-drawer__line-actions"><label class="visually-hidden" for="${id}">Quantity</label><div class="cart-drawer__quantity-control"><button type="button" aria-label="${this.escape(this.dataset.cartDecreaseLabel)}" data-cart-quantity-step="-1" data-cart-key="${this.escape(item.key)}" data-cart-quantity-input="${id}">−</button><input id="${id}" type="number" name="updates[]" value="${item.quantity}" min="0" step="1" data-cart-quantity data-cart-key="${this.escape(item.key)}"><button type="button" aria-label="${this.escape(this.dataset.cartIncreaseLabel)}" data-cart-quantity-step="1" data-cart-key="${this.escape(item.key)}" data-cart-quantity-input="${id}">+</button></div><button type="button" aria-label="${this.escape(this.dataset.cartRemoveLabel)}" data-cart-remove data-cart-key="${this.escape(item.key)}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg></button></div></div><div class="cart-drawer__line-price">${this.linePriceHtml(item, compare)}</div></article>`;
+    const image = item.image
+      ? `<img src="${this.escape(item.image)}" alt="${this.escape(item.product_title)}">`
+      : '<span class="cart-drawer__image-placeholder" aria-hidden="true"><svg class="cart-drawer__image-placeholder-icon" viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="58" height="36" rx="2"/><path d="M3 17h58M32 6v36M32 17c-7-1-11-5-9-9 2-3 7 0 9 6M32 17c7-1 11-5 9-9-2-3-7 0-9 6"/></svg></span>';
+    return `<article class="cart-drawer__line" data-cart-line="${this.escape(item.key)}" data-cart-variant-id="${item.variant_id}" data-cart-quantity="${item.quantity}" data-cart-unit-price="${item.final_price}" data-cart-compare-unit-price="${compare}"><a class="cart-drawer__image" href="${this.escape(item.url)}" aria-label="${this.escape(item.product_title)}">${image}</a><div class="cart-drawer__line-details">${this.lineDetailsHtml(item)}<div class="cart-drawer__line-actions"><label class="visually-hidden" for="${id}">Quantity</label><div class="cart-drawer__quantity-control"><button type="button" aria-label="${this.escape(this.dataset.cartDecreaseLabel)}" data-cart-quantity-step="-1" data-cart-key="${this.escape(item.key)}" data-cart-quantity-input="${id}">−</button><input id="${id}" type="number" name="updates[]" value="${item.quantity}" min="0" step="1" data-cart-quantity data-cart-key="${this.escape(item.key)}"><button type="button" aria-label="${this.escape(this.dataset.cartIncreaseLabel)}" data-cart-quantity-step="1" data-cart-key="${this.escape(item.key)}" data-cart-quantity-input="${id}">+</button></div><button type="button" aria-label="${this.escape(this.dataset.cartRemoveLabel)}" data-cart-remove data-cart-key="${this.escape(item.key)}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg></button></div></div><div class="cart-drawer__line-price">${this.linePriceHtml(item, compare)}</div></article>`;
   }
 
   lineDetailsHtml(item) {
     const variant = item.variant_title && item.variant_title !== 'Default Title' ? `<p>${this.escape(item.variant_title)}</p>` : '';
     const sellingPlan = item.selling_plan_allocation?.selling_plan?.name ? `<p>${this.escape(item.selling_plan_allocation.selling_plan.name)}</p>` : '';
-    const properties = Object.entries(item.properties || {}).filter(([, value]) => value !== '').map(([name, value]) => `<p>${this.escape(name)}: ${this.escape(value)}</p>`).join('');
+    const properties = Object.entries(item.properties || {}).filter(([name, value]) => value !== '' && !name.startsWith('__')).map(([name, value]) => `<p>${this.escape(name)}: ${this.escape(value)}</p>`).join('');
     const discounts = (item.line_level_discount_allocations || []).map((discount) => `<li>${this.escape(discount.discount_application?.title)} (−${this.store.formatMoney(discount.amount)})</li>`).join('');
     return `<a href="${this.escape(item.url)}">${this.escape(item.product_title)}</a>${variant}${sellingPlan}${properties}${discounts ? `<ul class="cart-drawer__discounts" role="list">${discounts}</ul>` : ''}`;
   }
@@ -482,6 +499,10 @@ class CartDrawer extends HTMLElement {
     this.addController?.abort();
     this.addController = new AbortController();
     this.opener = document.activeElement;
+    if (this.status) {
+      this.status.textContent = '';
+      this.status.hidden = true;
+    }
     const productForm = form.closest('product-form');
     const quickAdd = form.closest('quick-add');
     const productError = productForm?.querySelector('[data-product-selection-error]') || quickAdd?.querySelector('[data-quick-add-error]');
@@ -498,7 +519,7 @@ class CartDrawer extends HTMLElement {
       const response = await fetch(`${this.dataset.cartUrl}/add.js`, { method: 'POST', body, signal: this.addController.signal, headers: { Accept: 'application/json' } });
       if (!response.ok) {
         const error = await response.json().catch(() => null);
-        const message = error?.description || 'Item could not be added to cart.';
+        const message = cartErrorMessage(error, 'Item could not be added to cart.');
         // Shopify can reject the request after accepting the quantity that was
         // available. Refresh its authoritative state, but keep the shopper on
         // the PDP so the availability message is visible where they acted.
@@ -517,6 +538,10 @@ class CartDrawer extends HTMLElement {
       cart.sections = added.sections;
       this.store.replaceFromCart(cart);
       this.store.emit('server', 'Item added to cart.', cart);
+      if (this.status) {
+        this.status.textContent = '';
+        this.status.hidden = true;
+      }
       if (cart.item_count > 0) this.open(this.opener);
     } catch (error) {
       if (error.name !== 'AbortError') {

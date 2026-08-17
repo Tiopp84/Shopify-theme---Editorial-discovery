@@ -1,7 +1,8 @@
 # Narrivelle merchant documentation
 
 Version: **1.0.0**  
-Status: **local documentation draft — publish after the public documentation site is ready**
+Status: **public documentation source**
+Documentation: <https://amazinsolution.com/themes/narrivelle/docs/>
 
 Narrivelle is an editorial commerce theme for fashion, apparel, and lifestyle stores. This guide explains the settings and sections included in the theme. It does not replace Shopify's own documentation for checkout, payments, customer accounts, delivery, taxes, or app-provided functionality.
 
@@ -36,4 +37,4 @@ Shopify and installed providers determine checkout, payment methods, accelerated
 
 ## Getting help
 
-The public support form is not available yet. Until it is published, keep a record of your store URL, theme version, a description of the problem, steps to reproduce it, and screenshots or a short recording. See the [support policy](support-policy.md) for the information that a support request needs.
+Submit support requests through <https://amazinsolution.com/themes/narrivelle/support/>. Include your store URL, theme version, a description of the problem, steps to reproduce it, and screenshots or a short recording. See the [support policy](support-policy.md) for the information that a support request needs.

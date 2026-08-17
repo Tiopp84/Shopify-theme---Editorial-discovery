@@ -10,7 +10,7 @@ This document records the repository handoff point after implementation QA and h
 |---|---|
 | Branch / revision | `feat/update-style` at `c6def51` (`QA`) |
 | Working tree at handoff | Clean; `HEAD` matches `origin/feat/update-style` |
-| Theme metadata | Name `Narrivelle`, author `AmazinPro`, version `1.0.0`; professional trademark clearance and owner-provided public documentation/support destinations remain required for public listing |
+| Theme metadata | Name `Narrivelle`, author `AmazinPro`, version `1.0.0`; documentation and support destinations are configured at `https://amazinsolution.com/themes/narrivelle/docs/` and `https://amazinsolution.com/themes/narrivelle/support/`; professional trademark clearance remains required for public listing |
 | Theme implementation | GAP-01 through GAP-10 are implementation-complete for the available development-store fixtures |
 | Static QA | 2026-08-11: validator 151 files / 206 storefront keys / 523 schema keys; Theme Check 95 files, zero offenses; JavaScript syntax checks and `git diff --check` passed |
 | Lighthouse QA | Closed on Development Theme `#190375493996`; representative Mobile Slow 4G routes met the owner baseline and CLS was 0 |

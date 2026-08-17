@@ -25,12 +25,18 @@
               {% if item.selling_plan_allocation.compare_at_price > cart_reference_unit_price %}{% assign cart_reference_unit_price = item.selling_plan_allocation.compare_at_price %}{% endif %}
               {% assign cart_reference_line_price = cart_reference_unit_price | times: item.quantity %}
               <article class="cart-drawer__line" data-cart-line="{{ item.key }}" data-cart-variant-id="{{ item.variant.id }}" data-cart-quantity="{{ item.quantity }}" data-cart-unit-price="{{ item.final_price }}" data-cart-compare-unit-price="{{ cart_reference_unit_price }}">
-                <a href="{{ item.url }}">{% render 'image', image: item.image, alt: item.product.title, width: 160, sizes: '80px' %}</a>
+                <a class="cart-drawer__image" href="{{ item.url }}" aria-label="{{ item.product.title | escape }}">
+                  {% if item.image != blank %}
+                    {% render 'image', image: item.image, alt: item.product.title, width: 160, sizes: '80px' %}
+                  {% else %}
+                    <span class="cart-drawer__image-placeholder" aria-hidden="true">{% render 'cart-image-placeholder', icon_class: 'cart-drawer__image-placeholder-icon' %}</span>
+                  {% endif %}
+                </a>
                 <div class="cart-drawer__line-details">
                   <a href="{{ item.url }}">{{ item.product.title | escape }}</a>
                   {% unless item.product.has_only_default_variant %}<p>{{ item.variant.title | escape }}</p>{% endunless %}
                   {% if item.selling_plan_allocation %}<p>{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>{% endif %}
-                  {% for property in item.properties %}{% unless property.last == blank %}<p>{{ property.first | escape }}: {{ property.last | escape }}</p>{% endunless %}{% endfor %}
+                  {% for property in item.properties %}{% unless property.last == blank or property.first contains '__' %}<p>{{ property.first | escape }}: {{ property.last | escape }}</p>{% endunless %}{% endfor %}
                   {% if item.line_level_discount_allocations.size > 0 %}<ul class="cart-drawer__discounts" role="list">{% for discount in item.line_level_discount_allocations %}<li>{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</li>{% endfor %}</ul>{% endif %}
                   <div class="cart-drawer__line-actions">
                     <label class="visually-hidden" for="DrawerQuantity-{{ item.index }}">{{ 'cart.quantity' | t }}</label>
@@ -87,7 +93,11 @@
   .cart-drawer__empty[hidden] { display: none; }
   .cart-drawer__line { display: grid; grid-template-columns: 5.25rem minmax(0, 1fr) auto; gap: var(--space-3); border-block-end: 1px solid var(--color-border); padding-block-end: var(--space-4); }
   .cart-drawer__line[hidden] { display: none; }
-  .cart-drawer__line img { aspect-ratio: 4 / 5; object-fit: cover; inline-size: 100%; }
+  .cart-drawer__image { align-self: start; aspect-ratio: 4 / 5; background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); display: block; overflow: hidden; }
+  .cart-drawer__image > .image, .cart-drawer__image > .image > img, .cart-drawer__image > img { block-size: 100%; height: 100%; inline-size: 100%; width: 100%; }
+  .cart-drawer__image > .image > img, .cart-drawer__image > img { object-fit: contain; object-position: center; }
+  .cart-drawer__image-placeholder { align-items: center; aspect-ratio: 4 / 5; color: color-mix(in srgb, var(--color-foreground) 26%, var(--color-background)); display: flex; justify-content: center; }
+  .cart-drawer__image-placeholder-icon { block-size: auto; inline-size: 64%; }
   .cart-drawer__line-details { display: grid; align-content: start; gap: var(--space-1); min-inline-size: 0; }
   .cart-drawer__line-details > a { font-weight: 600; line-height: 1.3; text-decoration-thickness: 1px; text-underline-offset: .16em; }
   .cart-drawer__line-details > p { color: color-mix(in srgb, var(--color-foreground) 68%, var(--color-background)); font-size: .9em; }

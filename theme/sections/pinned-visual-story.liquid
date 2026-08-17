@@ -11,7 +11,7 @@
   endfor
 %}
 
-<section class="pinned-visual-story full-width pinned-visual-story--media-{{ section.settings.media_position }} pinned-visual-story--heading-{{ section.settings.heading_size }} pinned-visual-story--heading-{{ section.settings.heading_alignment }} pinned-visual-story--text-{{ section.settings.text_position }} pinned-visual-story--chapters-heading-{{ section.settings.chapter_heading_size }} pinned-visual-story--chapters-text-{{ section.settings.chapter_text_size }} pinned-visual-story--chapters-{{ section.settings.chapter_alignment }}{% unless section.settings.show_chapter_index %} pinned-visual-story--hide-chapter-index{% endunless %}{% if section.settings.enable_image_flip %} pinned-visual-story--image-flip{% endif %}" data-header-scroll-policy="hold-compact-header" data-motion="editorial-chapters"{% if section.settings.enable_image_flip %} data-pinned-story-flip{% endif %}{% if section.settings.enable_chapter_wheel %} data-pinned-story-wheel{% endif %} style="--pinned-story-background: {{ section.settings.background_color }}; --pinned-story-media-height: {{ section.settings.image_height | default: 600 }}px; --pinned-story-media-width: {{ image_width }}fr; --pinned-story-text-width: {{ text_width }}fr;" {% if section.settings.heading != blank %}aria-labelledby="PinnedVisualStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="pinned-visual-story full-width pinned-visual-story--media-{{ section.settings.media_position }} pinned-visual-story--heading-{{ section.settings.heading_size }} pinned-visual-story--heading-{{ section.settings.heading_alignment }} pinned-visual-story--text-{{ section.settings.text_position }} pinned-visual-story--chapters-heading-{{ section.settings.chapter_heading_size }} pinned-visual-story--chapters-text-{{ section.settings.chapter_text_size }} pinned-visual-story--chapters-{{ section.settings.chapter_alignment }}{% unless section.settings.show_chapter_index %} pinned-visual-story--hide-chapter-index{% endunless %}{% if section.settings.enable_image_flip %} pinned-visual-story--image-flip{% endif %}" data-header-scroll-policy="hold-compact-header" data-motion="editorial-chapters"{% if section.settings.enable_image_flip %} data-pinned-story-flip{% endif %}{% if section.settings.enable_chapter_wheel %} data-pinned-story-wheel{% endif %} style="--pinned-story-background: {{ section.settings.background_color | default: '#EBE7DD' }}; --pinned-story-color: {{ section.settings.text_color | default: '#1A1A1A' }}; --pinned-story-media-height: {{ section.settings.image_height | default: 600 }}px; --pinned-story-media-width: {{ image_width }}fr; --pinned-story-text-width: {{ text_width }}fr;" {% if section.settings.heading != blank %}aria-labelledby="PinnedVisualStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <header class="pinned-visual-story__intro">
     {% if section.settings.eyebrow != blank %}<p>{{ section.settings.eyebrow | escape }}</p>{% endif %}
     {% if section.settings.heading != blank %}<h2 id="PinnedVisualStoryHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
@@ -62,7 +62,7 @@
 </section>
 
 {% stylesheet %}
-  .pinned-visual-story { background: var(--pinned-story-background, var(--color-panel-01)); margin-block-end: var(--space-chapter); padding: clamp(var(--space-16), 7vw, 7rem) max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
+  .pinned-visual-story { background: var(--pinned-story-background, var(--color-panel-01)); color: var(--pinned-story-color, var(--color-foreground)); margin-block-end: var(--space-chapter); padding: clamp(var(--space-16), 7vw, 7rem) max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
   .pinned-visual-story__intro { margin-block-end: clamp(var(--space-12), 5vw, 5rem); max-width: 35rem; }
   .pinned-visual-story__intro p, .pinned-visual-story__number { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 600; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0 0 var(--space-3); text-transform: uppercase; }
   .pinned-visual-story__intro h2 { font-family: var(--font-campaign); font-size: clamp(var(--heading-size-128), 4.7vw, var(--heading-size-192)); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .96; margin: 0; }
@@ -93,7 +93,7 @@
   .pinned-visual-story--chapters-heading-small .pinned-visual-story__chapter h3 { font-size: clamp(var(--heading-size-72), 2.5vw, var(--heading-size-112)); }
   .pinned-visual-story--chapters-heading-medium .pinned-visual-story__chapter h3 { font-size: clamp(var(--heading-size-102), 3.6vw, var(--heading-size-160)); }
   .pinned-visual-story--chapters-heading-large .pinned-visual-story__chapter h3 { font-size: clamp(var(--heading-size-128), 4.4vw, var(--heading-size-192)); }
-  .pinned-visual-story__body { color: color-mix(in srgb, var(--color-foreground) 76%, var(--color-background)); font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .15); max-width: 29rem; }
+  .pinned-visual-story__body { color: color-mix(in srgb, var(--pinned-story-color, var(--color-foreground)) 76%, var(--pinned-story-background, var(--color-background))); font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .15); max-width: 29rem; }
   .pinned-visual-story--chapters-text-small .pinned-visual-story__body { font-size: calc(var(--body-text-base-size) * .9); }
   .pinned-visual-story--chapters-text-medium .pinned-visual-story__body { font-size: var(--body-text-base-size); }
   .pinned-visual-story--chapters-text-large .pinned-visual-story__body { font-size: calc(var(--body-text-base-size) * 1.08); }
@@ -175,7 +175,8 @@
     { "type": "checkbox", "id": "enable_image_flip", "label": "t:labels.enable_image_flip", "default": true },
     { "type": "checkbox", "id": "enable_chapter_wheel", "label": "t:labels.enable_chapter_wheel", "default": true },
     { "type": "header", "content": "t:general.style" },
-    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#EBE7DD" }
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#EBE7DD" },
+    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#1A1A1A" }
   ],
   "blocks": [
     {

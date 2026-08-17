@@ -111,6 +111,9 @@
         <p class="main-product__selling-plan-note">{{ 'products.form.selling_plan_notice' | t }}</p>
       </div>
     {% endif %}
+    {% if product.gift_card? %}
+      {% render 'gift-card-recipient-form', product: product, form: form, section: section, block: block %}
+    {% endif %}
     <p class="main-product__selection-error" data-product-selection-error role="alert" hidden></p>
     <button type="submit" data-product-submit {% unless current_variant.available %}disabled{% endunless %}>{% if current_variant.available %}{{ 'products.form.add_to_cart' | t }}{% else %}{{ 'products.form.sold_out' | t }}{% endif %}</button>
     {% if block.settings.show_dynamic_checkout_button %}

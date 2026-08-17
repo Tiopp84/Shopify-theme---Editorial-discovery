@@ -31,7 +31,7 @@ Do not edit checkout, payment, customer account, pickup, or provider-owned outpu
 2. Record the store URL, theme version, affected URL, browser/device, expected behavior, actual behavior, and steps to reproduce.
 3. Disable only the most recent Custom Liquid or app block on the duplicate, then test again.
 4. Capture screenshots or a short recording.
-5. Submit the complete record through the public support form when available.
+5. Submit the complete record through the public support form at <https://amazinsolution.com/themes/narrivelle/support/>.
 
 ## Content quality review
 
@@ -46,4 +46,4 @@ After updating products, menus, or sections, check:
 
 ## Version notes
 
-The Theme Editor metadata identifies this release as Narrivelle 1.0.0 by AmazinPro. The public documentation URL and support URL will be added once the public documentation/support service is live.
+The Theme Editor metadata identifies this release as Narrivelle 1.0.0 by AmazinPro. Documentation is available at <https://amazinsolution.com/themes/narrivelle/docs/> and support is available at <https://amazinsolution.com/themes/narrivelle/support/>.

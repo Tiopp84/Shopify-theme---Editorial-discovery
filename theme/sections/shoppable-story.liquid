@@ -3,7 +3,7 @@
   assign products_width = 100 | minus: text_width
 %}
 
-<section class="shoppable-story full-width shoppable-story--intro-{{ section.settings.intro_position }} shoppable-story--heading-{{ section.settings.heading_size }} shoppable-story--text-align-{{ section.settings.text_alignment }} shoppable-story--text-size-{{ section.settings.text_size }}" data-aos-section style="--shoppable-story-background: {{ section.settings.background_color }}; --shoppable-story-image-ratio: {{ section.settings.image_ratio }}; --shoppable-story-text-width: {{ text_width }}fr; --shoppable-story-products-width: {{ products_width }}fr;" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="shoppable-story full-width shoppable-story--intro-{{ section.settings.intro_position }} shoppable-story--heading-{{ section.settings.heading_size }} shoppable-story--text-align-{{ section.settings.text_alignment }} shoppable-story--text-size-{{ section.settings.text_size }}" data-aos-section style="--shoppable-story-background: {{ section.settings.background_color | default: '#EBE7DD' }}; --shoppable-story-color: {{ section.settings.text_color | default: '#1A1A1A' }}; --shoppable-story-image-ratio: {{ section.settings.image_ratio }}; --shoppable-story-text-width: {{ text_width }}fr; --shoppable-story-products-width: {{ products_width }}fr;" {% if section.settings.heading != blank %}aria-labelledby="ShoppableStoryHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="shoppable-story__intro"{% unless request.visual_preview_mode %} data-aos="fade-up-right"{% endunless %}>
     {% if section.settings.eyebrow != blank %}
       <p class="shoppable-story__eyebrow">{{ section.settings.eyebrow | escape }}</p>
@@ -22,7 +22,7 @@
 </section>
 
 {% stylesheet %}
-  .shoppable-story { background: var(--shoppable-story-background, var(--color-panel-01)); display: grid; gap: clamp(var(--space-12), 6vw, 6rem); margin: 0 0 var(--space-chapter); padding: clamp(var(--space-16), 8vw, 7rem) max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
+  .shoppable-story { background: var(--shoppable-story-background, var(--color-panel-01)); color: var(--shoppable-story-color, var(--color-foreground)); display: grid; gap: clamp(var(--space-12), 6vw, 6rem); margin: 0 0 var(--space-chapter); padding: clamp(var(--space-16), 8vw, 7rem) max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
   .shoppable-story__intro { align-content: center; display: grid; gap: var(--space-5); max-width: 26rem; }
   .shoppable-story__eyebrow, .shoppable-story__availability { font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 600; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; text-transform: uppercase; }
   .shoppable-story__intro h2 { font-family: var(--font-campaign); font-size: clamp(var(--heading-size-102), 3.3vw, var(--heading-size-160)); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.03em; line-height: .98; margin: 0; overflow-wrap: anywhere; }
@@ -32,7 +32,7 @@
   .shoppable-story--text-align-left .shoppable-story__intro { text-align: start; }
   .shoppable-story--text-align-center .shoppable-story__intro { text-align: center; }
   .shoppable-story--text-align-right .shoppable-story__intro { text-align: end; }
-  .shoppable-story__body { color: color-mix(in srgb, var(--color-foreground) 78%, var(--color-background)); font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .05); max-width: 30rem; }
+  .shoppable-story__body { color: color-mix(in srgb, var(--shoppable-story-color, var(--color-foreground)) 78%, var(--shoppable-story-background, var(--color-background))); font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .05); max-width: 30rem; }
   .shoppable-story--text-size-small .shoppable-story__body { font-size: calc(var(--body-text-base-size) * .9); }
   .shoppable-story--text-size-medium .shoppable-story__body { font-size: var(--body-text-base-size); }
   .shoppable-story--text-size-large .shoppable-story__body { font-size: calc(var(--body-text-base-size) * 1.08); }
@@ -45,7 +45,7 @@
   .shoppable-story__image, .shoppable-story__image > img, .shoppable-story__placeholder, .shoppable-story__placeholder > svg { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
   .shoppable-story__image > img { transition: transform 300ms ease; }
   .shoppable-story__product-content { display: grid; gap: var(--space-3); }
-  .shoppable-story__caption { align-items: baseline; border-block-end: 1px solid color-mix(in srgb, var(--color-foreground) 36%, transparent); display: flex; font-family: var(--small-label-font); font-size: var(--small-label-size); font-style: normal; font-weight: 600; gap: var(--space-2); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; padding-block-end: var(--space-2); width: fit-content; }
+  .shoppable-story__caption { align-items: baseline; border-block-end: 1px solid color-mix(in srgb, var(--shoppable-story-color, var(--color-foreground)) 36%, transparent); display: flex; font-family: var(--small-label-font); font-size: var(--small-label-size); font-style: normal; font-weight: 600; gap: var(--space-2); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; padding-block-end: var(--space-2); width: fit-content; }
   .shoppable-story__index::before { content: counter(shoppable-story, decimal-leading-zero); }
   .shoppable-story__decision { display: block; }
   .shoppable-story__decision h3 { font-family: var(--font-campaign); font-size: clamp(var(--heading-size-56), 2.2vw, var(--heading-size-86)); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); line-height: 1.08; margin: 0; min-width: 0; }
@@ -61,8 +61,8 @@
   .shoppable-story__color-names { font-size: calc(var(--body-text-base-size) * .88); line-height: 1.35; }
   .shoppable-story__size-names { font-size: calc(var(--body-text-base-size) * .88); line-height: 1.35; }
   .shoppable-story__swatches { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 0; padding: 0; }
-  .shoppable-story__swatch { background: var(--shoppable-story-swatch); background-position: center; background-size: cover; border: 1px solid color-mix(in srgb, var(--color-foreground) 32%, transparent); border-radius: 50%; block-size: 1.375rem; display: block; inline-size: 1.375rem; }
-  .shoppable-story__availability { color: var(--color-foreground); }
+  .shoppable-story__swatch { background: var(--shoppable-story-swatch); background-position: center; background-size: cover; border: 1px solid color-mix(in srgb, var(--shoppable-story-color, var(--color-foreground)) 32%, transparent); border-radius: 50%; block-size: 1.375rem; display: block; inline-size: 1.375rem; }
+  .shoppable-story__availability { color: var(--shoppable-story-color, var(--color-foreground)); }
   @media (min-width: 64rem) {
     .shoppable-story { align-items: start; grid-template-columns: minmax(15rem, var(--shoppable-story-text-width)) minmax(0, var(--shoppable-story-products-width)); }
     .shoppable-story__intro { align-self: start; block-size: fit-content; padding-block-start: var(--space-8); position: sticky; top: calc(var(--announcement-bar-height, 0px) + 6rem); }
@@ -119,7 +119,8 @@
     { "type": "select", "id": "image_ratio", "label": "t:labels.image_size", "options": [{ "value": "1 / 1", "label": "t:options.image_ratio.square" }, { "value": "4 / 5", "label": "t:options.image_ratio.portrait" }, { "value": "3 / 4", "label": "t:options.image_ratio.tall" }], "default": "4 / 5" },
     { "type": "checkbox", "id": "show_variants", "label": "t:labels.show_variants", "default": true },
     { "type": "header", "content": "t:general.style" },
-    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#EBE7DD" }
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#EBE7DD" },
+    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#1A1A1A" }
   ],
   "blocks": [{ "type": "story-product" }],
   "max_blocks": 8,

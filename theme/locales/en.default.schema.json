@@ -276,6 +276,7 @@
     "look_image": "Look image",
     "marquee": "Scrolling text",
     "marquee_speed": "Scroll speed",
+    "scroll_direction": "Scroll direction",
     "message_spacing": "Message spacing",
     "media_position": "Media position",
     "link": "Link",

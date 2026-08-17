@@ -26,4 +26,4 @@ Use Custom Liquid only for small, tested enhancements. Duplicate your theme firs
 
 ## How do I report a problem?
 
-Use the public support form when it is published. Include your store URL, Narrivelle version, affected page URL, steps to reproduce, expected and actual behavior, and screenshots or a recording.
+Use the public support form at <https://amazinsolution.com/themes/narrivelle/support/>. Include your store URL, Narrivelle version, affected page URL, steps to reproduce, expected and actual behavior, and screenshots or a recording.

@@ -3,7 +3,7 @@
   assign text_width = 100 | minus: image_width
 %}
 
-<section class="material-craft full-width material-craft--media-{{ section.settings.media_position }} material-craft--heading-{{ section.settings.heading_size }} material-craft--text-align-{{ section.settings.text_alignment }} material-craft--text-{{ section.settings.text_position }} material-craft--text-size-{{ section.settings.text_size }}" data-aos-section style="--material-craft-background: {{ section.settings.background_color }}; --material-craft-image-height: {{ section.settings.image_height | default: 600 }}px; --material-craft-image-width: {{ image_width }}fr; --material-craft-text-width: {{ text_width }}fr;" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="material-craft full-width material-craft--media-{{ section.settings.media_position }} material-craft--heading-{{ section.settings.heading_size }} material-craft--text-align-{{ section.settings.text_alignment }} material-craft--text-{{ section.settings.text_position }} material-craft--text-size-{{ section.settings.text_size }}" data-aos-section style="--material-craft-background: {{ section.settings.background_color | default: '#F5F3EE' }}; --material-craft-color: {{ section.settings.text_color | default: '#1A1A1A' }}; --material-craft-image-height: {{ section.settings.image_height | default: 600 }}px; --material-craft-image-width: {{ image_width }}fr; --material-craft-text-width: {{ text_width }}fr;" {% if section.settings.heading != blank %}aria-labelledby="MaterialCraftHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <div class="material-craft__images">
     {% for index in (1..2) %}
       {% assign image_key = 'image_' | append: index %}
@@ -26,12 +26,12 @@
 </section>
 
 {% stylesheet %}
-  .material-craft { align-items: center; background: var(--material-craft-background, var(--color-background)); display: grid; gap: clamp(var(--space-6), 3vw, var(--space-12)); margin: 0 0 var(--space-chapter); padding-inline: max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
+  .material-craft { align-items: center; background: var(--material-craft-background, var(--color-background)); color: var(--material-craft-color, var(--color-foreground)); display: grid; gap: clamp(var(--space-6), 3vw, var(--space-12)); margin: 0 0 var(--space-chapter); padding-inline: max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); }
   .material-craft__images { align-items: end; block-size: var(--material-craft-image-height, 600px); display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); }
   .material-craft__image { background: var(--color-panel-02); block-size: 100%; overflow: hidden; }
   .material-craft__image--2 { block-size: 68%; margin-block-end: 10%; }
   .material-craft__image .image, .material-craft__image .image > img, .material-craft__placeholder, .material-craft__placeholder svg { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
-  .material-craft__placeholder { background: var(--color-panel-02); color: color-mix(in srgb, var(--color-foreground) 30%, var(--color-panel-02)); }
+  .material-craft__placeholder { background: var(--color-panel-02); color: color-mix(in srgb, var(--material-craft-color, var(--color-foreground)) 30%, var(--color-panel-02)); }
   .material-craft__content { display: grid; gap: var(--space-5); max-width: 22rem; }
   .material-craft__eyebrow { display: grid; font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 600; gap: var(--space-3); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; text-transform: uppercase; }
   .material-craft__eyebrow::after { background: var(--color-border); content: ''; display: block; block-size: 1px; inline-size: var(--space-16); }
@@ -44,7 +44,7 @@
   .material-craft--text-align-right .material-craft__content { text-align: end; }
   .material-craft--text-align-center .material-craft__eyebrow { justify-items: center; }
   .material-craft--text-align-right .material-craft__eyebrow { justify-items: end; }
-  .material-craft__text { color: color-mix(in srgb, var(--color-foreground) 78%, var(--color-background)); font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .1); max-inline-size: 20rem; }
+  .material-craft__text { color: color-mix(in srgb, var(--material-craft-color, var(--color-foreground)) 78%, var(--material-craft-background, var(--color-background))); font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .1); max-inline-size: 20rem; }
   .material-craft--text-size-small .material-craft__text { font-size: calc(var(--body-text-base-size) * .9); }
   .material-craft--text-size-medium .material-craft__text { font-size: var(--body-text-base-size); }
   .material-craft--text-size-large .material-craft__text { font-size: calc(var(--body-text-base-size) * 1.08); }
@@ -99,7 +99,8 @@
     { "type": "range", "id": "image_height", "label": "t:labels.image_height", "min": 360, "max": 900, "step": 20, "unit": "px", "default": 600 },
     { "type": "select", "id": "media_position", "label": "t:labels.media_position", "options": [{ "value": "left", "label": "t:options.position.left" }, { "value": "right", "label": "t:options.position.right" }], "default": "left" },
     { "type": "header", "content": "t:general.style" },
-    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#F5F3EE" }
+    { "type": "color", "id": "background_color", "label": "t:labels.background_color", "default": "#F5F3EE" },
+    { "type": "color", "id": "text_color", "label": "t:labels.text_color", "default": "#1A1A1A" }
   ],
   "enabled_on": { "templates": ["index"] },
   "presets": [{ "name": "t:general.material_craft", "category": "Campaign & editorial" }]

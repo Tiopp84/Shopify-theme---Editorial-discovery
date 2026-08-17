@@ -13,4 +13,4 @@
 
 - Provider-owned features only appear when Shopify and the relevant provider make them eligible.
 - Merchants should review a duplicate theme and test their own catalog, apps, markets, and payment configuration before publishing.
-- Public documentation, public support contact details, and final Theme Store release evidence are still pending.
+- Public documentation is available at <https://amazinsolution.com/themes/narrivelle/docs/> and support is available at <https://amazinsolution.com/themes/narrivelle/support/>. Final Theme Store release evidence remains pending.

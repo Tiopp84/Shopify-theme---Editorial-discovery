@@ -1,6 +1,7 @@
 # Narrivelle support policy
 
-Status: **draft — publish with the public support form before launch**
+Status: **published**
+Support form: <https://amazinsolution.com/themes/narrivelle/support/>
 
 ## Response commitment
 
@@ -32,10 +33,10 @@ Provide:
 5. Steps to reproduce, the affected URL, expected behavior, and actual behavior.
 6. Screenshots, screen recordings, and browser/device details when useful.
 
-## Public support form requirements
+## Support form requirements
 
-The published form must collect name, email, store URL, theme name, version, and a problem description. It must allow image/file upload and send an automatic receipt email. Do not ask for a merchant's budget, phone number, or project type in this support form.
+Before Theme Store submission, verify that the public form collects name, email, store URL, theme name, version, and a problem description; allows image/file upload; and sends an automatic receipt email. It must not ask for a merchant's budget, phone number, or project type.
 
 ## Privacy
 
-Use request details and attachments only to investigate and respond to the support request. Publish the final privacy/contact details alongside the public form before launch.
+Use request details and attachments only to investigate and respond to the support request. Verify that privacy and contact details are published alongside the support form before submission.
