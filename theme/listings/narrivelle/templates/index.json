@@ -3,63 +3,110 @@
     "main": {
       "type": "editorial-hero",
       "settings": {
-        "eyebrow": "Narrivelle",
+        "text_protection": 70,
+        "eyebrow": "Narrivelle — The Issue",
         "heading": "The collection, considered",
-        "body": "<p>A visual retail experience for collections built around proportion, material and movement.</p>",
         "heading_size": "large",
+        "body": "<p>A wardrobe shaped by proportion, material and movement.</p>",
+        "link_label": "Explore the collection",
+        "content_width": "narrow",
+        "text_position": "bottom_left",
+        "text_alignment": "left",
         "desktop_height_vh": 85,
         "mobile_height_vh": 75,
-        "text_position": "bottom_left",
-        "text_alignment": "left"
+        "text_color": "#F5F3EE"
       }
     },
     "scrolling_text": {
       "type": "scrolling-text",
       "settings": {
-        "direction": "left"
+        "message_spacing": 40,
+        "direction": "left",
+        "speed": 6,
+        "height": 48,
+        "text_size": 16,
+        "background_color": "#242119",
+        "text_color": "#F5F3EE"
       },
       "blocks": {
         "message_material": {
           "type": "message",
-          "settings": { "text": "MATERIAL / MOVEMENT / FORM" }
+          "settings": {
+            "text": "MATERIAL / MOVEMENT / FORM"
+          }
         },
         "message_editorial": {
           "type": "message",
-          "settings": { "text": "A CONSIDERED EDITORIAL COMMERCE EXPERIENCE" }
+          "settings": {
+            "text": "A STUDY IN EVERYDAY PROPORTION"
+          }
         }
       },
-      "block_order": ["message_material", "message_editorial"]
+      "block_order": [
+        "message_material",
+        "message_editorial"
+      ]
     },
     "collection_list": {
       "type": "collection-list",
       "settings": {
-        "heading": "Curated collections",
-        "intro": "<p>Entry points for a collection with a point of view.</p>",
-        "desktop_columns": "4"
+        "heading": "Shop by intention",
+        "intro": "<p>Four useful ways into the current collection.</p>",
+        "heading_size": "medium",
+        "content_position": "left",
+        "heading_alignment": "left",
+        "desktop_columns": "4",
+        "grid_spacing": 24
       }
     },
     "story": {
       "type": "shoppable-story",
       "settings": {
         "eyebrow": "The story",
-        "heading": "Pieces composed for a day in motion",
-        "body": "<p>Each piece is available independently. Follow the product link to choose the right option.</p>",
-        "image_ratio": "4 / 5"
+        "heading": "Pieces for a day in motion",
+        "heading_size": "medium",
+        "body": "<p>Three independent pieces, each chosen for how it moves through the day. Follow each product link to select colour and size.</p>",
+        "text_size": "medium",
+        "text_alignment": "left",
+        "intro_position": "left",
+        "text_width": 36,
+        "image_ratio": "4 / 5",
+        "show_variants": true,
+        "background_color": "#EBE7DD",
+        "text_color": "#242119"
       },
       "blocks": {
-        "story_product_one": { "type": "story-product", "settings": {} },
-        "story_product_two": { "type": "story-product", "settings": {} },
-        "story_product_three": { "type": "story-product", "settings": {} }
+        "story_product_one": {
+          "type": "story-product",
+          "settings": {}
+        },
+        "story_product_two": {
+          "type": "story-product",
+          "settings": {}
+        },
+        "story_product_three": {
+          "type": "story-product",
+          "settings": {}
+        }
       },
-      "block_order": ["story_product_one", "story_product_two", "story_product_three"]
+      "block_order": [
+        "story_product_one",
+        "story_product_two",
+        "story_product_three"
+      ]
     },
     "featured_edit": {
       "type": "featured-edit",
       "settings": {
         "heading": "The selected edit",
+        "heading_size": "medium",
+        "heading_alignment": "left",
+        "show_price": true,
+        "show_index": true,
         "desktop_columns": "4",
         "desktop_rows": 1,
-        "image_ratio": "4 / 5"
+        "image_ratio": "4 / 5",
+        "show_second_image": true
       }
     },
     "visual_story": {
@@ -67,24 +114,65 @@
       "settings": {
         "eyebrow": "Details, considered",
         "heading": "Built around the way a day moves",
+        "heading_size": "medium",
+        "heading_alignment": "left",
+        "text_position": "left",
         "image_width": 58,
-        "image_height": 600
+        "image_height": 600,
+        "media_position": "left",
+        "show_chapter_index": true,
+        "chapter_heading_size": "medium",
+        "chapter_text_size": "medium",
+        "chapter_alignment": "left",
+        "enable_image_flip": false,
+        "enable_chapter_wheel": false,
+        "background_color": "#F5F3EE",
+        "text_color": "#242119"
       },
       "blocks": {
-        "chapter_one": { "type": "chapter", "settings": {} },
-        "chapter_two": { "type": "chapter", "settings": {} },
-        "chapter_three": { "type": "chapter", "settings": {} }
+        "chapter_one": {
+          "type": "chapter",
+          "settings": {
+            "heading": "01 — Proportion",
+            "text": "<p>Length, volume and line are resolved before decoration.</p>"
+          }
+        },
+        "chapter_two": {
+          "type": "chapter",
+          "settings": {
+            "heading": "02 — Movement",
+            "text": "<p>Pieces are made to hold their shape while the day changes pace.</p>"
+          }
+        },
+        "chapter_three": {
+          "type": "chapter",
+          "settings": {
+            "heading": "03 — Finish",
+            "text": "<p>Construction and tactile detail bring the collection into focus.</p>"
+          }
+        }
       },
-      "block_order": ["chapter_one", "chapter_two", "chapter_three"]
+      "block_order": [
+        "chapter_one",
+        "chapter_two",
+        "chapter_three"
+      ]
     },
     "material_craft": {
       "type": "material-craft",
       "settings": {
         "eyebrow": "Material note",
-        "heading": "The details make the difference",
-        "text": "<p>Fabric, finish and proportion are considered together, so everyday pieces feel distinct without asking for attention.</p>",
+        "heading": "A closer reading of texture and finish",
+        "heading_size": "medium",
+        "text": "<p>Material, finish and proportion are considered together, so each piece is easy to understand before it is worn.</p>",
+        "text_size": "medium",
+        "text_alignment": "left",
+        "text_position": "center",
         "image_width": 58,
-        "image_height": 600
+        "image_height": 600,
+        "media_position": "right",
+        "background_color": "#E1DBCC",
+        "text_color": "#242119"
       }
     },
     "composition": {
@@ -92,22 +180,47 @@
       "settings": {
         "eyebrow": "The composition",
         "heading": "A look, considered piece by piece",
+        "heading_size": "medium",
         "body": "<p>Every item has its own product decision. This composition does not imply a bundle or shared offer.</p>",
+        "text_size": "medium",
+        "text_alignment": "left",
+        "text_position": "center",
         "image_width": 44,
-        "desktop_columns": "3"
+        "image_height": 600,
+        "image_fit": "contain",
+        "media_position": "right",
+        "desktop_columns": "3",
+        "item_spacing": 24,
+        "show_price": true,
+        "show_second_image": false,
+        "background_color": "#242119",
+        "text_color": "#F5F3EE"
       },
       "blocks": {
-        "outfit_item_one": { "type": "outfit-item", "settings": {} },
-        "outfit_item_two": { "type": "outfit-item", "settings": {} },
-        "outfit_item_three": { "type": "outfit-item", "settings": {} }
+        "outfit_item_one": {
+          "type": "outfit-item",
+          "settings": {}
+        },
+        "outfit_item_two": {
+          "type": "outfit-item",
+          "settings": {}
+        },
+        "outfit_item_three": {
+          "type": "outfit-item",
+          "settings": {}
+        }
       },
-      "block_order": ["outfit_item_one", "outfit_item_two", "outfit_item_three"]
+      "block_order": [
+        "outfit_item_one",
+        "outfit_item_two",
+        "outfit_item_three"
+      ]
     },
     "email_signup": {
       "type": "email-signup",
       "settings": {
-        "heading": "Join the editorial circle",
-        "text": "<p>New studies, material stories and useful dispatches.</p>"
+        "heading": "The next issue, delivered",
+        "text": "<p>New studies, material notes and considered arrivals — sent occasionally.</p>"
       }
     }
   },
