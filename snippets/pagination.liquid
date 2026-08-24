@@ -59,6 +59,13 @@
     gap: var(--space-2);
   }
 
+  /* Keep pagination visually independent of whatever listing precedes it. */
+  .pagination {
+    box-sizing: border-box;
+    inline-size: 100%;
+    margin-block: var(--space-8);
+  }
+
   .pagination__list {
     list-style: none;
     padding: 0;

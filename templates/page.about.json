@@ -3,12 +3,34 @@
     "about-hero": {
       "type": "about-hero",
       "blocks": {
-        "slide-1": { "type": "slide", "settings": {} }
+        "slide-1": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "The studio",
+            "heading": "Clothes for the rhythm of everyday.",
+            "text": "<p>Considered pieces for moving through the day with ease, character and intention.</p>",
+            "content_position": "center_center",
+            "text_protection": 40
+          }
+        }
       },
       "block_order": ["slide-1"],
-      "settings": {}
+      "settings": {
+        "desktop_height": 75,
+        "mobile_height": 65,
+        "text_color": "#F5F3EE",
+        "enable_autoplay": false
+      }
     },
-    "about-story": { "type": "about-story", "settings": {} },
+    "about-story": {
+      "type": "about-story",
+      "settings": {
+        "eyebrow": "Our point of view",
+        "heading": "A smaller wardrobe, with more ways to live in it.",
+        "text": "<p>We begin with proportion, texture and the habits that make a piece worth returning to. The result is an everyday wardrobe that feels personal rather than prescribed.</p>",
+        "media_position": "left"
+      }
+    },
     "about-values": {
       "type": "about-values",
       "blocks": {
@@ -17,9 +39,22 @@
         "value-3": { "type": "value", "settings": { "heading": "Personal by nature", "text": "<p>We leave room for individual expression, so the collection can become entirely your own.</p>" } }
       },
       "block_order": ["value-1", "value-2", "value-3"],
-      "settings": {}
+      "settings": {
+        "eyebrow": "What guides us",
+        "heading": "Built for repeat wear, not a single moment.",
+        "text": "<p>Our decisions begin with what makes getting dressed feel easier and more like yourself.</p>",
+        "text_alignment": "left"
+      }
     },
-    "about-closing": { "type": "about-closing", "settings": {} }
+    "about-closing": {
+      "type": "about-closing",
+      "settings": {
+        "eyebrow": "Made to be lived in",
+        "heading": "Find the pieces that stay with you.",
+        "text": "<p>Explore the latest collection and build a wardrobe on your own terms.</p>",
+        "link_label": "Shop all"
+      }
+    }
   },
   "order": ["about-hero", "about-story", "about-values", "about-closing"]
 }
