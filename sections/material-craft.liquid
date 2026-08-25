@@ -18,10 +18,12 @@
     {% endfor %}
   </div>
   <div class="material-craft__content"{% unless request.visual_preview_mode %} data-aos="fade-left" data-aos-delay="250"{% endunless %}>
-    {% if section.settings.eyebrow != blank %}<p class="material-craft__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
-    {% if section.settings.heading != blank %}<h2 id="MaterialCraftHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
-    {% if section.settings.text != blank %}<div class="material-craft__text">{{ section.settings.text }}</div>{% endif %}
-    {% if section.settings.link_label != blank and section.settings.link != blank %}<a class="material-craft__link button" href="{{ section.settings.link }}">{{ section.settings.link_label | escape }} <span class="material-craft__link-arrow" aria-hidden="true">↗</span></a>{% endif %}
+    <div class="material-craft__content-frame">
+      {% if section.settings.eyebrow != blank %}<p class="material-craft__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
+      {% if section.settings.heading != blank %}<h2 id="MaterialCraftHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
+      {% if section.settings.text != blank %}<div class="material-craft__text">{{ section.settings.text }}</div>{% endif %}
+      {% if section.settings.link_label != blank and section.settings.link != blank %}<a class="material-craft__link button" href="{{ section.settings.link }}">{{ section.settings.link_label | escape }} <span class="material-craft__link-arrow" aria-hidden="true">↗</span></a>{% endif %}
+    </div>
   </div>
 </section>
 
@@ -32,19 +34,20 @@
   .material-craft__image--2 { block-size: 68%; margin-block-end: 10%; }
   .material-craft__image .image, .material-craft__image .image > img, .material-craft__placeholder, .material-craft__placeholder svg { block-size: 100%; display: block; height: 100%; inline-size: 100%; object-fit: cover; width: 100%; }
   .material-craft__placeholder { background: var(--color-panel-02); color: color-mix(in srgb, var(--material-craft-color, var(--color-foreground)) 30%, var(--color-panel-02)); }
-  .material-craft__content { display: grid; gap: var(--space-5); max-width: 22rem; }
-  .material-craft__eyebrow { display: grid; font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 600; gap: var(--space-3); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; text-transform: uppercase; }
+  .material-craft__content { align-self: stretch; display: grid; }
+  .material-craft__content-frame { display: grid; gap: var(--space-5); inline-size: min(100%, 22rem); }
+  .material-craft__eyebrow { display: grid; font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 600; gap: var(--space-3); inline-size: 100%; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0; text-transform: uppercase; }
   .material-craft__eyebrow::after { background: var(--color-border); content: ''; display: block; block-size: 1px; inline-size: var(--space-16); }
-  .material-craft h2 { font-family: var(--font-campaign); font-size: clamp(var(--heading-size-102), 4vw, var(--heading-size-160)); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .96; margin: 0; max-inline-size: 11ch; }
+  .material-craft h2 { font-family: var(--font-campaign); font-size: clamp(var(--heading-size-102), 4vw, var(--heading-size-160)); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); inline-size: min(100%, 11ch); letter-spacing: -.04em; line-height: .96; margin: 0; }
   .material-craft--heading-small h2 { font-size: clamp(var(--heading-size-72), 3vw, var(--heading-size-112)); }
   .material-craft--heading-medium h2 { font-size: clamp(var(--heading-size-102), 4vw, var(--heading-size-160)); }
   .material-craft--heading-large h2 { font-size: clamp(var(--heading-size-128), 5.2vw, var(--heading-size-192)); }
-  .material-craft--text-align-left .material-craft__content { text-align: start; }
-  .material-craft--text-align-center .material-craft__content { text-align: center; }
-  .material-craft--text-align-right .material-craft__content { text-align: end; }
+  .material-craft--text-align-left .material-craft__content, .material-craft--text-align-left .material-craft__content-frame { justify-items: start; text-align: start; }
+  .material-craft--text-align-center .material-craft__content, .material-craft--text-align-center .material-craft__content-frame { justify-items: center; text-align: center; }
+  .material-craft--text-align-right .material-craft__content, .material-craft--text-align-right .material-craft__content-frame { justify-items: end; text-align: end; }
   .material-craft--text-align-center .material-craft__eyebrow { justify-items: center; }
   .material-craft--text-align-right .material-craft__eyebrow { justify-items: end; }
-  .material-craft__text { color: color-mix(in srgb, var(--material-craft-color, var(--color-foreground)) 78%, var(--material-craft-background, var(--color-background))); font-size: var(--body-text-base-size); line-height: calc(var(--body-text-line-spacing) + .1); max-inline-size: 20rem; }
+  .material-craft__text { color: color-mix(in srgb, var(--material-craft-color, var(--color-foreground)) 78%, var(--material-craft-background, var(--color-background))); font-size: var(--body-text-base-size); inline-size: min(100%, 20rem); line-height: calc(var(--body-text-line-spacing) + .1); }
   .material-craft--text-size-small .material-craft__text { font-size: calc(var(--body-text-base-size) * .9); }
   .material-craft--text-size-medium .material-craft__text { font-size: var(--body-text-base-size); }
   .material-craft--text-size-large .material-craft__text { font-size: calc(var(--body-text-base-size) * 1.08); }
@@ -55,9 +58,9 @@
   .material-craft__link:is(:hover, :focus-visible) .material-craft__link-arrow { transform: translate(.2rem, -.2rem); }
   .material-craft--text-align-center .material-craft__link { justify-self: center; }
   .material-craft--text-align-right .material-craft__link { justify-self: end; }
-  .material-craft--text-top .material-craft__content { align-self: start; }
-  .material-craft--text-center .material-craft__content { align-self: center; }
-  .material-craft--text-bottom .material-craft__content { align-self: end; }
+  .material-craft--text-top .material-craft__content { align-content: start; }
+  .material-craft--text-center .material-craft__content { align-content: center; }
+  .material-craft--text-bottom .material-craft__content { align-content: end; }
   @media (min-width: 64rem) { .material-craft { grid-template-columns: minmax(0, var(--material-craft-image-width)) minmax(18rem, var(--material-craft-text-width)); } .material-craft--media-right { grid-template-columns: minmax(18rem, var(--material-craft-text-width)) minmax(0, var(--material-craft-image-width)); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
   @media (min-width: 48rem) and (max-width: 63.99rem) { .material-craft { grid-template-columns: minmax(0, var(--material-craft-image-width)) minmax(17rem, var(--material-craft-text-width)); } .material-craft--media-right { grid-template-columns: minmax(17rem, var(--material-craft-text-width)) minmax(0, var(--material-craft-image-width)); } .material-craft--media-right .material-craft__images { grid-column: 2; } .material-craft--media-right .material-craft__content { grid-column: 1; grid-row: 1; } }
   @media (min-width: 48rem) {
@@ -71,7 +74,7 @@
     .material-craft__images { block-size: auto; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
     .material-craft__image--1 { block-size: min(var(--material-craft-image-height, 600px), 120vw); }
     .material-craft__image--2 { block-size: min(var(--material-craft-image-height, 600px), 76vw); inline-size: 100%; margin: 0; }
-    .material-craft__content { gap: var(--space-4); max-inline-size: 32rem; }
+    .material-craft__content-frame { gap: var(--space-4); inline-size: min(100%, 32rem); }
     .material-craft h2 { max-inline-size: 12ch; }
     html.aos-enabled .material-craft [data-aos='fade-right'], html.aos-enabled .material-craft [data-aos='fade-left'] { transform: translate3d(0, var(--space-8), 0); }
     html.aos-enabled .material-craft [data-aos^='fade'].aos-animate { transform: translate3d(0, 0, 0); }

@@ -89,7 +89,7 @@
       "type": "slide",
       "name": "t:general.about_slide",
       "settings": [
-        { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "SUND84" },
+        { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "The studio" },
         { "type": "text", "id": "heading", "label": "t:labels.heading", "default": "Clothes for the rhythm of everyday." },
         { "type": "richtext", "id": "text", "label": "t:labels.text", "default": "<p>Considered pieces for moving through the day with ease, character and intention.</p>" },
         { "type": "image_picker", "id": "image", "label": "t:labels.image" },
@@ -109,6 +109,41 @@
     { "type": "checkbox", "id": "enable_autoplay", "label": "t:labels.enable_autoplay", "default": false },
     { "type": "range", "id": "autoplay_speed", "label": "t:labels.autoplay_interval", "info": "t:descriptions.autoplay_interval", "min": 3, "max": 15, "step": 1, "unit": "s", "default": 7, "visible_if": "{{ section.settings.enable_autoplay }}" }
   ],
-  "presets": [{ "name": "t:general.about_hero", "category": "Content", "blocks": [{ "type": "slide" }] }]
+  "presets": [{
+    "name": "t:general.about_hero",
+    "category": "Content",
+    "blocks": [
+      {
+        "type": "slide",
+        "settings": {
+          "eyebrow": "The studio",
+          "heading": "A wardrobe for the rhythm of everyday.",
+          "text": "<p>We begin with pieces that bring clarity to getting dressed: considered proportions, useful details and room to make them your own.</p>",
+          "content_position": "center_left",
+          "text_protection": 42
+        }
+      },
+      {
+        "type": "slide",
+        "settings": {
+          "eyebrow": "How we work",
+          "heading": "Considered from line to finish.",
+          "text": "<p>Texture, construction and proportion are resolved together, so every piece feels deliberate without asking for attention.</p>",
+          "content_position": "center_right",
+          "text_protection": 42
+        }
+      },
+      {
+        "type": "slide",
+        "settings": {
+          "eyebrow": "Made to return to",
+          "heading": "Personal in the wearing.",
+          "text": "<p>The collection is designed for repeat wear and new combinations, shaped as much by the person wearing it as by the original idea.</p>",
+          "content_position": "bottom_left",
+          "text_protection": 42
+        }
+      }
+    ]
+  }]
 }
 {% endschema %}
