@@ -7,14 +7,34 @@
           "type": "slide",
           "settings": {
             "eyebrow": "The studio",
-            "heading": "Clothes for the rhythm of everyday.",
-            "text": "<p>Considered pieces for moving through the day with ease, character and intention.</p>",
-            "content_position": "center_center",
-            "text_protection": 40
+            "heading": "A wardrobe for the rhythm of everyday.",
+            "text": "<p>We begin with pieces that bring clarity to getting dressed: considered proportions, useful details and room to make them your own.</p>",
+            "content_position": "center_left",
+            "text_protection": 42
+          }
+        },
+        "slide-2": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "How we work",
+            "heading": "Considered from line to finish.",
+            "text": "<p>Texture, construction and proportion are resolved together, so every piece feels deliberate without asking for attention.</p>",
+            "content_position": "center_right",
+            "text_protection": 42
+          }
+        },
+        "slide-3": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "Made to return to",
+            "heading": "Personal in the wearing.",
+            "text": "<p>The collection is designed for repeat wear and new combinations, shaped as much by the person wearing it as by the original idea.</p>",
+            "content_position": "bottom_left",
+            "text_protection": 42
           }
         }
       },
-      "block_order": ["slide-1"],
+      "block_order": ["slide-1", "slide-2", "slide-3"],
       "settings": {
         "desktop_height": 75,
         "mobile_height": 65,

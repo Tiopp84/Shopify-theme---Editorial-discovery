@@ -24,8 +24,8 @@ class HeaderShell extends HTMLElement {
     this.lastScrollY = window.scrollY;
     this.desktopCompactDownDistance = 0;
     this.desktopCompactUpDistance = 0;
-    this.desktopCompactEnterDistance = 40;
-    this.desktopCompactExitDistance = 96;
+    this.desktopCompactEnterDistance = 72;
+    this.desktopCompactExitDistance = 144;
     this.desktopScrollDeadZone = 2;
     this.desktopScrollInitialized = false;
     this.compactStateInitialized = false;

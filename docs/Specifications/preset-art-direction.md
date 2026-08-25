@@ -176,7 +176,7 @@ Avoid: glossy aspirational luxury clichés, maximal collage, constant animation,
 | 3 | Collection list | Enter the catalogue deliberately | Four collection entry points with different, useful taxonomy |
 | 4 | Shoppable story | Translate story into products | Three product references; clear product destination; no ambiguous hotspot-only interaction |
 | 5 | Featured edit | Serve intent-led shopping | Four product cards; stable 4:5 imagery and compact commerce metadata |
-| 6 | Pinned visual story | Add numbered narrative rhythm | Three chapters; each chapter has a distinct fact or styling context |
+| 6 | Pinned visual story | Add numbered narrative rhythm | Four chapters; each chapter has a distinct fact or styling context |
 | 7 | Material craft | Demonstrate reason to believe | Two detail images and a concise material/finish statement |
 | 8 | Outfit composition | Show styling without a false bundle | Three independent products, valid variants and availability state |
 | 9 | Email signup | Continue the editorial relationship | Dispatch language, not artificial exclusivity |
@@ -216,7 +216,7 @@ Avoid: empty-template appearance, generic Scandinavian clichés, faint/low-contr
 
 | Order | Existing section | Job | Direction |
 | ---: | --- | --- | --- |
-| 1 | Editorial hero | State the point of view | 72vh desktop / 68vh mobile; brief copy; one direct destination |
+| 1 | Editorial hero | State the point of view | 70vh desktop / 70vh mobile; brief copy; one direct destination |
 | 2 | Collection list | Explain the catalogue | Three columns; maximum three or four meaningful routes; 24px grid gap |
 | 3 | Featured edit | Put purchasable product first | Three columns, one row by default; second hover image off by default for visual calm |
 | 4 | Material craft | Give product confidence before PDP | One concise proof point; right-positioned image; no extended story chapter |

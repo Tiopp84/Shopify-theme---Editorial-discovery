@@ -118,7 +118,7 @@
         "heading_alignment": "left",
         "text_position": "left",
         "image_width": 58,
-        "image_height": 600,
+        "image_height": 780,
         "media_position": "left",
         "show_chapter_index": true,
         "chapter_heading_size": "medium",
@@ -133,29 +133,41 @@
         "chapter_one": {
           "type": "chapter",
           "settings": {
-            "heading": "01 — Proportion",
-            "text": "<p>Length, volume and line are resolved before decoration.</p>"
+            "heading": "Proportion, resolved",
+            "text": "<p>Length, volume and line are considered first, so the silhouette feels clear from every angle.</p>",
+            "link_label": "Shop outerwear"
           }
         },
         "chapter_two": {
           "type": "chapter",
           "settings": {
-            "heading": "02 — Movement",
-            "text": "<p>Pieces are made to hold their shape while the day changes pace.</p>"
+            "heading": "Made for movement",
+            "text": "<p>Easy layers and purposeful volume keep pace with a day that rarely stays still.</p>",
+            "link_label": "Shop bottoms"
           }
         },
         "chapter_three": {
           "type": "chapter",
           "settings": {
-            "heading": "03 — Finish",
-            "text": "<p>Construction and tactile detail bring the collection into focus.</p>"
+            "heading": "Finish, up close",
+            "text": "<p>Texture, seams and small construction choices give each piece its quiet definition.</p>",
+            "link_label": "Shop tops"
+          }
+        },
+        "chapter_four": {
+          "type": "chapter",
+          "settings": {
+            "heading": "Worn again, differently",
+            "text": "<p>Considered separates invite new combinations without losing the line of the collection.</p>",
+            "link_label": "Shop the collection"
           }
         }
       },
       "block_order": [
         "chapter_one",
         "chapter_two",
-        "chapter_three"
+        "chapter_three",
+        "chapter_four"
       ]
     },
     "material_craft": {
@@ -186,7 +198,7 @@
         "text_alignment": "left",
         "text_position": "center",
         "image_width": 44,
-        "image_height": 600,
+        "image_height": 780,
         "image_fit": "contain",
         "media_position": "right",
         "desktop_columns": "3",
