@@ -404,16 +404,32 @@
       border-radius: 0.75rem;
       background: var(--header-compact-background-color);
       box-shadow: 0 0.75rem 1.5rem rgb(36 33 25 / 10%);
-      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-columns: auto minmax(0, 1fr) auto;
       justify-content: start;
-      gap: 2rem;
+      gap: clamp(1.5rem, 2.5vw, 2.5rem);
+    }
+
+    /* The compact frame is FLIP-transformed between layouts. A box-shadow in
+     * that composited layer appears to sweep across the page, so restore it
+     * only once the frame has reached its final position. */
+    .header-shell--layout-transitioning .header-shell__inner {
+      box-shadow: none;
+    }
+
+    /* Do not let the navigation pill fade or interpolate from the old grid
+     * coordinates while the header itself is FLIP-transformed. */
+    .header-shell--layout-transitioning .header-shell__desktop-nav-pill {
+      opacity: 0 !important;
+      transition: none !important;
     }
 
     .header-shell--compact .header-shell__brand {
       grid-column: 1;
       grid-row: 1;
       justify-self: start;
-      font-size: 1.4rem;
+      font-size: clamp(1.45rem, 1.7vw, 1.75rem);
+      font-weight: var(--font-heading--weight);
+      letter-spacing: -.025em;
     }
 
     .header-shell--compact .header-shell__brand img {
@@ -440,7 +456,34 @@
     }
 
     .header-shell--compact .header-shell__actions {
-      display: none;
+      display: flex;
+      grid-column: 3;
+      grid-row: 1;
+    }
+
+    /* Compact always uses one horizontal information row. These selectors
+     * intentionally outrank the centre/centre regular-header layout. */
+    .header-shell--compact.header-shell--logo-center.header-shell--menu-center .header-shell__inner {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-rows: auto;
+      padding-block: 0;
+    }
+
+    .header-shell--compact.header-shell--logo-center.header-shell--menu-center .header-shell__brand {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
+    }
+
+    .header-shell--compact.header-shell--logo-center.header-shell--menu-center .header-shell__desktop-nav {
+      grid-column: 2;
+      grid-row: 1;
+      justify-content: center;
+    }
+
+    .header-shell--compact.header-shell--logo-center.header-shell--menu-center .header-shell__actions {
+      grid-column: 3;
+      grid-row: 1;
     }
 
   }

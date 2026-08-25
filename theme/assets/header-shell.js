@@ -22,14 +22,14 @@ class HeaderShell extends HTMLElement {
     this.submenuHoverCloseTimer = null;
     this.scrollFrame = null;
     this.lastScrollY = window.scrollY;
-    this.desktopCompactDownDistance = 0;
-    this.desktopCompactUpDistance = 0;
-    this.desktopCompactEnterDistance = 72;
-    this.desktopCompactExitDistance = 144;
-    this.desktopScrollDeadZone = 2;
+    this.desktopCompactEnterOffset = 160;
+    this.desktopCompactExitOffset = 64;
     this.desktopScrollInitialized = false;
     this.compactStateInitialized = false;
     this.compactAnimation = null;
+    this.desktopLayoutTransitionFrame = null;
+    this.desktopLayoutTransitionVersion = 0;
+    this.desktopNavHoverSuspended = false;
     this.mobileBarDownDistance = 0;
     this.mobileBarUpDistance = 0;
     this.mobileBarThreshold = 72;
@@ -38,8 +38,6 @@ class HeaderShell extends HTMLElement {
     this.mobileBarHoldDuration = 1200;
     this.mobileBarLockUntil = 0;
     this.mobileTaskbarTimer = null;
-    this.wasHoldingCompactContext = false;
-    this.compactContextSources = new Set();
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.desktopLayoutQuery = window.matchMedia('(min-width: 64rem)');
     this.mobileSearchDrawerQuery = window.matchMedia('(max-width: 47.99rem)');
@@ -119,23 +117,27 @@ class HeaderShell extends HTMLElement {
     this.desktopLayoutQuery?.removeEventListener('change', this.onDesktopLayoutChange);
     if (this.scrollFrame) window.cancelAnimationFrame(this.scrollFrame);
     this.compactAnimation?.cancel();
+    if (this.desktopLayoutTransitionFrame) window.cancelAnimationFrame(this.desktopLayoutTransitionFrame);
     if (this.navPillFocusFrame) window.cancelAnimationFrame(this.navPillFocusFrame);
     this.scrollFrame = null;
+    this.desktopLayoutTransitionFrame = null;
+    this.desktopLayoutTransitionVersion += 1;
+    this.desktopNavHoverSuspended = false;
     this.mobileBarLockUntil = 0;
-    this.wasHoldingCompactContext = false;
-    this.compactContextSources?.clear();
     this.hideMobileTaskbar();
     window.clearTimeout(this.mobileTaskbarTimer);
-    this.classList.remove('header-shell--compact', 'header-shell--scrolled', 'header-shell--mobile-taskbar-entering', 'header-shell--mobile-taskbar', 'header-shell--mobile-taskbar-leaving');
+    this.classList.remove('header-shell--compact', 'header-shell--scrolled', 'header-shell--layout-transitioning', 'header-shell--mobile-taskbar-entering', 'header-shell--mobile-taskbar', 'header-shell--mobile-taskbar-leaving');
     this.initialized = false;
   }
 
   onDesktopNavPointerOver(event) {
+    if (this.desktopNavHoverSuspended) return;
     const item = this.navPillItems.find((candidate) => candidate === event.target || candidate.contains(event.target));
     if (item && item !== this.activeNavPillItem) this.setNavPill(item, { deferText: true });
   }
 
   onDesktopNavPointerLeave() {
+    if (this.desktopNavHoverSuspended) return;
     if (!this.desktopNav?.contains(document.activeElement)) this.clearNavPill();
   }
 
@@ -226,8 +228,6 @@ class HeaderShell extends HTMLElement {
     this.hideMobileTaskbar();
     this.lastScrollY = window.scrollY;
     this.mobileBarLockUntil = 0;
-    this.wasHoldingCompactContext = false;
-    this.compactContextSources.clear();
     this.desktopScrollInitialized = false;
     this.compactStateInitialized = false;
     this.resetDesktopCompactDistance();
@@ -238,8 +238,6 @@ class HeaderShell extends HTMLElement {
   onDesktopLayoutChange() {
     this.setCompactHeader(false, { animate: false });
     this.hideMobileTaskbar();
-    this.wasHoldingCompactContext = false;
-    this.compactContextSources.clear();
     this.desktopScrollInitialized = false;
     this.compactStateInitialized = false;
     this.resetDesktopCompactDistance();
@@ -264,8 +262,26 @@ class HeaderShell extends HTMLElement {
     }
 
     const shouldAnimate = animate && this.compactStateInitialized && !this.reducedMotionQuery.matches;
+    const shouldSuspendNavHover = this.desktopLayoutQuery.matches && Boolean(this.desktopNav);
+    const transitionVersion = shouldSuspendNavHover ? this.desktopLayoutTransitionVersion + 1 : null;
     const inner = this.headerInner;
     const firstBounds = shouldAnimate ? inner?.getBoundingClientRect() : null;
+
+    if (!shouldSuspendNavHover) {
+      this.desktopLayoutTransitionVersion += 1;
+      if (this.desktopLayoutTransitionFrame) window.cancelAnimationFrame(this.desktopLayoutTransitionFrame);
+      this.desktopLayoutTransitionFrame = null;
+      this.desktopNavHoverSuspended = false;
+      this.classList.remove('header-shell--layout-transitioning');
+    }
+
+    // Changing the grid can move menu items beneath a stationary cursor.
+    // Those pointer events are caused by layout, not an intentional hover.
+    if (shouldSuspendNavHover) {
+      this.desktopLayoutTransitionVersion = transitionVersion;
+      this.desktopNavHoverSuspended = true;
+      this.classList.add('header-shell--layout-transitioning');
+    }
 
     // A pill and an open native details menu are both positioned from the
     // desktop layout. Close those transient states before the compact layout
@@ -279,10 +295,18 @@ class HeaderShell extends HTMLElement {
     this.classList.toggle('header-shell--compact', isCompact);
     this.compactStateInitialized = true;
 
-    if (!shouldAnimate || !inner || !firstBounds) return;
+    if (!shouldAnimate || !inner || !firstBounds) {
+      this.compactAnimation?.cancel();
+      this.compactAnimation = null;
+      if (shouldSuspendNavHover) this.finishDesktopLayoutTransition(transitionVersion);
+      return;
+    }
 
     const lastBounds = inner.getBoundingClientRect();
-    if (!lastBounds.width || !lastBounds.height) return;
+    if (!lastBounds.width || !lastBounds.height) {
+      if (shouldSuspendNavHover) this.finishDesktopLayoutTransition(transitionVersion);
+      return;
+    }
 
     this.compactAnimation?.cancel();
     const translateX = firstBounds.left - lastBounds.left;
@@ -297,33 +321,26 @@ class HeaderShell extends HTMLElement {
       fill: 'both'
     });
     this.compactAnimation = compactAnimation;
-    compactAnimation.finished.catch(() => {}).finally(() => {
+    compactAnimation.finished.then(() => {
+      if (this.compactAnimation !== compactAnimation) return;
+      compactAnimation.cancel();
+      this.compactAnimation = null;
+      this.finishDesktopLayoutTransition(transitionVersion);
+    }).catch(() => {
+      // A replacement animation keeps hover suspended for its own duration.
       if (this.compactAnimation === compactAnimation) this.compactAnimation = null;
     });
   }
 
-  hasHeldCompactContext() {
-    const sections = [...document.querySelectorAll('[data-header-scroll-policy="hold-compact-header"]')];
-    const activeSources = new Set();
-
-    sections.forEach((section) => {
-      const stickyTarget = section.querySelector('[data-header-scroll-target]');
-      if (!stickyTarget) return;
-
-      const stickyStyle = window.getComputedStyle(stickyTarget);
-      if (stickyStyle.position !== 'sticky') return;
-      const stickyOffset = Number.parseFloat(stickyStyle.top) || 0;
-      const targetBounds = stickyTarget.getBoundingClientRect();
-      const sectionBounds = section.getBoundingClientRect();
-      const wasActive = this.compactContextSources.has(section);
-      const releaseBuffer = wasActive ? 16 : 1;
-      const isActive = targetBounds.top <= stickyOffset + releaseBuffer
-        && sectionBounds.bottom > stickyOffset + targetBounds.height - releaseBuffer;
-      if (isActive) activeSources.add(section);
+  finishDesktopLayoutTransition(transitionVersion) {
+    if (transitionVersion !== this.desktopLayoutTransitionVersion) return;
+    if (this.desktopLayoutTransitionFrame) window.cancelAnimationFrame(this.desktopLayoutTransitionFrame);
+    this.desktopLayoutTransitionFrame = window.requestAnimationFrame(() => {
+      if (transitionVersion !== this.desktopLayoutTransitionVersion) return;
+      this.desktopLayoutTransitionFrame = null;
+      this.desktopNavHoverSuspended = false;
+      this.classList.remove('header-shell--layout-transitioning');
     });
-
-    this.compactContextSources = activeSources;
-    return activeSources.size > 0;
   }
 
   updateScrollState() {
@@ -356,26 +373,21 @@ class HeaderShell extends HTMLElement {
       return;
     }
 
-    if (this.hasHeldCompactContext()) {
-      this.setCompactHeader(true);
-      this.wasHoldingCompactContext = true;
-      this.desktopScrollInitialized = true;
-      this.resetDesktopCompactDistance();
+    // Keep the current layout stable while a header-owned dialog has focus.
+    // Its close handler re-evaluates the scroll state after the overlay exits.
+    if (dialogOpen) {
       this.lastScrollY = scrollY;
       return;
     }
 
-    if (this.wasHoldingCompactContext) {
-      this.wasHoldingCompactContext = false;
-      if (delta < 0) {
-        this.setCompactHeader(false);
-        this.resetDesktopCompactDistance();
-        this.lastScrollY = scrollY;
-        return;
-      }
+    // Keep a keyboard interaction in its current layout just like an open
+    // dialog; focus must not cause a scroll-threshold mode change.
+    if (keyboardFocusInside) {
+      this.lastScrollY = scrollY;
+      return;
     }
 
-    if (scrollY <= 40 || dialogOpen || keyboardFocusInside) {
+    if (scrollY <= this.desktopCompactExitOffset) {
       this.setCompactHeader(false);
       this.desktopScrollInitialized = true;
       this.resetDesktopCompactDistance();
@@ -384,37 +396,23 @@ class HeaderShell extends HTMLElement {
     }
 
     if (!this.desktopScrollInitialized) {
-      this.setCompactHeader(scrollY > 120, { animate: false });
+      this.setCompactHeader(scrollY >= this.desktopCompactEnterOffset, { animate: false });
       this.desktopScrollInitialized = true;
       this.resetDesktopCompactDistance();
       this.lastScrollY = scrollY;
       return;
     }
 
-    if (Math.abs(delta) > this.desktopScrollDeadZone) {
-      if (delta > 0) {
-        this.desktopCompactDownDistance += delta;
-        this.desktopCompactUpDistance = 0;
-        if (!this.classList.contains('header-shell--compact') && this.desktopCompactDownDistance >= this.desktopCompactEnterDistance) {
-          this.setCompactHeader(true);
-          this.resetDesktopCompactDistance();
-        }
-      } else {
-        this.desktopCompactUpDistance += Math.abs(delta);
-        this.desktopCompactDownDistance = 0;
-        if (this.classList.contains('header-shell--compact') && this.desktopCompactUpDistance >= this.desktopCompactExitDistance) {
-          this.setCompactHeader(false);
-          this.resetDesktopCompactDistance();
-        }
-      }
+    if (!this.classList.contains('header-shell--compact') && scrollY >= this.desktopCompactEnterOffset) {
+      this.setCompactHeader(true);
     }
 
     this.lastScrollY = scrollY;
   }
 
   resetDesktopCompactDistance() {
-    this.desktopCompactDownDistance = 0;
-    this.desktopCompactUpDistance = 0;
+    // Retained as a no-op for the surrounding lifecycle calls. The desktop
+    // header now uses fixed scroll offsets rather than accumulated distance.
   }
 
   updateMobileTaskbar({ scrollY, delta, dialogOpen }) {
@@ -508,6 +506,7 @@ class HeaderShell extends HTMLElement {
   }
 
   onNavGroupPointerEnter(event) {
+    if (this.desktopNavHoverSuspended) return;
     if (event.pointerType && event.pointerType !== 'mouse') return;
     window.clearTimeout(this.hoverCloseTimer);
     const activeGroup = event.currentTarget;
@@ -518,6 +517,7 @@ class HeaderShell extends HTMLElement {
   }
 
   onNavGroupPointerLeave(event) {
+    if (this.desktopNavHoverSuspended) return;
     if (event.pointerType && event.pointerType !== 'mouse') return;
     const activeGroup = event.currentTarget;
     this.hoverCloseTimer = window.setTimeout(() => {
@@ -526,6 +526,7 @@ class HeaderShell extends HTMLElement {
   }
 
   onSubmenuGroupPointerEnter(event) {
+    if (this.desktopNavHoverSuspended) return;
     if (event.pointerType && event.pointerType !== 'mouse') return;
     window.clearTimeout(this.submenuHoverCloseTimer);
     const activeGroup = event.currentTarget;
@@ -536,6 +537,7 @@ class HeaderShell extends HTMLElement {
   }
 
   onSubmenuGroupPointerLeave(event) {
+    if (this.desktopNavHoverSuspended) return;
     if (event.pointerType && event.pointerType !== 'mouse') return;
     const activeGroup = event.currentTarget;
     this.submenuHoverCloseTimer = window.setTimeout(() => {
@@ -614,7 +616,6 @@ class HeaderShell extends HTMLElement {
       const dialog = this.querySelector(`[data-header-dialog="${CSS.escape(openButton.dataset.dialogOpen)}"]`);
       if (!dialog) return;
       this.activeOpener = openButton;
-      this.setCompactHeader(false);
       dialog.showModal();
       if (openButton.dataset.dialogOpen === 'search' && !this.mobileSearchDrawerQuery.matches) {
         requestAnimationFrame(() => dialog.querySelector('input[type="search"]')?.focus());
