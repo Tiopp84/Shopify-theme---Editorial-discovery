@@ -16,7 +16,7 @@
 | Trường | Giá trị |
 |---|---|
 | Cập nhật lần cuối | 2026-08-11 (Asia/Ho_Chi_Minh) |
-| Phase | Requirement remediation implementation complete; Lighthouse QA closed; provider, browser/webview, fresh-install and commercial hardening evidence remain deferred until a qualified demo/client-transfer store exists |
+| Phase | Requirement remediation implementation complete; Lighthouse QA and technical handoff closed; provider, browser/webview, fresh-install and commercial hardening evidence remain deferred until a qualified demo/client-transfer store exists |
 | Milestone | M0 — ACHIEVED; M1 — ACHIEVED (visual polish deferred); M2 — ACHIEVED |
 | Trạng thái tổng thể | IN PROGRESS |
 | Release readiness | NOT READY |
@@ -24,7 +24,7 @@
 
 ## Mục tiêu đang thực hiện
 
-Preserve the completed Shopify-native implementation surfaces and prepare the remaining provider/browser/install/hardening evidence when a qualified demo/client-transfer store exists. Do not claim submission readiness from Lighthouse or local/static checks alone.
+Maintain a clean technical handoff baseline. Defer provider/browser/install/hardening evidence until a qualified demo/client-transfer store exists; do not claim submission readiness from Lighthouse or local/static checks alone.
 
 ## Đã hoàn thành
 
@@ -36,8 +36,8 @@ Preserve the completed Shopify-native implementation surfaces and prepare the re
 - [x] Hoàn thành market scan định hướng ban đầu và lập product brief đề xuất để phê duyệt.
 - [x] Product brief được phê duyệt; English-only v1.0 với localization contract từ đầu.
 - [x] Hoàn thành desk research competitive analysis 15 theme và xác định năm khoảng trống thị trường.
-- [x] Hoàn thành basic naming screen; loại Loomline/Atelier khỏi public naming và chọn Narrivelle làm provisional lead.
-- [x] Narrivelle được chấp thuận làm commercial name provisional; professional clearance vẫn là release/public-brand gate.
+- [x] Hoàn thành basic naming screen; loại Loomline/Atelier khỏi public naming và chọn Narrivelle làm tên theme.
+- [x] Owner chốt Narrivelle là tên theme và metadata Theme Editor; professional clearance vẫn là release/public-brand gate.
 - [x] Khóa source provenance, dependency và asset license policy cho Skeleton import.
 - [x] Khóa MVP feature matrix với priority, role owner, acceptance và explicit out-of-scope.
 - [x] Import official Shopify Skeleton Theme HEAD `a4f32d3` bằng Shopify CLI 4.5.1.
@@ -55,6 +55,9 @@ Preserve the completed Shopify-native implementation surfaces and prepare the re
 
 ## Hoàn thành trong phiên
 
+- [x] Merchant documentation draft: completed the local English `docs/Merchant/` guide with getting started, global settings, Header/Footer, Home, section reference, Product/Cart, Catalog/Search, content templates, Custom Liquid/app blocks, FAQ, maintenance/update, pre-publish checklist, support policy and release notes. It is deliberately not public documentation or a support contact form: public hosting, public URLs, file-upload support form, auto-responder, privacy/contact details, screenshots and final content review remain COM-04 requirements, 2026-08-11.
+- [x] Theme metadata identity: owner set Theme Editor `theme_name` to Narrivelle, `theme_author` to AmazinPro and `theme_version` to 1.0.0. Existing Shopify documentation/support URLs remain explicitly temporary until owner-provided public Narrivelle destinations exist; this does not close COM-01 or make a package submittable, 2026-08-11.
+- [x] Final technical handoff: created `QA/final-technical-handoff.md` as the operational handoff record for the clean `feat/update-style` baseline. It records the implementation/static/Lighthouse state, valid but deliberately non-submittable package, Shopify ownership boundary, all deferred evidence and the qualified-store re-open procedure. The repository is now a maintenance/handoff baseline; no net-new popup or storefront feature is implied by this handoff, 2026-08-11.
 - [x] Submission-gap static QA consolidation: owner confirms the currently implemented GAP surfaces are acceptable for the available development-store fixtures. On 2026-08-11, repository validator passed (151 files, 206 storefront keys, 523 schema keys), Theme Check passed (95 files, zero offenses), `git diff --check` passed, and every JavaScript asset passed syntax validation. Provider/account/data-dependent QA is explicitly deferred—not marked PASS—until a qualified client-transfer/demo store exists: accelerated checkout, Shop Pay Installments, Follow on Shop eligibility, complete pickup/expiry/Apple Wallet states, browser/webview matrix and clean installation. GAP-01–10 are implementation-complete unless a regression is found; release readiness remains NOT READY.
 - [x] EVD static-readiness run: required template files were verified, and `shopify theme package` produced a valid 149-file / 1,038,712-byte archive without development credentials, `markets.json`, `.git` or `node_modules`. The archive remains deliberately non-submittable: inherited `Skeleton-0.1.0` metadata and no `/listings/` preset directory. Real-route, provider, browser/device, benchmark and fresh-store evidence remains deferred until a qualified store exists.
 - [x] Lighthouse QA closed on hosted Development Theme `#190375493996`, 2026-08-11: Mobile Lighthouse 13.3 / Slow 4G representative routes passed the owner acceptance baseline — Home 75 Performance / 92 Accessibility / 85 SEO; PDP 72 / 100 / 92; Cart 82 / 100 / 100; Collection product grid 74 / 100 / 100; Collection list 70 / 100 / 100. CLS was 0 in every recorded route; Desktop smoke was accepted by owner. Best Practices remained ~77 only for Shopify/Shop app cookies, hosting security headers and runtime Issues outside theme ownership. Route-specific LCP/image/contrast/descriptive-link fixes were pushed to Development Theme; this closes Lighthouse QA only, not browser/webview, screen-reader, reduced-motion, provider or clean-install evidence.
@@ -284,7 +287,7 @@ Preserve the completed Shopify-native implementation surfaces and prepare the re
 | Stiletto owner spot-check | `docs/Discovery/evidence/tier-1/stiletto/` | COMPLETE — product quick view + populated cart |
 | Pipeline owner spot-check | `docs/Discovery/evidence/tier-1/pipeline/` | COMPLETE — product-card quick add + unavailable size |
 | Concept owner spot-check | `docs/Discovery/evidence/tier-1/concept/` | COMPLETE — header/task bar + cart bottom sheet |
-| Naming screen | `docs/Discovery/naming-audit.md` | Basic screen complete; Narrivelle provisional, legal clearance pending |
+| Naming screen | `docs/Discovery/naming-audit.md` | Narrivelle selected by owner; legal clearance pending for public listing |
 | Provenance/license plan | `docs/Governance/source-provenance-and-licenses.md`, `docs/Governance/asset-license-register.md`, root `THIRD_PARTY_NOTICES.md` | APPROVED FOR FOUNDATION IMPORT |
 | MVP scope | `docs/Specifications/mvp-feature-matrix.md` | LOCKED — priority/owner/acceptance/out-of-scope defined |
 | Skeleton baseline | `theme/`, upstream `a4f32d393b9eadf6c4403318ca39116832e5d1df`, commit `7fdb6a1` | 39 files inspected; Theme Check zero offenses |
@@ -346,15 +349,12 @@ Preserve the completed Shopify-native implementation surfaces and prepare the re
 
 ## Việc tiếp theo — theo thứ tự
 
-0. Implement GAP-03 Pickup availability on PDP according to the handoff prompt below. Preserve all existing dirty work and native Shopify ownership. After its static implementation, capture GAP-02/03/06/07/08 Shopify Preview and Theme Editor evidence; GAP-01 provider/handoff evidence remains pending. Phase 8 remains deferred, not achieved; do not start hardening or packaging while GAP-01–10 remain.
-1. Trên Shopify preview, gán `page.contact` và `page.faq` cho hai Page fixtures rồi kiểm tra Page base, Contact success/error/no-JS và FAQ empty/long blocks tại 320/375/768/1024/desktop, keyboard, zoom, reduced motion và Theme Editor lifecycle.
-2. Trên Shopify preview, kiểm tra 404, Password và Gift card với dữ liệu/state thực: 404 recovery CTA; Password có/không có store message và native error; Gift card active/disabled/expired/expiry, logo fallback và Apple Wallet khi khả dụng, tại 320/375/768/1024/desktop, keyboard, zoom và reduced motion.
-3. Hoàn thiện các secondary template còn thiếu theo inventory tại [`../Specifications/secondary-templates-contract.md`](../Specifications/secondary-templates-contract.md); giữ Blog/Article composition hiện có là điểm xuất phát và không tái sử dụng product/cart controller ở content surface.
-4. Trên Shopify preview, chạy Phase 8 gate cho từng template với dữ liệu thật và rỗng, long content, missing image/resource, 320/375/768/1024/desktop, keyboard, zoom, reduced motion và Theme Editor lifecycle. Ghi evidence trước khi đóng Phase 8.
-5. Deferred regression: verify homepage motion at desktop, 1024 px, 768 px, 375 px and 320 px; verify cart drawer at desktop, 375 and 320 px after page scroll; and run the Phase 7 visual gate after real hero/story/composition resources are configured.
-6. Khi một accelerated checkout provider hợp lệ được bật, chạy và ghi smoke test native handoff; khi có tracked deny-oversell fixture, chạy lại inventory-preflight row của Cart runbook.
-7. Khi merchant thêm selling plan, Shopify-hosted/external video hoặc 3D model, chạy lại rows NOT EVIDENCED của PDP runbook.
-8. Thực hiện professional trademark clearance trước khi public brand/listing assets; ghi approval/proof trước mọi demo asset hoặc dependency mới.
+0. Dùng [`../QA/final-technical-handoff.md`](../QA/final-technical-handoff.md) làm điểm tiếp tục cho maintenance/handoff. Không mở rộng storefront chỉ để tạo feature parity.
+1. Giữ GAP-01–09, EVD-01–05 và commercial gates ở trạng thái deferred/NOT EVIDENCED cho đến khi có qualified demo/client-transfer store. Không đổi thành PASS từ static QA hoặc Lighthouse.
+2. Khi qualified store sẵn sàng, chạy fixture/provider/browser/fresh-install matrix trong gap register và các QA runbook, rồi cập nhật evidence theo kết quả thật.
+3. Chỉ bắt đầu commercial submission package sau trademark clearance, metadata release, hai preset, `/listings/`, demo asset có provenance/license và public support documentation.
+
+## Prompt lịch sử — GAP-03 Pickup availability trên PDP (đã được thay thế)
 
 ## Prompt mở chat mới — GAP-03 Pickup availability trên PDP
 

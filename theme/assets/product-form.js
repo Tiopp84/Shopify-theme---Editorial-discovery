@@ -16,6 +16,10 @@ class ProductForm extends HTMLElement {
     this.skuValue = this.section.querySelector('[data-product-sku-value]');
     this.availability = this.section.querySelector('[data-product-availability]');
     this.paymentTermsVariantInputs = [...this.section.querySelectorAll('[data-product-payment-terms-variant-id]')];
+    this.giftCardRecipientToggle = this.querySelector('[data-gift-card-recipient-toggle]');
+    this.giftCardRecipientFields = this.querySelector('[data-gift-card-recipient-fields]');
+    this.giftCardRecipientEmail = this.querySelector('[data-gift-card-recipient-email]');
+    this.paymentButton = this.querySelector('[data-product-payment-button]');
     this.variants = JSON.parse(this.section.querySelector('[data-product-variants]').textContent);
     this.cartQuantities = new Map();
     if (!this.variantInput || !this.submit || !this.price) return;
@@ -32,10 +36,12 @@ class ProductForm extends HTMLElement {
     this.querySelector('[data-product-quantity-decrease]')?.addEventListener('click', () => this.changeQuantity(-1), { signal });
     this.querySelector('[data-product-quantity-increase]')?.addEventListener('click', () => this.changeQuantity(1), { signal });
     this.quantity?.addEventListener('change', () => this.clampQuantity(), { signal });
+    this.giftCardRecipientToggle?.addEventListener('change', () => this.syncGiftCardRecipient(), { signal });
     this.form?.addEventListener('submit', (event) => this.onSubmit(event), { signal });
     window.addEventListener('popstate', () => this.fromUrl(), { signal });
     window.addEventListener('cart:state', (event) => this.applyCartState(event.detail?.quantities), { signal });
     this.setAttribute('data-product-enhanced', '');
+    this.syncGiftCardRecipient();
     this.fromUrl();
     this.loadCartState();
   }
@@ -195,6 +201,29 @@ class ProductForm extends HTMLElement {
       input.setAttribute('value', variantId);
       input.dispatchEvent(new Event('change', { bubbles: true }));
     });
+  }
+
+  syncGiftCardRecipient() {
+    if (!this.giftCardRecipientToggle || !this.giftCardRecipientFields) return;
+    const enabled = this.giftCardRecipientToggle.checked;
+    this.giftCardRecipientFields.hidden = !enabled;
+    this.giftCardRecipientFields.querySelectorAll('input, textarea').forEach((input) => {
+      input.disabled = !enabled;
+    });
+    if (this.giftCardRecipientEmail) this.giftCardRecipientEmail.required = enabled;
+    if (this.paymentButton) this.paymentButton.hidden = enabled;
+    const sendOn = this.giftCardRecipientFields.querySelector('[data-gift-card-recipient-date]');
+    if (!sendOn) return;
+    const today = new Date();
+    const max = new Date(today);
+    max.setDate(max.getDate() + 90);
+    sendOn.min = this.formatDate(today);
+    sendOn.max = this.formatDate(max);
+  }
+
+  formatDate(date) {
+    const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return offsetDate.toISOString().slice(0, 10);
   }
 
   syncOptionButtons() {

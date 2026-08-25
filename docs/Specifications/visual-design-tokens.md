@@ -6,7 +6,7 @@ This document is the visual source of truth for the next homepage design and all
 
 ## Reference precedence
 
-`stitch_fashion_cart_redesign/narrivelle/DESIGN.md` is a supporting Stitch reference only. `stitch_fashion_cart_redesign/narrivelle_homepage_desktop_full_width_hero/` and `stitch_fashion_cart_redesign/narrivelle_homepage_mobile_editorial_overlay/` are the approved homepage composition references. They inform the full-bleed desktop hero, mobile editorial overlay, divider-led hierarchy, tonal layering, sharp geometry and responsive grid discipline. Where any Stitch export conflicts with this contract, this contract wins: use the mineral-neutral palette and Moss accent below, Francus Italic rather than Bodoni Moda for campaign type, and the 8px spacing base rather than 4px.
+`stitch_fashion_cart_redesign/narrivelle/DESIGN.md` is a supporting Stitch reference only. `stitch_fashion_cart_redesign/narrivelle_homepage_desktop_full_width_hero/` and `stitch_fashion_cart_redesign/narrivelle_homepage_mobile_editorial_overlay/` are the approved homepage composition references. They inform the full-bleed desktop hero, mobile editorial overlay, divider-led hierarchy, tonal layering, sharp geometry and responsive grid discipline. Where any Stitch export conflicts with this contract, this contract wins: use the mineral-neutral palette and Moss accent below, Instrument Serif Italic rather than Bodoni Moda for campaign type, and the 8px spacing base rather than 4px.
 
 ## Foundation principle
 
@@ -30,7 +30,7 @@ Moss may rotate by collection or season in a future merchant-safe system (for ex
 
 | Role | Typeface | Use | Rules |
 |---|---|---|---|
-| Campaign serif | Francus Italic | Campaign headlines and story titles only | Never use for product cards, PDP decisions, cart, filters, form labels or prices. One dominant campaign headline per viewport. |
+| Campaign serif | Instrument Serif Italic | Campaign headlines and story titles only | Never use for product cards, PDP decisions, cart, filters, form labels or prices. One dominant campaign headline per viewport. |
 | Commerce sans | Inter | Navigation, section headings, body, labels, product names, controls and prices | Default typeface for every commerce surface. |
 | Price | Inter with tabular numerals | Current, compare-at and unit prices | Use `font-variant-numeric: tabular-nums`; align price columns without relying on whitespace. |
 
@@ -66,5 +66,5 @@ The base unit is **8 px**. Approved major steps are **8 / 16 / 24 / 40 / 64 px**
 
 - Applied to shared primitives: the approved Paper/Ink/Moss/default-border palette, sharp default controls, semantic 8/16/24/40/64 px aliases, commerce/campaign font roles and tabular price figures.
 - Commerce headings, cart product titles, facet labels and mobile navigation use the commerce role. Campaign hero/story/composition headings and the brand use the campaign role.
-- The actual font faces still come from Shopify Theme Settings. Select Inter for the commerce font and a licensed Shopify-hosted Francus Italic (when available) for the campaign font; no remote font runtime is introduced.
+- The actual font faces still come from Shopify Theme Settings. Select Inter for the commerce font and Instrument Serif Italic for the campaign font; no remote font runtime is introduced.
 - No route-specific layout was changed in this migration. PDP adaptive media and header dropdown stacking are retained functional fixes and require visual verification in Shopify preview.

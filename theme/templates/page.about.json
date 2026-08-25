@@ -3,12 +3,54 @@
     "about-hero": {
       "type": "about-hero",
       "blocks": {
-        "slide-1": { "type": "slide", "settings": {} }
+        "slide-1": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "The studio",
+            "heading": "A wardrobe for the rhythm of everyday.",
+            "text": "<p>We begin with pieces that bring clarity to getting dressed: considered proportions, useful details and room to make them your own.</p>",
+            "content_position": "center_left",
+            "text_protection": 42
+          }
+        },
+        "slide-2": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "How we work",
+            "heading": "Considered from line to finish.",
+            "text": "<p>Texture, construction and proportion are resolved together, so every piece feels deliberate without asking for attention.</p>",
+            "content_position": "center_right",
+            "text_protection": 42
+          }
+        },
+        "slide-3": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "Made to return to",
+            "heading": "Personal in the wearing.",
+            "text": "<p>The collection is designed for repeat wear and new combinations, shaped as much by the person wearing it as by the original idea.</p>",
+            "content_position": "bottom_left",
+            "text_protection": 42
+          }
+        }
       },
-      "block_order": ["slide-1"],
-      "settings": {}
+      "block_order": ["slide-1", "slide-2", "slide-3"],
+      "settings": {
+        "desktop_height": 75,
+        "mobile_height": 65,
+        "text_color": "#F5F3EE",
+        "enable_autoplay": false
+      }
     },
-    "about-story": { "type": "about-story", "settings": {} },
+    "about-story": {
+      "type": "about-story",
+      "settings": {
+        "eyebrow": "Our point of view",
+        "heading": "A smaller wardrobe, with more ways to live in it.",
+        "text": "<p>We begin with proportion, texture and the habits that make a piece worth returning to. The result is an everyday wardrobe that feels personal rather than prescribed.</p>",
+        "media_position": "left"
+      }
+    },
     "about-values": {
       "type": "about-values",
       "blocks": {
@@ -17,9 +59,22 @@
         "value-3": { "type": "value", "settings": { "heading": "Personal by nature", "text": "<p>We leave room for individual expression, so the collection can become entirely your own.</p>" } }
       },
       "block_order": ["value-1", "value-2", "value-3"],
-      "settings": {}
+      "settings": {
+        "eyebrow": "What guides us",
+        "heading": "Built for repeat wear, not a single moment.",
+        "text": "<p>Our decisions begin with what makes getting dressed feel easier and more like yourself.</p>",
+        "text_alignment": "left"
+      }
     },
-    "about-closing": { "type": "about-closing", "settings": {} }
+    "about-closing": {
+      "type": "about-closing",
+      "settings": {
+        "eyebrow": "Made to be lived in",
+        "heading": "Find the pieces that stay with you.",
+        "text": "<p>Explore the latest collection and build a wardrobe on your own terms.</p>",
+        "link_label": "Shop all"
+      }
+    }
   },
   "order": ["about-hero", "about-story", "about-values", "about-closing"]
 }

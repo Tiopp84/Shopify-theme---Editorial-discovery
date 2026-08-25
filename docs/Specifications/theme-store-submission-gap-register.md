@@ -57,7 +57,7 @@ This register converts the current code audit into release-gated work. It is not
 
 | ID | Gap | Required completion / acceptance |
 |---|---|---|
-| COM-01 | Theme metadata | Replace Skeleton/Shopify name, author, version, support and documentation URLs only after professional name clearance. Metadata names the release candidate, not its baseline. |
+| COM-01 | Theme metadata | Theme Editor metadata names `Narrivelle`, author `AmazinPro` and version `1.0.0`. Replace inherited Shopify documentation and support URLs only with owner-provided public Narrivelle destinations after professional name clearance; metadata must name the release candidate, not its baseline. |
 | COM-02 | Presets and listings | Ship two parity presets. One preset takes the theme name; listing templates match each demo store and are included under `/listings/` in the submission ZIP. |
 | COM-03 | Demo stores and assets | Client transfer demo store per preset with real products/copy/images, correct catalog tags, no fake commerce signals and registered redistribution rights. |
 | COM-04 | Public docs and support | Public merchant documentation, FAQ, support policy and support contact form include name, email, store URL, theme/version, issue description, attachment route and autoresponder. Support SLA and escalation ownership are defined. |

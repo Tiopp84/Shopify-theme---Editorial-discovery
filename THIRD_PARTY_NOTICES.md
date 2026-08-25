@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-Narrivelle currently has no approved third-party runtime libraries.
+Narrivelle includes the approved, self-hosted third-party components listed below. No third-party runtime is loaded from a remote CDN.
 
 ## Shopify Skeleton Theme
 
@@ -38,6 +38,16 @@ Do not add third-party code or assets to this file without also recording approv
 - Source: `https://www.npmjs.com/package/aos`
 - Version: `2.3.4`
 - Files: `theme/assets/aos-2.3.4.css`
-- License: MIT, `https://github.com/michalsnik/aos/blob/v2/LICENSE`
-- Usage: self-hosted only on the index template for an isolated first-visible fade experiment. `aos-home.js` uses AOS CSS with custom one-time viewport triggers only when reduced motion is not requested; it does not scrub or pin scrolling.
-- Removal path: remove the self-hosted CSS asset, `aos-home.js`, the index-template tags and this register entry.
+- License: MIT License, Copyright (c) 2015 Michał Sajnóg. The required full notice is included below and the upstream license is available at `https://github.com/michalsnik/aos/blob/v2/LICENSE`.
+- Usage: self-hosted CSS supports one-time viewport reveals on index, collection and list-collections templates. Theme-owned scripts add the reveal state only when reduced motion is not requested; they do not scrub or pin scrolling.
+- Removal path: remove the self-hosted CSS asset, `aos-home.js`, `catalog-reveal.js`, the related layout tags and this register entry.
+
+### AOS MIT License
+
+Copyright (c) 2015 Michał Sajnóg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

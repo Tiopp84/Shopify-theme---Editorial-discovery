@@ -60,6 +60,9 @@ class AboutHeroController {
 
     if (this.reducedMotion.matches) return;
 
+    // Autoplay is independent of the optional viewport reveal animation.
+    this.startAutoplay();
+
     if (!('IntersectionObserver' in window)) {
       this.reveal();
       return;
@@ -83,7 +86,6 @@ class AboutHeroController {
       this.slides[this.index]?.classList.remove('is-entering');
       this.transitionTimer = null;
     }, 900);
-    this.startAutoplay();
   }
 
   startStageSwipe(event) {
@@ -234,7 +236,7 @@ class AboutHeroController {
 
   stopAutoplay() {
     if (!this.timer) return;
-    window.clearInterval(this.timer);
+    window.clearTimeout(this.timer);
     this.timer = null;
   }
 

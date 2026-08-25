@@ -38,28 +38,27 @@
             class: 'shoppable-story__image',
             image: block.settings.image,
             alt: custom_image_alt,
-            width: 480,
-            widths: '80, 120, 160, 240, 360, 480',
-            sizes: '(min-width: 64rem) 12rem, (min-width: 48rem) 42vw, 4rem'
+            width: 1200,
+            widths: '320, 480, 640, 800, 960, 1200',
+            sizes: '(min-width: 64rem) 18rem, (min-width: 48rem) 42vw, 100vw'
           %}
         {% elsif story_product.featured_image != blank %}
           {% render 'image',
             class: 'shoppable-story__image',
             image: story_product.featured_image,
             alt: product_image_alt,
-            width: 480,
-            widths: '80, 120, 160, 240, 360, 480',
-            sizes: '(min-width: 64rem) 12rem, (min-width: 48rem) 42vw, 4rem'
+            width: 1200,
+            widths: '320, 480, 640, 800, 960, 1200',
+            sizes: '(min-width: 64rem) 18rem, (min-width: 48rem) 42vw, 100vw'
           %}
         {% else %}
           <span class="shoppable-story__placeholder" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag }}</span>
         {% endif %}
       </a>
       <div class="shoppable-story__product-content">
-        <p class="shoppable-story__caption">{% if block.settings.caption != blank %}{{ block.settings.caption | escape }}{% endif %}</p>
+        <p class="shoppable-story__caption"><span class="shoppable-story__index" aria-hidden="true"></span>{% if block.settings.caption != blank %}<span class="shoppable-story__caption-text">{{ block.settings.caption | escape }}</span>{% endif %}</p>
         <div class="shoppable-story__decision">
           <h3 id="StoryProductTitle-{{ block.id }}"><a href="{{ story_product.url }}">{{ story_product.title | escape }}</a></h3>
-          {% render 'price', item: story_product, class: 'shoppable-story__price' %}
         </div>
         {% if section.settings.show_variants and color_option != blank %}
           <div class="shoppable-story__color-options">
@@ -90,22 +89,23 @@
             <span class="shoppable-story__size-names">{% for value in size_option.values limit: 8 %}{{ value.name | escape }}{% unless forloop.last %}, {% endunless %}{% endfor %}</span>
           </div>
         {% endif %}
+        {% render 'price', item: story_product, class: 'shoppable-story__price' %}
         {% unless story_product.available %}
           <p class="shoppable-story__availability">{{ 'products.card.sold_out' | t }}</p>
         {% endunless %}
       </div>
     </article>
   </div>
-{% elsif request.design_mode or request.visual_preview_mode %}
+{% else %}
   <div class="shoppable-story__item shoppable-story__preview-card" role="listitem"{% unless request.visual_preview_mode %} data-aos-product-item data-aos="fade-up"{% endunless %} {{ block.shopify_attributes }}>
     <article class="shoppable-story__product">
       <span class="shoppable-story__media">{{ 'product-1' | placeholder_svg_tag }}</span>
       <div class="shoppable-story__product-content">
-        <p class="shoppable-story__caption"></p>
+        <p class="shoppable-story__caption"><span class="shoppable-story__index" aria-hidden="true"></span></p>
         <div class="shoppable-story__decision">
           <p class="shoppable-story__preview-title">{{ 'products.card.placeholder_title' | t }}</p>
-          <span class="shoppable-story__preview-price">{{ 'products.card.placeholder_price' | t }}</span>
         </div>
+        <span class="shoppable-story__preview-price">{{ 'products.card.placeholder_price' | t }}</span>
       </div>
     </article>
   </div>

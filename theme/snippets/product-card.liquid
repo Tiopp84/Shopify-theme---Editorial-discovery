@@ -6,6 +6,7 @@
   @param {boolean} [show_vendor] - Show the product vendor above the title.
   @param {boolean} [show_badge] - Show sale and sold-out badges.
   @param {boolean} [show_index] - Show the card position within the current result set.
+  @param {boolean} [index_above_media] - Render the existing product index above the media instead of in card metadata.
   @param {boolean} [show_price] - Show the product price.
   @param {boolean} [show_second_image] - Reveal the second product image on hover/focus when available.
   @param {boolean} [show_quick_add] - Show the variant-safe quick-add control where this context supports it.
@@ -55,6 +56,9 @@
 %}
 
 <article class="product-card product-card--{{ card_context }}{% unless product.available %} product-card--unavailable{% endunless %}" data-product-id="{{ product.id }}"{% if entrance_delay != blank %} data-catalog-reveal data-aos="fade-up" data-aos-delay="{{ entrance_delay }}"{% endif %} aria-labelledby="{{ card_id }}">
+  {% if index_above_media and show_index != false and card_index %}
+    <p class="product-card__index product-card__index--above-media">{{ formatted_index }}{% if card_count %} / {{ formatted_count }}{% endif %}</p>
+  {% endif %}
   <div class="product-card__media" style="--product-card-ratio: {{ image_ratio }}; --product-card-image-fit: {{ image_fit }};">
     {% if product.featured_image %}
       {% render 'image',
@@ -75,9 +79,9 @@
       </a>
     {% endif %}
     {% if show_badge != false and product.available == false %}
-      <span class="product-card__status">{{ 'products.card.sold_out' | t }}</span>
+      <span class="product-card__status product-card__status--sold-out">{{ 'products.card.sold_out' | t }}</span>
     {% elsif show_badge != false and on_sale %}
-      <span class="product-card__status">{{ 'products.card.sale' | t }}</span>
+      <span class="product-card__status product-card__status--sale">{{ 'products.card.sale' | t }}</span>
     {% endif %}
     {% if show_quick_add != false and product.available and card_context != 'recommendation' and card_context != 'homepage' %}
       <div class="product-card__quick-add-wrap">
@@ -107,7 +111,14 @@
                     <div class="quick-add__media-stage" data-quick-add-media-stage tabindex="0" aria-label="{{ 'products.gallery.media_selection' | t }}">
                       {% for media in product.media %}
                         <div class="quick-add__media-item" data-quick-add-media-id="{{ media.id }}"{% unless media.id == product.selected_or_first_available_variant.featured_media.id or forloop.first %} hidden{% endunless %}>
-                          {{ media.preview_image | image_url: width: 720 | image_tag: alt: media.alt, widths: '320, 480, 720', sizes: '(min-width: 750px) 18rem, 40vw', loading: 'lazy' }}
+                          {% case media.media_type %}
+                            {% when 'video' %}
+                              {{ media | media_tag: image_size: '720x', loop: true, muted: true, controls: false, preload: 'metadata' }}
+                            {% when 'external_video' %}
+                              {{ media | external_video_tag }}
+                            {% else %}
+                              {{ media.preview_image | image_url: width: 720 | image_tag: alt: media.alt, widths: '320, 480, 720', sizes: '(min-width: 750px) 18rem, 40vw', loading: 'lazy' }}
+                          {% endcase %}
                         </div>
                       {% endfor %}
                       {% if product.media.size > 1 %}
@@ -115,6 +126,15 @@
                         <button class="quick-add__media-nav quick-add__media-nav--next" type="button" data-quick-add-media-next aria-label="{{ 'products.gallery.next' | t }}">→</button>
                       {% endif %}
                     </div>
+                    {% for media in product.media %}
+                      {% if media.media_type == 'video' %}
+                        <div class="quick-add__video-controls" data-quick-add-video-controls="{{ media.id }}"{% unless media.id == product.selected_or_first_available_variant.featured_media.id or forloop.first %} hidden{% endunless %}>
+                          <button type="button" data-quick-add-video-toggle aria-label="Pause video">Ⅱ</button>
+                          <input type="range" min="0" max="100" value="0" step="0.1" data-quick-add-video-progress aria-label="Video progress">
+                          <button type="button" data-quick-add-video-mute aria-label="Unmute video"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 5 6 9H3v6h3l5 4V5Z M16 9l5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/></svg></button>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
                     {% if product.media.size > 1 %}
                       <div class="quick-add__media-thumbnails" aria-label="{{ 'products.gallery.media_selection' | t }}">
                         {% for media in product.media %}
@@ -190,7 +210,7 @@
   <div class="product-card__content">
     {% if show_index != false and card_index or show_vendor and product.vendor != blank %}
       <div class="product-card__meta">
-        {% if show_index != false and card_index %}
+        {% if index_above_media != true and show_index != false and card_index %}
           <span class="product-card__index">{{ formatted_index }}{% if card_count %} / {{ formatted_count }}{% endif %}</span>
         {% endif %}
         {% if show_vendor and product.vendor != blank %}
@@ -352,6 +372,7 @@
   }
 
   .product-card__index { color: var(--color-foreground); font-weight: 700; }
+  .product-card__index--above-media { font-family: var(--small-label-font); font-size: var(--small-label-size); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: 0 0 var(--space-3); }
   .product-card__vendor { margin-inline-start: auto; }
 
   .product-card__decision {
@@ -452,9 +473,15 @@
   .quick-add__header button { background: transparent; border: 0; color: currentcolor; font-size: 1.5rem; min-block-size: 2.75rem; min-inline-size: 2.75rem; padding: 0; }
   .quick-add__product { display: grid; grid-template-columns: minmax(15rem, .9fr) minmax(20rem, 1.1fr); }
   .quick-add__media { align-content: start; background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background)); display: grid; gap: var(--space-3); min-block-size: 100%; padding: var(--space-4); }
-  .quick-add__media-stage { overflow: hidden; position: relative; touch-action: pan-y; }
-  .quick-add__media-item, .quick-add__media-item img, .quick-add__media-placeholder, .quick-add__media-placeholder svg { block-size: 100%; inline-size: 100%; }
-  .quick-add__media-item img { aspect-ratio: 4 / 5; border-radius: .5rem; display: block; object-fit: cover; }
+  .quick-add__media-stage { aspect-ratio: 4 / 5; background: color-mix(in srgb, var(--color-foreground) 3%, var(--color-background)); overflow: hidden; position: relative; touch-action: pan-y; }
+  .quick-add__media-item, .quick-add__media-item :is(img, video, iframe), .quick-add__media-placeholder, .quick-add__media-placeholder svg { block-size: 100%; inline-size: 100%; }
+  .quick-add__media-item :is(img, video, iframe) { border-radius: .5rem; display: block; object-fit: contain; }
+  .quick-add__media-item video { background: color-mix(in srgb, var(--color-foreground) 3%, var(--color-background)); }
+  .quick-add__video-controls { align-items: center; display: flex; gap: var(--space-2); min-block-size: 1.75rem; }
+  .quick-add__video-controls[hidden] { display: none; }
+  .quick-add__video-controls button { align-items: center; background: transparent; border: 1px solid var(--color-border); border-radius: 50%; color: currentcolor; display: inline-flex; font-size: .7rem; justify-content: center; min-block-size: 1.75rem; min-inline-size: 1.75rem; padding: 0; }
+  .quick-add__video-controls button svg { block-size: .95rem; inline-size: .95rem; }
+  .quick-add__video-controls input { accent-color: var(--color-foreground); flex: 1; margin: 0; min-inline-size: 0; }
   .quick-add__media-nav { align-items: center; background: color-mix(in srgb, var(--color-background) 88%, transparent); border: 0; border-radius: 50%; color: var(--color-foreground); display: grid; inset-block-start: 50%; min-block-size: 2.5rem; min-inline-size: 2.5rem; padding: 0; place-items: center; position: absolute; transform: translateY(-50%); z-index: 1; }
   .quick-add__media-nav--previous { inset-inline-start: var(--space-2); }
   .quick-add__media-nav--next { inset-inline-end: var(--space-2); }

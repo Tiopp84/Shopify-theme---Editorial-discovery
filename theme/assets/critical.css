@@ -50,6 +50,31 @@ html.size-guide-modal-open .site-panel {
   padding-inline-end: var(--scroll-lock-scrollbar-width, 0px);
 }
 
+/* Reserve the classic scrollbar gutter before an overlay opens. This preserves
+ * one coordinate space for both normal-flow and viewport-fixed UI (header,
+ * announcement bar, and footer), avoiding per-component offset corrections.
+ * Browsers without support retain the compensation rules above. */
+@supports (scrollbar-gutter: stable) {
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  html:has(dialog[scroll-lock][open], details[scroll-lock][open]) body,
+  html.quick-add-modal-open body,
+  html.product-gallery-modal-open body,
+  html.size-guide-modal-open body {
+    padding-inline-end: 0;
+  }
+
+  html:has(dialog[scroll-lock][open], details[scroll-lock][open]) .site-panel,
+  html.quick-add-modal-open .site-panel,
+  html.product-gallery-modal-open .site-panel,
+  html.size-guide-modal-open .site-panel {
+    inline-size: 100%;
+    padding-inline-end: 0;
+  }
+}
+
 html {
   -webkit-tap-highlight-color: transparent;
   overflow-x: clip;
@@ -123,6 +148,21 @@ body {
 
 .rte {
   line-height: var(--body-text-line-spacing);
+}
+
+.rte :is(h1, h2, h3, h4, h5, h6) {
+  margin-block: 1.5em 0.6em;
+}
+
+.rte h1 { font-size: clamp(var(--heading-size-72), 4vw, var(--heading-size-112)); }
+.rte h2 { font-size: clamp(var(--heading-size-64), 3.4vw, var(--heading-size-96)); }
+.rte h3 { font-size: clamp(var(--heading-size-56), 2.8vw, var(--heading-size-80)); }
+.rte h4 { font-size: clamp(var(--heading-size-48), 2.2vw, var(--heading-size-64)); }
+.rte h5 { font-size: clamp(var(--heading-size-43), 1.8vw, var(--heading-size-56)); }
+.rte h6 { font-size: clamp(var(--heading-size-40), 1.5vw, var(--heading-size-48)); }
+
+[hidden] {
+  display: none !important;
 }
 
 :root {

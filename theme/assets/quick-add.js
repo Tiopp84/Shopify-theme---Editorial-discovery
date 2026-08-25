@@ -19,6 +19,7 @@ class QuickAdd extends HTMLElement {
     this.availability = this.querySelector('[data-quick-add-availability]');
     this.mediaStage = this.querySelector('[data-quick-add-media-stage]');
     this.media = [...this.querySelectorAll('[data-quick-add-media-id]')];
+    this.videoControls = [...this.querySelectorAll('[data-quick-add-video-controls]')];
     this.selectedMediaId = this.media.find((item) => !item.hidden)?.dataset.quickAddMediaId || this.media[0]?.dataset.quickAddMediaId;
     this.mediaButtons = [...this.querySelectorAll('[data-quick-add-media-select]')];
     this.variants = JSON.parse(this.querySelector('[data-quick-add-variants]')?.textContent || '[]');
@@ -31,6 +32,7 @@ class QuickAdd extends HTMLElement {
     this.dialog.addEventListener('click', (event) => { if (event.target === this.dialog) this.dialog.close(); }, { signal });
     this.dialog.addEventListener('close', () => {
       this.unlockPageScroll();
+      this.pauseVideos();
       if (this.opener) {
         this.opener.focus({ preventScroll: true });
         if (!this.opener.matches(':focus-visible')) this.opener.blur();
@@ -46,6 +48,16 @@ class QuickAdd extends HTMLElement {
     this.querySelector('[data-quick-add-quantity-decrease]')?.addEventListener('click', () => this.changeQuantity(-1), { signal });
     this.querySelector('[data-quick-add-quantity-increase]')?.addEventListener('click', () => this.changeQuantity(1), { signal });
     this.mediaButtons.forEach((button) => button.addEventListener('click', () => this.selectMedia(button.dataset.quickAddMediaSelect), { signal }));
+    this.videoControls.forEach((controls) => {
+      controls.querySelector('[data-quick-add-video-toggle]')?.addEventListener('click', () => this.toggleSelectedVideo(), { signal });
+      controls.querySelector('[data-quick-add-video-mute]')?.addEventListener('click', () => this.toggleSelectedVideoMute(), { signal });
+      controls.querySelector('[data-quick-add-video-progress]')?.addEventListener('input', (event) => this.seekSelectedVideo(event), { signal });
+    });
+    this.media.forEach((item) => {
+      const video = item.querySelector('video');
+      if (!video) return;
+      ['loadedmetadata', 'timeupdate', 'play', 'pause', 'volumechange'].forEach((eventName) => video.addEventListener(eventName, () => this.syncVideoControls(), { signal }));
+    });
     this.querySelector('[data-quick-add-media-previous]')?.addEventListener('click', () => this.stepMedia(-1), { signal });
     this.querySelector('[data-quick-add-media-next]')?.addEventListener('click', () => this.stepMedia(1), { signal });
     this.mediaStage?.addEventListener('pointerdown', (event) => this.onMediaPointerDown(event), { signal });
@@ -91,6 +103,7 @@ class QuickAdd extends HTMLElement {
       this.lockPageScroll();
       this.dialog.showModal();
     }
+    this.playSelectedVideo();
     (this.options[0] || this.querySelector('[data-quick-add-close]'))?.focus({ preventScroll: true });
   }
 
@@ -264,13 +277,64 @@ class QuickAdd extends HTMLElement {
       const selected = item.dataset.quickAddMediaId === String(id);
       item.hidden = !selected;
       if (!selected) {
+        item.querySelector('video')?.pause();
         item.style.removeProperty('transform');
         item.style.removeProperty('will-change');
         delete item.dataset.quickAddMediaOffset;
       }
     });
+    this.videoControls.forEach((controls) => { controls.hidden = controls.dataset.quickAddVideoControls !== String(id); });
     this.mediaButtons.forEach((button) => button.toggleAttribute('aria-current', button.dataset.quickAddMediaSelect === String(id)));
     this.selectedMediaId = String(id);
+    if (this.dialog?.open) this.playSelectedVideo();
+    this.syncVideoControls();
+  }
+
+  selectedVideo() {
+    return this.media.find((item) => item.dataset.quickAddMediaId === this.selectedMediaId)?.querySelector('video');
+  }
+
+  pauseVideos() {
+    this.media.forEach((item) => item.querySelector('video')?.pause());
+  }
+
+  playSelectedVideo() {
+    const video = this.selectedVideo();
+    if (video) video.play().catch(() => {});
+  }
+
+  toggleSelectedVideo() {
+    const video = this.selectedVideo();
+    if (!video) return;
+    if (video.paused) this.playSelectedVideo();
+    else video.pause();
+  }
+
+  toggleSelectedVideoMute() {
+    const video = this.selectedVideo();
+    if (video) video.muted = !video.muted;
+  }
+
+  seekSelectedVideo(event) {
+    const video = this.selectedVideo();
+    if (video?.duration) video.currentTime = (Number(event.currentTarget.value) / 100) * video.duration;
+  }
+
+  syncVideoControls() {
+    const video = this.selectedVideo();
+    const controls = this.videoControls.find((item) => item.dataset.quickAddVideoControls === this.selectedMediaId);
+    if (!video || !controls) return;
+    const toggle = controls.querySelector('[data-quick-add-video-toggle]');
+    const mute = controls.querySelector('[data-quick-add-video-mute]');
+    const progress = controls.querySelector('[data-quick-add-video-progress]');
+    if (toggle) { toggle.textContent = video.paused ? '▶' : 'Ⅱ'; toggle.setAttribute('aria-label', video.paused ? 'Play video' : 'Pause video'); }
+    if (mute) {
+      mute.innerHTML = video.muted
+        ? '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 5 6 9H3v6h3l5 4V5Z M16 9l5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/></svg>'
+        : '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 5 6 9H3v6h3l5 4V5Z M15.5 9.5a3.5 3.5 0 0 1 0 5m2.5-7.5a7 7 0 0 1 0 10" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/></svg>';
+      mute.setAttribute('aria-label', video.muted ? 'Unmute video' : 'Mute video');
+    }
+    if (progress && video.duration) progress.value = String((video.currentTime / video.duration) * 100);
   }
 
   stepMedia(direction) {

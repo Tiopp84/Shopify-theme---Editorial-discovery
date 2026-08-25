@@ -4,24 +4,23 @@
   assign product_count = featured_collection.products_count | at_most: product_limit
 %}
 
-<section class="featured-edit full-width featured-edit--heading-{{ section.settings.heading_size }} featured-edit--heading-{{ section.settings.heading_alignment }} featured-edit--columns-{{ section.settings.desktop_columns }}" data-aos-section style="--featured-edit-background: var(--color-background);" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
+<section class="featured-edit full-width featured-edit--heading-{{ section.settings.heading_size }} featured-edit--heading-{{ section.settings.heading_alignment }} featured-edit--columns-{{ section.settings.desktop_columns }}{% if section.settings.show_index %} featured-edit--show-index{% endif %}" data-aos-section style="--featured-edit-background: var(--color-background);" {% if section.settings.heading != blank %}aria-labelledby="FeaturedEditHeading-{{ section.id }}"{% endif %} {{ section.shopify_attributes }}>
   <header class="featured-edit__header" data-aos="fade-down">
     {% if section.settings.heading != blank %}<h2 id="FeaturedEditHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>{% endif %}
+    {% if featured_collection != blank and featured_collection.products_count > 0 %}
+      <a class="featured-edit__view-all" href="{{ featured_collection.url }}">{{ 'navigation.view_all' | t: title: featured_collection.title }}</a>
+    {% else %}
+      <span class="featured-edit__view-all">{{ 'navigation.view_all_label' | t }}</span>
+    {% endif %}
   </header>
 
   {% if featured_collection != blank and featured_collection.products_count > 0 %}
-    <div class="featured-edit__grid-actions">
-      <a class="featured-edit__view-all" href="{{ featured_collection.url }}">{{ 'navigation.view_all' | t: title: featured_collection.title }}</a>
-    </div>
     <ul class="featured-edit__grid curated-grid--center-incomplete" role="list">
       {% for product in featured_collection.products limit: product_limit %}
-        <li data-aos-product-item data-aos="fade-up" data-aos-delay="{{ forloop.index0 | at_most: 3 | times: 100 }}">{% render 'product-card', product: product, card_context: 'homepage', card_index: forloop.index, card_count: product_count, image_ratio: section.settings.image_ratio, show_index: section.settings.show_index, show_price: section.settings.show_price, show_second_image: section.settings.show_second_image, sizes: '(min-width: 64rem) 23vw, (min-width: 48rem) 44vw, 46vw' %}</li>
+        <li data-aos-product-item data-aos="fade-up" data-aos-delay="{{ forloop.index0 | at_most: 3 | times: 100 }}">{% render 'product-card', product: product, card_context: 'homepage', card_index: forloop.index, card_count: product_count, image_ratio: section.settings.image_ratio, show_index: section.settings.show_index, index_above_media: true, show_price: section.settings.show_price, show_second_image: section.settings.show_second_image, sizes: '(min-width: 64rem) 23vw, (min-width: 48rem) 76vw, 46vw' %}</li>
       {% endfor %}
     </ul>
   {% else %}
-    <div class="featured-edit__grid-actions featured-edit__grid-actions--preview">
-      <span class="featured-edit__view-all">{{ 'navigation.view_all_label' | t }}</span>
-    </div>
     <ul class="featured-edit__grid featured-edit__grid--preview" role="presentation" aria-hidden="true">
       {% for index in (1..4) %}
         {% assign placeholder_image = 'product-' | append: index %}
@@ -38,17 +37,16 @@
 </section>
 
 {% stylesheet %}
-  .featured-edit { --featured-edit-gutter: clamp(1.25rem, 3.3vw, 3.75rem); background: var(--featured-edit-background, transparent); margin: 0 0 var(--space-chapter); max-width: none; padding: clamp(1.5rem, 4vw, 3rem) var(--featured-edit-gutter); }
-  .featured-edit__header { margin-block-end: clamp(1.5rem, 5vw, 3rem); }
-  .featured-edit h2 { font-family: var(--font-campaign); font-size: clamp(2.35rem, 4.2vw, 4rem); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .93; margin: 0; }
-  .featured-edit--heading-small h2 { font-size: clamp(1.85rem, 3vw, 2.75rem); }
-  .featured-edit--heading-medium h2 { font-size: clamp(2.35rem, 4.2vw, 4rem); }
-  .featured-edit--heading-large h2 { font-size: clamp(2.75rem, 5.5vw, 5.5rem); }
+  .featured-edit { --featured-edit-gutter: max(var(--layout-gutter), calc((100vw - var(--layout-content-max)) / 2)); background: var(--featured-edit-background, transparent); margin: 0 0 var(--space-chapter); max-width: none; padding: var(--space-chapter) var(--featured-edit-gutter); }
+  .featured-edit__header { align-items: end; display: flex; gap: var(--space-6); justify-content: space-between; margin-block-end: var(--space-12); }
+  .featured-edit h2 { font-family: var(--font-campaign); font-size: clamp(var(--heading-size-102), 4.2vw, var(--heading-size-160)); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); letter-spacing: -.04em; line-height: .96; margin: 0; }
+  .featured-edit--heading-small h2 { font-size: clamp(var(--heading-size-72), 3vw, var(--heading-size-112)); }
+  .featured-edit--heading-medium h2 { font-size: clamp(var(--heading-size-102), 4.2vw, var(--heading-size-160)); }
+  .featured-edit--heading-large h2 { font-size: clamp(var(--heading-size-128), 5.5vw, var(--heading-size-192)); }
   .featured-edit--heading-left .featured-edit__header { text-align: start; }
-  .featured-edit--heading-center .featured-edit__header { text-align: center; }
-  .featured-edit--heading-right .featured-edit__header { text-align: end; }
-  .featured-edit__grid-actions { display: flex; justify-content: end; margin-block-end: var(--space-4); }
-  .featured-edit__view-all { align-items: center; color: currentcolor; display: inline-flex; font-size: .6875rem; font-weight: 700; gap: .55rem; letter-spacing: .1em; text-decoration: none; text-transform: uppercase; }
+  .featured-edit--heading-center .featured-edit__header { align-items: center; flex-direction: column; text-align: center; }
+  .featured-edit--heading-right .featured-edit__header { flex-direction: row-reverse; text-align: end; }
+  .featured-edit__view-all { align-items: center; border-block-end: 1px solid currentcolor; color: currentcolor; display: inline-flex; font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 600; gap: var(--space-2); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); padding-block-end: var(--space-1); text-decoration: none; text-transform: uppercase; white-space: nowrap; }
   .featured-edit__view-all::after { content: '→'; font-size: 1.1rem; font-weight: 400; line-height: .7; transition: transform 180ms ease; }
   .featured-edit__view-all:is(:hover, :focus-visible) { color: var(--color-interactive); }
   .featured-edit__view-all:is(:hover, :focus-visible)::after { transform: translateX(.25rem); }
@@ -64,60 +62,35 @@
   .featured-edit .product-card__media { background: color-mix(in srgb, var(--featured-edit-background, var(--color-background)) 82%, white); border: 0; padding: 0; }
   .featured-edit .product-card__media::after { content: none; }
   .featured-edit .product-card__content { display: grid; gap: var(--space-2); min-width: 0; padding-block-start: var(--space-3); }
-  .featured-edit .product-card__meta { display: block; font-size: .625rem; font-weight: 700; letter-spacing: .12em; }
-  .featured-edit .product-card__decision { align-items: start; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr) max-content; min-width: 0; }
-  .featured-edit .product-card__title { font-family: var(--font-campaign); font-size: clamp(.95rem, 1.2vw, 1.15rem); font-weight: var(--font-heading--weight); line-height: 1.12; min-block-size: 2.24em; }
-  .featured-edit .product-card__price { align-self: start; font-size: .875rem; font-weight: 700; justify-content: flex-end; min-inline-size: 0; }
-  /* When Featured Edit directly follows the hero, its introduction becomes a
-   * continuation panel rather than starting a visually separate chapter. The
-   * product grid remains in normal flow, so section editing and long copy stay safe. */
-  @supports selector(.shopify-section:has(> .editorial-hero)) {
-    .shopify-section:has(> .editorial-hero) > .editorial-hero { border-block-end: 0; margin-block-end: 0; }
-    .shopify-section:has(> .editorial-hero) + .shopify-section:has(> .featured-edit) > .featured-edit {
-      --featured-edit-bridge: clamp(2.5rem, 5vw, 4.5rem);
-      margin-block-end: 0;
-      padding-block-end: var(--space-chapter);
-      padding-block-start: 0;
-      position: relative;
-    }
-    .shopify-section:has(> .editorial-hero) + .shopify-section:has(> .featured-edit) .featured-edit__header {
-      background: var(--featured-edit-background, var(--color-background));
-      border-radius: clamp(1.25rem, 2.4vw, 2rem) clamp(1.25rem, 2.4vw, 2rem) 0 0;
-      margin-block-start: calc(var(--featured-edit-bridge) * -1);
-      padding: clamp(1.5rem, 3vw, 2.5rem);
-      position: relative;
-      z-index: 2;
-    }
-  }
+  .featured-edit .product-card__meta { display: block; font-family: var(--small-label-font); font-size: var(--small-label-size); font-weight: 600; letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); }
+  .featured-edit .product-card__decision { display: block; min-width: 0; }
+  .featured-edit .product-card__title { font-family: var(--collection-title-font); font-size: var(--collection-title-size); font-style: var(--font-heading--style); font-weight: var(--font-heading--weight); line-height: 1.2; min-block-size: 0; }
+  .featured-edit .product-card__price { font-size: var(--product-price-size); justify-content: flex-start; margin-block-start: var(--space-2); min-inline-size: 0; }
 
   @media (min-width: 64rem) {
-    .featured-edit { padding-inline: clamp(7.5rem, 10vw, 12rem); }
     .featured-edit--columns-3 .featured-edit__grid > li { flex-basis: calc((100% - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap)) / 3); }
     .featured-edit--columns-4 .featured-edit__grid > li { flex-basis: calc((100% - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap) - var(--featured-edit-grid-gap)) / 4); }
   }
+  @media (max-width: 63.99rem) {
+    .featured-edit .product-card__media { position: relative; }
+  }
   @media (max-width: 47.99rem) {
-    .featured-edit { margin-block-end: var(--space-chapter-mobile); padding-block: var(--space-5); }
-    .featured-edit__header { margin-block-end: var(--space-5); }
-    .featured-edit h2 { font-size: 2.25rem; }
-    .featured-edit__view-all { font-size: .5625rem; }
-    .featured-edit__grid { --featured-edit-grid-gap: var(--space-3); }
+    .featured-edit { margin-block-end: var(--space-chapter-mobile); padding-block: var(--space-chapter-mobile); }
+    .featured-edit__header { align-items: start; flex-direction: column; gap: var(--space-5); margin-block-end: var(--space-8); }
+    .featured-edit--heading-center .featured-edit__header { align-items: center; }
+    .featured-edit--heading-right .featured-edit__header { align-items: end; flex-direction: column; }
+    .featured-edit h2 { font-size: clamp(var(--heading-size-102), 9vw, var(--heading-size-128)); }
+    .featured-edit__grid { --featured-edit-grid-gap: var(--space-3); flex-wrap: nowrap; justify-content: start; margin-inline-end: calc(-1 * var(--featured-edit-gutter)); overflow-x: auto; overscroll-behavior-inline: contain; padding-block-end: var(--space-2); padding-inline-end: var(--featured-edit-gutter); scroll-padding-inline: var(--featured-edit-gutter); scroll-snap-type: inline mandatory; scrollbar-width: thin; touch-action: pan-x pan-y; }
+    .featured-edit__grid > li { flex-basis: min(76%, 19rem); scroll-snap-align: start; }
     .featured-edit .product-card { gap: var(--space-2); }
     .featured-edit .product-card__status { padding: .3rem .4rem; }
-    .featured-edit .product-card__content { gap: .35rem; padding-block-start: var(--space-2); }
-    .featured-edit .product-card__meta { font-size: .55rem; letter-spacing: .09em; }
-    .featured-edit .product-card__decision { gap: var(--space-2); }
-    .featured-edit .product-card__title { font-size: .9rem; line-height: 1.08; min-inline-size: 0; }
-    .featured-edit .product-card__price { font-size: .75rem; max-inline-size: 100%; min-inline-size: 0; }
+    .featured-edit .product-card__content { gap: var(--space-2); padding-block-start: var(--space-3); }
+    .featured-edit .product-card__title { font-size: var(--collection-title-size); line-height: 1.15; min-inline-size: 0; }
+    .featured-edit .product-card__price { font-size: var(--product-price-size); max-inline-size: 100%; min-inline-size: 0; }
   }
   @media (max-width: 30rem) {
     .featured-edit .product-card__decision { grid-template-columns: minmax(0, 1fr); }
     .featured-edit .product-card__price { justify-content: flex-start; text-align: start; }
-  }
-  @media (max-width: 47.99rem) {
-    @supports selector(.shopify-section:has(> .editorial-hero)) {
-      .shopify-section:has(> .editorial-hero) + .shopify-section:has(> .featured-edit) > .featured-edit { --featured-edit-bridge: 1.5rem; margin-block-end: 0; padding-block-end: var(--space-chapter-mobile); }
-      .shopify-section:has(> .editorial-hero) + .shopify-section:has(> .featured-edit) .featured-edit__header { border-radius: 1.25rem 1.25rem 0 0; padding: var(--space-5); }
-    }
   }
 {% endstylesheet %}
 

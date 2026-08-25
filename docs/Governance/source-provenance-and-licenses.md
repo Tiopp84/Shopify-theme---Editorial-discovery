@@ -52,7 +52,7 @@ Dependency chỉ được thêm khi:
 
 Không thêm framework frontend, slider/modal library hoặc icon font theo mặc định. Ưu tiên web platform APIs, custom elements nhỏ, inline SVG nguyên bản và CSS native.
 
-GSAP Core (và ScrollTrigger khi cần) có thể được phê duyệt như motion runtime ngoại lệ theo `Specifications/motion-architecture.md`; không phải là dependency mặc định. Mỗi lần đưa vào production phải self-host bản pin version, ghi source/license/notice, bundle impact và removal path vào evidence register. CDN không được dùng làm production runtime.
+GSAP Core (và ScrollTrigger khi cần) có thể được phê duyệt như motion runtime ngoại lệ theo `Specifications/motion-architecture.md`; không phải là dependency mặc định. AOS `2.3.4` cũng được phê duyệt cho các one-time viewport reveal tự quản lý bởi script của theme. Mỗi dependency production phải self-host bản pin version, ghi source/license/notice, bundle impact và removal path vào evidence register. CDN không được dùng làm production runtime.
 
 ## 5. Asset policy
 
@@ -69,6 +69,7 @@ GSAP Core (và ScrollTrigger khi cần) có thể được phê duyệt như mot
 | Shopify Skeleton Theme | `https://github.com/Shopify/skeleton-theme.git`, HEAD `a4f32d393b9eadf6c4403318ca39116832e5d1df`, imported 2026-07-17 via Shopify CLI 4.5.1 | Shopify restricted MIT-style license in `theme/LICENSE.md` | `7fdb6a1` | IMPORTED / THEME CHECK PASS |
 | Narrivelle original code | Repository này | Proprietary submission source | Từ commit sau baseline | IN PROGRESS |
 | GSAP Core + ScrollTrigger | `https://www.npmjs.com/package/gsap`, version `3.13.0`, imported 2026-07-28 | GSAP Standard “No Charge” License | Uncommitted working tree | APPROVED — self-hosted for homepage reveals and one desktop-only `pinned-visual-story` scrub timeline. CSS owns the sticky layout; ScrollTrigger never pins or changes document layout. Reduced motion and mobile omit the choreography. Core 72 KB + ScrollTrigger 44 KB minified; remove the two script tags and `home-reveal.js` to disable the effect |
+| AOS | `https://www.npmjs.com/package/aos`, version `2.3.4`, imported 2026-07-30 | MIT License, Copyright (c) 2015 Michał Sajnóg | Uncommitted working tree | APPROVED — self-hosted CSS for one-time viewport reveals on index, collection and list-collections templates. Theme-owned `aos-home.js` and `catalog-reveal.js` provide the trigger state; reduced-motion users receive the unanimated content. No CDN, scroll scrub or JavaScript pinning. Remove the CSS asset, both scripts and their layout tags to disable it. |
 | Fonts | Shopify/system only ở baseline | Shopify/platform terms | TBD | POLICY APPROVED |
 | Icons | Original inline SVG plus Phosphor Icons Regular subset `v2.0.8` (`d42782b2abe747d904b971ccab48b182a1455f86`) | Original + MIT | Uncommitted working tree | APPROVED — 20 Phosphor SVG files are self-hosted as CSS masks for Editorial details only; no icon font, package, CDN or remote runtime is used. License notice and asset register entry are required. |
 | Demo imagery | TBD per asset | Commercial proof required | N/A | BLOCKED UNTIL REGISTERED |

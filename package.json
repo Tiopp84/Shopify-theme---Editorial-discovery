@@ -1,7 +1,7 @@
 {
   "name": "shopify-theme-editorial-discovery",
   "version": "1.0.0",
-  "description": "Shopify Theme - Editorial Discovery with GSAP animations and Git Subtree deployment scripts",
+  "description": "Shopify Theme - Editorial Discovery with self-hosted GSAP and AOS motion assets",
   "private": true,
   "scripts": {
     "theme:dev": "shopify theme dev --path theme",

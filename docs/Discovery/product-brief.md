@@ -21,7 +21,7 @@ Theme không cạnh tranh bằng số lượng section hoặc một lookbook đ�
 | Vấn đề chính | Store giàu hình ảnh thường hy sinh khả năng tìm sản phẩm; store catalog lớn thường thiếu storytelling và product confidence | Tạo bài toán thống nhất thay vì tập hợp feature rời rạc |
 | Positioning | Editorial discovery theme for growing fashion brands—turning campaign imagery into fast, confident mobile shopping | Nêu merchant, outcome và trải nghiệm khác biệt |
 | Giá launch | USD 350 | Nằm dưới nhóm premium USD 400–420 nhưng tránh tín hiệu giá rẻ; review lên USD 400 sau validation |
-| Preset | 2: Atelier và Afterdark (working names) | Một preset refined/editorial và một preset streetwear/high-contrast; capabilities ngang nhau |
+| Preset | 2: Narrivelle và Still | Narrivelle là hướng high-end editorial/campaign; Still là hướng tối giản, quiet commerce. Mỗi demo dùng 20–30 sản phẩm; capabilities ngang nhau nhưng homepage composition khác nhau có chủ đích. |
 | Ngôn ngữ launch | English hoàn chỉnh; kiến trúc locale-ready | Giảm QA/support ban đầu; không hard-code copy để thêm locale sau |
 | SLA support | Phản hồi trong 2 business days | Yêu cầu Theme Store hiện hành |
 | Nguồn code | Shopify Skeleton Theme + implementation/art direction nguyên bản | Giảm rủi ro eligibility và chi phí foundation so với viết toàn bộ shell từ số 0 |
@@ -143,7 +143,7 @@ Không giảm giá để cạnh tranh với theme USD 100–170. Lợi thế ph�
 - [x] Duyệt mức giá launch USD 350.
 - [x] Duyệt English-only ở version 1.0, locale-ready.
 - [x] Duyệt Shopify Skeleton Theme làm baseline.
-- [x] Duyệt hai hướng preset Atelier/Afterdark; tên chỉ là working names.
+- [x] Chốt hai preset: Narrivelle (high-end editorial/campaign) và Still (tối giản, quiet commerce). Cần recheck trademark/domain và Shopify naming conflicts ngay trước lần public upload đầu tiên.
 
 ## 11. Localization contract cho version 1.0
 
