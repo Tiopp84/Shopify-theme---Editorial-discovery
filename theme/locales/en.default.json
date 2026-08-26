@@ -12,12 +12,20 @@
     "empty_title": "New stories are on their way",
     "empty_text": "There are no articles to read here yet.",
     "article_metadata_html": "{{ date }} by {{ author }}",
+    "by_author": "By {{ author }}",
+    "comments_count": {
+      "one": "{{ count }} comment",
+      "other": "{{ count }} comments"
+    },
+    "comments_empty": "No comments yet.",
     "read_time": "{{ count }} min read",
     "other_stories": "Other stories",
     "comment_form_body": "Comment",
     "comment_form_email": "Email",
+    "comment_form_intro": "Join the conversation.",
+    "comment_form_success": "Thanks — your comment has been submitted.",
     "comment_form_name": "Name",
-    "comment_form_submit": "Post",
+    "comment_form_submit": "Post comment",
     "comment_form_title": "Add a comment"
   },
   "cart": {

@@ -1,24 +1,39 @@
-# Contributing to Skeleton Theme
+# Contributing to Narrivelle
 
-## How to contribute
+Narrivelle is a maintained commercial Shopify theme. Contributions are accepted only through the project's approved repository and review process; this document does not grant a license to distribute the theme or its demo assets.
 
-We ❤️ pull requests. If you'd like to fix a bug, contribute a feature, or just correct a typo, feel free to do so, as long as you follow our [Code of Conduct](./CODE_OF_CONDUCT.md).
+## Before proposing a change
 
-If you're thinking of adding a new feature or proposing a new pattern across the theme, please consider opening an issue first. This will allow us to discuss your idea, ensure it aligns with the project's direction, and potentially save you some time.
+- State the merchant problem, affected routes and acceptance criteria.
+- Check the current [Theme Store requirements](https://shopify.dev/docs/storefronts/themes/store/requirements) and relevant Shopify platform guidance.
+- Preserve Shopify ownership of checkout, payments, localization, customer accounts and other platform-managed flows.
+- Do not add an app dependency, remote runtime, font, stock image, generated asset or third-party code without written provenance and redistribution rights.
+- Do not include store credentials, customer data, private URLs, theme IDs or a demo store's exported settings in a contribution.
 
-For your contribution to be accepted, you'll need to sign the [Shopify Contributor License Agreement (CLA)](https://cla.shopify.com/).
+## Implementation standards
 
-## Standards
+- Use OS 2.0 JSON templates, sections, blocks and settings that a merchant can understand in the Theme Editor.
+- Keep Narrivelle and Still preset behavior intentional; test both whenever a shared component changes.
+- Maintain responsive layout, keyboard operation, visible focus, reduced-motion behavior, localization and empty states.
+- Add or update locale strings for every customer-facing string.
+- Avoid hard-coded product handles, collection handles, image URLs, demo copy and commercial claims in reusable theme code.
+- Keep changes focused. Do not reformat or replace unrelated files.
 
-* This codebase must be minimalist, not a fully featured theme.
-* This theme must provide a common foundational starting point for most developers.
-* Do not include or reference legacy or non-recommended features.
-* All changes must preserve the principles defined in the README.
+## Required verification
 
-## Steps to contribute
+Run the applicable checks before requesting review:
 
-1. Fork the repository: [https://github.com/Shopify/skeleton-theme/fork](https://github.com/Shopify/skeleton-theme/fork)
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to your branch: `git push origin my-new-feature`
-5. Create a new Pull Request
+```bash
+# From theme/
+shopify theme check --path .
+
+# From the repository root, when available
+node scripts/validate-theme.mjs
+git diff --check
+```
+
+Then test the changed behavior in Shopify Preview/Theme Editor with real and empty data, at compact and desktop widths. Record any Shopify-owned state that cannot be reproduced locally rather than simulating it.
+
+## Review and release
+
+Every contribution is reviewed for functionality, design coherence, accessibility, performance, merchant clarity and asset provenance. A merged change is not release approval. The release owner completes the validation and evidence gates described in the theme README before packaging or submission.

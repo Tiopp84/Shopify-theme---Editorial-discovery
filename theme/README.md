@@ -1,160 +1,146 @@
-<h1 align="center" style="position: relative;">
-  <br>
-    <img src="./assets/shoppy-x-ray.svg" alt="logo" width="200">
-  <br>
-  Shopify Skeleton Theme
-</h1>
+# Narrivelle
 
-A minimal, carefully structured Shopify theme designed to help you quickly get started. Designed with modularity, maintainability, and Shopify's best practices in mind.
+Narrivelle is an editorial Shopify OS 2.0 fashion theme. It is built around restrained typography, product-led storytelling, and flexible merchandising for fashion, accessories, and lifestyle stores.
 
-<p align="center">
-  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
-  <a href="./actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shopify/skeleton-theme/actions/workflows/ci.yml/badge.svg"></a>
-</p>
+The release includes two curated presets:
 
-## Getting started
+- **Narrivelle** — warm, tactile and editorial.
+- **Still** — quieter, product-study focused and neutral.
 
-### Prerequisites
+Both presets use the same codebase. Their storefront composition and defaults live in `/listings` and are applied when the theme is pushed with the matching Shopify CLI listing.
 
-Before starting, ensure you have the latest Shopify CLI installed:
+## Requirements
 
-- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli) – helps you download, upload, preview themes, and streamline your workflows
+- A Shopify store with permission to manage themes.
+- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli) 3.x or newer.
+- Node.js only if you run repository validation scripts from the project root.
 
-If you use VS Code:
+## Local development
 
-- [Shopify Liquid VS Code Extension](https://shopify.dev/docs/storefronts/themes/tools/shopify-liquid-vscode) – provides syntax highlighting, linting, inline documentation, and auto-completion specifically designed for Liquid templates
-
-### Clone
-
-Clone this repository using Git or Shopify CLI:
+Run commands from this `theme` directory.
 
 ```bash
-git clone git@github.com:Shopify/skeleton-theme.git
-# or
-shopify theme init
-```
-
-### Preview
-
-Preview this theme using Shopify CLI:
-
-```bash
+shopify auth login
 shopify theme dev
 ```
 
-## Theme architecture
+The default development store is configured in `shopify.theme.toml`. To preview a particular demo preset and its store data:
 
 ```bash
-.
-├── assets          # Stores static assets (CSS, JS, images, fonts, etc.)
-├── blocks          # Reusable, nestable, customizable UI components
-├── config          # Global theme settings and customization options
-├── layout          # Top-level wrappers for pages (layout templates)
-├── locales         # Translation files for theme internationalization
-├── sections        # Modular full-width page components
-├── snippets        # Reusable Liquid code or HTML fragments
-└── templates       # Templates combining sections to define page structures
+# Narrivelle demo
+shopify theme dev -e narrivelle_demo --listing narrivelle --open
+
+# Still demo
+shopify theme dev -e still_demo --listing still --open
 ```
 
-To learn more, refer to the [theme architecture documentation](https://shopify.dev/docs/storefronts/themes/architecture).
+Use real store content when reviewing product, collection, blog, search, cart, customer and localization flows. A local development theme only mirrors the store selected by the command.
 
-### Templates
+## Presets and demo environments
 
-[Templates](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) control what's rendered on each type of page in a theme.
+| Preset | CLI listing | Demo environment | Purpose |
+| --- | --- | --- | --- |
+| Narrivelle | `narrivelle` | `narrivelle_demo` | Primary editorial fashion demo |
+| Still | `still` | `still_demo` | Alternate quiet/product-study demo |
 
-The Skeleton Theme scaffolds [JSON templates](https://shopify.dev/docs/storefronts/themes/architecture/templates/json-templates) to make it easy for merchants to customize their store.
+The environment store and theme IDs are deliberately kept in `shopify.theme.toml`, which is excluded from a submission package. Do not copy one store's Theme Editor configuration into the other: each demo has its own products, media, navigation and preset setup.
 
-None of the template types are required, and not all of them are included in the Skeleton Theme. Refer to the [template types reference](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) for a full list.
+## Safe demo-store deployment
 
-### Sections
+First stop any active `shopify theme dev` session for the same store. For normal code updates, push only the changed files so store-specific Theme Editor configuration remains intact:
 
-[Sections](https://shopify.dev/docs/storefronts/themes/architecture/sections) are Liquid files that allow you to create reusable modules of content that can be customized by merchants. They can also include blocks which allow merchants to add, remove, and reorder content within a section.
+```bash
+# Example: push the blog/article update to Narrivelle
+shopify theme push -e narrivelle_demo \
+  --only sections/blog.liquid \
+  --only sections/article.liquid \
+  --only locales/en.default.json
 
-Sections are made customizable by including a `{% schema %}` in the body. For more information, refer to the [section schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/sections/section-schema).
+# Apply the same code update to Still
+shopify theme push -e still_demo \
+  --only sections/blog.liquid \
+  --only sections/article.liquid \
+  --only locales/en.default.json
+```
 
-### Blocks
+Use a full preset push only when intentionally changing the preset/template configuration:
 
-[Blocks](https://shopify.dev/docs/storefronts/themes/architecture/blocks) let developers create flexible layouts by breaking down sections into smaller, reusable pieces of Liquid. Each block has its own set of settings, and can be added, removed, and reordered within a section.
+```bash
+shopify theme push -e narrivelle_demo --listing narrivelle --strict
+shopify theme push -e still_demo --listing still --strict
+```
 
-Blocks are made customizable by including a `{% schema %}` in the body. For more information, refer to the [block schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/theme-blocks/schema).
+`config/settings_data.json` and `templates/*.json` can overwrite settings saved in the Theme Editor. Do not include them in a routine code push after a demo store has been merchandised. Make a deliberate backup/pull of the relevant store configuration before any full push.
 
-## Schemas
+## Merchant configuration required for the demos
 
-When developing components defined by schema settings, we recommend these guidelines to simplify your code:
+Code alone does not make either demo complete. Configure the following in each Shopify admin and verify it on the storefront:
 
-- **Single property settings**: For settings that correspond to a single CSS property, use CSS variables:
+- Products with complete variants, prices, inventory, media, alt text and color swatches.
+- Collections with intentional product membership and landscape collection-banner images.
+- Main and footer menus, including real destinations for Catalog, About, Contact and Journal.
+- About page, homepage sections and preset-specific media selected in Theme Editor.
+- A Journal blog with at least three authored articles, cover images, inline content images and comment settings tested.
+- Markets/currency configuration. Keep the country selector where it is useful; enable the language selector only when translated content is available.
+- Store policies, contact details, shipping/returns configuration and other merchant-owned content.
 
-  ```liquid
-  <div class="collection" style="--gap: {{ block.settings.gap }}px">
-    ...
-  </div>
+Do not use fake reviews, inventory, discounts, ratings, policies, payment claims or shipping promises in a demo.
 
-  {% stylesheet %}
-    .collection {
-      gap: var(--gap);
-    }
-  {% endstylesheet %}
+## Validation
 
-  {% schema %}
-  {
-    "settings": [{
-      "type": "range",
-      "label": "gap",
-      "id": "gap",
-      "min": 0,
-      "max": 100,
-      "unit": "px",
-      "default": 0,
-    }]
-  }
-  {% endschema %}
-  ```
+Run these checks before every demo update and before packaging:
 
-- **Multiple property settings**: For settings that control multiple CSS properties, use CSS classes:
+```bash
+# From this directory
+shopify theme check --path .
 
-  ```liquid
-  <div class="collection {{ block.settings.layout }}">
-    ...
-  </div>
+# From the repository root, when the script is available
+node scripts/validate-theme.mjs
 
-  {% stylesheet %}
-    .collection--full-width {
-      /* multiple styles */
-    }
-    .collection--narrow {
-      /* multiple styles */
-    }
-  {% endstylesheet %}
+# From the repository root: inspect whitespace/patch errors
+git diff --check
+```
 
-  {% schema %}
-  {
-    "settings": [{
-      "type": "select",
-      "id": "layout",
-      "label": "layout",
-      "values": [
-        { "value": "collection--full-width", "label": "t:options.full" },
-        { "value": "collection--narrow", "label": "t:options.narrow" }
-      ]
-    }]
-  }
-  {% endschema %}
-  ```
+Theme Check and static validation do not prove Shopify-native functionality. Manually test the relevant flow on both demo stores after changes, especially mobile navigation, collection/search filters, product variants and media, cart/checkout handoff, localization, customer account states, blog comments, empty states, keyboard operation and reduced motion.
 
-## CSS & JavaScript
+## Submission package
 
-For CSS and JavaScript, we recommend using the [`{% stylesheet %}`](https://shopify.dev/docs/api/liquid/tags#stylesheet) and [`{% javascript %}`](https://shopify.dev/docs/api/liquid/tags/javascript) tags. They can be included multiple times, but the code will only appear once.
+Create the archive from a clean release commit, not from an arbitrary local worktree:
 
-### `critical.css`
+```bash
+shopify theme package --path .
+```
 
-The Skeleton Theme explicitly separates essential CSS necessary for every page into a dedicated `critical.css` file.
+Before submitting the resulting ZIP, complete and record a release gate outside the distributable theme package. In particular, verify:
 
-## Contributing
+- Current [Theme Store requirements](https://shopify.dev/docs/storefronts/themes/store/requirements) and the [theme test checklist](https://shopify.dev/docs/storefronts/themes/store/test-theme/checklist).
+- Two complete, independently reviewable demo stores with parity to their listed presets.
+- Originality/provenance and redistribution rights for every image, font, icon, dependency and listing asset.
+- Public documentation, support contact/form, support SLA, changelog/release notes and accurate listing metadata/screenshots.
+- Fresh-store install, Theme Editor lifecycle, browser/mobile coverage, accessibility/performance evidence and all Shopify-native commerce states required by the checklist.
+- Release metadata in `config/settings_schema.json`: final theme name, version, author, and real public documentation/support URLs. Do not submit placeholder URLs.
 
-We're excited for your contributions to the Skeleton Theme! This repository aims to remain as lean, lightweight, and fundamental as possible, and we kindly ask your contributions to align with this intention.
+Keep the internal gap register and live-evidence record outside the distributable theme package. A successful package command or Theme Check result is not submission approval.
 
-Visit our [CONTRIBUTING.md](./CONTRIBUTING.md) for a detailed overview of our process, guidelines, and recommendations.
+## Project structure
 
-## License
+```text
+theme/
+├── assets/                 # CSS, JavaScript, fonts and self-hosted media assets
+├── blocks/                 # Reusable theme blocks
+├── config/                 # Theme settings schema and defaults
+├── layout/                 # Storefront document layout
+├── listings/               # Narrivelle and Still preset template configurations
+├── locales/                # Storefront translations
+├── sections/               # Theme Editor sections
+├── snippets/               # Reusable Liquid fragments
+└── templates/              # JSON and Liquid route templates
+```
 
-Skeleton Theme is open-sourced under the [MIT](./LICENSE.md) License.
+## Licensing and attribution
+
+The project inherits the Shopify Skeleton Theme license in [LICENSE.md](./LICENSE.md). Included open-source components are listed in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). Keep the complete asset/dependency provenance record outside the distributable package before release. Do not add a commercial, generated or stock asset to the theme or a listing without recording its usage and redistribution rights.
+
+## Support
+
+Before public distribution, replace the Theme Editor documentation and support URLs with owned, publicly accessible Narrivelle destinations. The support route must state the supported theme version, expected response time and the information needed to reproduce an issue.

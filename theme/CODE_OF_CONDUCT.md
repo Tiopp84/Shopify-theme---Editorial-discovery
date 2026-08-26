@@ -1,4 +1,4 @@
-# Contributor Covenant Code of Conduct
+# Narrivelle Contributor Code of Conduct
 
 ## Our Pledge
 
@@ -59,8 +59,9 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-opensource@shopify.com.
+reported through the private support or contributor contact published for the
+current Narrivelle release. Reports must not be sent to Shopify unless they
+concern Shopify's own services or policies.
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
