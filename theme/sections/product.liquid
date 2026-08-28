@@ -23,7 +23,7 @@
           >
           {% case media.media_type %}
             {% when 'image' %}
-              {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 50vw, 100vw', loading: media_loading, fetchpriority: media_fetchpriority %}
+              {% render 'image', image: media.preview_image, class: 'main-product__image', widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 64rem) 50vw, calc(100vw - 2.5rem)', loading: media_loading, fetchpriority: media_fetchpriority %}
             {% when 'video' %}
               {{ media | media_tag: image_size: '1200x', controls: true, preload: 'metadata' }}
             {% when 'external_video' %}
