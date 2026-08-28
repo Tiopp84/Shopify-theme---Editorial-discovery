@@ -30,6 +30,7 @@
             <span>{{ 'collections.facets.filters' | t }}</span>
           </button>
           <dialog class="collection-facets-dialog" aria-labelledby="DesktopFacetsTitle" data-facet-dialog="desktop" data-overlay-motion="drawer-start" scroll-lock>
+            <div class="collection-facets-dialog__surface" aria-hidden="true"></div>
             <div class="collection-facets-dialog__header" data-facets-entrance="header">
               <div>
                 <h2 id="DesktopFacetsTitle">{{ 'collections.facets.filters' | t }}</h2>
@@ -70,6 +71,7 @@
           {%- endif %}
         </button>
         <dialog class="collection-facets-dialog" aria-labelledby="MobileFacetsTitle" data-facet-dialog="mobile" data-overlay-motion="sheet" scroll-lock>
+          <div class="collection-facets-dialog__surface" aria-hidden="true"></div>
           <div class="collection-facets-dialog__header" data-facets-entrance="header">
             <h2 id="MobileFacetsTitle">{{ 'collections.facets.filter_and_sort' | t }}</h2>
             <button type="button" aria-label="{{ 'collections.facets.close' | t }}" data-facets-close>
@@ -265,6 +267,8 @@
 
   .collection-facets-dialog::backdrop { background: transparent; }
   .collection-facets-dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
+  .collection-facets-dialog__surface { inset: 0; position: absolute; z-index: 0; }
+  .collection-facets-dialog > :not(.collection-facets-dialog__surface) { position: relative; z-index: 1; }
 
   .collection-facets-dialog__header {
     margin-block-end: var(--space-4);

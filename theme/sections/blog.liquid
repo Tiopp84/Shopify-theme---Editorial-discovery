@@ -28,13 +28,12 @@
             {% endif %}
             <div class="blog-card__content">
               <h2><a href="{{ article.url }}">{{ article.title | escape }}</a></h2>
-              {% if section.settings.show_author or section.settings.show_date or section.settings.show_read_time %}
-                <p class="blog-card__metadata">
-                  {% if section.settings.show_author and article.author != blank %}<span>{{ article.author | escape }}</span>{% endif %}
-                  {% if section.settings.show_date %}<span>{{ article.published_at | time_tag: format: 'date' }}</span>{% endif %}
-                  {% if section.settings.show_read_time %}<span>{{ 'blog.read_time' | t: count: article_read_minutes }}</span>{% endif %}
-                </p>
-              {% endif %}
+              <ul class="blog-card__metadata" role="list">
+                {% if section.settings.show_author and article.author != blank %}<li>{{ 'blog.by_author' | t: author: article.author }}</li>{% endif %}
+                {% if section.settings.show_date %}<li>{{ article.published_at | time_tag: format: 'date' }}</li>{% endif %}
+                {% if section.settings.show_read_time %}<li>{{ 'blog.read_time' | t: count: article_read_minutes }}</li>{% endif %}
+                <li>{{ 'blog.comments_count' | t: count: article.comments_count }}</li>
+              </ul>
               {% assign article_excerpt = article.excerpt_or_content | strip_html | strip_newlines | strip %}
               {% if article_excerpt != blank %}<p class="blog-card__excerpt">{{ article_excerpt | truncatewords: 28 }}</p>{% endif %}
             </div>
@@ -71,8 +70,9 @@
   .blog-card h2 { font-size: clamp(var(--heading-size-44), calc(var(--heading-size-44) + 2.25vw), var(--heading-size-64)); margin: 0; }
   .blog-card h2 a { color: inherit; text-decoration: none; }
   .blog-card h2 a:focus-visible, .blog-card__media:focus-visible { outline: .125rem solid var(--color-interactive); outline-offset: .25rem; }
-  .blog-card__metadata { align-items: center; color: color-mix(in srgb, var(--color-foreground) 68%, var(--color-background)); display: flex; flex-wrap: wrap; font-family: var(--small-label-font); font-size: var(--small-label-size); gap: var(--space-2); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); margin: var(--space-3) 0 0; }
-  .blog-card__metadata span + span::before { content: '·'; margin-inline-end: var(--space-2); }
+  .blog-card__metadata { align-items: center; color: color-mix(in srgb, var(--color-foreground) 68%, var(--color-background)); display: flex; flex-wrap: wrap; font-family: var(--small-label-font); font-size: var(--small-label-size); gap: var(--space-2); letter-spacing: var(--small-label-letter-spacing); line-height: var(--small-label-line-height); list-style: none; margin: var(--space-3) 0 0; padding: 0; }
+  .blog-card__metadata li { overflow-wrap: anywhere; }
+  .blog-card__metadata li + li::before { content: '·'; margin-inline-end: var(--space-2); }
   .blog-card__excerpt { line-height: calc(var(--body-text-line-spacing) + .1); margin: var(--space-3) 0 0; }
   .blog-template--with-media.blog-template--editorial .blog-card { align-items: start; grid-template-columns: minmax(6rem, 30vw) minmax(0, 1fr); }
   .blog-template--editorial .blog-card__media { max-inline-size: 14rem; }

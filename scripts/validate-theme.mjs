@@ -23,8 +23,13 @@ function jsonc(text) {
 function flatten(value, prefix = '', output = new Set()) {
   for (const [key, child] of Object.entries(value)) {
     const path = prefix ? `${prefix}.${key}` : key;
-    if (child && typeof child === 'object' && !Array.isArray(child)) flatten(child, path, output);
-    else output.add(path);
+    if (child && typeof child === 'object' && !Array.isArray(child)) {
+      // A translation key can resolve to a pluralization object (for example,
+      // `blog.comments_count`) rather than a terminal string. Keep the parent
+      // key as valid while also collecting its individual plural forms.
+      output.add(path);
+      flatten(child, path, output);
+    } else output.add(path);
   }
   return output;
 }

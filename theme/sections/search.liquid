@@ -56,6 +56,7 @@
             {% if section.settings.enable_filtering and search.filters != empty %}<span aria-hidden="true">+</span>{% endif %}
           </button>
           <dialog class="search-facets-dialog" aria-labelledby="SearchFacetsMobileTitle-{{ section.id }}" data-search-facet-dialog="mobile" data-overlay-motion="sheet" scroll-lock>
+            <div class="search-facets-dialog__surface" aria-hidden="true"></div>
             <div class="search-facets-dialog__header" data-facets-entrance="header">
               <h2 id="SearchFacetsMobileTitle-{{ section.id }}">{{ 'collections.facets.filter_and_sort' | t }}</h2>
               <button type="button" aria-label="{{ 'collections.facets.close' | t }}" data-search-facets-close>{% render 'icon', name: 'close' %}</button>
@@ -91,6 +92,7 @@
             <span>{{ 'collections.facets.filters' | t }}</span>
           </button>
           <dialog class="search-facets-dialog" aria-labelledby="SearchFacetsDesktopTitle-{{ section.id }}" data-search-facet-dialog="desktop" data-overlay-motion="drawer-start" scroll-lock>
+            <div class="search-facets-dialog__surface" aria-hidden="true"></div>
             <div class="search-facets-dialog__header" data-facets-entrance="header">
               <div>
                 <h2 id="SearchFacetsDesktopTitle-{{ section.id }}">{{ 'collections.facets.filters' | t }}</h2>
@@ -352,6 +354,8 @@
 
   .search-facets-dialog::backdrop { background: transparent; }
   .search-facets-dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }
+  .search-facets-dialog__surface { inset: 0; position: absolute; z-index: 0; }
+  .search-facets-dialog > :not(.search-facets-dialog__surface) { position: relative; z-index: 1; }
 
   .search-facets-dialog__header {
     align-items: center;
