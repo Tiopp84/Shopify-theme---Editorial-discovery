@@ -860,15 +860,17 @@ class ProductGallery extends HTMLElement {
   sizeDialog(aspect) {
     this.mediaAspect = aspect;
     const isVideo = this.dialog?.dataset.productGalleryMediaType === 'video';
-    const maxWidth = window.innerWidth * 0.92;
-    // Video is constrained by height, not a guessed width: 50dvh remains
-    // responsive for every aspect ratio and lets width follow naturally.
-    const maxHeight = window.innerHeight * (isVideo ? 0.5 : 1) - (isVideo ? 0 : 80);
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    const maxWidth = window.innerWidth * 0.88;
+    // Reserve comfortable breathing room around portrait media. The gallery
+    // toolbar lives inside this frame, so it remains visible above browser and
+    // Theme Editor viewport chrome instead of falling below the dialog.
+    const maxHeight = viewportHeight * (isVideo ? 0.56 : 0.78);
     const width = Math.min(maxWidth, maxHeight * aspect);
     const height = width / aspect;
     this.dialog.style.inlineSize = `${Math.floor(width)}px`;
     this.dialog.style.blockSize = `${Math.floor(height)}px`;
-    this.dialog.style.marginBlockStart = `${Math.max(8, Math.floor((window.innerHeight - height) / 2))}px`;
+    this.dialog.style.marginBlockStart = `${Math.max(8, Math.floor((viewportHeight - height) / 2))}px`;
   }
 
   enableHoverZoom(image) {

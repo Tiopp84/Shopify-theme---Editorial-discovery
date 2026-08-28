@@ -82,6 +82,12 @@
         >
           {% render 'icon', name: 'search' %}
         </button>
+        <noscript>
+          <a class="header-shell__icon-button" href="{{ routes.search_url }}">
+            <span class="visually-hidden">{{ 'search.title' | t }}</span>
+            {% render 'icon', name: 'search' %}
+          </a>
+        </noscript>
       {% else %}
         <a class="header-shell__icon-button" href="{{ routes.search_url }}">
           <span class="visually-hidden">{{ 'search.title' | t }}</span>
@@ -96,6 +102,12 @@
             {% render 'icon', name: 'account' %}
           </span>
         </shopify-account>
+        <noscript>
+          <a class="header-shell__icon-button" href="{{ routes.account_login_url }}">
+            <span class="visually-hidden">{{ 'customer.account' | t }}</span>
+            {% render 'icon', name: 'account' %}
+          </a>
+        </noscript>
       {% endif %}
 
       {% if section.settings.show_localization and localization.available_countries.size > 1 or section.settings.show_localization and localization.available_languages.size > 1 %}
@@ -152,6 +164,12 @@
         {% render 'icon', name: 'search' %}
         <span>{{ 'search.title' | t }}</span>
       </button>
+      <noscript>
+        <a class="header-shell__task" href="{{ routes.search_url }}">
+          {% render 'icon', name: 'search' %}
+          <span>{{ 'search.title' | t }}</span>
+        </a>
+      </noscript>
     {% else %}
       <a class="header-shell__task" href="{{ routes.search_url }}">
         {% render 'icon', name: 'search' %}
@@ -174,6 +192,12 @@
           <span>{{ 'customer.account' | t }}</span>
         </span>
       </shopify-account>
+      <noscript>
+        <a class="header-shell__task" href="{{ routes.account_login_url }}">
+          {% render 'icon', name: 'account' %}
+          <span>{{ 'customer.account' | t }}</span>
+        </a>
+      </noscript>
     {% endif %}
   </nav>
 
@@ -272,6 +296,7 @@
       data-overlay-motion="drawer-end"
       scroll-lock
     >
+      <div class="header-shell__search-dialog-surface" aria-hidden="true"></div>
       <div class="header-shell__drawer-header" data-search-drawer-entrance="header">
         <h2 id="HeaderSearchTitle">{{ 'search.title' | t }}</h2>
         <button
@@ -290,6 +315,13 @@
     </dialog>
   {% endif %}
 </header-shell>
+
+<noscript>
+  <style>
+    .header-shell [data-dialog-open='search'],
+    .header-shell shopify-account { display: none !important; }
+  </style>
+</noscript>
 
 {% stylesheet %}
   .header-shell {
@@ -545,6 +577,13 @@
     z-index: 1;
   }
 
+  /* A long top-level menu can wrap onto a second row. The active dropdown
+     must create the topmost local stacking layer so that row never paints
+     through a level-two or level-three panel. */
+  .header-shell__desktop-nav > .header-shell__nav-group[open] {
+    z-index: 2;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .header-shell__desktop-nav--pill-motion .header-shell__desktop-nav-pill {
       transition: opacity 180ms ease, transform 380ms cubic-bezier(.34, 1.38, .64, 1), inline-size 340ms cubic-bezier(.16, 1, .3, 1), block-size 340ms cubic-bezier(.16, 1, .3, 1);
@@ -632,12 +671,16 @@
     position: relative;
   }
 
-  .header-shell__nav-group::after {
-    position: absolute;
+  .header-shell__nav-group[open]::after {
     content: '';
-    inset-block-start: 100%;
-    inset-inline: 0;
-    block-size: var(--space-4);
+    position: absolute;
+    /* Keep the hover target continuous from a top-level trigger to every
+       pixel of its wider dropdown, including the dropdown border. */
+    inset-block-start: calc(100% - 1px);
+    inset-inline-start: 0;
+    block-size: calc(var(--space-4) + 2px);
+    inline-size: max(100%, 14rem);
+    z-index: 30;
   }
 
   .header-shell__submenu {
@@ -681,6 +724,18 @@
   .header-shell__submenu-group {
     border-radius: .35rem;
     position: relative;
+  }
+
+  .header-shell__submenu-group[open]::after {
+    content: '';
+    position: absolute;
+    /* The level-three panel is offset horizontally. This invisible bridge
+       prevents its parent <details> from closing as a mouse crosses the gap. */
+    inset-block-start: calc(var(--space-3) * -1);
+    inset-inline-start: calc(100% - 1px);
+    block-size: calc(100% + var(--space-3) * 2);
+    inline-size: calc(var(--space-2) + 2px);
+    z-index: 31;
   }
 
   .header-shell__submenu-group > summary {
@@ -833,6 +888,12 @@
     display: flex;
     flex-direction: column;
   }
+
+  /* The dialog itself represents the backdrop click target. This surface
+     covers otherwise-empty padding inside the drawer so an interior click
+     doesn't bubble as a dialog/backdrop click. */
+  .header-shell__search-dialog-surface { inset: 0; position: absolute; z-index: 0; }
+  .header-shell__search-dialog > :not(.header-shell__search-dialog-surface) { position: relative; z-index: 1; }
 
   .header-shell__search-dialog::backdrop { background: transparent; }
   .header-shell__search-dialog[open][data-overlay-visible]::backdrop { background: color-mix(in srgb, var(--overlay-color) var(--overlay-opacity), transparent); }

@@ -83,7 +83,7 @@
     {% elsif show_badge != false and on_sale %}
       <span class="product-card__status product-card__status--sale">{{ 'products.card.sale' | t }}</span>
     {% endif %}
-    {% if show_quick_add != false and product.available and card_context != 'recommendation' and card_context != 'homepage' %}
+    {% if show_quick_add != false and product.available and product.selling_plan_groups == empty and card_context != 'recommendation' and card_context != 'homepage' %}
       <div class="product-card__quick-add-wrap">
         {% if available_variant_count == 1 %}
           <quick-add class="product-card__quick-add-shell" data-product-form data-quick-add-direct data-product-url="{{ product.url }}" data-variant-id="{{ quick_add_variant.id }}" data-error="{{ 'products.card.quick_add_error' | t }}">

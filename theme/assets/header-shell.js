@@ -133,7 +133,25 @@ class HeaderShell extends HTMLElement {
   onDesktopNavPointerOver(event) {
     if (this.desktopNavHoverSuspended) return;
     const item = this.navPillItems.find((candidate) => candidate === event.target || candidate.contains(event.target));
-    if (item && item !== this.activeNavPillItem) this.setNavPill(item, { deferText: true });
+    if (!item) return;
+
+    if (this.dropdownHoverEnabled) {
+      const hoveredGroup = item.closest('.header-shell__nav-group');
+      if (hoveredGroup) {
+        window.clearTimeout(this.hoverCloseTimer);
+        this.navGroups.forEach((group) => {
+          if (group !== hoveredGroup) group.removeAttribute('open');
+        });
+        hoveredGroup.setAttribute('open', '');
+      } else {
+        // A top-level link has no submenu, so it must immediately replace any
+        // previously active dropdown rather than leaving it below a new pill.
+        window.clearTimeout(this.hoverCloseTimer);
+        this.navGroups.forEach((group) => group.removeAttribute('open'));
+      }
+    }
+
+    if (item !== this.activeNavPillItem) this.setNavPill(item, { deferText: true });
   }
 
   onDesktopNavPointerLeave() {
@@ -514,6 +532,7 @@ class HeaderShell extends HTMLElement {
       if (group !== activeGroup) group.removeAttribute('open');
     });
     activeGroup.setAttribute('open', '');
+    this.setNavPill(activeGroup.querySelector(':scope > summary'), { deferText: true });
   }
 
   onNavGroupPointerLeave(event) {
